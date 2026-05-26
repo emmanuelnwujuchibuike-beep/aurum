@@ -1,99 +1,119 @@
-
 /* ═══════════════════════════════════════════════════════════════════
-   AURUM CAPITAL — Netlify Serverless Function
-   File: netlify/functions/user-auth.js
+   AURUM CAPITAL — Netlify Serverless Function  v2 (FIXED)
+   File path: netlify/functions/user-auth.js
 
-   Deploy to Netlify — this function protects your CMA token.
-   Set these environment variables in Netlify Dashboard:
-     → CF_CMA_TOKEN    (Contentful Content Management API token)
-     → CF_SPACE_ID     (Your Contentful Space ID)
-     → CF_ENV          (usually "master")
-     → CF_CONTENT_TYPE (your user content type ID, e.g. "aurumUser")
-     → ALLOWED_ORIGIN  (your site URL or * for open)
+   Set these in Netlify Dashboard → Site Settings → Environment Variables:
+     CF_CMA_TOKEN     →  Contentful Content Management API token
+     CF_SPACE_ID      →  Your Contentful Space ID
+     CF_ENV           →  master  (or your env name)
+     CF_CONTENT_TYPE  →  aurumUser  (content type ID you created)
+     ALLOWED_ORIGIN   →  https://yoursite.netlify.app  (or *)
+     ADMIN_SECRET     →  any secret string
 ═══════════════════════════════════════════════════════════════════ */
 
-const contentful = require('contentful');
+/* NOTE: No require() — pure Node built-ins + native fetch (Node 18+) */
 
 const CF_CMA_BASE = 'https://api.contentful.com';
 
 exports.handler = async (event) => {
 
-  /* ── CORS headers ──────────────────────────────────────────── */
-  const origin   = process.env.ALLOWED_ORIGIN || '*';
-  const corsHdrs = {
+  /* ── CORS ─────────────────────────────────────────────────── */
+  const origin = process.env.ALLOWED_ORIGIN || '*';
+  const cors = {
     'Access-Control-Allow-Origin' : origin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type'                : 'application/json',
   };
 
-  /* Handle preflight */
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: corsHdrs, body: '' };
-  if (event.httpMethod !== 'POST')    return { statusCode: 405, headers: corsHdrs, body: JSON.stringify({ error: 'Method not allowed' }) };
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: cors, body: '' };
+  if (event.httpMethod !== 'POST')
+    return { statusCode: 405, headers: cors, body: JSON.stringify({ ok: false, error: 'Method not allowed' }) };
 
-  /* ── Read env vars ─────────────────────────────────────────── */
-
-//   Refreshing variables)
+  /* ── Env vars ─────────────────────────────────────────────── */
   const CMA_TOKEN    = process.env.CF_CMA_TOKEN;
   const SPACE_ID     = process.env.CF_SPACE_ID;
   const ENV          = process.env.CF_ENV || 'master';
   const CONTENT_TYPE = process.env.CF_CONTENT_TYPE || 'aurum';
 
   if (!CMA_TOKEN || !SPACE_ID) {
+    console.error('Missing CF_CMA_TOKEN or CF_SPACE_ID env vars');
     return {
       statusCode: 500,
-      headers: corsHdrs,
-      body: JSON.stringify({ error: 'Server misconfiguration' }),
+      headers: cors,
+      body: JSON.stringify({ ok: false, error: 'Server misconfiguration: missing environment variables. Check Netlify dashboard.' }),
     };
   }
 
-  /* ── Parse body ────────────────────────────────────────────── */
+  /* ── Parse body ───────────────────────────────────────────── */
   let body;
-  try { body = JSON.parse(event.body || '{}'); }
-  catch { return { statusCode: 400, headers: corsHdrs, body: JSON.stringify({ error: 'Invalid JSON body.' }) }; }
+  try {
+    body = JSON.parse(event.body || '{}');
+  } catch {
+    return { statusCode: 400, headers: cors, body: JSON.stringify({ ok: false, error: 'Invalid request body.' }) };
+  }
 
   const { action } = body;
+  console.log(`[user-auth] action=${action}`);
 
   /* ══════════════════════════════════════════════════════════
      ACTION: register
-     Creates a new aurumUser entry in Contentful via CMA.
   ══════════════════════════════════════════════════════════ */
   if (action === 'register') {
-    const { userId, firstName, lastName, email, phone, passwordHash, avatarInitials, cashBalance, plan, createdAt } = body;
+    const {
+      userId, firstName, lastName, email,
+      phone, passwordHash, avatarInitials,
+      cashBalance, plan, createdAt
+    } = body;
 
-    /* Basic server-side validation */
+    /* ── Server-side validation ───────────────────────────── */
     if (!userId || !firstName || !lastName || !email || !passwordHash)
-      return { statusCode: 400, headers: corsHdrs, body: JSON.stringify({ error: 'Missing required fields.' }) };
-    if (!/^\S+@\S+\.\S{2,}$/.test(email))
-      return { statusCode: 400, headers: corsHdrs, body: JSON.stringify({ error: 'Invalid email address.' }) };
+      return { statusCode: 400, headers: cors, body: JSON.stringify({ ok: false, error: 'Missing required fields.' }) };
 
-    /* ── Step 1: Check if email already exists via CMA search ── */
+    if (!/^\S+@\S+\.\S{2,}$/.test(email))
+      return { statusCode: 400, headers: cors, body: JSON.stringify({ ok: false, error: 'Invalid email address.' }) };
+
+    /* ── 1. Check email uniqueness via CMA ────────────────── */
     try {
-      const checkUrl = `${CF_CMA_BASE}/spaces/${SPACE_ID}/environments/${ENV}/entries?content_type=${CONTENT_TYPE}&fields.email=${encodeURIComponent(email)}&limit=1`;
+      const checkUrl = `${CF_CMA_BASE}/spaces/${SPACE_ID}/environments/${ENV}/entries`
+        + `?content_type=${CONTENT_TYPE}&fields.email=${encodeURIComponent(email.toLowerCase())}&limit=1`;
+
       const checkRes = await fetch(checkUrl, {
-        headers: { Authorization: `Bearer ${CMA_TOKEN}`, 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${CMA_TOKEN}`,
+          'Content-Type' : 'application/json',
+        },
       });
+
+      if (!checkRes.ok) {
+        const errBody = await checkRes.text();
+        console.error('Email check failed:', checkRes.status, errBody);
+        return { statusCode: 500, headers: cors, body: JSON.stringify({ ok: false, error: 'Could not verify email. Is your CMA token correct and does the content type exist?' }) };
+      }
+
       const checkJson = await checkRes.json();
       if (checkJson.total > 0)
-        return { statusCode: 409, headers: corsHdrs, body: JSON.stringify({ error: 'An account with that email already exists.' }) };
+        return { statusCode: 409, headers: cors, body: JSON.stringify({ ok: false, error: 'An account with that email already exists.' }) };
+
     } catch (e) {
-      return { statusCode: 500, headers: corsHdrs, body: JSON.stringify({ error: 'Could not verify email uniqueness: ' + e.message }) };
+      console.error('Email check exception:', e);
+      return { statusCode: 500, headers: cors, body: JSON.stringify({ ok: false, error: 'Email check failed: ' + e.message }) };
     }
 
-    /* ── Step 2: Create the Contentful entry ───────────────── */
-    const entryBody = {
+    /* ── 2. Create Contentful entry ───────────────────────── */
+    const entryPayload = {
       fields: {
-        userId         : { 'en-US': userId },
-        firstName      : { 'en-US': firstName },
-        lastName       : { 'en-US': lastName },
-        email          : { 'en-US': email.toLowerCase() },
-        phone          : { 'en-US': phone || '' },
-        passwordHash   : { 'en-US': passwordHash },
-        avatarInitials : { 'en-US': avatarInitials },
-        cashBalance    : { 'en-US': parseFloat(cashBalance) || 0 },
-        plan           : { 'en-US': plan || 'standard' },
-        isActive       : { 'en-US': true },
-        createdAt      : { 'en-US': createdAt || new Date().toISOString() },
+        userId        : { 'en-US': userId },
+        firstName     : { 'en-US': firstName.trim() },
+        lastName      : { 'en-US': lastName.trim() },
+        email         : { 'en-US': email.toLowerCase().trim() },
+        phone         : { 'en-US': phone || 'phone' },
+        passwordHash  : { 'en-US': passwordHash },
+        avatarInitials: { 'en-US': avatarInitials || (firstName[0] + lastName[0]).toUpperCase() },
+        cashBalance   : { 'en-US': parseFloat(cashBalance) || 0 },
+        plan          : { 'en-US': plan || 'standard' },
+        isActive      : { 'en-US': true },
+        createdAt     : { 'en-US': createdAt || new Date().toISOString() },
       },
     };
 
@@ -103,65 +123,87 @@ exports.handler = async (event) => {
       const createRes = await fetch(createUrl, {
         method : 'POST',
         headers: {
-          Authorization           : `Bearer ${CMA_TOKEN}`,
-          'Content-Type'          : 'application/vnd.contentful.management.v1+json',
-          'X-Contentful-Content-Type': CONTENT_TYPE,
+          'Authorization'              : `Bearer ${CMA_TOKEN}`,
+          'Content-Type'               : 'application/vnd.contentful.management.v1+json',
+          'X-Contentful-Content-Type'  : CONTENT_TYPE,
         },
-        body: JSON.stringify(entryBody),
+        body: JSON.stringify(entryPayload),
       });
+
       entry = await createRes.json();
-      if (!createRes.ok)
-        return { statusCode: createRes.status, headers: corsHdrs, body: JSON.stringify({ error: entry.message || 'Failed to create account in Contentful.', details: entry }) };
+
+      if (!createRes.ok) {
+        console.error('Create entry failed:', createRes.status, JSON.stringify(entry));
+        const detail = entry?.details?.errors?.map(e => e.details).join(', ') || entry.message || 'Unknown Contentful error';
+        return { statusCode: createRes.status, headers: cors, body: JSON.stringify({ ok: false, error: 'Could not create account: ' + detail }) };
+      }
+
     } catch (e) {
-      return { statusCode: 500, headers: corsHdrs, body: JSON.stringify({ error: 'Contentful create error: ' + e.message }) };
+      console.error('Create entry exception:', e);
+      return { statusCode: 500, headers: cors, body: JSON.stringify({ ok: false, error: 'Account creation failed: ' + e.message }) };
     }
 
-    /* ── Step 3: Publish the entry so CDA can read it ──────── */
-    let published = false;
+    /* ── 3. Publish entry so CDA can read it ──────────────── */
     try {
       const pubUrl = `${CF_CMA_BASE}/spaces/${SPACE_ID}/environments/${ENV}/entries/${entry.sys.id}/published`;
       const pubRes = await fetch(pubUrl, {
         method : 'PUT',
         headers: {
-          Authorization     : `Bearer ${CMA_TOKEN}`,
+          'Authorization'       : `Bearer ${CMA_TOKEN}`,
           'X-Contentful-Version': String(entry.sys.version),
         },
       });
-      if (pubRes.ok) published = true;
-    } catch (_) { /* Non-fatal — entry created but not published */ }
+      if (!pubRes.ok) {
+        const pubErr = await pubRes.text();
+        console.warn('Publish failed (entry created but unpublished):', pubErr);
+      }
+    } catch (e) {
+      console.warn('Publish exception (non-fatal):', e.message);
+    }
 
-    /* ── Return safe user object (NO password hash) ─────────── */
+    /* ── 4. Return safe user (no passwordHash) ────────────── */
+    console.log(`[user-auth] register success: ${email}`);
     return {
       statusCode: 201,
-      headers: corsHdrs,
+      headers: cors,
       body: JSON.stringify({
         ok: true,
-        published,
-        user: { userId, firstName, lastName, email, phone, avatarInitials, cashBalance, plan, createdAt },
+        user: {
+          userId, firstName, lastName,
+          email: email.toLowerCase(),
+          phone: phone || '',
+          avatarInitials: avatarInitials || (firstName[0] + lastName[0]).toUpperCase(),
+          cashBalance: parseFloat(cashBalance) || 0,
+          plan: plan || 'standard',
+          createdAt: createdAt || new Date().toISOString(),
+        },
         entryId: entry.sys.id,
       }),
     };
   }
 
   /* ══════════════════════════════════════════════════════════
-     ACTION: delete (admin use — remove a user entry)
+     ACTION: delete  (admin only)
   ══════════════════════════════════════════════════════════ */
   if (action === 'delete') {
     const { entryId, adminSecret } = body;
-    if (adminSecret !== process.env.ADMIN_SECRET)
-      return { statusCode: 403, headers: corsHdrs, body: JSON.stringify({ error: 'Forbidden.' }) };
+    if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET)
+      return { statusCode: 403, headers: cors, body: JSON.stringify({ ok: false, error: 'Forbidden.' }) };
     try {
+      /* Unpublish first */
       await fetch(`${CF_CMA_BASE}/spaces/${SPACE_ID}/environments/${ENV}/entries/${entryId}/published`, {
-        method: 'DELETE', headers: { Authorization: `Bearer ${CMA_TOKEN}` },
+        method: 'DELETE', headers: { 'Authorization': `Bearer ${CMA_TOKEN}` },
       });
-      await fetch(`${CF_CMA_BASE}/spaces/${SPACE_ID}/environments/${ENV}/entries/${entryId}`, {
-        method: 'DELETE', headers: { Authorization: `Bearer ${CMA_TOKEN}` },
+      /* Then delete */
+      const delRes = await fetch(`${CF_CMA_BASE}/spaces/${SPACE_ID}/environments/${ENV}/entries/${entryId}`, {
+        method: 'DELETE', headers: { 'Authorization': `Bearer ${CMA_TOKEN}` },
       });
-      return { statusCode: 200, headers: corsHdrs, body: JSON.stringify({ ok: true }) };
+      if (!delRes.ok) throw new Error('Delete failed: ' + delRes.status);
+      return { statusCode: 200, headers: cors, body: JSON.stringify({ ok: true }) };
     } catch (e) {
-      return { statusCode: 500, headers: corsHdrs, body: JSON.stringify({ error: e.message }) };
+      return { statusCode: 500, headers: cors, body: JSON.stringify({ ok: false, error: e.message }) };
     }
   }
 
-  return { statusCode: 400, headers: corsHdrs, body: JSON.stringify({ error: 'Unknown action: ' + action }) };
+  return { statusCode: 400, headers: cors, body: JSON.stringify({ ok: false, error: 'Unknown action: ' + action }) };
 };
