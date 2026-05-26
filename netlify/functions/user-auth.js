@@ -123,7 +123,7 @@
         firstName     : { 'en-US': firstName.trim() },
         lastName      : { 'en-US': lastName.trim() },
         email         : { 'en-US': email.toLowerCase().trim() },
-        phone         : { 'en-US': phone || 'phone' },
+        phone         : { 'en-US': phone || '' },
         passwordHash  : { 'en-US': passwordHash },
         avatarInitials: { 'en-US': avatarInitials || (firstName[0] + lastName[0]).toUpperCase() },
         cashBalance   : { 'en-US': parseFloat(cashBalance) || 0 },
