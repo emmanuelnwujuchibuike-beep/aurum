@@ -17,31 +17,31 @@
 
   exports.handler = async (event) => {
 
-   exports.handler = async (event, context) => {
-    // 1. Parse the incoming data
+exports.handler = async (event) => {
     const data = JSON.parse(event.body);
-
     try {
-        // 2. THIS IS THE LINE TO REPLACE: 
-        // We are going to ask Contentful what its fields really are
+        // 1. Get the actual model
         const contentType = await client.getContentType('aurum');
-        console.log("ACTUAL FIELDS ALLOWED BY CONTENTFUL:", JSON.stringify(contentType.fields.map(f => f.id), null, 2));
+        
+        // 2. Identify the field IDs dynamically
+        const fieldIds = contentType.fields.map(f => f.id);
+        const nameField = fieldIds.find(id => id.toLowerCase().includes('first'));
+        const phoneField = fieldIds.find(id => id.toLowerCase().includes('phone'));
 
-        // 3. Keep the code paused here for a second
-        // We will fill this part in once you give me the log output
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: "Check the logs to see the required field names" })
-        };
+        // 3. Create the entry using the discovered IDs
+        const entry = await client.createEntry('aurum', {
+            fields: {
+                [nameField]: { 'en-US': data.firstName },
+                [phoneField]: { 'en-US': data.phone }
+            }
+        });
 
+        return { statusCode: 200, body: JSON.stringify({ message: "Success" }) };
     } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message })
-        };
+        console.error("DEBUG ERROR:", error);
+        return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
     }
 };
-
   /* ── CORS ─────────────────────────────────────────────────── */
   const origin = process.env.ALLOWED_ORIGIN || '*';
   const cors = {
@@ -183,7 +183,7 @@
           }
         });
         console.log("Entry created:", JSON.stringify(entry, null, 2));
-        
+
       if (!createRes.ok) {
         console.error('Create entry failed:', createRes.status, JSON.stringify(entry));
         const detail = entry?.details?.errors?.map(e => e.details).join(', ') || entry.message || 'Unknown Contentful error';
