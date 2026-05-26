@@ -117,15 +117,17 @@ exports.handler = async (event) => {
     }
 
     /* ── Step 3: Publish the entry so CDA can read it ──────── */
+    let published = false;
     try {
       const pubUrl = `${CF_CMA_BASE}/spaces/${SPACE_ID}/environments/${ENV}/entries/${entry.sys.id}/published`;
-      await fetch(pubUrl, {
+      const pubRes = await fetch(pubUrl, {
         method : 'PUT',
         headers: {
           Authorization     : `Bearer ${CMA_TOKEN}`,
           'X-Contentful-Version': String(entry.sys.version),
         },
       });
+      if (pubRes.ok) published = true;
     } catch (_) { /* Non-fatal — entry created but not published */ }
 
     /* ── Return safe user object (NO password hash) ─────────── */
@@ -134,6 +136,7 @@ exports.handler = async (event) => {
       headers: corsHdrs,
       body: JSON.stringify({
         ok: true,
+        published,
         user: { userId, firstName, lastName, email, phone, avatarInitials, cashBalance, plan, createdAt },
         entryId: entry.sys.id,
       }),

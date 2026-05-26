@@ -223,7 +223,7 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
           <div class="flex-1 h-px bg-white/[.07]"></div>
         </div>
 
-        <form type="submit" id="signupForm" onsubmit="submit(event)" novalidate class="space-y-4 au au3">
+        <form id="liForm" onsubmit="doLogin(event)" novalidate class="space-y-4 au au3">
           <div>
             <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Email Address</label>
             <div class="inp-icon">
@@ -413,7 +413,8 @@ function setLoad(prefix, on) {
 
 async function doSignup(e) {
     e.preventDefault();
-    setLoad('su', true); // Show loading spinner
+  clearErrors();
+  setLoad('su', true); // Show loading spinner
 
     // 1. Grab values from your form
     const formData = {
@@ -422,7 +423,7 @@ async function doSignup(e) {
         firstName: document.getElementById('su-fn').value.trim(),
         lastName: document.getElementById('su-ln').value.trim(),
         email: document.getElementById('su-em').value.trim(),
-        phone: document.getElementById('su-ph').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
         passwordHash: document.getElementById('su-pw').value, // In real apps, hash this first!
         avatarInitials: 'A',
         cashBalance: 0,
@@ -440,11 +441,13 @@ async function doSignup(e) {
 
         const result = await response.json();
 
-        if (response.ok) {
-            console.log("Success! User created in Contentful:", result);
-            // Redirect or show success message
+        if (response.ok && result.ok) {
+          // Show success overlay
+          const ov = document.getElementById('successOverlay');
+          if (ov) { ov.classList.remove('hidden'); ov.style.display = 'flex'; }
+          console.log('User created:', result);
         } else {
-            alert("Error: " + result.error);
+          showErr('suErr','suErrMsg', result.error || 'Signup failed.');
         }
     } catch (err) {
         console.error("Connection failed:", err);
@@ -456,13 +459,13 @@ async function doSignup(e) {
 /* ── Login ───────────────────────────────────────────────── */
 function doLogin(e) {
   e.preventDefault(); clearErrors();
-  const em = document.getElementById('email').value.trim();
-  const pw = document.getElementById('passwordHash').value;
+  const em = document.getElementById('li-em').value.trim();
+  const pw = document.getElementById('li-pw').value;
   if (!em || !pw) { showErr('liErr','liErrMsg','Please enter your email and password.'); return; }
 
   setLoad('li', true);
   setTimeout(() => {
-    const res = AurumDB.auth.login({ email:em, password:pw });
+    const res = AurumDB.auth.login({ email: em, password: pw });
     setLoad('li', false);
     if (!res.ok) { document.getElementById('li-em').classList.add('err'); document.getElementById('li-pw').classList.add('err'); showErr('liErr','liErrMsg', res.error); return; }
     /* ✅ Redirect to dashboard immediately after login */
@@ -574,45 +577,7 @@ window.AurumNav = AurumNav;
 </script>
 
 <script>
-  document.getElementById('signupForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // 1. Show a loading state (e.g., change button text)
-    const btn = e.target.querySelector('button');
-    btn.textContent = "Creating Account...";
-    btn.disabled = true;
-
-    const data = {
-        firstName: document.getElementById('firstName').value,
-        phone: document.getElementById('phone').value,
-        // ... include other fields
-    };
-
-    try {
-        const response = await fetch('/.netlify/functions/user-auth', {
-            method: 'POST',
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            // 2. SUCCESS: Show your overlay/modal here
-            // Assuming your overlay has an ID like 'successOverlay'
-            document.getElementById('successOverlay').style.display = 'flex';
-        } else {
-            // 3. ERROR: Show error
-            alert("Signup failed: " + result.error);
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Server connection error. Please try again.");
-    } finally {
-        // Reset button
-        btn.textContent = "Sign Up";
-        btn.disabled = false;
-    }
-});
+    <!-- Removed stray signupForm listener; sign-in now uses `liForm` and `doLogin()` -->
 </script>
 
 
