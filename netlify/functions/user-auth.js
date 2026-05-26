@@ -17,21 +17,30 @@
 
   exports.handler = async (event) => {
 
-    exports.handler = async (event) => {
-      const data = JSON.parse(event.body);
-      
-      // ADD THIS LINE: It will show up in your Netlify logs 
-      console.log("Received Data:", data); 
+   exports.handler = async (event, context) => {
+    // 1. Parse the incoming data
+    const data = JSON.parse(event.body);
 
-      // Ensure these keys match your Contentful API IDs EXACTLY
-      const entry = await client.createEntry('aurum', {
-          fields: {
-              firstName: { 'en-US': data.firstName }, 
-              phone: { 'en-US': data.phone }
-          }
-      });
-      // ...
-  };
+    try {
+        // 2. THIS IS THE LINE TO REPLACE: 
+        // We are going to ask Contentful what its fields really are
+        const contentType = await client.getContentType('aurum');
+        console.log("ACTUAL FIELDS ALLOWED BY CONTENTFUL:", JSON.stringify(contentType.fields.map(f => f.id), null, 2));
+
+        // 3. Keep the code paused here for a second
+        // We will fill this part in once you give me the log output
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Check the logs to see the required field names" })
+        };
+
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message })
+        };
+    }
+};
 
   /* ── CORS ─────────────────────────────────────────────────── */
   const origin = process.env.ALLOWED_ORIGIN || '*';
