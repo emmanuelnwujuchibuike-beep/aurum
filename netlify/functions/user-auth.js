@@ -12,6 +12,8 @@
      → ALLOWED_ORIGIN  (your site URL or * for open)
 ═══════════════════════════════════════════════════════════════════ */
 
+const contentful = require('contentful');
+
 const CF_CMA_BASE = 'https://api.contentful.com';
 
 exports.handler = async (event) => {

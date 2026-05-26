@@ -7,6 +7,9 @@
   functions = "netlify/functions"   # folder where your functions live
   publish   = "."                   # root folder (or your dist folder)
 
+[functions]
+  node_bundler = "esbuild"
+
 [[headers]]
   for = "/*"
   [headers.values]
