@@ -164,16 +164,26 @@
       const contentType = await client.getContentType('aurum');
       console.log("THE CORRECT FIELD IDS ARE:", JSON.stringify(contentType.fields.map(f => f.id), null, 2));
 
-      entry = await createRes.json();
-      const entry = await client.createEntry('aurum', {
-      fields: {
-        // --- CHANGE THIS ---
-        firstName: { 'en-US': data.firstName }, 
-        // -------------------
-        phone: { 'en-US': data.phone }
-    }
-});
+//       entry = await createRes.json();
+//       const entry = await client.createEntry('aurum', {
+//       fields: {
+//         // --- CHANGE THIS ---
+//         firstName: { 'en-US': data.firstName }, 
+//         // -------------------
+//         phone: { 'en-US': data.phone }
+//     }
+// });
 
+              // user-auth.js
+        const entry = await client.createEntry('aurum', {
+          fields: {
+            // We are using 'en-US' - ensure this is your default Locale
+            firstName: { 'en-US': data.firstName }, 
+            phone: { 'en-US': data.phone }
+          }
+        });
+        console.log("Entry created:", JSON.stringify(entry, null, 2));
+        
       if (!createRes.ok) {
         console.error('Create entry failed:', createRes.status, JSON.stringify(entry));
         const detail = entry?.details?.errors?.map(e => e.details).join(', ') || entry.message || 'Unknown Contentful error';

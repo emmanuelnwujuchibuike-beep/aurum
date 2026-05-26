@@ -433,7 +433,7 @@ async function doSignup(e) {
 
     // 2. The Bridge: Send data to your Netlify Function
     try {
-        const response = await fetch('/.netlify/functions/user-auth', {
+        const response = await fetch('/.netlify/functions/user-auth.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
