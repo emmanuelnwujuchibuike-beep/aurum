@@ -48,18 +48,12 @@ tailwind.config = {
     content:''; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
     background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
   }
-
-  /* ── Sidebar ── */
   .sidebar-link { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; font-size:.84rem; font-weight:500; color:#5a6880; transition:all .2s; text-decoration:none; }
   .sidebar-link:hover { background:rgba(255,255,255,.05); color:#edf2f8; }
   .sidebar-link.on { background:rgba(201,168,76,.12); color:#c9a84c; border:1px solid rgba(201,168,76,.2); }
   .sidebar-link i { width:16px; text-align:center; }
-
-  /* ── Chart ── */
   @keyframes drawLine { from{stroke-dashoffset:1000} to{stroke-dashoffset:0} }
   .chart-line { stroke-dasharray:1000; stroke-dashoffset:1000; animation:drawLine 2s ease forwards .5s; }
-
-  /* ── Entrance animations ── */
   @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
   .anim-1{animation:fadeUp .6s ease forwards .1s;opacity:0}
   .anim-2{animation:fadeUp .6s ease forwards .2s;opacity:0}
@@ -67,19 +61,11 @@ tailwind.config = {
   .anim-4{animation:fadeUp .6s ease forwards .4s;opacity:0}
   .anim-5{animation:fadeUp .6s ease forwards .5s;opacity:0}
   .anim-6{animation:fadeUp .6s ease forwards .6s;opacity:0}
-
-  /* ── Donut ── */
   .donut-ring { transition:stroke-dasharray 1.4s cubic-bezier(.16,1,.3,1) .6s; }
-
-  /* ── Stat card hover ── */
   .stat-card { transition:border-color .25s, transform .25s; }
   .stat-card:hover { transform:translateY(-2px); }
-
-  /* ── Skeleton loader ── */
   .skeleton { background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:6px; }
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-  /* ── Scrollbar ── */
   ::-webkit-scrollbar{width:4px;height:4px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
@@ -87,23 +73,15 @@ tailwind.config = {
 </head>
 <body class="bg-void overflow-x-hidden">
 
-<!-- ═══════════════════════════════════════════════
-     LAYOUT SHELL
-═══════════════════════════════════════════════ -->
 <div class="flex min-h-screen relative z-10">
 
-  <!-- ══════════════════════════════
-       SIDEBAR
-  ══════════════════════════════ -->
+  <!-- SIDEBAR -->
   <aside class="hidden lg:flex flex-col fixed top-0 left-0 bottom-0 w-60 bg-deep border-r border-white/[.06] z-50 py-6 px-4">
-
-    <!-- Logo -->
     <a href="investment.html" class="flex items-center gap-3 px-2 mb-8">
       <div class="w-8 h-8 rounded-lg flex items-center justify-center text-void font-bold text-sm font-mono shadow-gold" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
       <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
     </a>
 
-    <!-- Nav -->
     <div class="flex flex-col gap-1 flex-1">
       <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
       <a href="dashboard.html" class="sidebar-link on"><i class="fas fa-gauge-high"></i>Dashboard</a>
@@ -123,19 +101,19 @@ tailwind.config = {
       <a href="#" class="sidebar-link"><i class="fas fa-circle-question"></i>Support</a>
     </div>
 
-    <!-- ── Sidebar User Block (populated from Supabase) ── -->
+    <!-- Sidebar user block — populated from Supabase profiles -->
     <div class="border-t border-white/[.06] pt-4 mt-4">
       <div class="flex items-center gap-3 px-2">
-        <!-- Avatar initials: set by Supabase profiles.avatar_initials -->
         <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void user-avatar-initials"
              style="background:linear-gradient(135deg,#c9a84c,#a87c28)">…</div>
         <div class="flex-1 min-w-0">
-          <!-- Full name from profiles.first_name + profiles.last_name -->
           <p class="text-snow text-sm font-medium truncate user-display-name" id="nav-user-fullname">Loading…</p>
-          <!-- Cash from profiles.cash — edit this in Supabase to update instantly -->
+          <!--
+            Cash shown here is LIVE from Supabase profiles.cash.
+            Admins can change it via: UPDATE profiles SET cash = X WHERE email = '...';
+          -->
           <p class="font-mono text-[9px] text-steel truncate" id="nav-cash-display">— available</p>
         </div>
-        <!-- Sign out button -->
         <a href="#" data-signout class="text-steel hover:text-snow transition-colors text-xs" title="Sign out">
           <i class="fas fa-arrow-right-from-bracket"></i>
         </a>
@@ -143,29 +121,21 @@ tailwind.config = {
     </div>
   </aside>
 
-  <!-- ══════════════════════════════
-       MAIN CONTENT
-  ══════════════════════════════ -->
+  <!-- MAIN -->
   <div class="flex-1 lg:ml-60 flex flex-col">
 
-    <!-- ── TOP BAR ── -->
+    <!-- TOP BAR -->
     <header class="sticky top-0 z-40 bg-void/90 backdrop-blur-xl border-b border-white/[.06] px-6 md:px-8 h-16 flex items-center justify-between gap-4">
-
-      <!-- Mobile logo -->
       <a href="investment.html" class="flex lg:hidden items-center gap-2">
         <div class="w-7 h-7 rounded-lg flex items-center justify-center text-void font-bold text-xs font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
         <span class="font-display text-lg tracking-[.1em] text-snow">Aurum</span>
       </a>
-
-      <!-- Search -->
       <div class="hidden md:flex items-center gap-3 flex-1 max-w-xs">
         <div class="flex-1 flex items-center gap-2 bg-white/[.04] border border-white/[.08] rounded-xl px-4 py-2.5">
           <i class="fas fa-search text-steel text-xs"></i>
           <input type="text" placeholder="Search assets…" class="bg-transparent outline-none text-sm text-snow placeholder-steel flex-1 w-full">
         </div>
       </div>
-
-      <!-- Right actions -->
       <div class="flex items-center gap-3">
         <button class="relative w-9 h-9 flex items-center justify-center bg-white/[.04] border border-white/[.08] rounded-xl text-steel hover:text-snow transition-colors">
           <i class="fas fa-bell text-sm"></i>
@@ -174,24 +144,35 @@ tailwind.config = {
         <a href="invest.html" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-void transition-all hover:shadow-gold" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">
           <i class="fas fa-plus text-xs"></i> Invest
         </a>
-        <!-- Mobile avatar — initials from Supabase -->
         <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void lg:hidden user-avatar-initials"
              style="background:linear-gradient(135deg,#c9a84c,#a87c28)">…</div>
       </div>
     </header>
 
-    <!-- ══════════════════════════════
-         PAGE BODY
-    ══════════════════════════════ -->
+    <!-- LOW BALANCE BANNER
+         Shown automatically when cash drops below $10 (MIN_TRADE).
+         Hidden by default; dashboard.js reveals it when needed.
+    -->
+    <div id="lowBalanceWarning"
+         class="hidden mx-6 md:mx-8 mt-4 p-4 rounded-2xl border border-loss/30 bg-loss/10 flex items-start gap-3">
+      <i class="fas fa-triangle-exclamation text-loss mt-0.5 flex-shrink-0"></i>
+      <div>
+        <p class="text-loss font-semibold text-sm">Insufficient balance to trade</p>
+        <p class="text-loss/70 text-xs mt-0.5">
+          Your cash balance is too low to open new positions (minimum $10).
+          Please make a deposit or ask your admin to top up your account.
+        </p>
+      </div>
+    </div>
+
+    <!-- PAGE BODY -->
     <main class="flex-1 px-6 md:px-8 py-8 space-y-8">
 
-      <!-- ── GREETING ── -->
+      <!-- GREETING -->
       <div class="anim-1">
         <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase mb-1">Good morning</p>
         <!--
-          user-first-name: populated from profiles.first_name
-          This is whatever the user typed at signup.
-          Change it anytime in Supabase → Table Editor → profiles → first_name column.
+          user-first-name: profiles.first_name (set at signup, editable in Supabase)
         -->
         <h1 class="font-display text-3xl md:text-4xl font-light text-snow tracking-tight">
           Welcome back, <em class="italic text-gold" id="user-first-name">…</em>
@@ -202,15 +183,10 @@ tailwind.config = {
         </p>
       </div>
 
-      <!-- ── STAT CARDS ──
-           All values come from Supabase.
-           To control from SQL editor:
-             UPDATE public.profiles SET cash = 5000.00 WHERE email = 'user@example.com';
-             INSERT INTO public.holdings (user_id,symbol,name,quantity,avg_buy_price) VALUES (...);
-      ── -->
+      <!-- STAT CARDS -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 anim-2">
 
-        <!-- Total Portfolio -->
+        <!-- Total Portfolio = portfolioValue + cash (all from Supabase) -->
         <div class="stat-card col-span-2 md:col-span-1 bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gold/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Total Portfolio</p>
           <p class="font-display text-3xl font-light text-snow tracking-tight" id="totalVal">
@@ -224,7 +200,7 @@ tailwind.config = {
           <p class="font-mono text-[9px] text-steel mt-1">All time</p>
         </div>
 
-        <!-- Today's P&L (static display — hook to a daily_pnl column if needed) -->
+        <!-- Today P&L (static — hook to daily_pnl column if needed) -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gain/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Today's P&L</p>
           <p class="font-display text-2xl font-light text-gain tracking-tight">+$1,847</p>
@@ -234,7 +210,7 @@ tailwind.config = {
           <p class="font-mono text-[9px] text-steel mt-1">vs yesterday</p>
         </div>
 
-        <!-- Invested Value -->
+        <!-- Invested = sum(holdings) at live price (Supabase holdings table) -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-accent/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Invested</p>
           <p class="font-display text-2xl font-light text-snow tracking-tight" id="investedVal">
@@ -243,13 +219,13 @@ tailwind.config = {
           <div class="flex items-center gap-1.5 mt-2">
             <span class="text-mist text-xs font-mono">Deployed capital</span>
           </div>
-          <!-- assetCount: number of rows in holdings for this user -->
           <p class="font-mono text-[9px] text-steel mt-1" id="assetCount">— assets</p>
         </div>
 
-        <!-- Cash Balance
-             Source: profiles.cash column
-             Admin control: UPDATE public.profiles SET cash = X WHERE email = 'user@example.com';
+        <!--
+          Cash Balance — source: profiles.cash
+          Admin SQL: UPDATE profiles SET cash = 5000 WHERE email = 'user@example.com';
+          DB trigger credits/debits automatically on every transaction insert.
         -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gold/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Cash Balance</p>
@@ -263,17 +239,15 @@ tailwind.config = {
         </div>
       </div>
 
-      <!-- ── CHART + ALLOCATION ── -->
+      <!-- CHART + ALLOCATION -->
       <div class="grid lg:grid-cols-3 gap-6 anim-3">
 
-        <!-- Portfolio Chart -->
         <div class="lg:col-span-2 bg-surface border border-white/[.07] rounded-2xl overflow-hidden">
           <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/[.06]">
             <div>
               <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">Portfolio Performance</p>
               <p class="font-display text-xl text-snow font-light">
                 <span id="totalVal2">—</span>
-                <span class="text-gain text-sm font-body font-normal" id="chartPnlLabel"></span>
               </p>
             </div>
             <div class="flex gap-1 bg-white/[.04] border border-white/[.07] rounded-xl p-1">
@@ -310,49 +284,34 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Allocation Donut
-             Dynamically built from Supabase holdings rows.
-             Each holding's share is computed from live price × quantity.
-             Add/remove holdings in Supabase to update this chart.
+        <!--
+          Allocation donut — built from Supabase holdings in real-time.
+          Each slice = live price × quantity for that holding.
         -->
         <div class="bg-surface border border-white/[.07] rounded-2xl p-6">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">Allocation</p>
           <p class="font-display text-lg text-snow font-light mb-5">Portfolio Split</p>
-
           <div class="flex justify-center mb-6">
             <svg viewBox="0 0 120 120" class="w-36 h-36">
-              <!-- allocationDonut: redrawn on every holdings change -->
               <g id="allocationDonut"></g>
             </svg>
           </div>
-
-          <!-- allocationLegend: one row per holding, dynamically generated -->
           <div class="space-y-3" id="allocationLegend">
-            <!-- skeleton placeholder while loading -->
-            <div class="flex items-center justify-between">
-              <div class="skeleton w-24 h-3">&nbsp;</div>
-              <div class="skeleton w-16 h-3">&nbsp;</div>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="skeleton w-20 h-3">&nbsp;</div>
-              <div class="skeleton w-16 h-3">&nbsp;</div>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="skeleton w-16 h-3">&nbsp;</div>
-              <div class="skeleton w-16 h-3">&nbsp;</div>
-            </div>
+            <div class="flex items-center justify-between"><div class="skeleton w-24 h-3">&nbsp;</div><div class="skeleton w-16 h-3">&nbsp;</div></div>
+            <div class="flex items-center justify-between"><div class="skeleton w-20 h-3">&nbsp;</div><div class="skeleton w-16 h-3">&nbsp;</div></div>
+            <div class="flex items-center justify-between"><div class="skeleton w-16 h-3">&nbsp;</div><div class="skeleton w-16 h-3">&nbsp;</div></div>
           </div>
         </div>
       </div>
 
-      <!-- ── HOLDINGS + TRANSACTIONS ── -->
+      <!-- HOLDINGS + TRANSACTIONS -->
       <div class="grid lg:grid-cols-5 gap-6 anim-4">
 
-        <!-- Holdings Table
-             Source: public.holdings table
-             Admin SQL to add a holding:
-               INSERT INTO public.holdings (user_id,symbol,name,icon,color,quantity,avg_buy_price)
-               VALUES ('uuid-here','BTC','Bitcoin','fab fa-bitcoin','#f7931a',0.5,60000.00);
+        <!--
+          Holdings table — reads from public.holdings.
+          Admin SQL to add:
+            INSERT INTO holdings (user_id,symbol,name,icon,color,quantity,avg_buy_price)
+            VALUES ('uuid','BTC','Bitcoin','fab fa-bitcoin','#f7931a',0.5,60000);
         -->
         <div class="lg:col-span-3 bg-surface border border-white/[.07] rounded-2xl overflow-hidden">
           <div class="flex items-center justify-between px-6 py-4 border-b border-white/[.06]">
@@ -369,34 +328,26 @@ tailwind.config = {
                   <th class="text-right px-6 py-3 font-mono text-[9px] tracking-[.1em] text-steel uppercase">Value</th>
                 </tr>
               </thead>
-              <!-- Populated by dashboard.js renderHoldings() -->
               <tbody id="holdingsTbody">
-                <tr>
-                  <td colspan="4" class="px-6 py-6">
-                    <div class="space-y-3">
-                      <div class="skeleton w-full h-4">&nbsp;</div>
-                      <div class="skeleton w-full h-4">&nbsp;</div>
-                      <div class="skeleton w-3/4 h-4">&nbsp;</div>
-                    </div>
-                  </td>
-                </tr>
+                <tr><td colspan="4" class="px-6 py-6"><div class="space-y-3"><div class="skeleton w-full h-4">&nbsp;</div><div class="skeleton w-full h-4">&nbsp;</div><div class="skeleton w-3/4 h-4">&nbsp;</div></div></td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Recent Transactions
-             Source: public.transactions table
-             Admin SQL to add a transaction:
-               INSERT INTO public.transactions (user_id,type,symbol,name,icon,color,quantity,price_at_tx,usd_amount)
-               VALUES ('uuid-here','buy','BTC','Bitcoin','fab fa-bitcoin','#f7931a',0.5,67000,33500.00);
+        <!--
+          Transactions — reads from public.transactions (last 8, newest first).
+          Admin SQL to add:
+            INSERT INTO transactions (user_id,type,symbol,name,icon,color,quantity,price_at_tx,usd_amount)
+            VALUES ('uuid','buy','BTC','Bitcoin','fab fa-bitcoin','#f7931a',0.5,67000,33500);
+          NOTE: inserting a transaction triggers apply_transaction_cash()
+          which adjusts profiles.cash automatically.
         -->
         <div class="lg:col-span-2 bg-surface border border-white/[.07] rounded-2xl overflow-hidden">
           <div class="flex items-center justify-between px-6 py-4 border-b border-white/[.06]">
             <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase">Recent Activity</p>
             <a href="#" class="font-mono text-[10px] text-steel hover:text-snow transition-colors">View all</a>
           </div>
-          <!-- Populated by dashboard.js renderTransactions() -->
           <div class="divide-y divide-white/[.04]" id="txList">
             <div class="px-6 py-4 space-y-3">
               <div class="skeleton w-full h-4">&nbsp;</div>
@@ -407,47 +358,32 @@ tailwind.config = {
         </div>
       </div>
 
-      <!-- ── QUICK ACTIONS ── -->
+      <!-- QUICK ACTIONS -->
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 anim-5">
         <button onclick="window.location='invest.html'"
                 class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gold/30 hover:bg-lift transition-all">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gold text-xl"
-               style="background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2)">
-            <i class="fas fa-arrow-trend-up"></i>
-          </div>
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gold text-xl" style="background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2)"><i class="fas fa-arrow-trend-up"></i></div>
           <p class="font-semibold text-snow text-sm">Buy / Invest</p>
           <p class="text-xs text-steel text-center">Deploy capital across markets</p>
         </button>
-
         <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gain/30 hover:bg-lift transition-all">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gain text-xl"
-               style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)">
-            <i class="fas fa-money-bill-transfer"></i>
-          </div>
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gain text-xl" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)"><i class="fas fa-money-bill-transfer"></i></div>
           <p class="font-semibold text-snow text-sm">Withdraw</p>
           <p class="text-xs text-steel text-center">Transfer to bank account</p>
         </button>
-
         <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-accent/30 hover:bg-lift transition-all">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-accent text-xl"
-               style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2)">
-            <i class="fas fa-repeat"></i>
-          </div>
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-accent text-xl" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2)"><i class="fas fa-repeat"></i></div>
           <p class="font-semibold text-snow text-sm">Swap</p>
           <p class="text-xs text-steel text-center">Exchange between assets</p>
         </button>
-
         <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-violet-500/30 hover:bg-lift transition-all">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-violet-400 text-xl"
-               style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2)">
-            <i class="fas fa-chart-pie"></i>
-          </div>
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-violet-400 text-xl" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2)"><i class="fas fa-chart-pie"></i></div>
           <p class="font-semibold text-snow text-sm">Rebalance</p>
           <p class="text-xs text-steel text-center">Auto-optimise allocation</p>
         </button>
       </div>
 
-      <!-- ── MARKET MOVERS ── -->
+      <!-- MARKET MOVERS -->
       <div class="bg-surface border border-white/[.07] rounded-2xl overflow-hidden anim-6">
         <div class="flex items-center justify-between px-6 py-4 border-b border-white/[.06]">
           <div>
@@ -456,33 +392,23 @@ tailwind.config = {
           </div>
           <a href="invest.html" class="text-xs font-mono text-gold hover:text-gold-bright transition-colors tracking-[.06em]">View Markets →</a>
         </div>
-        <!-- Populated by dashboard.js renderMarketMovers() + live ticker -->
         <div class="grid md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/[.04]" id="moversGrid"></div>
       </div>
 
     </main>
 
-    <!-- Footer -->
     <footer class="px-8 py-5 border-t border-white/[.06] flex items-center justify-between flex-wrap gap-3">
-      <p class="font-mono text-[9px] text-steel tracking-[.08em]">©️2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
+      <p class="font-mono text-[9px] text-steel tracking-[.08em]">©2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
       <p class="font-mono text-[9px] text-steel tracking-[.06em]">Prices update every 2s · Past performance ≠ future results</p>
     </footer>
   </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Load JS as an ES module so Supabase imports work -->
+<!--
+  dashboard.js is an ES module.
+  It imports Supabase from the CDN directly — no separate supabaseClient.js needed.
+  Make sure dashboard.js and dashboard.html are in the same folder.
+-->
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>
