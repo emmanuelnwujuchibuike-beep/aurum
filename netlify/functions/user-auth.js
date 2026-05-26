@@ -61,6 +61,12 @@
   const ENV          = process.env.CF_ENV || 'master';
   const CONTENT_TYPE = process.env.CF_CONTENT_TYPE || 'aurum';
 
+  const client = contentful.createClient({
+  accessToken: process.env.CF_CMA_TOKEN,
+  // Add this line to force the correct environment
+  environment: 'master' 
+});
+
   if (!CMA_TOKEN || !SPACE_ID) {
     console.error('Missing CF_CMA_TOKEN or CF_SPACE_ID env vars');
     return {
@@ -253,3 +259,10 @@
 
 
 console.log("Entry created:", JSON.stringify(entry, null, 2));
+
+const space = await client.getSpace(process.env.CF_SPACE_ID);
+const environment = await space.getEnvironment('master');
+const contentType = await environment.getContentType('aurum');
+
+console.log("ACTUAL SPACE ID:", space.sys.id);
+console.log("FIELDS:", JSON.stringify(contentType.fields.map(f => f.id)));
