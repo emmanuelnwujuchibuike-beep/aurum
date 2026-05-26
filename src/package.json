@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "contentful": "^11.12.2",
+    "contentful-management": "^12.5.0"
+  }
+}

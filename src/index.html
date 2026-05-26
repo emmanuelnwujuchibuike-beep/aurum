@@ -1,0 +1,603 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aurum Capital — Precision Investment Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="output.css">
+    <link rel="stylesheet" href="input.css">
+    <!-- <link rel="icon" type="image/png" href="./image/loadingicon-removebg-preview.png" class=""> -->
+  <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+ 
+  <div id="loader">
+    <div class="ld-logo">
+      <div class="loader-icon">
+        <span>A</span><span>U</span><span>R</span><span>U</span><span>M</span>
+        <span style="display:inline-block;width:.5ch"></span>
+      </div>
+      
+    
+    </div>
+    <div class="ld-line"><div class="ld-fill"></div></div>
+    <div class="ld-sub">Precision Investment Platform</div>
+  </div>
+
+  <header id="mainHeader">
+    <a href="#" class="logo">
+      <div class="logo-mark">A</div>
+      Aurum Capital
+    </a>
+    <nav class="desk">
+      <a href="#markets" class="on">Markets</a>
+      <a href="invest.html">Invest</a>
+      <a href="#assets">Assets</a>
+      <a href="#property">Property</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="head-right">
+      <a href="signin.html" class="btn-outline-sm">Sign In</a>
+      <a href="signup.html" class="btn-gold">Open Account</a>
+    </div>
+    <button class="mob-btn" id="mobBtn">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div class="ticker-bar">
+    <div class="ticker-inner" id="tickerInner"></div>
+  </div>
+
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <div class="drawer" id="drawer">
+    <a href="#markets">Markets</a>
+    <a href="invest.html">Invest</a>
+    <a href="#assets">Assets</a>
+    <a href="#property">Property</a>
+    <a href="about.html">About</a>
+    <a href="signup.html" style="margin-top:12px;background:linear-gradient(135deg,var(--gold),#a87c28);color:var(--void);font-weight:600;border:none;text-align:center">Open Account</a>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-orb-1"></div>
+    <div class="hero-orb-2"></div>
+
+    <div class="hero-inner">
+      <div>
+        <div class="hero-label reveal">Institutional-Grade Platform</div>
+        <h1 class="hero-title reveal">
+          Invest in<br>
+          <em>Markets that</em><br>
+          <strong>Shape Tomorrow</strong>
+        </h1>
+        <p class="hero-sub reveal">
+          Access crypto, equities, and prime real estate through a single precision platform. Built for sophisticated investors who demand more.
+        </p>
+        <div class="hero-ctas reveal">
+          <a href="invest.html" class="btn-primary">
+            <i class="fas fa-chart-line"></i> Start Investing
+          </a>
+          <a href="#markets" class="btn-secondary">
+            <i class="fas fa-play-circle"></i> Explore Markets
+          </a>
+        </div>
+        <div class="trust-bar reveal">
+          <div class="trust-item">
+            <span class="trust-num">$4.2B+</span>
+            <span class="trust-lbl">Assets Under Management</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-item">
+            <span class="trust-num">180K+</span>
+            <span class="trust-lbl">Active Investors</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-item">
+            <span class="trust-num">98.4%</span>
+            <span class="trust-lbl">Uptime Reliability</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="portfolio-card reveal">
+        <div class="pc-header">
+          <div>
+            <div class="pc-label">Portfolio Value</div>
+            <div class="pc-value">$94,320</div>
+          </div>
+          <div class="pc-change up">+4.6%</div>
+        </div>
+        <div style="padding:24px;">
+          <svg class="sparkline" viewBox="0 0 320 80" preserveAspectRatio="none">
+            <path d="M0,50 C60,40 120,20 180,34 C240,48 280,28 320,20" fill="none" stroke="rgba(201,168,76,0.9)" stroke-width="3"/>
+          </svg>
+        </div>
+        <div class="asset-row">
+          <div class="asset-icon" style="background:#f7931a22;color:#f7931a">₿</div>
+          <div class="asset-info">
+            <div class="asset-sym">Bitcoin</div>
+            <div class="asset-name">Dominant crypto exposure</div>
+          </div>
+          <div class="asset-right">
+            <div class="asset-price">$77,430</div>
+            <div class="asset-chg up">+2.8%</div>
+          </div>
+        </div>
+        <div class="asset-row">
+          <div class="asset-icon" style="background:#00aae422;color:#00aae4">X</div>
+          <div class="asset-info">
+            <div class="asset-sym">Ripple</div>
+            <div class="asset-name">High-growth digital payments</div>
+          </div>
+          <div class="asset-right">
+            <div class="asset-price">$0.72</div>
+            <div class="asset-chg dn">-1.2%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell markets-section" id="markets">
+    <div class="section-inner">
+      <div class="section-label">Live Markets</div>
+      <h2 class="section-title reveal">Track the Pulse of Global Assets</h2>
+      <p class="section-sub reveal">Real-time market moves, curated insights, and asset classes across crypto, stocks, and commodities—all in one interface.</p>
+      <div class="market-tabs reveal">
+        <button class="tab-btn on" onclick="filterMarkets('all', this)">All</button>
+        <button class="tab-btn" onclick="filterMarkets('crypto', this)">Crypto</button>
+        <button class="tab-btn" onclick="filterMarkets('stocks', this)">Stocks</button>
+        <button class="tab-btn" onclick="filterMarkets('commodities', this)">Commodities</button>
+      </div>
+      <div class="market-grid" id="marketGrid"></div>
+    </div>
+  </section>
+
+  <section class="section-shell" id="invest">
+    <div class="section-inner">
+      <div class="section-label">Investment Verticals</div>
+      <h2 class="section-title reveal">Diversified Opportunity Streams</h2>
+      <p class="section-sub reveal">Select from tailored verticals designed for growth, stability, or yield depending on your portfolio mandate.</p>
+      <div class="verticals-grid reveal">
+        <div class="vert-card">
+          <div class="vc-banner" style="background-image: url(./image/asset.jpg); background-position: center; background-size: cover;">
+            <div class="vc-icon">⟠</div>
+          </div>
+          <div class="vc-body">
+            <div class="vc-title">Digital Assets</div>
+            <div class="vc-desc">High-conviction crypto opportunities with integrated risk controls.</div>
+            <div class="vc-stats">
+              <div>
+                <div class="vc-stat-val"><em>+23%</em></div>
+                <div class="vc-stat-lbl">Annual Growth</div>
+              </div>
+            </div>
+            <a class="vc-link" href="asset.html">View strategy</a>
+          </div>
+        </div>
+        <div class="vert-card">
+          <div class="vc-banner" style="background-image: url(./image/trend.jpg); background-position: center; background-size: cover;">
+            <div class="vc-icon">📈</div>
+          </div>
+          <div class="vc-body">
+            <div class="vc-title">Equities</div>
+            <div class="vc-desc">Concentrated exposure to market leaders, tech innovators and defensive staples.</div>
+            <div class="vc-stats">
+              <div>
+                <div class="vc-stat-val"><em>+12%</em></div>
+                <div class="vc-stat-lbl">YTD Return</div>
+              </div>
+            </div>
+            <a class="vc-link" href="equities.html">View strategy</a>
+          </div>
+        </div>
+        <div class="vert-card">
+          <div class="vc-banner" style="background-image: url(./image/real.avif); background-position: center; background-size: cover;">
+            <div class="vc-icon">🏘️</div>
+          </div>
+          <div class="vc-body">
+            <div class="vc-title">Real Estate</div>
+            <div class="vc-desc">Premium property portfolios with income and capital preservation objectives.</div>
+            <div class="vc-stats">
+              <div>
+                <div class="vc-stat-val"><em>+8%</em></div>
+                <div class="vc-stat-lbl">Stable Yield</div>
+              </div>
+            </div>
+            <a class="vc-link" href="property.html">View strategy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell assets-section" id="assets">
+    <div class="section-inner">
+      <div class="section-label">Featured Assets</div>
+      <h2 class="section-title reveal">High-Conviction Picks</h2>
+      <p class="section-sub reveal">Curated exposure to the most compelling assets monitored by our research team.</p>
+      <div class="table-wrap reveal" style="overflow-x:auto;">
+        <table class="assets-table">
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Price</th>
+              <th>Change</th>
+              <th>Market Cap</th>
+              <th>Trend</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="assetsTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell" id="property">
+    <div class="section-inner">
+      <div class="section-label">Property Spotlight</div>
+      <h2 class="section-title reveal">Prime Real Estate Exposure</h2>
+      <p class="section-sub reveal">Direct access to property investments across leading global markets.</p>
+      <div class="property-grid reveal">
+        <div class="prop-card">
+          <div class="prop-img" style="background-image: url(./image/frankfurt.jpg); background-position: center; background-size: cover;">
+            <div class="prop-overlay"></div>
+            <span class="prop-badge live">Live</span>
+          </div>
+          <div class="prop-body">
+            <div class="prop-type">Mixed-Use Office</div>
+            <div class="prop-name">Nature Cabin</div>
+            <div class="prop-btn">
+              <div class="prop-loc"><i class="fas fa-location-dot"></i> Frankfurt, Germany</div>
+              <button class="tbl-btn"><a href="invest.html">Invest</a></button>
+            </div>
+            <div class="prop-meta">
+              <div class="prop-meta-item">
+                <div class="prop-meta-val gold">7.3%</div>
+                <div class="prop-meta-lbl">Target Yield</div>
+              </div>
+              <div class="prop-meta-item">
+                <div class="prop-meta-val">$500K - $650K</div>
+                <div class="prop-meta-lbl">Asset Value</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-card">
+          <div class="prop-img" style="background-image: url(./image/furt.jpg); background-position: center; background-size: cover;">
+            <div class="prop-overlay"></div>
+            <span class="prop-badge live">Live</span>
+          </div>
+          <div class="prop-body">
+            <div class="prop-type">Vacation</div>
+            <div class="prop-name">Lake Constance</div>
+            <div class="prop-btn">
+              <div class="prop-loc"><i class="fas fa-location-dot"></i> Bodensee, Germany</div>
+              <button class="tbl-btn"><a href="invest.html">Invest</a></button>
+            </div>
+            <div class="prop-meta">
+              <div class="prop-meta-item">
+                <div class="prop-meta-val gold">7.3%</div>
+                <div class="prop-meta-lbl">Target Yield</div>
+              </div>
+              <div class="prop-meta-item">
+                <div class="prop-meta-val">$550K - $750K</div>
+                <div class="prop-meta-lbl">Asset Value</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-card">
+          <div class="prop-img" style="background-image: url(./image/beach2.jpg); background-position: center; background-size: cover;">
+            <div class="prop-overlay"></div>
+            <span class="prop-badge live">Live</span>
+          </div>
+          <div class="prop-body">
+            <div class="prop-type">Beach House</div>
+            <div class="prop-name">Beach side</div>
+            <div class="prop-btn">
+              <div class="prop-loc"><i class="fas fa-location-dot"></i> Santa Monica, California, United States</div>
+              <button class="tbl-btn"><a href="invest.html">Invest</a></button>
+            </div>
+            <div class="prop-meta">
+              <div class="prop-meta-item">
+                <div class="prop-meta-val gold">7.3%</div>
+                <div class="prop-meta-lbl">Target Yield</div>
+              </div>
+              <div class="prop-meta-item">
+                <div class="prop-meta-val">$25M - $30M</div>
+                <div class="prop-meta-lbl">Asset Value</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-card">
+          <div class="prop-img" style="background-image: url(./image/dc.webp); background-position: center; background-size: cover;">
+            <div class="prop-overlay"></div>
+            <span class="prop-badge live">Live</span>
+          </div>
+          <div class="prop-body">
+            <div class="prop-type">Tech Equipped</div>
+            <div class="prop-name">Luxury home</div>
+            <div class="prop-btn">
+              <div class="prop-loc"><i class="fas fa-location-dot"></i> Washington DC, United States</div>
+              <button class="tbl-btn"><a href="invest.html">Invest</a></button>
+            </div>
+            <div class="prop-meta">
+              <div class="prop-meta-item">
+                <div class="prop-meta-val gold">7.3%</div>
+                <div class="prop-meta-lbl">Target Yield</div>
+              </div>
+              <div class="prop-meta-item">
+                <div class="prop-meta-val">$10M - $15M</div>
+                <div class="prop-meta-lbl">Asset Value</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="prop-card">
+          <div class="prop-img" style="background-image: url(./image/burwood.jpg); background-position: center; background-size: cover;">
+            <div class="prop-overlay"></div>
+            <span class="prop-badge new">New</span>
+          </div>
+          <div class="prop-body">
+            <div class="prop-type">Luxury Residential</div>
+            <div class="prop-name">Harbor Heights</div>
+            <div class="prop-btn">
+              <div class="prop-loc"><i class="fas fa-location-dot"></i> Sydney, Australia</div>
+              <button class="tbl-btn"><a href="invest.html">Invest</a></button>
+            </div>
+            <div class="prop-meta">
+              <div class="prop-meta-item">
+                <div class="prop-meta-val gold">6.8%</div>
+                <div class="prop-meta-lbl">Target Yield</div>
+              </div>
+              <div class="prop-meta-item">
+                <div class="prop-meta-val">$2.2M</div>
+                <div class="prop-meta-lbl">Asset Value</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-card">
+          <div class="prop-img" style="background-image: url(./image/dallas.avif); background-position: center; background-size: cover;">
+            <div class="prop-overlay"></div>
+            <span class="prop-badge sold">Sold</span>
+          </div>
+          <div class="prop-body">
+            <div class="prop-type">Industrial Park</div>
+            <div class="prop-name">Riverfront</div>
+            <div class="prop-btn">
+              <div class="prop-loc"><i class="fas fa-location-dot"></i> Dallas, United States</div>
+              <button class="tbl-btn"><a href="invest.html">Invest</a></button>
+            </div>
+            <div class="prop-meta">
+              <div class="prop-meta-item">
+                <div class="prop-meta-val gold">8.1%</div>
+                <div class="prop-meta-lbl">Target Yield</div>
+              </div>
+              <div class="prop-meta-item">
+                <div class="prop-meta-val">$7M</div>
+                <div class="prop-meta-lbl">Asset Value</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="cta-inner reveal">
+      <div>
+        <h2 class="cta-title">Create a portfolio with precision, scale, and insight.</h2>
+        <p class="cta-sub">Join Aurum Capital for direct access to differentiated asset classes and proprietary allocation tools of institutional caliber.</p>
+      </div>
+      <a href="#" class="btn-primary">Create Account</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div>
+          <a href="#" class="logo" style="font-size:1.15rem; margin-bottom:16px;">Aurum Capital</a>
+          <p class="footer-brand-desc">Aurum Capital empowers investors with a modern, secure platform for crypto, stocks, and real estate investing.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Company</div>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="career.html">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Explore</div>
+          <ul>
+            <li><a href="#markets">Markets</a></li>
+            <li><a href="invest.html">Invest</a></li>
+            <li><a href="#assets">Assets</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Support</div>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-legal">© 2016 Aurum Capital. All rights reserved.</div>
+        <div class="footer-social">
+          <a class="social-btn" href="#"><i class="fab fa-twitter"></i></a>
+          <a class="social-btn" href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a class="social-btn" href="#"><i class="fab fa-telegram"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <strong>Risk Disclaimer:</strong> Investing involves substantial risk of loss. Past performance is not indicative of future results. Real estate investments are illiquid and subject to market fluctuations. Aurum Capital is a registered investment platform regulated under applicable financial services law.
+    </div>
+  </footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  
+</script>
+
+  <script>
+    
+/* ── LOADER ───────────────────────────────────────────── */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{document.getElementById('loader').classList.add('out');},1800);
+});
+
+/* ── HEADER COMPACT ───────────────────────────────────── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('mainHeader').classList.toggle('compact',scrollY>60);
+},{passive:true});
+
+/* ── MOBILE DRAWER ────────────────────────────────────── */
+const mobBtn=document.getElementById('mobBtn'),drawer=document.getElementById('drawer'),doverlay=document.getElementById('drawerOverlay');
+mobBtn.addEventListener('click',()=>{drawer.classList.toggle('on');doverlay.classList.toggle('on')});
+doverlay.addEventListener('click',()=>{drawer.classList.remove('on');doverlay.classList.remove('on')});
+  </script>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════
+   AURUM CAPITAL — SHARED NAV COMPONENT  (aurum-nav.js)
+   Include after server.js on every protected page.
+   Call: AurumNav.init(activeLink)
+═══════════════════════════════════════════════════════ */
+const AurumNav = (() => {
+
+  function init(activeLink = ''){
+    const user = AurumDB.auth.currentUser();
+    if(!user){ AurumDB.auth.requireAuth(); return null; }
+
+    /* Load platform settings for fee/key config */
+    AurumDB.contentful.getSettings().catch(()=>{});
+
+    /* Inject sidebar HTML into #sidebar placeholder if present */
+    const sidebar = document.getElementById('aurum-sidebar');
+    if(sidebar) sidebar.innerHTML = buildSidebar(activeLink, user);
+
+    /* Update topbar user elements */
+    setEl('nav-user-initials', user.avatarInitials || '?');
+    setEl('nav-user-name',     user.firstName + ' ' + user.lastName);
+    setEl('nav-user-cash',     '$' + fmt(user.cash) + ' available');
+    setEl('nav-cash-display',  '$' + fmt(user.cash));
+
+    /* Wire sign-out buttons (any element with data-signout) */
+    document.querySelectorAll('[data-signout]').forEach(el => {
+      el.addEventListener('click', e => { e.preventDefault(); AurumDB.signOut(); });
+    });
+
+    return user;
+  }
+
+  function buildSidebar(active, user){
+    const links = [
+      { href:'dashboard.html',     icon:'fa-gauge-high',         label:'Dashboard',    key:'dashboard' },
+      { href:'invest.html',        icon:'fa-chart-line',         label:'Invest',       key:'invest' },
+      { href:'transactions.html',  icon:'fa-clock-rotate-left',  label:'Transactions', key:'transactions' },
+      { href:'signup.html',        icon:'fa-user-circle',        label:'My Account',   key:'account' },
+    ];
+    const marketLinks = [
+      { href:'invest.html#crypto',   icon:'fab fa-bitcoin',  label:'Crypto' },
+      { href:'invest.html#stocks',   icon:'fa-chart-bar',    label:'Stocks' },
+      { href:'invest.html#property', icon:'fa-city',         label:'Real Estate' },
+    ];
+
+    const navItem = ({ href, icon, label, key }) =>
+      `<a href="${href}" class="sbl${active===key?' on':''}" ${key==='account'?'':''}><i class="${icon.startsWith('fab')?icon:'fas '+icon}"></i>${label}</a>`;
+
+    return `
+      <a href="investment.html" class="flex items-center gap-3 px-2 mb-8">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-void font-bold text-sm font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
+        <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
+      </a>
+      <div class="flex flex-col gap-1 flex-1 overflow-y-auto">
+        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
+        ${links.map(navItem).join('')}
+        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Markets</p>
+        ${marketLinks.map(l=>`<a href="${l.href}" class="sbl"><i class="${l.icon.startsWith('fab')?l.icon:'fas '+l.icon}"></i>${l.label}</a>`).join('')}
+        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Account</p>
+        <a href="signup.html" class="sbl"><i class="fas fa-user-shield"></i>Profile</a>
+        <a href="#" class="sbl" data-signout><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
+      </div>
+      <div class="border-t border-white/[.06] pt-4 mt-3">
+        <div class="flex items-center gap-3 px-2">
+          <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void flex-shrink-0"
+               style="background:linear-gradient(135deg,#c9a84c,#a87c28)">${user.avatarInitials||'?'}</div>
+          <div class="min-w-0 flex-1">
+            <p class="text-snow text-sm font-medium truncate">${user.firstName} ${user.lastName}</p>
+            <p class="font-mono text-[9px] text-gold truncate" id="nav-user-cash">$${fmt(user.cash)} available</p>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function setEl(id, text){
+    const el = document.getElementById(id);
+    if(el) el.textContent = text;
+  }
+
+  function fmt(p){
+    if(!p && p!==0) return '0.00';
+    if(p>=1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return parseFloat(p).toFixed(2);
+  }
+
+  return { init };
+})();
+window.AurumNav = AurumNav;
+  </script>
+
+
+
+
+
+  <script src="server.js"></script>
+  <script src="contentful.js"></script>
+  <script src="script.js" defer></script>
+</body>
+</html>
