@@ -13,9 +13,25 @@
 
 /* NOTE: No require() — pure Node built-ins + native fetch (Node 18+) */
 
-const CF_CMA_BASE = 'https://api.contentful.com';
+  const CF_CMA_BASE = 'https://api.contentful.com';
 
-exports.handler = async (event) => {
+  exports.handler = async (event) => {
+
+    exports.handler = async (event) => {
+      const data = JSON.parse(event.body);
+      
+      // ADD THIS LINE: It will show up in your Netlify logs
+      console.log("Received Data:", data); 
+
+      // Ensure these keys match your Contentful API IDs EXACTLY
+      const entry = await client.createEntry('shipment', {
+          fields: {
+              firstName: { 'en-US': data.firstName }, 
+              phone: { 'en-US': data.phone }
+          }
+      });
+      // ...
+  };
 
   /* ── CORS ─────────────────────────────────────────────────── */
   const origin = process.env.ALLOWED_ORIGIN || '*';
