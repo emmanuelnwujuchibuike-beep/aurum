@@ -20,11 +20,11 @@
     exports.handler = async (event) => {
       const data = JSON.parse(event.body);
       
-      // ADD THIS LINE: It will show up in your Netlify logs
+      // ADD THIS LINE: It will show up in your Netlify logs 
       console.log("Received Data:", data); 
 
       // Ensure these keys match your Contentful API IDs EXACTLY
-      const entry = await client.createEntry('shipment', {
+      const entry = await client.createEntry('aurum', {
           fields: {
               firstName: { 'en-US': data.firstName }, 
               phone: { 'en-US': data.phone }
@@ -223,3 +223,13 @@
 
   return { statusCode: 400, headers: cors, body: JSON.stringify({ ok: false, error: 'Unknown action: ' + action }) };
 };
+
+// In user-auth.js
+console.log("Attempting to create entry in model: aurum");
+console.log("Fields being sent:", JSON.stringify({
+    firstName: { 'en-US': data.firstName },
+    phone: { 'en-US': data.phone }
+}, null, 2));
+
+
+console.log("Entry created:", JSON.stringify(entry, null, 2));
