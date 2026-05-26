@@ -15,43 +15,25 @@
 
   const CF_CMA_BASE = 'https://api.contentful.com';
 
-  exports.handler = async (event) => {
+  import contentful from 'contentful-management';
 
-// Ensure all 'await' calls are INSIDE the handler function
-exports.handler = async (event, context) => {
-    try {
-        const data = JSON.parse(event.body);
-        
-        // Everything must happen inside this async block
-        const contentType = await client.getContentType('aurum');
-        
-        // ... your logic here ...
+const client = contentful.createClient({
+  accessToken: process.env.CF_CMA_TOKEN
+});
 
+export const handler = async (event, context) => {
+  /* ── CORS ─────────────────────────────────────────────────── */
+  const origin = process.env.ALLOWED_ORIGIN || '*';
+  const cors = {
+    'Access-Control-Allow-Origin' : origin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type'                : 'application/json',
+  };
 
-          const nameField = fieldIds.find(id => id.toLowerCase().includes('first'));
-        const phoneField = fieldIds.find(id => id.toLowerCase().includes('phone'));
-
-        // 3. Create the entry using the discovered IDs
-        const entry = await client.createEntry('aurum', {
-            fields: {
-                [nameField]: { 'en-US': data.firstName },
-                [phoneField]: { 'en-US': data.phone }
-            }
-        });
-        console.log("Entry created:", JSON.stringify(entry, null, 2));
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: "Success" })
-        };
-    } catch (error) {
-        console.error("DEBUG ERROR:", error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message })
-        };
-    }
-};
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: cors, body: '' };
+  
+  // Now proceed with your existing logic...
   /* ── CORS ─────────────────────────────────────────────────── */
   const origin = process.env.ALLOWED_ORIGIN || '*';
   const cors = {
