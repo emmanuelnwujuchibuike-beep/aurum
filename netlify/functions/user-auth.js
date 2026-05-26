@@ -17,15 +17,18 @@
 
   exports.handler = async (event) => {
 
-exports.handler = async (event) => {
-    const data = JSON.parse(event.body);
+// Ensure all 'await' calls are INSIDE the handler function
+exports.handler = async (event, context) => {
     try {
-        // 1. Get the actual model
+        const data = JSON.parse(event.body);
+        
+        // Everything must happen inside this async block
         const contentType = await client.getContentType('aurum');
         
-        // 2. Identify the field IDs dynamically
-        const fieldIds = contentType.fields.map(f => f.id);
-        const nameField = fieldIds.find(id => id.toLowerCase().includes('first'));
+        // ... your logic here ...
+
+
+          const nameField = fieldIds.find(id => id.toLowerCase().includes('first'));
         const phoneField = fieldIds.find(id => id.toLowerCase().includes('phone'));
 
         // 3. Create the entry using the discovered IDs
@@ -35,11 +38,18 @@ exports.handler = async (event) => {
                 [phoneField]: { 'en-US': data.phone }
             }
         });
+        console.log("Entry created:", JSON.stringify(entry, null, 2));
 
-        return { statusCode: 200, body: JSON.stringify({ message: "Success" }) };
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Success" })
+        };
     } catch (error) {
         console.error("DEBUG ERROR:", error);
-        return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message })
+        };
     }
 };
   /* ── CORS ─────────────────────────────────────────────────── */
