@@ -1,8 +1,10 @@
 {
   "name": "auruminvest",
   "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Build complete'"
+  },
   "dependencies": {
     "contentful": "^11.12.2"
   }
 }
-
