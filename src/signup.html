@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<!-- <script src="server.js"></script> -->
 <script>
 tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']},
 colors:{void:'#040608',deep:'#080c12',base:'#0c1118',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',cloud:'#c4d0e0',snow:'#edf2f8',
@@ -43,18 +42,14 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
   .au1{animation-delay:.08s}.au2{animation-delay:.16s}.au3{animation-delay:.24s}.au4{animation-delay:.32s}.au5{animation-delay:.4s}
   .pw-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5a6880;cursor:pointer;padding:4px;transition:color .2s;}
   .pw-toggle:hover{color:#edf2f8;}
-  /* Strength bars */
   .str{height:3px;border-radius:2px;width:0%;transition:width .35s ease,background .35s ease;}
-  /* Checkbox */
   .chk-wrap{display:flex;align-items:flex-start;gap:10px;cursor:pointer;user-select:none;}
   .chk-box{width:18px;height:18px;flex-shrink:0;border-radius:5px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:2px;}
   .chk-box.on{background:#c9a84c;border-color:#c9a84c;}
-  /* Left panel stats */
   @keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   .stat-item{animation:countUp .7s ease forwards;opacity:0;}
   .stat-item:nth-child(1){animation-delay:.5s}.stat-item:nth-child(2){animation-delay:.65s}
   .stat-item:nth-child(3){animation-delay:.8s}.stat-item:nth-child(4){animation-delay:.95s}
-  /* Success overlay */
   @keyframes scaleIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
   #successBox{animation:scaleIn .5s cubic-bezier(.16,1,.3,1) forwards;}
 </style>
@@ -140,37 +135,38 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
           <div class="flex-1 h-px bg-white/[.07]"></div>
         </div>
 
-        <form id="suForm" onsubmit="doSignup(event)" novalidate class="space-y-4 au au3">
+        <!-- ✅ FIX: form tag wraps ALL fields — was closed too early before -->
+        <form id="signup-form" novalidate class="space-y-4 au au3">
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">First Name</label>
-              <input id="su-fn" class="inp" placeholder="James" autocomplete="given-name">
+              <input type="text" id="first-name-input" class="inp" placeholder="James" autocomplete="given-name">
             </div>
             <div>
               <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Last Name</label>
-              <input id="su-ln" class="inp" placeholder="Riley" autocomplete="family-name">
+              <input type="text" id="last-name-input" class="inp" placeholder="Riley" autocomplete="family-name">
             </div>
           </div>
           <div>
             <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Email Address</label>
             <div class="inp-icon">
-              <input id="su-em" type="email" class="inp" placeholder="you@example.com" autocomplete="email">
+              <input id="email-input" type="email" class="inp" placeholder="you@example.com" autocomplete="email">
               <i class="fas fa-envelope"></i>
             </div>
           </div>
           <div>
             <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Phone (optional)</label>
             <div class="inp-icon">
-              <input id="phone" type="number" class="inp" placeholder="+1 555 000 0000" autocomplete="tel">
+              <input id="phone-input" type="tel" class="inp" placeholder="+1 555 000 0000" autocomplete="tel">
               <i class="fas fa-phone"></i>
             </div>
           </div>
           <div>
             <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Password</label>
             <div class="inp-icon relative">
-              <input id="su-pw" type="password" class="inp pr-10" placeholder="Min. 8 characters" autocomplete="new-password" oninput="chkStr(this.value)">
+              <input id="password-input" type="password" class="inp pr-10" placeholder="Min. 8 characters" autocomplete="new-password" oninput="chkStr(this.value)">
               <i class="fas fa-lock"></i>
-              <button type="button" class="pw-toggle" onclick="togPw('su-pw',this)"><i class="fas fa-eye text-xs"></i></button>
+              <button type="button" class="pw-toggle" onclick="togPw('password-input',this)"><i class="fas fa-eye text-xs"></i></button>
             </div>
             <div class="flex gap-1 mt-2">
               <div class="flex-1 h-[3px] bg-white/[.06] rounded-full overflow-hidden"><div id="sb1" class="str"></div></div>
@@ -183,9 +179,9 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
           <div>
             <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Confirm Password</label>
             <div class="inp-icon relative">
-              <input id="su-pw2" type="password" class="inp pr-10" placeholder="Repeat password" autocomplete="new-password">
+              <input id="confirm-password-input" type="password" class="inp pr-10" placeholder="Repeat password" autocomplete="new-password">
               <i class="fas fa-lock"></i>
-              <button type="button" class="pw-toggle" onclick="togPw('su-pw2',this)"><i class="fas fa-eye text-xs"></i></button>
+              <button type="button" class="pw-toggle" onclick="togPw('confirm-password-input',this)"><i class="fas fa-eye text-xs"></i></button>
             </div>
           </div>
           <!-- Terms -->
@@ -203,6 +199,7 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
             <span id="suSpin" class="hidden spin"><i class="fas fa-spinner text-sm"></i></span>
           </button>
         </form>
+        <!-- ✅ This paragraph is now correctly OUTSIDE the form -->
         <p class="text-center text-sm text-steel mt-5 au au4">Already have an account? <button class="text-gold hover:text-gold-bright font-medium transition-colors" onclick="showTab('li')">Sign in →</button></p>
       </div>
 
@@ -242,8 +239,6 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
               <button type="button" class="pw-toggle" onclick="togPw('li-pw',this)"><i class="fas fa-eye text-xs"></i></button>
             </div>
           </div>
-          
-          
           <!-- Error -->
           <div id="liErr" class="hidden p-4 bg-loss/10 border border-loss/25 rounded-xl">
             <p class="font-mono text-[11px] text-loss flex items-center gap-2"><i class="fas fa-circle-exclamation"></i><span id="liErrMsg"></span></p>
@@ -273,318 +268,87 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
     <p class="text-mist text-sm mb-2">Your account is ready. We've added a</p>
     <p class="font-display text-3xl text-snow mb-8">$100 <span class="text-gold">welcome balance</span></p>
     <div class="space-y-2 text-left mb-6">
-      
       <div class="flex items-center gap-3 p-3 bg-white/[.03] border border-white/[.06] rounded-xl">
         <i class="fas fa-check-circle text-gain text-sm w-4"></i>
         <span class="text-sm text-cloud">$100 cash balance available</span>
       </div>
       <div class="flex items-center gap-3 p-3 bg-white/[.03] border border-white/[.06] rounded-xl">
         <i class="fas fa-check-circle text-gain text-sm w-4"></i>
-        <span class="text-sm text-cloud">Full access: crypto, stocks &; property</span>
+        <span class="text-sm text-cloud">Full access: crypto, stocks &amp; property</span>
       </div>
     </div>
-    <button onclick="window.location.href='dashboard.html'" class="btn-gold text-base py-4" style="box-shadow:0 8px 40px rgba(201,168,76,.3)">
-      <a href="dashboard.html" class="flex items-center justify-center gap-2">
-        <i class="fas fa-gauge-high"></i> Open My Dashboard
-      </a>
-    </button>
+    <a href="dashboard.html" class="btn-gold text-base py-4" style="box-shadow:0 8px 40px rgba(201,168,76,.3)">
+      <i class="fas fa-gauge-high"></i> Open My Dashboard
+    </a>
   </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
-// /* ── Init ─────────────────────────────────────────────────── */
-// window.addEventListener('DOMContentLoaded', () => {
-//   /* Already logged in → go straight to dashboard */
-//   if (AurumDB.auth.currentUser()) { window.location.href = 'dashboard.html'; return; }
-//   AurumDB.ensureDemoAccount();
-//   /* Pre-select tab from URL hash */
-//   if (location.hash === '#signin') showTab('li');
-// });
-
-/* ── Tab switch ──────────────────────────────────────────── */
-function showTab(t) {
-  const su = t === 'su';
-  document.getElementById('suPanel').classList.toggle('hidden', !su);
-  document.getElementById('liPanel').classList.toggle('hidden', su);
-  document.getElementById('tabSu').classList.toggle('on', su);
-  document.getElementById('tabLi').classList.toggle('on', !su);
-  clearErrors();
-}
-
-/* ── Password visibility ─────────────────────────────────── */
-function togPw(id, btn) {
-  const inp = document.getElementById(id);
-  const show = inp.type === 'password';
-  inp.type = show ? 'text' : 'password';
-  btn.innerHTML = `<i class="fas fa-eye${show ? '-slash' : ''} text-xs"></i>`;
-}
-
-/* ── Checkbox ────────────────────────────────────────────── */
-let termsChecked = false;
-function togChk() {
-  termsChecked = !termsChecked;
-  document.getElementById('chkBox').classList.toggle('on', termsChecked);
-  document.getElementById('suTerms').checked = termsChecked;
-}
-
-/* ── Password strength ───────────────────────────────────── */
-function chkStr(pw) {
-  let s = 0;
-  if (pw.length >= 8) s++;
-  if (/[A-Z]/.test(pw)) s++;
-  if (/[0-9]/.test(pw)) s++;
-  if (/[^A-Za-z0-9]/.test(pw)) s++;
-  const cols = ['#ef4444','#f59e0b','#3b82f6','#22c55e'];
-  const lbls = ['Weak','Fair','Good','Strong'];
-  for (let i = 1; i <= 4; i++) {
-    const b = document.getElementById('sb' + i);
-    b.style.width = i <= s ? '100%' : '0%';
-    b.style.background = i <= s ? cols[s-1] : 'transparent';
+  /* ── Tab switch ──────────────────────────────────────────── */
+  function showTab(t) {
+    const su = t === 'su';
+    document.getElementById('suPanel').classList.toggle('hidden', !su);
+    document.getElementById('liPanel').classList.toggle('hidden', su);
+    document.getElementById('tabSu').classList.toggle('on', su);
+    document.getElementById('tabLi').classList.toggle('on', !su);
+    clearErrors();
   }
-  const l = document.getElementById('strLbl');
-  l.textContent = pw ? (lbls[s-1] || 'Very Weak') : '';
-  l.style.color = pw && cols[s-1] ? cols[s-1] : '#5a6880';
-}
 
-/* ── Error helpers ───────────────────────────────────────── */
-function clearErrors() {
-  ['suErr','liErr'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('hidden'); });
-  document.querySelectorAll('.inp').forEach(i => i.classList.remove('err'));
-}
-function showErr(wrapperId, msgId, msg) {
-  const w = document.getElementById(wrapperId), m = document.getElementById(msgId);
-  if (w && m) { m.textContent = msg; w.classList.remove('hidden'); }
-}
-function setLoad(prefix, on) {
-  const btn = document.getElementById(prefix+'Btn');
-  const lbl = document.getElementById(prefix+'BtnLbl');
-  const spn = document.getElementById(prefix+'Spin');
-  btn.disabled = on;
-  lbl.classList.toggle('hidden', on);
-  spn.classList.toggle('hidden', !on);
-}
+  /* ── Password visibility ─────────────────────────────────── */
+  function togPw(id, btn) {
+    const inp = document.getElementById(id);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.innerHTML = `<i class="fas fa-eye${show ? '-slash' : ''} text-xs"></i>`;
+  }
 
-/* ── Signup ──────────────────────────────────────────────── */
+  /* ── Checkbox ────────────────────────────────────────────── */
+  let termsChecked = false;
+  function togChk() {
+    termsChecked = !termsChecked;
+    document.getElementById('chkBox').classList.toggle('on', termsChecked);
+    document.getElementById('suTerms').checked = termsChecked;
+  }
 
-// Ensure your button has an ID, e.g., id="signup-btn"
-// document.addEventListener('DOMContentLoaded', () => {
-//     const signupBtn = document.getElementById('suBtn');
-//     if (signupBtn) {
-//         signupBtn.addEventListener('click', doSignup);
-//     }
-// });
-
-async function doSignup(e) {
-    e.preventDefault();
-  clearErrors();
-  setLoad('su', true); // Show loading spinner
-
-    // 1. Grab values from your form
-    const formData = {
-        action: 'register',
-        userId: 'user_' + Date.now(), // Generate a simple ID
-        firstName: document.getElementById('su-fn').value.trim(),
-        lastName: document.getElementById('su-ln').value.trim(),
-        email: document.getElementById('su-em').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        passwordHash: document.getElementById('su-pw').value, // In real apps, hash this first!
-        avatarInitials: 'A',
-        cashBalance: 0,
-        plan: 'standard',
-        createdAt: new Date().toISOString()
-    };
-
-    // 2. The Bridge: Send data to your Netlify Function
-    try {
-        const response = await fetch('/.netlify/functions/user-auth', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.ok) {
-          // Show success overlay
-          const ov = document.getElementById('successOverlay');
-          if (ov) { ov.classList.remove('hidden'); ov.style.display = 'flex'; }
-          console.log('User created:', result);
-        } else {
-          showErr('suErr','suErrMsg', result.error || 'Signup failed.');
-        }
-    } catch (err) {
-        console.error("Connection failed:", err);
-    } finally {
-        setLoad('su', false); // Hide loading spinner
+  /* ── Password strength ───────────────────────────────────── */
+  function chkStr(pw) {
+    let s = 0;
+    if (pw.length >= 8) s++;
+    if (/[A-Z]/.test(pw)) s++;
+    if (/[0-9]/.test(pw)) s++;
+    if (/[^A-Za-z0-9]/.test(pw)) s++;
+    const cols = ['#ef4444','#f59e0b','#3b82f6','#22c55e'];
+    const lbls = ['Weak','Fair','Good','Strong'];
+    for (let i = 1; i <= 4; i++) {
+      const b = document.getElementById('sb' + i);
+      b.style.width = i <= s ? '100%' : '0%';
+      b.style.background = i <= s ? cols[s-1] : 'transparent';
     }
-}
+    const l = document.getElementById('strLbl');
+    l.textContent = pw ? (lbls[s-1] || 'Very Weak') : '';
+    l.style.color = pw && cols[s-1] ? cols[s-1] : '#5a6880';
+  }
 
-/* ── Login ───────────────────────────────────────────────── */
-function doLogin(e) {
-  e.preventDefault(); clearErrors();
-  const em = document.getElementById('li-em').value.trim();
-  const pw = document.getElementById('li-pw').value;
-  if (!em || !pw) { showErr('liErr','liErrMsg','Please enter your email and password.'); return; }
-
-  setLoad('li', true);
-  setTimeout(() => {
-    const res = AurumDB.auth.login({ email: em, password: pw });
-    setLoad('li', false);
-    if (!res.ok) { document.getElementById('li-em').classList.add('err'); document.getElementById('li-pw').classList.add('err'); showErr('liErr','liErrMsg', res.error); return; }
-    /* ✅ Redirect to dashboard immediately after login */
-    window.location.href = 'dashboard.html';
-  }, 700);
-}
-
-// /* ── Demo fill ───────────────────────────────────────────── */
-// function fillDemo() {
-//   document.getElementById('li-em').value = 'demo@aurum.com';
-//   document.getElementById('li-pw').value = 'Demo1234';
-//   document.getElementById('li-em').classList.remove('err');
-//   document.getElementById('li-pw').classList.remove('err');
-// }
+  /* ── Error helpers ───────────────────────────────────────── */
+  function clearErrors() {
+    ['suErr','liErr'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('hidden'); });
+    document.querySelectorAll('.inp').forEach(i => i.classList.remove('err'));
+  }
+  function showErr(wrapperId, msgId, msg) {
+    const w = document.getElementById(wrapperId), m = document.getElementById(msgId);
+    if (w && m) { m.textContent = msg; w.classList.remove('hidden'); }
+  }
+  function setLoad(prefix, on) {
+    const btn = document.getElementById(prefix+'Btn');
+    const lbl = document.getElementById(prefix+'BtnLbl');
+    const spn = document.getElementById(prefix+'Spin');
+    if (btn) btn.disabled = on;
+    if (lbl) lbl.classList.toggle('hidden', on);
+    if (spn) spn.classList.toggle('hidden', !on);
+  }
 </script>
 
-
-
-
-<script>
-  /* ═══════════════════════════════════════════════════════
-   AURUM CAPITAL — SHARED NAV COMPONENT  (aurum-nav.js)
-   Include after server.js on every protected page.
-   Call: AurumNav.init(activeLink)
-═══════════════════════════════════════════════════════ */
-const AurumNav = (() => {
-
-  function init(activeLink = ''){
-    const user = AurumDB.auth.currentUser();
-    if(!user){ AurumDB.auth.requireAuth(); return null; }
-
-    /* Load platform settings for fee/key config */
-    AurumDB.contentful.getSettings().catch(()=>{});
-
-    /* Inject sidebar HTML into #sidebar placeholder if present */
-    const sidebar = document.getElementById('aurum-sidebar');
-    if(sidebar) sidebar.innerHTML = buildSidebar(activeLink, user);
-
-    /* Update topbar user elements */
-    setEl('nav-user-initials', user.avatarInitials || '?');
-    setEl('nav-user-name',     user.firstName + ' ' + user.lastName);
-    setEl('nav-user-cash',     '$' + fmt(user.cash) + ' available');
-    setEl('nav-cash-display',  '$' + fmt(user.cash));
-
-    /* Wire sign-out buttons (any element with data-signout) */
-    document.querySelectorAll('[data-signout]').forEach(el => {
-      el.addEventListener('click', e => { e.preventDefault(); AurumDB.signOut(); });
-    });
-
-    return user;
-  }
-
-  function buildSidebar(active, user){
-    const links = [
-      { href:'dashboard.html',     icon:'fa-gauge-high',         label:'Dashboard',    key:'dashboard' },
-      { href:'invest.html',        icon:'fa-chart-line',         label:'Invest',       key:'invest' },
-      { href:'transactions.html',  icon:'fa-clock-rotate-left',  label:'Transactions', key:'transactions' },
-      { href:'signup.html',        icon:'fa-user-circle',        label:'My Account',   key:'account' },
-    ];
-    const marketLinks = [
-      { href:'invest.html#crypto',   icon:'fab fa-bitcoin',  label:'Crypto' },
-      { href:'invest.html#stocks',   icon:'fa-chart-bar',    label:'Stocks' },
-      { href:'invest.html#property', icon:'fa-city',         label:'Real Estate' },
-    ];
-
-    const navItem = ({ href, icon, label, key }) =>
-      `<a href="${href}" class="sbl${active===key?' on':''}" ${key==='account'?'':''}><i class="${icon.startsWith('fab')?icon:'fas '+icon}"></i>${label}</a>`;
-
-    return `
-      <a href="investment.html" class="flex items-center gap-3 px-2 mb-8">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-void font-bold text-sm font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
-        <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
-      </a>
-      <div class="flex flex-col gap-1 flex-1 overflow-y-auto">
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
-        ${links.map(navItem).join('')}
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Markets</p>
-        ${marketLinks.map(l=>`<a href="${l.href}" class="sbl"><i class="${l.icon.startsWith('fab')?l.icon:'fas '+l.icon}"></i>${l.label}</a>`).join('')}
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Account</p>
-        <a href="signup.html" class="sbl"><i class="fas fa-user-shield"></i>Profile</a>
-        <a href="#" class="sbl" data-signout><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
-      </div>
-      <div class="border-t border-white/[.06] pt-4 mt-3">
-        <div class="flex items-center gap-3 px-2">
-          <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void flex-shrink-0"
-               style="background:linear-gradient(135deg,#c9a84c,#a87c28)">${user.avatarInitials||'?'}</div>
-          <div class="min-w-0 flex-1">
-            <p class="text-snow text-sm font-medium truncate">${user.firstName} ${user.lastName}</p>
-            <p class="font-mono text-[9px] text-gold truncate" id="nav-user-cash">$${fmt(user.cash)} available</p>
-          </div>
-        </div>
-      </div>`;
-  }
-
-  function setEl(id, text){
-    const el = document.getElementById(id);
-    if(el) el.textContent = text;
-  }
-
-  function fmt(p){
-    if(!p && p!==0) return '0.00';
-    if(p>=1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    return parseFloat(p).toFixed(2);
-  }
-
-  return { init };
-})();
-window.AurumNav = AurumNav;
-</script>
-
-<script>
-    <!-- Removed stray signupForm listener; sign-in now uses `liForm` and `doLogin()` -->
-</script>
-
-
-
-
-<script src="server.js"></script>
-<!-- <script src="script.js"></script> -->
-<script src="contentful.js"></script>
+<!-- ✅ FIX: type="module" (not "modules"), loaded once at end of body -->
+<script type="module" src="signup.js"></script>
 </body>
 </html>

@@ -48,18 +48,18 @@ tailwind.config = {
     content:''; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
     background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
   }
-  /* Sidebar */
+
+  /* ── Sidebar ── */
   .sidebar-link { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; font-size:.84rem; font-weight:500; color:#5a6880; transition:all .2s; text-decoration:none; }
   .sidebar-link:hover { background:rgba(255,255,255,.05); color:#edf2f8; }
   .sidebar-link.on { background:rgba(201,168,76,.12); color:#c9a84c; border:1px solid rgba(201,168,76,.2); }
   .sidebar-link i { width:16px; text-align:center; }
-  /* Animated portfolio line */
+
+  /* ── Chart ── */
   @keyframes drawLine { from{stroke-dashoffset:1000} to{stroke-dashoffset:0} }
   .chart-line { stroke-dasharray:1000; stroke-dashoffset:1000; animation:drawLine 2s ease forwards .5s; }
-  /* Card shimmer on hover */
-  .stat-card { transition:border-color .25s, transform .25s; }
-  .stat-card:hover { transform:translateY(-2px); }
-  /* Number counter */
+
+  /* ── Entrance animations ── */
   @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
   .anim-1{animation:fadeUp .6s ease forwards .1s;opacity:0}
   .anim-2{animation:fadeUp .6s ease forwards .2s;opacity:0}
@@ -67,9 +67,19 @@ tailwind.config = {
   .anim-4{animation:fadeUp .6s ease forwards .4s;opacity:0}
   .anim-5{animation:fadeUp .6s ease forwards .5s;opacity:0}
   .anim-6{animation:fadeUp .6s ease forwards .6s;opacity:0}
-  /* Allocation donut */
+
+  /* ── Donut ── */
   .donut-ring { transition:stroke-dasharray 1.4s cubic-bezier(.16,1,.3,1) .6s; }
-  /* scrollbar */
+
+  /* ── Stat card hover ── */
+  .stat-card { transition:border-color .25s, transform .25s; }
+  .stat-card:hover { transform:translateY(-2px); }
+
+  /* ── Skeleton loader ── */
+  .skeleton { background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:6px; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* ── Scrollbar ── */
   ::-webkit-scrollbar{width:4px;height:4px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
@@ -77,12 +87,14 @@ tailwind.config = {
 </head>
 <body class="bg-void overflow-x-hidden">
 
-<!-- ═══════════ LAYOUT SHELL ═══════════ -->
+<!-- ═══════════════════════════════════════════════
+     LAYOUT SHELL
+═══════════════════════════════════════════════ -->
 <div class="flex min-h-screen relative z-10">
 
-  <!-- ══════════════════════════════════
+  <!-- ══════════════════════════════
        SIDEBAR
-  ══════════════════════════════════ -->
+  ══════════════════════════════ -->
   <aside class="hidden lg:flex flex-col fixed top-0 left-0 bottom-0 w-60 bg-deep border-r border-white/[.06] z-50 py-6 px-4">
 
     <!-- Logo -->
@@ -91,7 +103,7 @@ tailwind.config = {
       <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
     </a>
 
-    <!-- Nav sections -->
+    <!-- Nav -->
     <div class="flex flex-col gap-1 flex-1">
       <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
       <a href="dashboard.html" class="sidebar-link on"><i class="fas fa-gauge-high"></i>Dashboard</a>
@@ -111,25 +123,32 @@ tailwind.config = {
       <a href="#" class="sidebar-link"><i class="fas fa-circle-question"></i>Support</a>
     </div>
 
-    <!-- User -->
+    <!-- ── Sidebar User Block (populated from Supabase) ── -->
     <div class="border-t border-white/[.06] pt-4 mt-4">
       <div class="flex items-center gap-3 px-2">
-        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">JR</div>
+        <!-- Avatar initials: set by Supabase profiles.avatar_initials -->
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void user-avatar-initials"
+             style="background:linear-gradient(135deg,#c9a84c,#a87c28)">…</div>
         <div class="flex-1 min-w-0">
-          <p class="text-snow text-sm font-medium truncate">James Riley</p>
-          <p class="font-mono text-[9px] text-steel truncate">Premium Account</p>
+          <!-- Full name from profiles.first_name + profiles.last_name -->
+          <p class="text-snow text-sm font-medium truncate user-display-name" id="nav-user-fullname">Loading…</p>
+          <!-- Cash from profiles.cash — edit this in Supabase to update instantly -->
+          <p class="font-mono text-[9px] text-steel truncate" id="nav-cash-display">— available</p>
         </div>
-        <a href="#" class="text-steel hover:text-snow transition-colors text-xs"><i class="fas fa-arrow-right-from-bracket"></i></a>
+        <!-- Sign out button -->
+        <a href="#" data-signout class="text-steel hover:text-snow transition-colors text-xs" title="Sign out">
+          <i class="fas fa-arrow-right-from-bracket"></i>
+        </a>
       </div>
     </div>
   </aside>
 
-  <!-- ══════════════════════════════════
+  <!-- ══════════════════════════════
        MAIN CONTENT
-  ══════════════════════════════════ -->
+  ══════════════════════════════ -->
   <div class="flex-1 lg:ml-60 flex flex-col">
 
-    <!-- TOP BAR -->
+    <!-- ── TOP BAR ── -->
     <header class="sticky top-0 z-40 bg-void/90 backdrop-blur-xl border-b border-white/[.06] px-6 md:px-8 h-16 flex items-center justify-between gap-4">
 
       <!-- Mobile logo -->
@@ -155,33 +174,57 @@ tailwind.config = {
         <a href="invest.html" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-void transition-all hover:shadow-gold" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">
           <i class="fas fa-plus text-xs"></i> Invest
         </a>
-        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void lg:hidden" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">JR</div>
+        <!-- Mobile avatar — initials from Supabase -->
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void lg:hidden user-avatar-initials"
+             style="background:linear-gradient(135deg,#c9a84c,#a87c28)">…</div>
       </div>
     </header>
 
-    <!-- PAGE BODY -->
+    <!-- ══════════════════════════════
+         PAGE BODY
+    ══════════════════════════════ -->
     <main class="flex-1 px-6 md:px-8 py-8 space-y-8">
 
-      <!-- Greeting -->
+      <!-- ── GREETING ── -->
       <div class="anim-1">
         <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase mb-1">Good morning</p>
-        <h1 class="font-display text-3xl md:text-4xl font-light text-snow tracking-tight">Welcome back, <em class="italic text-gold">James</em></h1>
-        <p class="text-mist text-sm mt-1">Here's your portfolio performance — <span id="liveDate" class="font-mono text-xs text-steel"></span></p>
+        <!--
+          user-first-name: populated from profiles.first_name
+          This is whatever the user typed at signup.
+          Change it anytime in Supabase → Table Editor → profiles → first_name column.
+        -->
+        <h1 class="font-display text-3xl md:text-4xl font-light text-snow tracking-tight">
+          Welcome back, <em class="italic text-gold" id="user-first-name">…</em>
+        </h1>
+        <p class="text-mist text-sm mt-1">
+          Here's your portfolio performance —
+          <span id="liveDate" class="font-mono text-xs text-steel"></span>
+        </p>
       </div>
 
-      <!-- ── STAT CARDS ── -->
+      <!-- ── STAT CARDS ──
+           All values come from Supabase.
+           To control from SQL editor:
+             UPDATE public.profiles SET cash = 5000.00 WHERE email = 'user@example.com';
+             INSERT INTO public.holdings (user_id,symbol,name,quantity,avg_buy_price) VALUES (...);
+      ── -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 anim-2">
 
+        <!-- Total Portfolio -->
         <div class="stat-card col-span-2 md:col-span-1 bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gold/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Total Portfolio</p>
-          <p class="font-display text-3xl font-light text-snow tracking-tight" id="totalVal">$284,920</p>
+          <p class="font-display text-3xl font-light text-snow tracking-tight" id="totalVal">
+            <span class="skeleton inline-block w-28 h-7">&nbsp;</span>
+          </p>
           <div class="flex items-center gap-1.5 mt-2">
-            <span class="text-gain text-xs font-mono">▲ +$28,412</span>
-            <span class="text-gain text-[10px] bg-gain/10 border border-gain/20 px-2 py-0.5 rounded-full font-mono">+11.1%</span>
+            <span class="font-mono text-xs" id="totalPnlSign">▲</span>
+            <span class="font-mono text-xs" id="totalPnlAmt">…</span>
+            <span class="font-mono text-[10px] border border-current/20 px-2 py-0.5 rounded-full" id="totalPnlPct">…</span>
           </div>
           <p class="font-mono text-[9px] text-steel mt-1">All time</p>
         </div>
 
+        <!-- Today's P&L (static display — hook to a daily_pnl column if needed) -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gain/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Today's P&L</p>
           <p class="font-display text-2xl font-light text-gain tracking-tight">+$1,847</p>
@@ -191,18 +234,28 @@ tailwind.config = {
           <p class="font-mono text-[9px] text-steel mt-1">vs yesterday</p>
         </div>
 
+        <!-- Invested Value -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-accent/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Invested</p>
-          <p class="font-display text-2xl font-light text-snow tracking-tight">$256,508</p>
+          <p class="font-display text-2xl font-light text-snow tracking-tight" id="investedVal">
+            <span class="skeleton inline-block w-24 h-6">&nbsp;</span>
+          </p>
           <div class="flex items-center gap-1.5 mt-2">
             <span class="text-mist text-xs font-mono">Deployed capital</span>
           </div>
-          <p class="font-mono text-[9px] text-steel mt-1">Across 9 assets</p>
+          <!-- assetCount: number of rows in holdings for this user -->
+          <p class="font-mono text-[9px] text-steel mt-1" id="assetCount">— assets</p>
         </div>
 
+        <!-- Cash Balance
+             Source: profiles.cash column
+             Admin control: UPDATE public.profiles SET cash = X WHERE email = 'user@example.com';
+        -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gold/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Cash Balance</p>
-          <p class="font-display text-2xl font-light text-snow tracking-tight">$28,412</p>
+          <p class="font-display text-2xl font-light text-snow tracking-tight" id="cashVal">
+            <span class="skeleton inline-block w-24 h-6">&nbsp;</span>
+          </p>
           <div class="flex items-center gap-1.5 mt-2">
             <span class="text-gold text-xs font-mono">Available</span>
           </div>
@@ -218,7 +271,10 @@ tailwind.config = {
           <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/[.06]">
             <div>
               <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">Portfolio Performance</p>
-              <p class="font-display text-xl text-snow font-light">$284,920 <span class="text-gain text-sm font-body font-normal">▲ +11.1%</span></p>
+              <p class="font-display text-xl text-snow font-light">
+                <span id="totalVal2">—</span>
+                <span class="text-gain text-sm font-body font-normal" id="chartPnlLabel"></span>
+              </p>
             </div>
             <div class="flex gap-1 bg-white/[.04] border border-white/[.07] rounded-xl p-1">
               <button onclick="setRange(this,'1W')" class="px-3 py-1.5 rounded-lg font-mono text-[10px] text-steel hover:text-snow transition-colors">1W</button>
@@ -234,23 +290,15 @@ tailwind.config = {
                   <stop offset="0%" stop-color="#22c55e" stop-opacity=".25"/>
                   <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
                 </linearGradient>
-                <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#3b82f6" stop-opacity="0"/>
-                  <stop offset="100%" stop-color="#c9a84c" stop-opacity=".6"/>
-                </linearGradient>
               </defs>
-              <!-- Grid lines -->
               <line x1="0" y1="50"  x2="680" y2="50"  stroke="rgba(255,255,255,.04)" stroke-width="1"/>
               <line x1="0" y1="100" x2="680" y2="100" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
               <line x1="0" y1="150" x2="680" y2="150" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
-              <!-- Area fill -->
               <path id="chartArea" fill="url(#chartGrad)" d=""/>
-              <!-- Main line -->
-              <path id="chartLine" class="chart-line" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d=""/>
-              <!-- Highlight dot -->
+              <path id="chartLine" class="chart-line" fill="none" stroke="#22c55e" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" d=""/>
               <circle id="chartDot" r="4" fill="#22c55e" stroke="#040608" stroke-width="2"/>
             </svg>
-            <!-- X labels -->
             <div class="flex justify-between px-1 mt-1">
               <span class="font-mono text-[9px] text-steel">Apr</span>
               <span class="font-mono text-[9px] text-steel">May 1</span>
@@ -262,63 +310,36 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Allocation Donut -->
+        <!-- Allocation Donut
+             Dynamically built from Supabase holdings rows.
+             Each holding's share is computed from live price × quantity.
+             Add/remove holdings in Supabase to update this chart.
+        -->
         <div class="bg-surface border border-white/[.07] rounded-2xl p-6">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">Allocation</p>
           <p class="font-display text-lg text-snow font-light mb-5">Portfolio Split</p>
 
           <div class="flex justify-center mb-6">
             <svg viewBox="0 0 120 120" class="w-36 h-36">
-              <circle cx="60" cy="60" r="46" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="12"/>
-              <!-- BTC 45% → 289 circumference → 130 -->
-              <circle cx="60" cy="60" r="46" fill="none" stroke="#f7931a" stroke-width="12"
-                stroke-dasharray="130 289" stroke-dashoffset="0" stroke-linecap="round" class="donut-ring"
-                style="transform:rotate(-90deg);transform-origin:center"/>
-              <!-- ETH 28% → 81 -->
-              <circle cx="60" cy="60" r="46" fill="none" stroke="#627eea" stroke-width="12"
-                stroke-dasharray="81 289" stroke-dashoffset="-134" stroke-linecap="round" class="donut-ring"
-                style="transform:rotate(-90deg);transform-origin:center"/>
-              <!-- TSLA 18% → 52 -->
-              <circle cx="60" cy="60" r="46" fill="none" stroke="#e31937" stroke-width="12"
-                stroke-dasharray="52 289" stroke-dashoffset="-219" stroke-linecap="round" class="donut-ring"
-                style="transform:rotate(-90deg);transform-origin:center"/>
-              <!-- PROP 9% → 26 -->
-              <circle cx="60" cy="60" r="46" fill="none" stroke="#c9a84c" stroke-width="12"
-                stroke-dasharray="26 289" stroke-dashoffset="-272" stroke-linecap="round" class="donut-ring"
-                style="transform:rotate(-90deg);transform-origin:center"/>
-              <text x="60" y="57" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="14" fill="#edf2f8" font-weight="300">9 Assets</text>
-              <text x="60" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a6880">DIVERSIFIED</text>
+              <!-- allocationDonut: redrawn on every holdings change -->
+              <g id="allocationDonut"></g>
             </svg>
           </div>
 
-          <div class="space-y-3">
+          <!-- allocationLegend: one row per holding, dynamically generated -->
+          <div class="space-y-3" id="allocationLegend">
+            <!-- skeleton placeholder while loading -->
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#f7931a]"></span><span class="text-sm text-cloud">Bitcoin</span></div>
-              <div class="flex items-center gap-3">
-                <div class="w-20 h-1.5 bg-white/[.06] rounded-full overflow-hidden"><div class="h-full bg-[#f7931a] rounded-full" style="width:45%"></div></div>
-                <span class="font-mono text-xs text-snow w-8 text-right">45%</span>
-              </div>
+              <div class="skeleton w-24 h-3">&nbsp;</div>
+              <div class="skeleton w-16 h-3">&nbsp;</div>
             </div>
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#627eea]"></span><span class="text-sm text-cloud">Ethereum</span></div>
-              <div class="flex items-center gap-3">
-                <div class="w-20 h-1.5 bg-white/[.06] rounded-full overflow-hidden"><div class="h-full bg-[#627eea] rounded-full" style="width:28%"></div></div>
-                <span class="font-mono text-xs text-snow w-8 text-right">28%</span>
-              </div>
+              <div class="skeleton w-20 h-3">&nbsp;</div>
+              <div class="skeleton w-16 h-3">&nbsp;</div>
             </div>
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#e31937]"></span><span class="text-sm text-cloud">Tesla</span></div>
-              <div class="flex items-center gap-3">
-                <div class="w-20 h-1.5 bg-white/[.06] rounded-full overflow-hidden"><div class="h-full bg-[#e31937] rounded-full" style="width:18%"></div></div>
-                <span class="font-mono text-xs text-snow w-8 text-right">18%</span>
-              </div>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-gold"></span><span class="text-sm text-cloud">Property</span></div>
-              <div class="flex items-center gap-3">
-                <div class="w-20 h-1.5 bg-white/[.06] rounded-full overflow-hidden"><div class="h-full bg-gold rounded-full" style="width:9%"></div></div>
-                <span class="font-mono text-xs text-snow w-8 text-right">9%</span>
-              </div>
+              <div class="skeleton w-16 h-3">&nbsp;</div>
+              <div class="skeleton w-16 h-3">&nbsp;</div>
             </div>
           </div>
         </div>
@@ -327,45 +348,71 @@ tailwind.config = {
       <!-- ── HOLDINGS + TRANSACTIONS ── -->
       <div class="grid lg:grid-cols-5 gap-6 anim-4">
 
-        <!-- Holdings Table -->
+        <!-- Holdings Table
+             Source: public.holdings table
+             Admin SQL to add a holding:
+               INSERT INTO public.holdings (user_id,symbol,name,icon,color,quantity,avg_buy_price)
+               VALUES ('uuid-here','BTC','Bitcoin','fab fa-bitcoin','#f7931a',0.5,60000.00);
+        -->
         <div class="lg:col-span-3 bg-surface border border-white/[.07] rounded-2xl overflow-hidden">
           <div class="flex items-center justify-between px-6 py-4 border-b border-white/[.06]">
-            <div>
-              <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase">Holdings</p>
-            </div>
+            <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase">Holdings</p>
             <a href="invest.html" class="font-mono text-[10px] tracking-[.08em] text-gold hover:text-gold-bright transition-colors">+ Add Position</a>
           </div>
-
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-white/[.05]">
                   <th class="text-left px-6 py-3 font-mono text-[9px] tracking-[.1em] text-steel uppercase">Asset</th>
                   <th class="text-right px-4 py-3 font-mono text-[9px] tracking-[.1em] text-steel uppercase">Price</th>
-                  <th class="text-right px-4 py-3 font-mono text-[9px] tracking-[.1em] text-steel uppercase">24h</th>
+                  <th class="text-right px-4 py-3 font-mono text-[9px] tracking-[.1em] text-steel uppercase">P&L</th>
                   <th class="text-right px-6 py-3 font-mono text-[9px] tracking-[.1em] text-steel uppercase">Value</th>
                 </tr>
               </thead>
-              <tbody id="holdingsTbody"></tbody>
+              <!-- Populated by dashboard.js renderHoldings() -->
+              <tbody id="holdingsTbody">
+                <tr>
+                  <td colspan="4" class="px-6 py-6">
+                    <div class="space-y-3">
+                      <div class="skeleton w-full h-4">&nbsp;</div>
+                      <div class="skeleton w-full h-4">&nbsp;</div>
+                      <div class="skeleton w-3/4 h-4">&nbsp;</div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Recent Transactions -->
+        <!-- Recent Transactions
+             Source: public.transactions table
+             Admin SQL to add a transaction:
+               INSERT INTO public.transactions (user_id,type,symbol,name,icon,color,quantity,price_at_tx,usd_amount)
+               VALUES ('uuid-here','buy','BTC','Bitcoin','fab fa-bitcoin','#f7931a',0.5,67000,33500.00);
+        -->
         <div class="lg:col-span-2 bg-surface border border-white/[.07] rounded-2xl overflow-hidden">
           <div class="flex items-center justify-between px-6 py-4 border-b border-white/[.06]">
             <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase">Recent Activity</p>
             <a href="#" class="font-mono text-[10px] text-steel hover:text-snow transition-colors">View all</a>
           </div>
-          <div class="divide-y divide-white/[.04]" id="txList"></div>
+          <!-- Populated by dashboard.js renderTransactions() -->
+          <div class="divide-y divide-white/[.04]" id="txList">
+            <div class="px-6 py-4 space-y-3">
+              <div class="skeleton w-full h-4">&nbsp;</div>
+              <div class="skeleton w-full h-4">&nbsp;</div>
+              <div class="skeleton w-2/3 h-4">&nbsp;</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- ── QUICK ACTIONS + MARKET INSIGHT ── -->
+      <!-- ── QUICK ACTIONS ── -->
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 anim-5">
-
-        <button onclick="window.location='invest.html'" class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gold/30 hover:bg-lift transition-all">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gold text-xl" style="background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2)">
+        <button onclick="window.location='invest.html'"
+                class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gold/30 hover:bg-lift transition-all">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gold text-xl"
+               style="background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2)">
             <i class="fas fa-arrow-trend-up"></i>
           </div>
           <p class="font-semibold text-snow text-sm">Buy / Invest</p>
@@ -373,7 +420,8 @@ tailwind.config = {
         </button>
 
         <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gain/30 hover:bg-lift transition-all">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gain text-xl" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gain text-xl"
+               style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)">
             <i class="fas fa-money-bill-transfer"></i>
           </div>
           <p class="font-semibold text-snow text-sm">Withdraw</p>
@@ -381,7 +429,8 @@ tailwind.config = {
         </button>
 
         <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-accent/30 hover:bg-lift transition-all">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-accent text-xl" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2)">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-accent text-xl"
+               style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2)">
             <i class="fas fa-repeat"></i>
           </div>
           <p class="font-semibold text-snow text-sm">Swap</p>
@@ -389,7 +438,8 @@ tailwind.config = {
         </button>
 
         <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-violet-500/30 hover:bg-lift transition-all">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-violet-400 text-xl" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2)">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-violet-400 text-xl"
+               style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2)">
             <i class="fas fa-chart-pie"></i>
           </div>
           <p class="font-semibold text-snow text-sm">Rebalance</p>
@@ -406,6 +456,7 @@ tailwind.config = {
           </div>
           <a href="invest.html" class="text-xs font-mono text-gold hover:text-gold-bright transition-colors tracking-[.06em]">View Markets →</a>
         </div>
+        <!-- Populated by dashboard.js renderMarketMovers() + live ticker -->
         <div class="grid md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/[.04]" id="moversGrid"></div>
       </div>
 
@@ -413,235 +464,12 @@ tailwind.config = {
 
     <!-- Footer -->
     <footer class="px-8 py-5 border-t border-white/[.06] flex items-center justify-between flex-wrap gap-3">
-      <p class="font-mono text-[9px] text-steel tracking-[.08em]">©2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
+      <p class="font-mono text-[9px] text-steel tracking-[.08em]">©️2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
       <p class="font-mono text-[9px] text-steel tracking-[.06em]">Prices update every 2s · Past performance ≠ future results</p>
     </footer>
   </div>
 </div>
 
-<script>
-/* ── DATE ── */
-document.getElementById('liveDate').textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-/* ── PORTFOLIO CHART ── */
-const chartPts = [82,79,85,88,83,91,94,90,96,101,98,105,108,103,112,110,118,115,122,119,128,132,127,135,140,138,145,142,148,155];
-function buildChart(pts) {
-  const W=680,H=200,pad=10;
-  const minV=Math.min(...pts),maxV=Math.max(...pts),range=maxV-minV;
-  const coords=pts.map((v,i)=>{
-    const x=(i/(pts.length-1))*(W-2*pad)+pad;
-    const y=H-pad-((v-minV)/range)*(H-2*pad);
-    return[x,y];
-  });
-  const linePts=coords.map(([x,y],i)=>(i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1)).join(' ');
-  const areaPath=linePts+` L${coords[coords.length-1][0].toFixed(1)},${H} L${pad},${H} Z`;
-  document.getElementById('chartLine').setAttribute('d',linePts);
-  document.getElementById('chartArea').setAttribute('d',areaPath);
-  const last=coords[coords.length-1];
-  document.getElementById('chartDot').setAttribute('cx',last[0]);
-  document.getElementById('chartDot').setAttribute('cy',last[1]);
-}
-buildChart(chartPts);
-function setRange(btn,range){
-  document.querySelectorAll('.chart-range-btn').forEach(b=>{b.classList.remove('bg-lift','text-snow');b.classList.add('text-steel')});
-  const varPts={
-    '1W':[120,118,124,122,128,130,134],
-    '1M':chartPts,
-    '3M':[60,65,70,68,78,82,79,85,88,92,91,96,98,103,108,112,110,118,122,128,132,127,135,140,138,145,142,148,155,160],
-    '1Y':[40,42,38,50,55,52,60,58,65,70,68,75,78,82,79,85,88,92,91,96,98,103,108,112,110,118,122,128,132,135,142,148,155,162,158,168,175,180,178,185,192,198,194,200,208,212,218,224,220,228,235,240,248,255,260,268,274,280,290,298]
-  };
-  buildChart(varPts[range]||chartPts);
-}
-
-/* ── ASSET DATA ── */
-const HOLDINGS = [
-  {sym:'BTC', name:'Bitcoin',      icon:'fab fa-bitcoin',    color:'#f7931a', qty:.9284,  price:67430,  chg:2.8,  up:true  },
-  {sym:'ETH', name:'Ethereum',     icon:'fab fa-ethereum',   color:'#627eea', qty:23.14,  price:3280,   chg:1.4,  up:true  },
-  {sym:'TSLA',name:'Tesla Inc.',   icon:'fas fa-car',        color:'#e31937', qty:198,    price:248.50, chg:-0.6, up:false },
-  {sym:'SOL', name:'Solana',       icon:'fas fa-sun',        color:'#9945ff', qty:112.5,  price:188,    chg:3.1,  up:true  },
-  {sym:'NVDA',name:'NVIDIA',       icon:'fas fa-microchip',  color:'#76b900', qty:26.4,   price:875.20, chg:2.1,  up:true  },
-  {sym:'AAPL',name:'Apple Inc.',   icon:'fab fa-apple',      color:'#a2aaad', qty:82,     price:189.30, chg:0.4,  up:true  },
-  {sym:'GOLD',name:'Gold Spot',    icon:'fas fa-coins',      color:'#c9a84c', qty:14.2,   price:2318.40,chg:0.3,  up:true  },
-];
-
-function fmtP(p){if(p>=1000)return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});if(p>=1)return p.toFixed(2);return p.toFixed(4);}
-
-function buildHoldings() {
-  const tb = document.getElementById('holdingsTbody');
-  tb.innerHTML = HOLDINGS.map((a,i)=>`
-    <tr class="border-b border-white/[.04] hover:bg-white/[.02] transition-colors" style="animation:fadeUp .5s ease forwards ${.1+i*.08}s;opacity:0">
-      <td class="px-6 py-3.5">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0" style="background:${a.color}18;color:${a.color}">
-            <i class="${a.icon}"></i>
-          </div>
-          <div>
-            <p class="font-semibold text-snow text-sm">${a.sym}</p>
-            <p class="font-mono text-[10px] text-steel">${a.qty} units</p>
-          </div>
-        </div>
-      </td>
-      <td class="px-4 py-3.5 text-right font-mono text-sm text-snow" id="hp-${a.sym}">$${fmtP(a.price)}</td>
-      <td class="px-4 py-3.5 text-right">
-        <span class="font-mono text-xs px-2 py-1 rounded-lg ${a.up?'text-gain bg-gain/10':'text-loss bg-loss/10'}">
-          ${a.up?'+':''}${a.chg}%
-        </span>
-      </td>
-      <td class="px-6 py-3.5 text-right font-mono text-sm text-snow" id="hv-${a.sym}">$${(a.qty*a.price).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}</td>
-    </tr>`).join('');
-}
-buildHoldings();
-
-/* ── TRANSACTIONS ── */
-const TXS = [
-  {type:'buy',  sym:'BTC',  icon:'fab fa-bitcoin',  color:'#f7931a', amt:'+0.12 BTC',  usd:'-$8,091',  time:'2h ago'},
-  {type:'sell', sym:'SOL',  icon:'fas fa-sun',       color:'#9945ff', amt:'-15 SOL',   usd:'+$2,820',  time:'5h ago'},
-  {type:'buy',  sym:'NVDA', icon:'fas fa-microchip', color:'#76b900', amt:'+4 shares', usd:'-$3,500',  time:'1d ago'},
-  {type:'dep',  sym:'USD',  icon:'fas fa-building-columns',color:'#3b82f6',amt:'+$10,000',usd:'Deposit',time:'2d ago'},
-  {type:'sell', sym:'ETH',  icon:'fab fa-ethereum',  color:'#627eea', amt:'-2 ETH',    usd:'+$6,560',  time:'3d ago'},
-  {type:'buy',  sym:'TSLA', icon:'fas fa-car',       color:'#e31937', amt:'+20 shares',usd:'-$4,970',  time:'5d ago'},
-];
-
-document.getElementById('txList').innerHTML = TXS.map(tx=>`
-  <div class="flex items-center gap-3 px-6 py-3.5 hover:bg-white/[.02] transition-colors">
-    <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs flex-shrink-0" style="background:${tx.color}18;color:${tx.color}">
-      <i class="${tx.icon}"></i>
-    </div>
-    <div class="flex-1 min-w-0">
-      <p class="text-snow text-sm font-medium">${tx.type==='buy'?'Bought':tx.type==='sell'?'Sold':'Deposited'} ${tx.sym}</p>
-      <p class="font-mono text-[10px] text-steel">${tx.time}</p>
-    </div>
-    <div class="text-right flex-shrink-0">
-      <p class="font-mono text-xs text-snow">${tx.amt}</p>
-      <p class="font-mono text-[10px] ${tx.type==='sell'||tx.type==='dep'?'text-gain':'text-loss'}">${tx.usd}</p>
-    </div>
-  </div>`).join('');
-
-/* ── MARKET MOVERS ── */
-const MOVERS = [
-  {sym:'SOL', name:'Solana',   icon:'fas fa-sun',      color:'#9945ff', price:188,    chg:+3.1, up:true },
-  {sym:'BTC', name:'Bitcoin',  icon:'fab fa-bitcoin',  color:'#f7931a', price:67430,  chg:+2.8, up:true },
-  {sym:'NVDA',name:'NVIDIA',   icon:'fas fa-microchip',color:'#76b900', price:875.20, chg:+2.1, up:true },
-  {sym:'XRP', name:'Ripple',   icon:'fas fa-water',    color:'#00aae4', price:0.72,   chg:-1.2, up:false},
-];
-document.getElementById('moversGrid').innerHTML = MOVERS.map(m=>`
-  <div class="p-5 hover:bg-white/[.02] transition-colors">
-    <div class="flex items-center gap-3 mb-3">
-      <div class="w-9 h-9 rounded-xl flex items-center justify-center text-sm" style="background:${m.color}18;color:${m.color}"><i class="${m.icon}"></i></div>
-      <div><p class="font-semibold text-snow text-sm">${m.sym}</p><p class="text-[10px] text-steel">${m.name}</p></div>
-    </div>
-    <p class="font-mono text-base text-snow">$${fmtP(m.price)}</p>
-    <span class="font-mono text-xs px-2 py-0.5 rounded-lg mt-1 inline-block ${m.up?'text-gain bg-gain/10':'text-loss bg-loss/10'}">${m.up?'+':''}${m.chg}%</span>
-  </div>`).join('');
-
-/* ── LIVE PRICE UPDATE ── */
-function jitter(p){return p*(1+(Math.random()-.5)*.0012);}
-setInterval(()=>{
-  HOLDINGS.forEach(a=>{
-    a.price=jitter(a.price);
-    const hp=document.getElementById('hp-'+a.sym);
-    const hv=document.getElementById('hv-'+a.sym);
-    if(hp) hp.textContent='$'+fmtP(a.price);
-    if(hv) hv.textContent='$'+(a.qty*a.price).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
-  });
-},2000);
-
-/* CSS for fadeUp */
-const s=document.createElement('style');
-s.textContent='@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}';
-document.head.appendChild(s);
-</script>
-
-<script>
-  /* ═══════════════════════════════════════════════════════
-   AURUM CAPITAL — SHARED NAV COMPONENT  (aurum-nav.js)
-   Include after server.js on every protected page.
-   Call: AurumNav.init(activeLink)
-═══════════════════════════════════════════════════════ */
-const AurumNav = (() => {
-
-  function init(activeLink = ''){
-    const user = AurumDB.auth.currentUser();
-    if(!user){ AurumDB.auth.requireAuth(); return null; }
-
-    /* Load platform settings for fee/key config */
-    AurumDB.contentful.getSettings().catch(()=>{});
-
-    /* Inject sidebar HTML into #sidebar placeholder if present */
-    const sidebar = document.getElementById('aurum-sidebar');
-    if(sidebar) sidebar.innerHTML = buildSidebar(activeLink, user);
-
-    /* Update topbar user elements */
-    setEl('nav-user-initials', user.avatarInitials || '?');
-    setEl('nav-user-name',     user.firstName + ' ' + user.lastName);
-    setEl('nav-user-cash',     '$' + fmt(user.cash) + ' available');
-    setEl('nav-cash-display',  '$' + fmt(user.cash));
-
-    /* Wire sign-out buttons (any element with data-signout) */
-    document.querySelectorAll('[data-signout]').forEach(el => {
-      el.addEventListener('click', e => { e.preventDefault(); AurumDB.signOut(); });
-    });
-
-    return user;
-  }
-
-  function buildSidebar(active, user){
-    const links = [
-      { href:'dashboard.html',     icon:'fa-gauge-high',         label:'Dashboard',    key:'dashboard' },
-      { href:'invest.html',        icon:'fa-chart-line',         label:'Invest',       key:'invest' },
-      { href:'transactions.html',  icon:'fa-clock-rotate-left',  label:'Transactions', key:'transactions' },
-      { href:'signup.html',        icon:'fa-user-circle',        label:'My Account',   key:'account' },
-    ];
-    const marketLinks = [
-      { href:'invest.html#crypto',   icon:'fab fa-bitcoin',  label:'Crypto' },
-      { href:'invest.html#stocks',   icon:'fa-chart-bar',    label:'Stocks' },
-      { href:'invest.html#property', icon:'fa-city',         label:'Real Estate' },
-    ];
-
-    const navItem = ({ href, icon, label, key }) =>
-      `<a href="${href}" class="sbl${active===key?' on':''}" ${key==='account'?'':''}><i class="${icon.startsWith('fab')?icon:'fas '+icon}"></i>${label}</a>`;
-
-    return `
-      <a href="investment.html" class="flex items-center gap-3 px-2 mb-8">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-void font-bold text-sm font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
-        <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
-      </a>
-      <div class="flex flex-col gap-1 flex-1 overflow-y-auto">
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
-        ${links.map(navItem).join('')}
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Markets</p>
-        ${marketLinks.map(l=>`<a href="${l.href}" class="sbl"><i class="${l.icon.startsWith('fab')?l.icon:'fas '+l.icon}"></i>${l.label}</a>`).join('')}
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Account</p>
-        <a href="signup.html" class="sbl"><i class="fas fa-user-shield"></i>Profile</a>
-        <a href="#" class="sbl" data-signout><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
-      </div>
-      <div class="border-t border-white/[.06] pt-4 mt-3">
-        <div class="flex items-center gap-3 px-2">
-          <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void flex-shrink-0"
-               style="background:linear-gradient(135deg,#c9a84c,#a87c28)">${user.avatarInitials||'?'}</div>
-          <div class="min-w-0 flex-1">
-            <p class="text-snow text-sm font-medium truncate">${user.firstName} ${user.lastName}</p>
-            <p class="font-mono text-[9px] text-gold truncate" id="nav-user-cash">$${fmt(user.cash)} available</p>
-          </div>
-        </div>
-      </div>`;
-  }
-
-  function setEl(id, text){
-    const el = document.getElementById(id);
-    if(el) el.textContent = text;
-  }
-
-  function fmt(p){
-    if(!p && p!==0) return '0.00';
-    if(p>=1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    return parseFloat(p).toFixed(2);
-  }
-
-  return { init };
-})();
-window.AurumNav = AurumNav;
-</script>
 
 
 
@@ -654,12 +482,7 @@ window.AurumNav = AurumNav;
 
 
 
-
-
-<script></script>
-
-<script src="script.js"></script>
-<script src="server.js"></script>
-<script src="contentful.js"></script>
+<!-- Load JS as an ES module so Supabase imports work -->
+<script type="module" src="dashboard.js"></script>
 </body>
 </html>

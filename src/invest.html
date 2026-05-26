@@ -3,249 +3,301 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurum Capital — Create Account</title>
+<title>Aurum Capital — Invest</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="server.js"></script>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="output.css">
-<script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
-<script src="contentful.js"></script>
 <script>
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: {
-        display:['Cormorant Garamond','serif'],
-        body:   ['DM Sans','sans-serif'],
-        mono:   ['JetBrains Mono','monospace'],
-      },
-      colors: {
-        void:'#040608', deep:'#080c12', base:'#0c1118', surface:'#111820', lift:'#172030',
-        steel:'#5a6880', mist:'#8c9db5', cloud:'#c4d0e0', snow:'#edf2f8',
-        gold:{ DEFAULT:'#c9a84c', bright:'#e8c96a' },
-        gain:'#22c55e', loss:'#ef4444',
-      }
-    }
-  }
-}
+tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{void:'#040608',deep:'#080c12',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',snow:'#edf2f8',gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
 </script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#040608;color:#edf2f8;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(201,168,76,.05),transparent)}
+.sbl{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;font-size:.84rem;font-weight:500;color:#5a6880;transition:all .2s;text-decoration:none;margin-bottom:2px}
+.sbl:hover{background:rgba(255,255,255,.05);color:#edf2f8}
+.sbl.on{background:rgba(201,168,76,.12);color:#c9a84c;border:1px solid rgba(201,168,76,.22)}
+.sbl i{width:16px;text-align:center;flex-shrink:0}
+.invest-card{background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s}
+.invest-card:hover{border-color:rgba(201,168,76,.3);transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.invest-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 18px;border-radius:12px;font-size:.82rem;font-weight:600;color:#040608;background:linear-gradient(135deg,#c9a84c,#a87c28);border:none;cursor:pointer;transition:all .2s}
+.invest-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.3)}
+.invest-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.tab-chip{padding:7px 18px;border-radius:30px;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#5a6880;cursor:pointer;transition:all .2s}
+.tab-chip:hover{color:#edf2f8;background:rgba(255,255,255,.07)}
+.tab-chip.on{background:rgba(201,168,76,.14);color:#c9a84c;border-color:rgba(201,168,76,.3)}
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#111820;border:1px solid rgba(255,255,255,.09);border-radius:24px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.8)}
+.preset-btn{flex:1;padding:7px 0;border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;cursor:pointer;transition:all .18s}
+.preset-btn:hover{background:rgba(201,168,76,.12);color:#c9a84c;border-color:rgba(201,168,76,.25)}
+.yield-badge{display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:4px 10px;border-radius:20px;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.22);white-space:nowrap}
+.stat-box{background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:16px 20px}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:rgba(255,255,255,.08);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#c9a84c;border:2px solid #040608}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.a1{animation:fadeUp .5s ease forwards .05s;opacity:0}
+.a2{animation:fadeUp .5s ease forwards .15s;opacity:0}
+.a3{animation:fadeUp .5s ease forwards .25s;opacity:0}
+.a4{animation:fadeUp .5s ease forwards .35s;opacity:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{animation:spin .7s linear infinite}
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:10px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+#authGate{position:fixed;inset:0;z-index:999;background:#040608;display:flex;align-items:center;justify-content:center}
+#toast{position:fixed;bottom:28px;right:28px;z-index:600;background:#111820;border-radius:18px;padding:14px 20px;display:flex;align-items:center;gap:14px;min-width:280px;box-shadow:0 20px 60px rgba(0,0,0,.6);transform:translateY(20px);opacity:0;transition:all .35s cubic-bezier(.16,1,.3,1);pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
+</style>
 </head>
-<body class="bg-void overflow-x-hidden">
+<body>
 
-<div class="flex min-h-screen relative z-10">
+<!-- Auth gate -->
+<div id="authGate">
+  <div style="text-align:center">
+    <div style="width:48px;height:48px;margin:0 auto 16px;border-radius:14px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:18px">A</div>
+    <p style="font-family:'JetBrains Mono',monospace;color:#5a6880;font-size:11px;letter-spacing:.2em">VERIFYING SESSION…</p>
+  </div>
+</div>
 
-  <!-- SIDEBAR -->
-   
-    
-      <aside class=" flex-col fixed top-0 left-0 bottom-0 w-60 z-50 py-6 px-4">
-        <button id="menu-btn" type="button" aria-label="Toggle menu" class="relative z-[110] h-12 w-12 flex items-center justify-center rounded-xl bg-blue-white transition-all hover:scale-110 active:scale-95">
-          <div class="w-8 h-8 mb-8 rounded-lg flex items-center justify-center text-void font-bold text-sm font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
-        </button>    
-      
+<div id="appShell" style="display:none;position:relative;z-index:1">
 
-        <div id="overlay" class="fixed inset-0 z-[80] hidden bg-black/20 backdrop-blur-sm transition-opacity duration-500 opacity-0"></div>
-
-        <div id="side-menu" class="fixed top-0 right-0 z-[90] h-screen w-[55%] lg:w-[30%] translate-x-full bg-slate-950 shadow-[-20px_0_50px_rgba(0,0,0,0.1)] transition-transform duration-700 ease-in-out">
-            <div class="flex flex-col h-full pt-32 px-10">
-                
-                <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
-                
-
-          <div class="flex flex-col gap-1 flex-1">
-              <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
-              <a href="dashboard.html" class="sidebar-link"><i class="fas fa-gauge-high"></i>Dashboard</a>
-              <a href="invest.html"    class="sidebar-link on"><i class="fas fa-chart-line"></i>Invest</a>
-              <a href="#"              class="sidebar-link"><i class="fas fa-briefcase"></i>Portfolio</a>
-              <a href=""              class="sidebar-link"><i class="fas fa-repeat"></i>Transactions</a>
-              <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-6">Markets</p>
-              <a href="#crypto"   class="sidebar-link" onclick="filterByTab('crypto')"><i class="fab fa-bitcoin"></i>Crypto</a>
-              <a href="#stocks"   class="sidebar-link" onclick="filterByTab('stocks')"><i class="fas fa-chart-bar"></i>Stocks</a>
-              <a href="#property" class="sidebar-link" onclick="filterByTab('property')"><i class="fas fa-city"></i>Real Estate</a>
-              <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-6">Account</p>
-              <a href="signup.html" class="sidebar-link"><i class="fas fa-user-circle"></i>My Account</a>
-              <a href="#" onclick="AurumDB.auth.logout();window.location.href='signup.html'" class="sidebar-link"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
-          </div>
-        <div class="border-t border-white/[.06] pt-4 mt-4">
-          <div class="flex items-center gap-3 px-2">
-            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void" id="sbAvatar" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">--</div>
-            <div class="flex-1 min-w-0">
-              <p class="text-snow text-sm font-medium truncate" id="sbName">Loading…</p>
-              <p class="font-mono text-[9px] text-gold truncate" id="sbCash">$0.00 available</p>
-            </div>
-          </div>
+  <!-- ══ SIDEBAR (desktop) ══ -->
+  <aside id="sidebar" style="display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;background:#080c12;border-right:1px solid rgba(255,255,255,.06);z-index:50;padding:24px 16px;overflow-y:auto">
+    <a href="dashboard.html" style="display:flex;align-items:center;gap:12px;padding:0 8px;margin-bottom:32px;text-decoration:none">
+      <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:14px;flex-shrink:0">A</div>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
+    </a>
+    <div style="flex:1">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin-bottom:8px">Overview</p>
+      <a href="dashboard.html" class="sbl"><i class="fas fa-gauge-high"></i>Dashboard</a>
+      <a href="invest.html"    class="sbl on"><i class="fas fa-chart-line"></i>Invest</a>
+      <a href="#"              class="sbl"><i class="fas fa-briefcase"></i>Portfolio</a>
+      <a href="#"              class="sbl"><i class="fas fa-repeat"></i>Transactions</a>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin:20px 0 8px">Markets</p>
+      <a href="#" onclick="setFilter('crypto');return false"   class="sbl"><i class="fab fa-bitcoin"></i>Crypto</a>
+      <a href="#" onclick="setFilter('stocks');return false"   class="sbl"><i class="fas fa-chart-bar"></i>Stocks</a>
+      <a href="#" onclick="setFilter('property');return false" class="sbl"><i class="fas fa-city"></i>Real Estate</a>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin:20px 0 8px">Account</p>
+      <a href="signup.html" class="sbl"><i class="fas fa-user-circle"></i>Profile</a>
+      <a href="#" id="signOutBtn" class="sbl"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:16px;margin-top:12px">
+      <div style="display:flex;align-items:center;gap:12px;padding:0 8px">
+        <div id="sbAvatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;flex-shrink:0">?</div>
+        <div style="min-width:0;flex:1">
+          <p id="sbName" style="color:#edf2f8;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">…</p>
+          <p id="sbCash" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">$0.00 available</p>
         </div>
-
-            </div>
-        </div>
-      </aside>
-
-  <!-- MAIN -->
-  <div class="flex-1 flex flex-col">
-
-    <!-- TOP BAR -->
-    <header class="sticky top-0 z-40 bg-void/90 backdrop-blur-xl border-b border-white/[.06] px-6 md:px-8 h-16 flex items-center justify-center gap-4 relative">
-      <!-- Search -->
-      <div class="mx-auto flex items-center gap-2 w-full max-w-sm bg-white/[.04] border border-white/[.08] rounded-xl px-4 py-2.5">
-        <i class="fas fa-search text-steel text-xs"></i>
-        <input type="text" id="searchInput" placeholder="Search BTC, Tesla, London…" class="bg-transparent outline-none text-sm text-snow placeholder-steel flex-1" oninput="renderCards()">
       </div>
-      <div class="absolute right-6 top-1/2 hidden md:flex -translate-y-1/2 items-center gap-4">
-        <div class="text-right">
-          <p class="font-mono text-[9px] text-steel tracking-[.08em] uppercase">Cash Balance</p>
-          <p class="font-display text-lg text-snow font-light" id="headerCash">$0.00</p>
-        </div>
-        <a href="signup.html" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-void" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">
-          <i class="fas fa-user text-xs"></i> My Account
+    </div>
+  </aside>
+
+  <!-- ══ MAIN AREA ══ -->
+  <div id="mainContent" style="margin-left:0;display:flex;flex-direction:column;min-height:100vh">
+
+    <!-- Topbar -->
+    <header style="position:sticky;top:0;z-index:40;background:rgba(4,6,8,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <!-- Mobile menu btn -->
+        <button id="mobileMenuBtn" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">
+          <i class="fas fa-bars" style="font-size:13px"></i>
+        </button>
+        <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+          <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:12px">A</div>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
         </a>
       </div>
-      <div class="absolute right-6 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void lg:hidden" id="mobAvatar" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">--</div>
+      <!-- Search -->
+      <div style="flex:1;max-width:360px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:9px 16px">
+        <i class="fas fa-search" style="color:#5a6880;font-size:12px"></i>
+        <input type="text" id="searchInput" placeholder="Search BTC, Tesla, London…"
+          style="background:transparent;border:none;outline:none;color:#edf2f8;font-size:13px;flex:1;font-family:'DM Sans',sans-serif">
+      </div>
+      <!-- Right side -->
+      <div style="display:flex;align-items:center;gap:16px">
+        <div id="topbarCashBlock" style="text-align:right">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em;text-transform:uppercase">Cash Balance</p>
+          <p id="headerCash" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#edf2f8;font-weight:300">$0.00</p>
+        </div>
+        <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608" id="mobAvatar">?</div>
+      </div>
     </header>
 
-    <!-- PAGE -->
-    <main class="flex-1 px-6 md:px-8 py-8 space-y-10">
-
-      <!-- HEADER + STATS -->
-      <div class="au1">
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase mb-1">// Investment Centre</p>
-        <h1 class="font-display text-3xl md:text-4xl font-light text-snow mb-1">Choose your <em class="italic text-gold">next position</em></h1>
-        <p class="text-mist text-sm">Invest across crypto, global equities, and prime real estate.</p>
+    <!-- Mobile drawer backdrop -->
+    <div id="mobileBackdrop" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)"></div>
+    <!-- Mobile drawer -->
+    <div id="mobileDrawer" style="display:none;position:fixed;top:0;left:0;bottom:0;width:280px;z-index:90;background:#080c12;border-right:1px solid rgba(255,255,255,.07);flex-direction:column;padding:24px 16px;overflow-y:auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding:0 8px">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
+        <button id="mobileCloseBtn" style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">
+          <i class="fas fa-xmark" style="font-size:12px"></i>
+        </button>
       </div>
-
-      <!-- BALANCE STRIP -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 au2">
-        <div class="bg-surface border border-white/[.07] rounded-2xl p-4">
-          <p class="font-mono text-[9px] tracking-[.1em] text-steel uppercase mb-2">Cash Available</p>
-          <p class="font-display text-2xl text-snow" id="cashBal">$0.00</p>
-          <button onclick="openDepositModal()" class="mt-2 font-mono text-[10px] text-gold hover:text-gold-bright transition-colors">+ Deposit funds</button>
-        </div>
-        <div class="bg-surface border border-white/[.07] rounded-2xl p-4">
-          <p class="font-mono text-[9px] tracking-[.1em] text-steel uppercase mb-2">Portfolio Value</p>
-          <p class="font-display text-2xl text-snow" id="portVal">$0.00</p>
-        </div>
-        <div class="bg-surface border border-white/[.07] rounded-2xl p-4">
-          <p class="font-mono text-[9px] tracking-[.1em] text-steel uppercase mb-2">Positions</p>
-          <p class="font-display text-2xl text-snow" id="posCount">0</p>
-        </div>
-        <div class="bg-surface border border-white/[.07] rounded-2xl p-4">
-          <p class="font-mono text-[9px] tracking-[.1em] text-steel uppercase mb-2">Transactions</p>
-          <p class="font-display text-2xl text-snow" id="txCount">0</p>
-        </div>
-      </div>
-
-      <!-- FILTER TABS -->
-      <div class="flex gap-2 flex-wrap au3" id="filterTabs">
-        <button class="tab-chip on" onclick="setFilter('all',this)">All Markets</button>
-        <button class="tab-chip" id="tab-crypto"   onclick="setFilter('crypto',this)">Cryptocurrency</button>
-        <button class="tab-chip" id="tab-stocks"   onclick="setFilter('stocks',this)">Global Stocks</button>
-        <button class="tab-chip" id="tab-property" onclick="setFilter('property',this)">Real Estate</button>
-      </div>
-
-      <!-- ─────────────────────────────────────────
-           CRYPTO SECTION
-      ───────────────────────────────────────── -->
-      <section id="sec-crypto" class="space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">// Cryptocurrency</p>
-            <h2 class="font-display text-2xl font-light text-snow">Digital <em class="italic text-gold">Assets</em></h2>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin-bottom:8px">Overview</p>
+      <a href="dashboard.html" class="sbl"><i class="fas fa-gauge-high"></i>Dashboard</a>
+      <a href="invest.html"    class="sbl on"><i class="fas fa-chart-line"></i>Invest</a>
+      <a href="#"              class="sbl"><i class="fas fa-briefcase"></i>Portfolio</a>
+      <a href="#"              class="sbl"><i class="fas fa-repeat"></i>Transactions</a>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin:20px 0 8px">Account</p>
+      <a href="signup.html" class="sbl"><i class="fas fa-user-circle"></i>Profile</a>
+      <a href="#" id="drawerSignOut" class="sbl"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
+      <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:16px;margin-top:auto">
+        <div style="display:flex;align-items:center;gap:12px;padding:0 8px">
+          <div id="drawerAvatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;flex-shrink:0">?</div>
+          <div style="min-width:0">
+            <p id="drawerName" style="color:#edf2f8;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">…</p>
+            <p id="drawerCash" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c">$0.00 available</p>
           </div>
-          <span class="flex items-center gap-2 font-mono text-[9px] text-gain tracking-[.08em]">
-            <span class="w-1.5 h-1.5 rounded-full bg-gain animate-pulse"></span>LIVE PRICES
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE BODY -->
+    <main style="flex:1;padding:32px 24px;max-width:1400px;width:100%">
+
+      <!-- Heading -->
+      <div class="a1" style="margin-bottom:28px">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;margin-bottom:6px">// Investment Centre</p>
+        <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:300;color:#edf2f8;margin-bottom:6px">
+          Choose your <em style="font-style:italic;color:#c9a84c">next position</em>
+        </h1>
+        <p style="color:#8c9db5;font-size:13px">Deploy capital across crypto, global equities, and prime real estate.</p>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="a2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:32px">
+        <div class="stat-box">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:8px">Cash Available</p>
+          <p id="cashBal" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">$0.00</p>
+          <button onclick="openDepositModal()" style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c;background:none;border:none;cursor:pointer;padding:0">+ Add funds</button>
+        </div>
+        <div class="stat-box">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:8px">Portfolio Value</p>
+          <p id="portVal" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">$0.00</p>
+        </div>
+        <div class="stat-box">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:8px">Positions</p>
+          <p id="posCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">0</p>
+        </div>
+        <div class="stat-box">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:8px">All-time Trades</p>
+          <p id="txCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">0</p>
+        </div>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="a3" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px" id="filterTabs">
+        <button class="tab-chip on" data-filter="all"      onclick="setFilter('all',this)">All Markets</button>
+        <button class="tab-chip"    data-filter="crypto"   onclick="setFilter('crypto',this)">Cryptocurrency</button>
+        <button class="tab-chip"    data-filter="stocks"   onclick="setFilter('stocks',this)">Global Stocks</button>
+        <button class="tab-chip"    data-filter="property" onclick="setFilter('property',this)">Real Estate</button>
+      </div>
+
+      <!-- Crypto section -->
+      <section id="sec-crypto" style="margin-bottom:48px" class="a4">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px">
+          <div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5a6880;text-transform:uppercase;margin-bottom:4px">// Cryptocurrency</p>
+            <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#edf2f8">Digital <em style="font-style:italic;color:#c9a84c">Assets</em></h2>
+          </div>
+          <span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#22c55e;letter-spacing:.08em">
+            <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 1.5s infinite"></span>LIVE
           </span>
         </div>
-        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4" id="cryptoGrid"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" id="cryptoGrid">
+          <div class="skeleton" style="height:200px"></div>
+          <div class="skeleton" style="height:200px"></div>
+          <div class="skeleton" style="height:200px"></div>
+        </div>
       </section>
 
-      <!-- ─────────────────────────────────────────
-           STOCKS SECTION
-      ───────────────────────────────────────── -->
-      <section id="sec-stocks" class="space-y-4">
-        <div class="flex items-center justify-between">
+      <!-- Stocks section -->
+      <section id="sec-stocks" style="margin-bottom:48px">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px">
           <div>
-            <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">// Global Equities</p>
-            <h2 class="font-display text-2xl font-light text-snow">Stock <em class="italic text-gold">Market</em></h2>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5a6880;text-transform:uppercase;margin-bottom:4px">// Global Equities</p>
+            <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#edf2f8">Stock <em style="font-style:italic;color:#c9a84c">Market</em></h2>
           </div>
-          <button onclick="window.location.href='signup.html'" class="font-mono text-[10px] text-gold hover:text-gold-bright transition-colors tracking-[.06em]">View all →</button>
         </div>
-        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4" id="stocksGrid"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" id="stocksGrid">
+          <div class="skeleton" style="height:200px"></div>
+          <div class="skeleton" style="height:200px"></div>
+          <div class="skeleton" style="height:200px"></div>
+        </div>
       </section>
 
-      <!-- ─────────────────────────────────────────
-           PROPERTY SECTION
-      ───────────────────────────────────────── -->
-      <section id="sec-property" class="space-y-4">
-        <div class="flex items-center justify-between">
+      <!-- Property section -->
+      <section id="sec-property" style="margin-bottom:48px">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px">
           <div>
-            <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">// Real Estate Fund</p>
-            <h2 class="font-display text-2xl font-light text-snow">Prime <em class="italic text-gold">Properties</em></h2>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5a6880;text-transform:uppercase;margin-bottom:4px">// Real Estate Fund</p>
+            <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#edf2f8">Prime <em style="font-style:italic;color:#c9a84c">Properties</em></h2>
           </div>
-          <span class="font-mono text-[10px] text-gold bg-gold/10 border border-gold/20 px-3 py-1 rounded-full">Tokenized · From $500</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);padding:4px 12px;border-radius:20px">Tokenized · From $500</span>
         </div>
-        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4" id="propertyGrid"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" id="propertyGrid">
+          <div class="skeleton" style="height:260px"></div>
+          <div class="skeleton" style="height:260px"></div>
+          <div class="skeleton" style="height:260px"></div>
+        </div>
       </section>
 
     </main>
 
-    <footer class="px-8 py-5 border-t border-white/[.06] flex items-center justify-between flex-wrap gap-3">
-      <p class="font-mono text-[9px] text-steel tracking-[.08em]">©2025 AURUM CAPITAL</p>
-      <p class="font-mono text-[9px] text-steel tracking-[.06em]">Investment involves risk · Demo platform for illustration</p>
+    <footer style="padding:20px 24px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em">©2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Demo platform · Investment involves risk</p>
     </footer>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     INVEST MODAL
-═══════════════════════════════════════════════ -->
+<!-- ══ INVEST MODAL ══ -->
 <div class="modal-overlay" id="investModal">
   <div class="modal-box">
-    <!-- Header -->
-    <div class="flex items-center justify-between p-6 border-b border-white/[.07]">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl" id="mi-icon"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="display:flex;align-items:center;gap:16px">
+        <div id="mi-icon" style="width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px"></div>
         <div>
-          <p class="font-display text-2xl text-snow font-light" id="mi-sym">BTC</p>
-          <p class="text-steel text-sm" id="mi-name">Bitcoin</p>
+          <p id="mi-sym" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">—</p>
+          <p id="mi-name" style="color:#5a6880;font-size:13px">—</p>
         </div>
       </div>
-      <button onclick="closeInvestModal()" class="w-9 h-9 bg-white/[.05] border border-white/[.09] rounded-xl text-steel hover:text-snow transition-colors flex items-center justify-center">
-        <i class="fas fa-xmark text-sm"></i>
-      </button>
+      <button onclick="closeInvestModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">✕</button>
     </div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:20px">
 
-    <div class="p-6 space-y-5">
-      <!-- Live price -->
-      <div class="flex items-center justify-between p-4 bg-white/[.03] border border-white/[.06] rounded-xl">
-        <span class="font-mono text-[10px] text-steel uppercase tracking-[.1em]">Current Price</span>
-        <div class="text-right">
-          <p class="font-mono text-lg text-snow font-semibold" id="mi-price">$67,430</p>
-          <p class="font-mono text-[10px]" id="mi-chg">+2.8%</p>
+      <!-- Price row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em">Current Price</span>
+        <div style="text-align:right">
+          <p id="mi-price" style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#edf2f8;font-weight:500">—</p>
+          <p id="mi-chg" style="font-family:'JetBrains Mono',monospace;font-size:10px">—</p>
         </div>
       </div>
 
-      <!-- Investment type (Buy / Property) -->
-      <div id="mi-type-info" class="hidden p-4 bg-gold/[.07] border border-gold/20 rounded-xl">
-        <p class="font-mono text-[9px] tracking-[.1em] text-gold uppercase mb-2">Property Investment</p>
-        <p class="text-sm text-cloud" id="mi-type-desc">Earn rental income + capital appreciation</p>
+      <!-- Property info -->
+      <div id="mi-type-info" style="display:none;padding:14px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:14px">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#c9a84c;text-transform:uppercase;margin-bottom:6px">Property Investment</p>
+        <p id="mi-type-desc" style="font-size:13px;color:#c4d0e0">Earn rental income + capital appreciation</p>
       </div>
 
       <!-- Amount input -->
       <div>
-        <div class="flex items-center justify-between mb-2">
-          <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase">Investment Amount (USD)</label>
-          <span class="font-mono text-[10px] text-snow">Balance: <span class="text-gold" id="mi-bal">$0</span></span>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase">Investment (USD)</label>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#edf2f8">Balance: <span id="mi-bal" style="color:#c9a84c">$0</span></span>
         </div>
-        <div class="relative">
-          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-steel font-mono text-sm">$</span>
+        <div style="position:relative">
+          <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#5a6880;font-family:'JetBrains Mono',monospace;font-size:13px">$</span>
           <input type="number" id="mi-amount" value="500" min="10" step="10"
-            class="w-full bg-white/[.04] border border-white/[.1] rounded-xl pl-8 pr-4 py-3.5 text-snow font-mono text-xl outline-none focus:border-gold/50 focus:bg-lift transition-all"
-            oninput="updateModalCalc()">
+            style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px 14px 32px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:20px;outline:none;transition:border-color .2s"
+            oninput="updateModalCalc()" onfocus="this.style.borderColor='rgba(201,168,76,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
         </div>
-        <!-- Presets -->
-        <div class="flex gap-2 mt-3">
+        <div style="display:flex;gap:6px;margin-top:10px">
           <button class="preset-btn" onclick="setModalAmt(100)">$100</button>
           <button class="preset-btn" onclick="setModalAmt(500)">$500</button>
           <button class="preset-btn" onclick="setModalAmt(1000)">$1K</button>
@@ -256,601 +308,588 @@ tailwind.config = {
 
       <!-- Slider -->
       <div>
-        <div class="flex justify-between mb-1">
-          <label class="font-mono text-[9px] tracking-[.1em] text-steel uppercase">% of Cash Balance</label>
-          <span class="font-mono text-[10px] text-gold" id="mi-pct">—</span>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase">% of Balance</label>
+          <span id="mi-pct" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c">0%</span>
         </div>
-        <input type="range" id="mi-slider" min="0" max="100" value="0" step="1" class="w-full h-1.5 rounded-full" oninput="sliderToAmt(this.value)">
+        <input type="range" id="mi-slider" min="0" max="100" value="0" step="1" oninput="sliderToAmt(this.value)">
       </div>
 
       <!-- Order summary -->
-      <div class="bg-void/50 border border-white/[.06] rounded-xl p-4 space-y-2">
-        <p class="font-mono text-[9px] tracking-[.12em] text-steel uppercase mb-3">Order Summary</p>
-        <div class="flex justify-between text-sm"><span class="text-steel">You invest</span><span class="font-mono text-snow" id="os-invest">$500.00</span></div>
-        <div class="flex justify-between text-sm"><span class="text-steel">You receive</span><span class="font-mono text-snow" id="os-get">0.00741 BTC</span></div>
-        <div class="flex justify-between text-sm"><span class="text-steel">Platform fee (0.1%)</span><span class="font-mono text-steel" id="os-fee">$0.50</span></div>
-        <div class="h-px bg-white/[.06]"></div>
-        <div class="flex justify-between"><span class="text-steel text-sm">Total deducted</span><span class="font-mono text-snow font-semibold" id="os-total">$500.50</span></div>
+      <div style="background:rgba(4,6,8,.6);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase;margin-bottom:12px">Order Summary</p>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">You invest</span><span id="os-invest" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">$0.00</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">You receive</span><span id="os-get" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">Platform fee (0.1%)</span><span id="os-fee" style="font-family:'JetBrains Mono',monospace;color:#5a6880">$0.00</span></div>
+        <div style="height:1px;background:rgba(255,255,255,.06);margin-bottom:8px"></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#5a6880;font-size:13px">Total deducted</span><span id="os-total" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#edf2f8">$0.00</span></div>
       </div>
 
-      <!-- Insufficient funds -->
-      <div id="mi-insuf" class="hidden p-3 bg-loss/10 border border-loss/25 rounded-xl flex items-center gap-2">
-        <i class="fas fa-triangle-exclamation text-loss text-sm"></i>
-        <p class="font-mono text-[11px] text-loss">Insufficient cash balance. <button onclick="openDepositModal()" class="underline ml-1">Deposit funds →</button></p>
+      <!-- Insufficient -->
+      <div id="mi-insuf" style="display:none;padding:12px 16px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px;display:none;align-items:center;gap:10px">
+        <i class="fas fa-triangle-exclamation" style="color:#ef4444;font-size:13px;flex-shrink:0"></i>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444">Insufficient balance. <button onclick="openDepositModal()" style="background:none;border:none;color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;text-decoration:underline">Add funds →</button></p>
       </div>
 
-      <!-- CTA -->
+      <!-- Confirm -->
       <button id="mi-confirm" onclick="confirmInvestment()"
-        class="w-full py-4 rounded-xl font-semibold text-void text-base transition-all hover:shadow-[0_8px_32px_rgba(201,168,76,.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
-        style="background:linear-gradient(135deg,#c9a84c,#a87c28)">
-        <span id="mi-confirm-label"><i class="fas fa-bolt mr-1 text-sm"></i> Confirm Investment</span>
-        <div id="mi-spinner" class="hidden w-5 h-5 border-2 border-void/30 border-t-void rounded-full spin"></div>
+        style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span id="mi-label"><i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Confirm Investment</span>
+        <div id="mi-spin" style="display:none;width:18px;height:18px;border:2px solid rgba(4,6,8,.2);border-top-color:#040608;border-radius:50%" class="spinner"></div>
       </button>
-      <p class="text-center font-mono text-[9px] text-steel tracking-[.06em]">Orders execute instantly at current price</p>
+      <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.06em">Orders execute instantly at market price</p>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     DEPOSIT MODAL
-═══════════════════════════════════════════════ -->
+<!-- ══ DEPOSIT MODAL ══ -->
 <div class="modal-overlay" id="depositModal">
   <div class="modal-box" style="max-width:400px">
-    <div class="flex items-center justify-between p-6 border-b border-white/[.07]">
-      <h3 class="font-display text-2xl text-snow font-light">Deposit <em class="italic text-gold">Funds</em></h3>
-      <button onclick="closeDepositModal()" class="w-9 h-9 bg-white/[.05] border border-white/[.09] rounded-xl text-steel hover:text-snow transition-colors flex items-center justify-center"><i class="fas fa-xmark text-sm"></i></button>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8;font-weight:300">Deposit <em style="font-style:italic;color:#c9a84c">Funds</em></h3>
+      <button onclick="closeDepositModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
-    <div class="p-6 space-y-4">
-      <p class="text-sm text-mist">Select an amount to add to your cash balance (demo):</p>
-      <div class="grid grid-cols-2 gap-3">
-        <button onclick="makeDeposit(1000)"  class="p-4 bg-surface border border-white/[.07] rounded-xl hover:border-gold/30 transition-all text-center"><p class="font-display text-2xl text-snow">$1,000</p><p class="font-mono text-[9px] text-steel mt-1">Standard</p></button>
-        <button onclick="makeDeposit(5000)"  class="p-4 bg-surface border border-white/[.07] rounded-xl hover:border-gold/30 transition-all text-center"><p class="font-display text-2xl text-snow">$5,000</p><p class="font-mono text-[9px] text-steel mt-1">Plus</p></button>
-        <button onclick="makeDeposit(10000)" class="p-4 bg-surface border border-gold/20 rounded-xl hover:border-gold/40 transition-all text-center" style="background:rgba(201,168,76,.06)"><p class="font-display text-2xl text-gold">$10,000</p><p class="font-mono text-[9px] text-gold mt-1">Premium</p></button>
-        <button onclick="makeDeposit(50000)" class="p-4 bg-surface border border-white/[.07] rounded-xl hover:border-gold/30 transition-all text-center"><p class="font-display text-2xl text-snow">$50,000</p><p class="font-mono text-[9px] text-steel mt-1">Elite</p></button>
+    <div style="padding:24px">
+      <p style="font-size:13px;color:#8c9db5;margin-bottom:16px">Select an amount to add to your account (demo platform):</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <button onclick="makeDeposit(1000)"  style="padding:16px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">$1,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Standard</p>
+        </button>
+        <button onclick="makeDeposit(5000)"  style="padding:16px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">$5,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Plus</p>
+        </button>
+        <button onclick="makeDeposit(10000)" style="padding:16px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.25);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.5)'" onmouseout="this.style.borderColor='rgba(201,168,76,.25)'">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#c9a84c">$10,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c;margin-top:4px">Premium</p>
+        </button>
+        <button onclick="makeDeposit(50000)" style="padding:16px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">$50,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Elite</p>
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     SUCCESS TOAST
-═══════════════════════════════════════════════ -->
-<div id="successToast" class="fixed bottom-8 right-8 z-[600] hidden">
-  <div class="bg-surface border border-gain/25 rounded-2xl p-4 flex items-center gap-4 shadow-[0_20px_60px_rgba(0,0,0,.6)] min-w-[300px]">
-    <div class="w-10 h-10 rounded-xl bg-gain/15 border border-gain/25 flex items-center justify-center text-gain flex-shrink-0"><i class="fas fa-check text-sm"></i></div>
-    <div>
-      <p class="font-semibold text-snow text-sm" id="toastTitle">Investment Confirmed!</p>
-      <p class="font-mono text-[11px] text-steel" id="toastSub">0.00741 BTC purchased</p>
-    </div>
+<!-- Toast -->
+<div id="toast">
+  <div id="toast-icon" style="width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"></div>
+  <div>
+    <p id="toast-title" style="font-weight:600;color:#edf2f8;font-size:13px;margin-bottom:2px">—</p>
+    <p id="toast-sub" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">—</p>
   </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
-  
-</script>
+/* ═══════════════════════════════════════════════════
+   AURUM CAPITAL — invest.html  (Full Supabase build)
 
+   SETUP: Replace the two constants below with your
+   Supabase project URL and anon key.
+   Find them: Supabase dashboard → Project Settings → API
+═══════════════════════════════════════════════════ */
+const SUPABASE_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co'; // ← REPLACE
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';                   // ← REPLACE
+const MIN_TRADE     = 10;  // minimum $10 to open any trade
 
-<script>
-/* ═══════════════════════════════════════════════
-   ASSET DATABASE
-═══════════════════════════════════════════════ */
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── State ─────────────────────────────────────────
+let authUser   = null;  // supabase auth user
+let profile    = null;  // profiles row
+let myHoldings = [];    // holdings rows
+let modalAsset = null;
+let liveFilter = 'all';
+
+// ── Asset catalogue ───────────────────────────────
 const CRYPTO = [
-  {sym:'BTC', name:'Bitcoin',   cat:'crypto', icon:'fab fa-bitcoin',     color:'#f7931a', price:67430,  chg:+2.8, up:true,  desc:'The original digital store of value'},
-  {sym:'ETH', name:'Ethereum',  cat:'crypto', icon:'fab fa-ethereum',    color:'#627eea', price:3280,   chg:+1.4, up:true,  desc:'Smart contract platform powering DeFi'},
-  {sym:'SOL', name:'Solana',    cat:'crypto', icon:'fas fa-sun',         color:'#9945ff', price:188,    chg:+3.1, up:true,  desc:'High-speed Layer-1 blockchain'},
-  {sym:'BNB', name:'BNB Chain', cat:'crypto', icon:'fas fa-coins',       color:'#f3ba2f', price:612,    chg:-0.9, up:false, desc:'Binance ecosystem token with utility burns'},
-  {sym:'XRP', name:'Ripple',    cat:'crypto', icon:'fas fa-water',       color:'#00aae4', price:0.72,   chg:-1.2, up:false, desc:'Cross-border payment settlement network'},
-  {sym:'ADA', name:'Cardano',   cat:'crypto', icon:'fas fa-circle-nodes',color:'#3cc8c8', price:0.48,   chg:+0.8, up:true,  desc:'Research-driven proof-of-stake blockchain'},
+  {sym:'BTC', name:'Bitcoin',   cat:'crypto', icon:'fab fa-bitcoin',      color:'#f7931a', price:67430,  chg:+2.8,  desc:'The original digital store of value'},
+  {sym:'ETH', name:'Ethereum',  cat:'crypto', icon:'fab fa-ethereum',     color:'#627eea', price:3280,   chg:+1.4,  desc:'Smart contract platform powering DeFi'},
+  {sym:'SOL', name:'Solana',    cat:'crypto', icon:'fas fa-sun',          color:'#9945ff', price:188,    chg:+3.1,  desc:'High-speed Layer-1 blockchain'},
+  {sym:'BNB', name:'BNB Chain', cat:'crypto', icon:'fas fa-coins',        color:'#f3ba2f', price:612,    chg:-0.9,  desc:'Binance ecosystem utility token'},
+  {sym:'XRP', name:'Ripple',    cat:'crypto', icon:'fas fa-water',        color:'#00aae4', price:0.72,   chg:-1.2,  desc:'Cross-border payment settlement'},
+  {sym:'ADA', name:'Cardano',   cat:'crypto', icon:'fas fa-circle-nodes', color:'#3cc8c8', price:0.48,   chg:+0.8,  desc:'Research-driven proof-of-stake chain'},
 ];
 const STOCKS = [
-  {sym:'TSLA',name:'Tesla Inc.',  cat:'stocks', icon:'fas fa-car',         color:'#e31937', price:248.50, chg:-0.6, up:false, desc:'EV manufacturer and energy company'},
-  {sym:'AAPL',name:'Apple Inc.', cat:'stocks', icon:'fab fa-apple',       color:'#a2aaad', price:189.30, chg:+0.4, up:true,  desc:'World\'s most valuable consumer tech brand'},
-  {sym:'NVDA',name:'NVIDIA',     cat:'stocks', icon:'fas fa-microchip',   color:'#76b900', price:875.20, chg:+2.1, up:true,  desc:'AI chip leader powering the GPU revolution'},
-  {sym:'MSFT',name:'Microsoft',  cat:'stocks', icon:'fab fa-windows',     color:'#00a4ef', price:412.70, chg:+0.8, up:true,  desc:'Cloud, AI and enterprise software giant'},
-  {sym:'AMZN',name:'Amazon',     cat:'stocks', icon:'fab fa-amazon',      color:'#ff9900', price:195.50, chg:-0.3, up:false, desc:'Global e-commerce and AWS cloud leader'},
-  {sym:'GOOGL',name:'Alphabet',  cat:'stocks', icon:'fab fa-google',      color:'#4285f4', price:178.30, chg:+0.6, up:true,  desc:'Search, YouTube, and Google Cloud'},
+  {sym:'TSLA', name:'Tesla Inc.',  cat:'stocks', icon:'fas fa-car',       color:'#e31937', price:248.50, chg:-0.6,  desc:'EV manufacturer and energy company'},
+  {sym:'AAPL', name:'Apple Inc.', cat:'stocks', icon:'fab fa-apple',     color:'#a2aaad', price:189.30, chg:+0.4,  desc:"World's most valuable tech brand"},
+  {sym:'NVDA', name:'NVIDIA',     cat:'stocks', icon:'fas fa-microchip', color:'#76b900', price:875.20, chg:+2.1,  desc:'AI chip leader powering the GPU revolution'},
+  {sym:'MSFT', name:'Microsoft',  cat:'stocks', icon:'fab fa-windows',   color:'#00a4ef', price:412.70, chg:+0.8,  desc:'Cloud, AI and enterprise software'},
+  {sym:'AMZN', name:'Amazon',     cat:'stocks', icon:'fab fa-amazon',    color:'#ff9900', price:195.50, chg:-0.3,  desc:'Global e-commerce and AWS cloud'},
+  {sym:'GOOGL', name:'Alphabet',  cat:'stocks', icon:'fab fa-google',    color:'#4285f4', price:178.30, chg:+0.6,  desc:'Search, YouTube, and Google Cloud'},
 ];
 const PROPERTY = [
-  {sym:'LOND', name:'The Shard Tower Suite',    cat:'property', icon:'fas fa-building',         color:'#c9a84c', price:8.20,  yield:9.2,  location:'Southwark, London SE1',   type:'Commercial',   minEntry:500,  valuation:'$2.4M', funded:72},
-  {sym:'DXB',  name:'Burj Khalifa Residences',  cat:'property', icon:'fas fa-city',             color:'#e8c96a', price:11.40, yield:11.4, location:'Downtown Dubai, UAE',      type:'Hospitality',  minEntry:1000, valuation:'$5.1M', funded:48},
-  {sym:'NYC',  name:'One Manhattan West',       cat:'property', icon:'fas fa-building-columns', color:'#a0c0e8', price:7.80,  yield:7.8,  location:'Hudson Yards, NY 10001',   type:'Residential',  minEntry:500,  valuation:'$8.7M', funded:91},
-  {sym:'DXB2', name:'Palm Jumeirah Villa',      cat:'property', icon:'fas fa-umbrella-beach',   color:'#f3ba2f', price:13.50, yield:13.5, location:'Palm Jumeirah, Dubai',     type:'Luxury Villa', minEntry:2000, valuation:'$12.1M',funded:35},
-  {sym:'SGP',  name:'Marina Bay Tower',         cat:'property', icon:'fas fa-water',            color:'#3cc8c8', price:8.90,  yield:8.9,  location:'Marina Bay, Singapore',    type:'Commercial',   minEntry:500,  valuation:'$3.8M', funded:60},
-  {sym:'PAR',  name:'Champs-Élysées Office',    cat:'property', icon:'fas fa-eiffel-tower',     color:'#627eea', price:10.20, yield:10.2, location:'8th Arrondissement, Paris',type:'Office',       minEntry:1000, valuation:'$6.2M', funded:55},
+  {sym:'LOND', name:'The Shard Tower Suite',   cat:'property', icon:'fas fa-building',         color:'#c9a84c', price:500,  yield_:9.2,  location:'Southwark, London SE1',    type:'Commercial',   minEntry:500,  valuation:'$2.4M', funded:72},
+  {sym:'DXB',  name:'Burj Khalifa Residences', cat:'property', icon:'fas fa-city',             color:'#e8c96a', price:1000, yield_:11.4, location:'Downtown Dubai, UAE',      type:'Hospitality',  minEntry:1000, valuation:'$5.1M', funded:48},
+  {sym:'NYC',  name:'One Manhattan West',      cat:'property', icon:'fas fa-building-columns', color:'#a0c0e8', price:500,  yield_:7.8,  location:'Hudson Yards, NY 10001',   type:'Residential',  minEntry:500,  valuation:'$8.7M', funded:91},
+  {sym:'DXB2', name:'Palm Jumeirah Villa',     cat:'property', icon:'fas fa-umbrella-beach',   color:'#f3ba2f', price:2000, yield_:13.5, location:'Palm Jumeirah, Dubai',     type:'Luxury Villa', minEntry:2000, valuation:'$12.1M',funded:35},
+  {sym:'SGP',  name:'Marina Bay Tower',        cat:'property', icon:'fas fa-water',            color:'#3cc8c8', price:500,  yield_:8.9,  location:'Marina Bay, Singapore',    type:'Commercial',   minEntry:500,  valuation:'$3.8M', funded:60},
+  {sym:'PAR',  name:'Champs-Élysées Office',   cat:'property', icon:'fas fa-eiffel-tower',     color:'#627eea', price:1000, yield_:10.2, location:'8th Arrondissement, Paris',type:'Office',       minEntry:1000, valuation:'$6.2M', funded:55},
 ];
+const ALL_ASSETS = [...CRYPTO, ...STOCKS, ...PROPERTY];
 
-let currentFilter = 'all';
-let modalAsset = null;
-let currentUser = null;
+// ── Boot ──────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = 'signup.html'; return; }
+  authUser = session.user;
 
-function fmtP(p){ if(p>=1000)return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); if(p>=1)return p.toFixed(2); return p.toFixed(4); }
+  await loadProfile();
+  await loadPortfolioStats();
 
-/* ── Init ── */
-window.addEventListener('DOMContentLoaded',()=>{
-  currentUser = AurumDB.auth.currentUser();
-  if(!currentUser){ window.location.href='signup.html'; return; }
-  refreshUserInfo();
+  // Reveal app
+  document.getElementById('authGate').style.display = 'none';
+  showApp();
+
   renderCards();
-  // live price updates
+  document.getElementById('searchInput').addEventListener('input', renderCards);
+  document.getElementById('signOutBtn').addEventListener('click', doSignOut);
+  document.getElementById('drawerSignOut').addEventListener('click', doSignOut);
+  document.getElementById('mobileMenuBtn').addEventListener('click', openDrawer);
+  document.getElementById('mobileCloseBtn').addEventListener('click', closeDrawer);
+  document.getElementById('mobileBackdrop').addEventListener('click', closeDrawer);
+
+  // Realtime: admin cash update reflects instantly
+  sb.channel('invest-profile')
+    .on('postgres_changes', {
+      event:'UPDATE', schema:'public', table:'profiles',
+      filter:`id=eq.${authUser.id}`
+    }, ({ new: row }) => { profile = { ...profile, ...row }; refreshUI(); })
+    .subscribe();
+
   setInterval(tickPrices, 2200);
 });
 
-function refreshUserInfo(){
-  if(!currentUser) return;
-  const initials = currentUser.avatarInitials || (currentUser.firstName[0]+currentUser.lastName[0]).toUpperCase();
-  document.getElementById('sbAvatar').textContent = initials;
-  document.getElementById('mobAvatar').textContent = initials;
-  document.getElementById('sbName').textContent = currentUser.firstName+' '+currentUser.lastName;
-  document.getElementById('sbCash').textContent = '$'+fmtP(currentUser.cash)+' available';
-  document.getElementById('cashBal').textContent = '$'+fmtP(currentUser.cash);
-  document.getElementById('headerCash').textContent = '$'+fmtP(currentUser.cash);
-
-  // Portfolio value
-  const livePrices = {};
-  [...CRYPTO,...STOCKS].forEach(a=>livePrices[a.sym]=a.price);
-  const pv = AurumDB.portfolio.totalValue(currentUser.id, livePrices);
-  document.getElementById('portVal').textContent = '$'+pv.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
-
-  const positions = AurumDB.portfolio.get(currentUser.id);
-  document.getElementById('posCount').textContent = positions.length;
-  const txs = AurumDB.portfolio.getTransactions(currentUser.id);
-  document.getElementById('txCount').textContent = txs.length;
-}
-
-/* ── Filter ── */
-function setFilter(f, btn){
-  currentFilter = f;
-  document.querySelectorAll('.tab-chip').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderCards();
-  // Scroll to section
-  if(f!=='all'){
-    const el = document.getElementById('sec-'+f);
-    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+function showApp() {
+  const app = document.getElementById('appShell');
+  app.style.display = 'block';
+  // Show sidebar on desktop
+  if (window.innerWidth >= 1024) {
+    document.getElementById('sidebar').style.display = 'flex';
+    document.getElementById('mainContent').style.marginLeft = '240px';
   }
 }
-function filterByTab(f){
-  const btn = document.getElementById('tab-'+f);
-  if(btn) setFilter(f, btn);
-  return false;
+
+async function doSignOut() {
+  await sb.auth.signOut();
+  window.location.href = 'signup.html';
 }
 
-/* ── Render Cards ── */
-function renderCards(){
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const show = s => currentFilter==='all' || currentFilter===s;
-  const matches = a => !q || a.sym.toLowerCase().includes(q) || a.name.toLowerCase().includes(q) || (a.location||'').toLowerCase().includes(q);
-
-  document.getElementById('sec-crypto').style.display   = show('crypto')  ? '' : 'none';
-  document.getElementById('sec-stocks').style.display   = show('stocks')  ? '' : 'none';
-  document.getElementById('sec-property').style.display = show('property')? '' : 'none';
-
-  document.getElementById('cryptoGrid').innerHTML   = CRYPTO.filter(matches).map(cryptoCard).join('');
-  document.getElementById('stocksGrid').innerHTML   = STOCKS.filter(matches).map(stockCard).join('');
-  document.getElementById('propertyGrid').innerHTML = PROPERTY.filter(matches).map(propertyCard).join('');
+// ── Data loaders ──────────────────────────────────
+async function loadProfile() {
+  const { data, error } = await sb
+    .from('profiles').select('*').eq('id', authUser.id).single();
+  if (error) { showToast('Profile error', error.message, 'error'); return; }
+  profile = data;
+  refreshUI();
 }
 
-/* ── Crypto Card ── */
-function cryptoCard(a){
-  const pts = genSpark(a.up);
-  const sp  = sparkPath(pts);
-  const area= sp+` L140,44 L0,44 Z`;
-  return `
-  <div class="invest-card">
-    <div class="p-5">
-      <div class="flex items-start justify-between mb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-xl flex-shrink-0" style="background:${a.color}18;color:${a.color}">
-            <i class="${a.icon}"></i>
-          </div>
-          <div>
-            <p class="font-semibold text-snow text-base">${a.sym}</p>
-            <p class="text-steel text-xs">${a.name}</p>
-          </div>
+async function loadPortfolioStats() {
+  const { data: h } = await sb
+    .from('holdings').select('*').eq('user_id', authUser.id);
+  myHoldings = h || [];
+
+  const { count: txc } = await sb
+    .from('transactions').select('id', { count:'exact', head:true })
+    .eq('user_id', authUser.id);
+
+  const liveMap = {};
+  ALL_ASSETS.forEach(a => liveMap[a.sym] = a.price);
+  const portVal = myHoldings.reduce((s, h) => {
+    return s + Number(h.quantity) * (liveMap[h.symbol] || Number(h.current_price) || Number(h.avg_buy_price));
+  }, 0);
+
+  setTxt('portVal',  '$' + fmtUSD(portVal));
+  setTxt('posCount', myHoldings.length);
+  setTxt('txCount',  txc || 0);
+}
+
+function refreshUI() {
+  if (!profile) return;
+  const cash = Number(profile.cash || 0);
+  const name = ((profile.first_name||'') + ' ' + (profile.last_name||'')).trim() || 'User';
+  const ini  = profile.avatar_initials || '?';
+
+  ['cashBal','headerCash'].forEach(id => setTxt(id, '$' + fmtUSD(cash)));
+  setTxt('sbCash',     '$' + fmtUSD(cash) + ' available');
+  setTxt('drawerCash', '$' + fmtUSD(cash) + ' available');
+  setTxt('sbName',     name);
+  setTxt('drawerName', name);
+  ['sbAvatar','mobAvatarWrap','drawerAvatar'].forEach(id => setTxt(id, ini));
+}
+
+// ── Render cards ──────────────────────────────────
+function renderCards() {
+  const q = (document.getElementById('searchInput').value || '').toLowerCase();
+  const show = s => liveFilter === 'all' || liveFilter === s;
+  const ok   = a => !q || a.sym.toLowerCase().includes(q) || a.name.toLowerCase().includes(q) || (a.location||'').toLowerCase().includes(q);
+
+  toggleSection('sec-crypto',   show('crypto'));
+  toggleSection('sec-stocks',   show('stocks'));
+  toggleSection('sec-property', show('property'));
+
+  document.getElementById('cryptoGrid').innerHTML   = renderGrid(CRYPTO.filter(ok),   cryptoCard,   'No crypto matches your search');
+  document.getElementById('stocksGrid').innerHTML   = renderGrid(STOCKS.filter(ok),   stockCard,    'No stocks match your search');
+  document.getElementById('propertyGrid').innerHTML = renderGrid(PROPERTY.filter(ok), propertyCard, 'No properties match your search');
+}
+
+function renderGrid(arr, fn, empty) {
+  return arr.length ? arr.map(fn).join('') :
+    `<div style="grid-column:1/-1;padding:32px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">${empty}</div>`;
+}
+
+function toggleSection(id, show) {
+  document.getElementById(id).style.display = show ? '' : 'none';
+}
+
+function setFilter(f, btnOrStr) {
+  liveFilter = f;
+  document.querySelectorAll('.tab-chip').forEach(b => b.classList.remove('on'));
+  // handle both click event and programmatic call
+  const btn = typeof btnOrStr === 'string' ? document.querySelector(`[data-filter="${f}"]`) : btnOrStr;
+  if (btn) btn.classList.add('on');
+  renderCards();
+  if (f !== 'all') {
+    const el = document.getElementById('sec-' + f);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+}
+
+// ── Card templates ────────────────────────────────
+function cryptoCard(a) {
+  const up = a.chg >= 0;
+  const sp = sparkPath(genSpark(up));
+  return `<div class="invest-card">
+    <div style="padding:20px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:44px;height:44px;border-radius:14px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><i class="${a.icon}"></i></div>
+          <div><p style="font-weight:600;color:#edf2f8;font-size:15px">${a.sym}</p><p style="color:#5a6880;font-size:12px">${a.name}</p></div>
         </div>
-        <span class="font-mono text-xs px-2 py-1 rounded-lg ${a.up?'text-gain bg-gain/10':'text-loss bg-loss/10'}" id="cc-chg-${a.sym}">
-          ${a.up?'+':''}${a.chg}%
-        </span>
+        <span id="cc-chg-${a.sym}" style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 8px;border-radius:8px;background:${up?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};color:${up?'#22c55e':'#ef4444'}">${up?'+':''}${a.chg}%</span>
       </div>
-      <p class="text-xs text-steel mb-3 leading-relaxed">${a.desc}</p>
-      <div class="flex items-end justify-between mb-3">
-        <p class="font-mono text-xl text-snow font-semibold" id="cc-pr-${a.sym}">$${fmtP(a.price)}</p>
+      <p style="font-size:12px;color:#5a6880;margin-bottom:12px;line-height:1.5">${a.desc}</p>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px">
+        <p id="cc-pr-${a.sym}" style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#edf2f8;font-weight:600">$${fmtPrice(a.price)}</p>
         <svg viewBox="0 0 140 44" width="80" height="28" style="overflow:visible">
-          <path stroke="${a.up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="${a.up?'rgba(34,197,94,.06)':'rgba(239,68,68,.06)'}" d="${sp} L140,44 L0,44 Z"/>
-          <path stroke="${a.up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="none" d="${sp}"/>
+          <path stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="${up?'rgba(34,197,94,.06)':'rgba(239,68,68,.06)'}" d="${sp} L140,44 L0,44 Z"/>
+          <path stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="none" d="${sp}"/>
         </svg>
       </div>
-      <button class="invest-btn w-full justify-center" onclick="openInvestModal('${a.sym}')">
-        <i class="fas fa-plus text-xs"></i> Invest in ${a.sym}
+      <button class="invest-btn" onclick="openInvestModal('${a.sym}')">
+        <i class="fas fa-plus" style="font-size:11px"></i> Invest in ${a.sym}
       </button>
     </div>
   </div>`;
 }
 
-/* ── Stock Card ── */
-function stockCard(a){
-  const pts = genSpark(a.up);
-  const sp  = sparkPath(pts);
-  return `
-  <div class="invest-card">
-    <div class="p-5">
-      <div class="flex items-start justify-between mb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-xl flex-shrink-0" style="background:${a.color}18;color:${a.color}">
-            <i class="${a.icon}"></i>
-          </div>
-          <div>
-            <p class="font-semibold text-snow text-base">${a.sym}</p>
-            <p class="text-steel text-xs">${a.name}</p>
-          </div>
+function stockCard(a) {
+  const up = a.chg >= 0;
+  const sp = sparkPath(genSpark(up));
+  return `<div class="invest-card">
+    <div style="padding:20px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:44px;height:44px;border-radius:14px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><i class="${a.icon}"></i></div>
+          <div><p style="font-weight:600;color:#edf2f8;font-size:15px">${a.sym}</p><p style="color:#5a6880;font-size:12px">${a.name}</p></div>
         </div>
-        <span class="font-mono text-xs px-2 py-1 rounded-lg ${a.up?'text-gain bg-gain/10':'text-loss bg-loss/10'}" id="sc-chg-${a.sym}">
-          ${a.up?'+':''}${a.chg}%
-        </span>
+        <span id="sc-chg-${a.sym}" style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 8px;border-radius:8px;background:${up?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};color:${up?'#22c55e':'#ef4444'}">${up?'+':''}${a.chg}%</span>
       </div>
-      <p class="text-xs text-steel mb-3 leading-relaxed">${a.desc}</p>
-      <div class="flex items-end justify-between mb-3">
-        <p class="font-mono text-xl text-snow font-semibold" id="sc-pr-${a.sym}">$${fmtP(a.price)}</p>
+      <p style="font-size:12px;color:#5a6880;margin-bottom:12px;line-height:1.5">${a.desc}</p>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px">
+        <p id="sc-pr-${a.sym}" style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#edf2f8;font-weight:600">$${fmtPrice(a.price)}</p>
         <svg viewBox="0 0 140 44" width="80" height="28" style="overflow:visible">
-          <path stroke="${a.up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="${a.up?'rgba(34,197,94,.06)':'rgba(239,68,68,.06)'}" d="${sp} L140,44 L0,44 Z"/>
-          <path stroke="${a.up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="none" d="${sp}"/>
+          <path stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="${up?'rgba(34,197,94,.06)':'rgba(239,68,68,.06)'}" d="${sp} L140,44 L0,44 Z"/>
+          <path stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="none" d="${sp}"/>
         </svg>
       </div>
-      <button class="invest-btn w-full justify-center" onclick="openInvestModal('${a.sym}')">
-        <i class="fas fa-plus text-xs"></i> Buy ${a.sym} Shares
+      <button class="invest-btn" onclick="openInvestModal('${a.sym}')">
+        <i class="fas fa-plus" style="font-size:11px"></i> Buy ${a.sym}
       </button>
     </div>
   </div>`;
 }
 
-/* ── Property Card ── */
-function propertyCard(a){
-  return `
-  <div class="invest-card">
-    <!-- Banner -->
-    <div class="h-36 relative overflow-hidden flex items-center justify-center" style="background:linear-gradient(135deg,#0c1830,#172040,#0a1220)">
-      <div style="position:absolute;inset:0;opacity:.15;font-size:5rem;display:flex;align-items:center;justify-content:center">
-        <i class="${a.icon}" style="color:${a.color}"></i>
-      </div>
-      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(17,24,32,1) 0%,rgba(17,24,32,.3) 60%,transparent 100%)"></div>
-      <!-- Funded bar -->
-      <div class="absolute bottom-3 left-4 right-4">
-        <div class="flex justify-between mb-1">
-          <span class="font-mono text-[9px] text-steel">Funded</span>
-          <span class="font-mono text-[9px] text-gold">${a.funded}%</span>
+function propertyCard(a) {
+  return `<div class="invest-card">
+    <div style="height:140px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0c1830,#172040)">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:80px;opacity:.12"><i class="${a.icon}" style="color:${a.color}"></i></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,#111820 0%,rgba(17,24,32,.2) 60%,transparent 100%)"></div>
+      <div style="position:absolute;bottom:12px;left:16px;right:16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Funded</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c">${a.funded}%</span>
         </div>
-        <div class="h-1 bg-white/[.08] rounded-full overflow-hidden">
-          <div class="h-full rounded-full" style="width:${a.funded}%;background:linear-gradient(90deg,#c9a84c,#e8c96a)"></div>
+        <div style="height:3px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${a.funded}%;background:linear-gradient(90deg,#c9a84c,#e8c96a);border-radius:4px"></div>
         </div>
       </div>
     </div>
-
-    <div class="p-5">
-      <div class="flex items-start justify-between mb-2">
+    <div style="padding:18px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
         <div>
-          <p class="font-mono text-[9px] tracking-[.1em] text-steel uppercase mb-1">${a.type}</p>
-          <p class="font-display text-lg text-snow font-light">${a.name}</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">${a.type}</p>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:17px;color:#edf2f8;font-weight:300">${a.name}</p>
         </div>
-        <span class="yield-badge"><i class="fas fa-percent text-[8px]"></i>${a.yield}% APY</span>
+        <span class="yield-badge"><i class="fas fa-percent" style="font-size:8px"></i>${a.yield_}% APY</span>
       </div>
-
-      <p class="flex items-center gap-1.5 text-xs text-steel mb-4">
-        <i class="fas fa-location-dot text-gold text-[10px]"></i>${a.location}
+      <p style="font-size:12px;color:#5a6880;margin-bottom:14px;display:flex;align-items:center;gap:6px">
+        <i class="fas fa-location-dot" style="color:#c9a84c;font-size:10px"></i>${a.location}
       </p>
-
-      <div class="grid grid-cols-3 gap-2 mb-4">
-        <div class="text-center p-2.5 bg-white/[.03] border border-white/[.06] rounded-xl">
-          <p class="font-display text-base text-gold">${a.yield}%</p>
-          <p class="font-mono text-[9px] text-steel mt-0.5">Yield</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+        <div style="text-align:center;padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#c9a84c">${a.yield_}%</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">Yield</p>
         </div>
-        <div class="text-center p-2.5 bg-white/[.03] border border-white/[.06] rounded-xl">
-          <p class="font-display text-base text-snow">${a.valuation}</p>
-          <p class="font-mono text-[9px] text-steel mt-0.5">Value</p>
+        <div style="text-align:center;padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#edf2f8">${a.valuation}</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">Value</p>
         </div>
-        <div class="text-center p-2.5 bg-white/[.03] border border-white/[.06] rounded-xl">
-          <p class="font-display text-base text-snow">$${a.minEntry.toLocaleString()}</p>
-          <p class="font-mono text-[9px] text-steel mt-0.5">Min</p>
+        <div style="text-align:center;padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#edf2f8">$${a.minEntry.toLocaleString()}</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">Min</p>
         </div>
       </div>
-
-      <button class="invest-btn w-full justify-center" onclick="openInvestModal('${a.sym}')">
-        <i class="fas fa-building mr-1 text-xs"></i> Invest in Property
+      <button class="invest-btn" onclick="openInvestModal('${a.sym}')">
+        <i class="fas fa-building" style="font-size:11px;margin-right:4px"></i>Invest in Property
       </button>
     </div>
   </div>`;
 }
 
-/* ── Open Invest Modal ── */
-function openInvestModal(sym){
-  const all = [...CRYPTO, ...STOCKS, ...PROPERTY];
-  modalAsset = all.find(a=>a.sym===sym);
-  if(!modalAsset) return;
-  currentUser = AurumDB.auth.currentUser();
+// ── Invest modal ──────────────────────────────────
+function openInvestModal(sym) {
+  modalAsset = ALL_ASSETS.find(a => a.sym === sym);
+  if (!modalAsset || !profile) return;
   const a = modalAsset;
-  const isProp = a.cat==='property';
+  const isProp = a.cat === 'property';
 
-  document.getElementById('mi-icon').innerHTML=`<i class="${a.icon}"></i>`;
-  document.getElementById('mi-icon').style.background=`${a.color}18`;
-  document.getElementById('mi-icon').style.color=a.color;
-  document.getElementById('mi-sym').textContent=a.sym;
-  document.getElementById('mi-name').textContent=a.name;
-  document.getElementById('mi-price').textContent=isProp?a.yield+'% APY':'$'+fmtP(a.price);
-  const chgEl=document.getElementById('mi-chg');
-  if(isProp){chgEl.textContent='Annual rental yield';chgEl.className='font-mono text-[10px] text-gold';}
-  else{chgEl.textContent=(a.up?'+':'')+a.chg+'%';chgEl.className='font-mono text-[10px] '+(a.up?'text-gain':'text-loss');}
-  document.getElementById('mi-bal').textContent='$'+fmtP(currentUser.cash);
-  document.getElementById('mi-type-info').classList.toggle('hidden',!isProp);
-  if(isProp) document.getElementById('mi-type-desc').textContent=`Earn ${a.yield}% annual yield from rental income. Min entry: $${a.minEntry.toLocaleString()}.`;
+  // Icon
+  const iconEl = document.getElementById('mi-icon');
+  iconEl.innerHTML = `<i class="${a.icon}"></i>`;
+  iconEl.style.cssText = `width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;background:${a.color}18;color:${a.color}`;
 
-  // Set min amount for property
-  const minAmt = isProp ? a.minEntry : 10;
-  document.getElementById('mi-amount').value = Math.max(minAmt, 500).toFixed(0);
-  document.getElementById('mi-amount').min = minAmt;
+  setTxt('mi-sym',  a.sym);
+  setTxt('mi-name', a.name);
+
+  const chgEl = document.getElementById('mi-chg');
+  if (isProp) {
+    setTxt('mi-price', a.yield_ + '% APY');
+    chgEl.textContent = 'Annual rental yield';
+    chgEl.style.color = '#c9a84c';
+  } else {
+    setTxt('mi-price', '$' + fmtPrice(a.price));
+    chgEl.textContent = (a.chg >= 0 ? '+' : '') + a.chg + '%';
+    chgEl.style.color = a.chg >= 0 ? '#22c55e' : '#ef4444';
+  }
+
+  setTxt('mi-bal', '$' + fmtUSD(Number(profile.cash)));
+  document.getElementById('mi-type-info').style.display = isProp ? 'block' : 'none';
+  if (isProp) setTxt('mi-type-desc', `Earn ${a.yield_}% annual yield. Min entry: $${a.minEntry.toLocaleString()}.`);
+
+  const minAmt = isProp ? a.minEntry : MIN_TRADE;
+  document.getElementById('mi-amount').min   = minAmt;
+  document.getElementById('mi-amount').value = Math.max(minAmt, 500);
 
   updateModalCalc();
-  document.getElementById('investModal').style.display='flex';
-}
-function closeInvestModal(){ document.getElementById('investModal').style.display='none'; }
-
-/* ── Modal Calc ── */
-function updateModalCalc(){
-  if(!modalAsset||!currentUser) return;
-  const amt = parseFloat(document.getElementById('mi-amount').value)||0;
-  const fee = amt*0.001;
-  const isProp = modalAsset.cat==='property';
-  const qty = isProp ? amt : amt/modalAsset.price;
-  const qtyStr = isProp ? `${(amt/100000*modalAsset.yield).toFixed(2)}% of property` : (qty<1?qty.toFixed(6):qty.toFixed(4))+' '+modalAsset.sym;
-
-  document.getElementById('os-invest').textContent='$'+amt.toFixed(2);
-  document.getElementById('os-get').textContent=qtyStr;
-  document.getElementById('os-fee').textContent='$'+fee.toFixed(2);
-  document.getElementById('os-total').textContent='$'+(amt+fee).toFixed(2);
-
-  const pct = currentUser.cash>0 ? Math.min((amt/currentUser.cash)*100,100) : 0;
-  document.getElementById('mi-pct').textContent=pct.toFixed(1)+'%';
-  document.getElementById('mi-slider').value=pct.toFixed(1);
-
-  const insufficient = amt+fee > currentUser.cash;
-  document.getElementById('mi-insuf').classList.toggle('hidden',!insufficient);
-  document.getElementById('mi-confirm').disabled=insufficient;
-  document.getElementById('mi-confirm').style.opacity=insufficient?.5:1;
+  document.getElementById('investModal').classList.add('open');
 }
 
-function setModalAmt(v){ document.getElementById('mi-amount').value=v; updateModalCalc(); }
-function sliderToAmt(pct){ if(!currentUser) return; document.getElementById('mi-amount').value=Math.floor(currentUser.cash*(pct/100)); updateModalCalc(); }
+function closeInvestModal() {
+  document.getElementById('investModal').classList.remove('open');
+  modalAsset = null;
+}
 
-/* ── Confirm Investment ── */
-function confirmInvestment(){
-  if(!modalAsset||!currentUser) return;
-  const amt = parseFloat(document.getElementById('mi-amount').value)||0;
-  const a   = modalAsset;
-  const qty = a.cat==='property' ? amt : amt/a.price;
+function updateModalCalc() {
+  if (!modalAsset || !profile) return;
+  const amt  = parseFloat(document.getElementById('mi-amount').value) || 0;
+  const fee  = +(amt * 0.001).toFixed(2);
+  const isProp = modalAsset.cat === 'property';
+  const qty  = amt / modalAsset.price;
+  const qstr = isProp
+    ? (amt / 100000 * modalAsset.yield_).toFixed(2) + '% of property'
+    : (qty < 1 ? qty.toFixed(6) : qty.toFixed(4)) + ' ' + modalAsset.sym;
 
-  document.getElementById('mi-confirm-label').classList.add('hidden');
-  document.getElementById('mi-spinner').classList.remove('hidden');
+  setTxt('os-invest', '$' + amt.toFixed(2));
+  setTxt('os-get',    qstr);
+  setTxt('os-fee',    '$' + fee.toFixed(2));
+  setTxt('os-total',  '$' + (amt + fee).toFixed(2));
 
-  setTimeout(()=>{
-    const result = AurumDB.portfolio.invest(currentUser.id, a.sym, a.name, qty, a.price, a.color, a.icon);
-    document.getElementById('mi-confirm-label').classList.remove('hidden');
-    document.getElementById('mi-spinner').classList.add('hidden');
+  const cash = Number(profile.cash);
+  const pct  = cash > 0 ? Math.min((amt / cash) * 100, 100) : 0;
+  setTxt('mi-pct', pct.toFixed(1) + '%');
+  document.getElementById('mi-slider').value = pct.toFixed(1);
+  setTxt('mi-bal', '$' + fmtUSD(cash));
 
-    if(!result.ok){ alert(result.error); return; }
+  const insuf = amt + fee > cash || amt < MIN_TRADE;
+  document.getElementById('mi-insuf').style.display  = insuf ? 'flex' : 'none';
+  document.getElementById('mi-confirm').disabled      = insuf;
+  document.getElementById('mi-confirm').style.opacity = insuf ? '.5' : '1';
+}
 
-    // Refresh user
-    currentUser = AurumDB.auth.currentUser();
-    refreshUserInfo();
+function setModalAmt(v) { document.getElementById('mi-amount').value = v; updateModalCalc(); }
+function sliderToAmt(p) {
+  if (!profile) return;
+  document.getElementById('mi-amount').value = Math.floor(Number(profile.cash) * (p / 100));
+  updateModalCalc();
+}
+
+// ── Confirm investment → Supabase ─────────────────
+async function confirmInvestment() {
+  if (!modalAsset || !profile) return;
+  const a     = modalAsset;
+  const amt   = parseFloat(document.getElementById('mi-amount').value) || 0;
+  const fee   = +(amt * 0.001).toFixed(2);
+  const total = +(amt + fee).toFixed(2);
+  const cash  = Number(profile.cash);
+
+  if (total > cash)     { showToast('Insufficient balance', 'Deposit funds to continue', 'error'); return; }
+  if (amt < MIN_TRADE)  { showToast(`Minimum trade is $${MIN_TRADE}`, '', 'error'); return; }
+
+  // Lock UI
+  setTxt('mi-label', ''); // clear text, spinner takes over
+  document.getElementById('mi-label').style.display = 'none';
+  document.getElementById('mi-spin').style.display  = 'flex';
+  document.getElementById('mi-confirm').disabled    = true;
+
+  const qty = amt / a.price;
+
+  try {
+    // 1. Log transaction — trigger deducts cash automatically
+    const { error: txErr } = await sb.from('transactions').insert({
+      user_id:     authUser.id,
+      type:        'buy',
+      symbol:      a.sym,
+      name:        a.name,
+      icon:        a.icon,
+      color:       a.color,
+      quantity:    qty,
+      price_at_tx: a.price,
+      usd_amount:  -total,    // negative = debit
+      note:        `Buy ${a.sym} @ $${fmtPrice(a.price)}`
+    });
+    if (txErr) throw txErr;
+
+    // 2. Upsert holding — merge qty + recalculate avg price
+    const existing = myHoldings.find(h => h.symbol === a.sym);
+    if (existing) {
+      const newQty = Number(existing.quantity) + qty;
+      const newAvg = (Number(existing.avg_buy_price) * Number(existing.quantity) + a.price * qty) / newQty;
+      const { error: hErr } = await sb.from('holdings')
+        .update({ quantity: newQty, avg_buy_price: +newAvg.toFixed(2), current_price: a.price, updated_at: new Date().toISOString() })
+        .eq('id', existing.id);
+      if (hErr) throw hErr;
+    } else {
+      const { error: hErr } = await sb.from('holdings').insert({
+        user_id: authUser.id, symbol: a.sym, name: a.name,
+        icon: a.icon, color: a.color,
+        quantity: qty, avg_buy_price: a.price, current_price: a.price
+      });
+      if (hErr) throw hErr;
+    }
+
+    // 3. Refresh UI
+    await loadProfile();
+    await loadPortfolioStats();
     closeInvestModal();
 
-    // Toast
-    const qtyStr = qty<1?qty.toFixed(6):qty.toFixed(4);
-    showToast(`${a.sym} Investment Confirmed!`, `${qtyStr} ${a.sym} added to your portfolio`);
-  },900);
+    const qstr = qty < 1 ? qty.toFixed(6) : qty.toFixed(4);
+    showToast(`${a.sym} Confirmed!`, `${qstr} ${a.sym} added to your portfolio`, 'success');
+
+  } catch (err) {
+    showToast('Transaction failed', err.message || 'Please try again', 'error');
+  } finally {
+    document.getElementById('mi-label').style.display = 'flex';
+    document.getElementById('mi-label').innerHTML = '<i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Confirm Investment';
+    document.getElementById('mi-spin').style.display  = 'none';
+    document.getElementById('mi-confirm').disabled    = false;
+  }
 }
 
-/* ── Deposit Modal ── */
-function openDepositModal(){
-  closeInvestModal();
-  document.getElementById('depositModal').style.display='flex';
-}
-function closeDepositModal(){ document.getElementById('depositModal').style.display='none'; }
-function makeDeposit(amt){
-  if(!currentUser) return;
-  AurumDB.portfolio.deposit(currentUser.id, amt);
-  currentUser = AurumDB.auth.currentUser();
-  refreshUserInfo();
-  closeDepositModal();
-  showToast('Deposit Successful', '$'+amt.toLocaleString()+' added to your balance');
+// ── Deposit modal ─────────────────────────────────
+function openDepositModal() { closeInvestModal(); document.getElementById('depositModal').classList.add('open'); }
+function closeDepositModal() { document.getElementById('depositModal').classList.remove('open'); }
+
+async function makeDeposit(amt) {
+  if (!profile) return;
+  try {
+    const { error } = await sb.from('transactions').insert({
+      user_id: authUser.id, type:'deposit', symbol:'USD',
+      name:'Cash Deposit', icon:'fas fa-dollar-sign', color:'#22c55e',
+      usd_amount: amt, note:'Manual deposit via Invest page'
+    });
+    if (error) throw error;
+    await loadProfile();
+    closeDepositModal();
+    showToast('Deposit Successful', '$' + amt.toLocaleString() + ' added to your balance', 'success');
+  } catch (err) {
+    showToast('Deposit failed', err.message, 'error');
+  }
 }
 
-/* ── Toast ── */
-function showToast(title, sub){
-  const t=document.getElementById('successToast');
-  document.getElementById('toastTitle').textContent=title;
-  document.getElementById('toastSub').textContent=sub;
-  t.style.display='block';
-  setTimeout(()=>t.style.display='none',4000);
+// ── Mobile drawer ─────────────────────────────────
+function openDrawer() {
+  document.getElementById('mobileDrawer').style.display   = 'flex';
+  document.getElementById('mobileBackdrop').style.display = 'block';
+}
+function closeDrawer() {
+  document.getElementById('mobileDrawer').style.display   = 'none';
+  document.getElementById('mobileBackdrop').style.display = 'none';
 }
 
-/* ── Sparkline helpers ── */
-function genSpark(up, n=11){
-  const pts=[]; let v=50;
-  for(let i=0;i<n;i++){v+=(Math.random()-.5+(up?.3:-.3))*10;v=Math.max(5,Math.min(95,v));pts.push(v);}
-  return pts;
-}
-function sparkPath(pts,W=140,H=44){
-  const mn=Math.min(...pts),mx=Math.max(...pts),r=mx-mn||1;
-  return pts.map((v,i)=>{const x=(i/(pts.length-1))*W;const y=H-((v-mn)/r)*(H-6)-3;return(i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);}).join(' ');
-}
-
-/* ── Live prices ── */
-function tickPrices(){
-  [...CRYPTO,...STOCKS].forEach(a=>{
-    a.price*=(1+(Math.random()-.5)*.0009);
-    const cp=document.getElementById('cc-pr-'+a.sym)||document.getElementById('sc-pr-'+a.sym);
-    if(cp) cp.textContent='$'+fmtP(a.price);
-    if(modalAsset&&modalAsset.sym===a.sym){
-      document.getElementById('mi-price').textContent='$'+fmtP(a.price);
+// ── Live price tick ───────────────────────────────
+function tickPrices() {
+  [...CRYPTO, ...STOCKS].forEach(a => {
+    a.price *= 1 + (Math.random() - .5) * 0.0009;
+    const el = document.getElementById('cc-pr-' + a.sym) || document.getElementById('sc-pr-' + a.sym);
+    if (el) el.textContent = '$' + fmtPrice(a.price);
+    if (modalAsset?.sym === a.sym) {
+      setTxt('mi-price', '$' + fmtPrice(a.price));
       updateModalCalc();
     }
   });
 }
+
+// ── Sparkline helpers ─────────────────────────────
+function genSpark(up, n=11) {
+  let v=50, pts=[];
+  for(let i=0;i<n;i++){v+=(Math.random()-.5+(up?.3:-.3))*10;v=Math.max(5,Math.min(95,v));pts.push(v);}
+  return pts;
+}
+function sparkPath(pts, W=140, H=44) {
+  const mn=Math.min(...pts),mx=Math.max(...pts),r=mx-mn||1;
+  return pts.map((v,i)=>{
+    const x=(i/(pts.length-1))*W,y=H-((v-mn)/r)*(H-6)-3;
+    return(i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);
+  }).join(' ');
+}
+
+// ── Toast ─────────────────────────────────────────
+let _tt;
+function showToast(title, sub, type='info') {
+  const t  = document.getElementById('toast');
+  const ti = document.getElementById('toast-icon');
+  setTxt('toast-title', title);
+  setTxt('toast-sub', sub || '');
+  const cfg = {
+    success:{i:'fa-check',c:'#22c55e',b:'rgba(34,197,94,.15)',br:'rgba(34,197,94,.25)'},
+    error:  {i:'fa-triangle-exclamation',c:'#ef4444',b:'rgba(239,68,68,.15)',br:'rgba(239,68,68,.25)'},
+    info:   {i:'fa-circle-info',c:'#c9a84c',b:'rgba(201,168,76,.15)',br:'rgba(201,168,76,.25)'},
+  }[type] || {};
+  ti.innerHTML = `<i class="fas ${cfg.i}" style="color:${cfg.c};font-size:13px"></i>`;
+  ti.style.cssText = `width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${cfg.b};border:1px solid ${cfg.br}`;
+  t.style.borderColor = cfg.br;
+  t.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => t.classList.remove('show'), 4200);
+}
+
+// ── Helpers ───────────────────────────────────────
+function setTxt(id, v) { const e=document.getElementById(id); if(e) e.textContent=v; }
+function fmtUSD(n) { return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtPrice(p) {
+  if(p>=1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(p>=1) return p.toFixed(2);
+  return p.toFixed(4);
+}
 </script>
-
-<script>
-          const menuBtn = document.getElementById('menu-btn');
-          const sideMenu = document.getElementById('side-menu');
-          const overlay = document.getElementById('overlay');
-
-          const openMenu = () => {
-              sideMenu.classList.remove('translate-x-full');
-              overlay.classList.remove('hidden');
-              setTimeout(() => overlay.classList.add('opacity-100'), 10);
-          };
-
-          const closeMenu = () => {
-              sideMenu.classList.add('translate-x-full');
-              overlay.classList.remove('opacity-100');
-              setTimeout(() => overlay.classList.add('hidden'), 500);
-          };
-
-          menuBtn.addEventListener('click', () => {
-              if (sideMenu.classList.contains('translate-x-full')) {
-                  openMenu();
-              } else {
-                  closeMenu();
-              }
-          });
-
-          // Close menu if clicking the blurred area
-          overlay.addEventListener('click', closeMenu);
-
-          // Close menu when a sidebar link is clicked on mobile
-          sideMenu.addEventListener('click', (event) => {
-              const link = event.target.closest('a.sidebar-link');
-              if (link) closeMenu();
-          });
-      </script>
-
-
-<script>
-  /* ═══════════════════════════════════════════════════════
-   AURUM CAPITAL — SHARED NAV COMPONENT  (aurum-nav.js)
-   Include after server.js on every protected page.
-   Call: AurumNav.init(activeLink)
-═══════════════════════════════════════════════════════ */
-const AurumNav = (() => {
-
-  function init(activeLink = ''){
-    const user = AurumDB.auth.currentUser();
-    if(!user){ AurumDB.auth.requireAuth(); return null; }
-
-    /* Load platform settings for fee/key config */
-    AurumDB.contentful.getSettings().catch(()=>{});
-
-    /* Inject sidebar HTML into #sidebar placeholder if present */
-    const sidebar = document.getElementById('aurum-sidebar');
-    if(sidebar) sidebar.innerHTML = buildSidebar(activeLink, user);
-
-    /* Update topbar user elements */
-    setEl('nav-user-initials', user.avatarInitials || '?');
-    setEl('nav-user-name',     user.firstName + ' ' + user.lastName);
-    setEl('nav-user-cash',     '$' + fmt(user.cash) + ' available');
-    setEl('nav-cash-display',  '$' + fmt(user.cash));
-
-    /* Wire sign-out buttons (any element with data-signout) */
-    document.querySelectorAll('[data-signout]').forEach(el => {
-      el.addEventListener('click', e => { e.preventDefault(); AurumDB.signOut(); });
-    });
-
-    return user;
-  }
-
-  function buildSidebar(active, user){
-    const links = [
-      { href:'dashboard.html',     icon:'fa-gauge-high',         label:'Dashboard',    key:'dashboard' },
-      { href:'invest.html',        icon:'fa-chart-line',         label:'Invest',       key:'invest' },
-      { href:'transactions.html',  icon:'fa-clock-rotate-left',  label:'Transactions', key:'transactions' },
-      { href:'signup.html',        icon:'fa-user-circle',        label:'My Account',   key:'account' },
-    ];
-    const marketLinks = [
-      { href:'invest.html#crypto',   icon:'fab fa-bitcoin',  label:'Crypto' },
-      { href:'invest.html#stocks',   icon:'fa-chart-bar',    label:'Stocks' },
-      { href:'invest.html#property', icon:'fa-city',         label:'Real Estate' },
-    ];
-
-    const navItem = ({ href, icon, label, key }) =>
-      `<a href="${href}" class="sbl${active===key?' on':''}" ${key==='account'?'':''}><i class="${icon.startsWith('fab')?icon:'fas '+icon}"></i>${label}</a>`;
-
-    return `
-      <a href="investment.html" class="flex items-center gap-3 px-2 mb-8">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-void font-bold text-sm font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
-        <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
-      </a>
-      <div class="flex flex-col gap-1 flex-1 overflow-y-auto">
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
-        ${links.map(navItem).join('')}
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Markets</p>
-        ${marketLinks.map(l=>`<a href="${l.href}" class="sbl"><i class="${l.icon.startsWith('fab')?l.icon:'fas '+l.icon}"></i>${l.label}</a>`).join('')}
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Account</p>
-        <a href="signup.html" class="sbl"><i class="fas fa-user-shield"></i>Profile</a>
-        <a href="#" class="sbl" data-signout><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
-      </div>
-      <div class="border-t border-white/[.06] pt-4 mt-3">
-        <div class="flex items-center gap-3 px-2">
-          <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void flex-shrink-0"
-               style="background:linear-gradient(135deg,#c9a84c,#a87c28)">${user.avatarInitials||'?'}</div>
-          <div class="min-w-0 flex-1">
-            <p class="text-snow text-sm font-medium truncate">${user.firstName} ${user.lastName}</p>
-            <p class="font-mono text-[9px] text-gold truncate" id="nav-user-cash">$${fmt(user.cash)} available</p>
-          </div>
-        </div>
-      </div>`;
-  }
-
-  function setEl(id, text){
-    const el = document.getElementById(id);
-    if(el) el.textContent = text;
-  }
-
-  function fmt(p){
-    if(!p && p!==0) return '0.00';
-    if(p>=1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    return parseFloat(p).toFixed(2);
-  }
-
-  return { init };
-})();
-window.AurumNav = AurumNav;
-</script>
-
-
-
-
-
-
-
-
-
-<script src="server.js"></script>
-<script src="script.js"></script>
 </body>
 </html>
-

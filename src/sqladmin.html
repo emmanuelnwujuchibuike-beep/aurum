@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurum Capital — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --void: #040608; --deep: #080c12; --surface: #111820; --lift: #172030;
+  --steel: #5a6880; --mist: #8c9db5; --cloud: #c4d0e0; --snow: #edf2f8;
+  --gold: #c9a84c; --gold-dim: rgba(201,168,76,0.12); --gold-border: rgba(201,168,76,0.22);
+  --gain: #22c55e; --gain-dim: rgba(34,197,94,0.1);
+  --loss: #ef4444; --loss-dim: rgba(239,68,68,0.1);
+  --accent: #3b82f6; --accent-dim: rgba(59,130,246,0.1);
+  --border: rgba(255,255,255,0.07);
+}
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--void); color: var(--snow);
+  min-height: 100vh; display: flex;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(201,168,76,0.06), transparent);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px; flex-shrink: 0; background: var(--deep);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column;
+  padding: 24px 16px; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10;
+}
+.logo { display: flex; align-items: center; gap: 10px; margin-bottom: 36px; padding: 0 4px; }
+.logo-mark {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: linear-gradient(135deg,#c9a84c,#a87c28);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #040608; font-size: 14px;
+}
+.logo-text { font-family: 'Cormorant Garamond', serif; font-size: 18px; letter-spacing: .08em; color: var(--snow); }
+.logo-badge { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--loss); letter-spacing: .1em; background: var(--loss-dim); border: 1px solid rgba(239,68,68,.2); padding: 2px 6px; border-radius: 4px; margin-left: auto; }
+
+.nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .16em; color: var(--steel); text-transform: uppercase; padding: 0 8px; margin: 20px 0 8px; }
+.nav-btn {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; color: var(--steel); cursor: pointer;
+  border: none; background: none; width: 100%; text-align: left; transition: all .18s;
+  margin-bottom: 2px;
+}
+.nav-btn:hover { background: rgba(255,255,255,.04); color: var(--snow); }
+.nav-btn.active { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+.nav-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.sidebar-footer {
+  margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel);
+  line-height: 1.6;
+}
+.conn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gain); display: inline-block; margin-right: 6px; box-shadow: 0 0 6px var(--gain); }
+.conn-dot.off { background: var(--loss); box-shadow: 0 0 6px var(--loss); }
+
+/* ── MAIN ── */
+.main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 1; }
+
+.topbar {
+  height: 56px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; background: rgba(4,6,8,.8); backdrop-filter: blur(20px);
+  position: sticky; top: 0; z-index: 5;
+}
+.topbar-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; color: var(--snow); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+#connStatus { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--steel); }
+
+/* ── SETUP SCREEN ── */
+.setup-screen {
+  flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px;
+}
+.setup-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+  padding: 40px; max-width: 480px; width: 100%;
+}
+.setup-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; margin-bottom: 8px; }
+.setup-card p { color: var(--steel); font-size: 13px; line-height: 1.6; margin-bottom: 28px; }
+.field-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .1em; color: var(--steel); text-transform: uppercase; margin-bottom: 6px; }
+.field-input {
+  width: 100%; background: var(--deep); border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--snow); outline: none; margin-bottom: 16px; transition: border-color .2s;
+}
+.field-input:focus { border-color: var(--gold-border); }
+.field-input::placeholder { color: var(--steel); }
+.btn-primary {
+  width: 100%; padding: 13px; border-radius: 12px; border: none; cursor: pointer;
+  background: linear-gradient(135deg,#c9a84c,#a87c28); color: #040608;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  transition: opacity .2s, transform .15s;
+}
+.btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+/* ── CONTENT AREA ── */
+.content { padding: 32px; flex: 1; }
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header { margin-bottom: 28px; }
+.page-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; margin-bottom: 4px; }
+.page-header p { color: var(--steel); font-size: 13px; }
+
+/* Cards */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .14em; color: var(--steel); text-transform: uppercase; }
+.card-body { padding: 20px; }
+
+/* Table */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th { text-align: left; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .1em; color: var(--steel); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.tbl td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,.03); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: rgba(255,255,255,.015); }
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 6px; }
+.badge-gain { background: var(--gain-dim); color: var(--gain); border: 1px solid rgba(34,197,94,.2); }
+.badge-loss { background: var(--loss-dim); color: var(--loss); border: 1px solid rgba(239,68,68,.2); }
+.badge-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+.badge-accent { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(59,130,246,.2); }
+
+/* Form grid */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-full { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235a6880' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+
+/* Action buttons */
+.btn { padding: 8px 16px; border-radius: 9px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; transition: all .18s; }
+.btn-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+.btn-gold:hover { background: rgba(201,168,76,.2); }
+.btn-gain { background: var(--gain-dim); color: var(--gain); border: 1px solid rgba(34,197,94,.2); }
+.btn-gain:hover { background: rgba(34,197,94,.18); }
+.btn-loss { background: var(--loss-dim); color: var(--loss); border: 1px solid rgba(239,68,68,.2); }
+.btn-loss:hover { background: rgba(239,68,68,.18); }
+.btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 7px; }
+.btn-full { width: 100%; padding: 12px; border-radius: 11px; font-size: 14px; }
+
+/* Toast */
+#toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 100;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 20px; font-size: 13px; min-width: 240px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5); display: none;
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+#toast.success { border-color: rgba(34,197,94,.3); color: var(--gain); }
+#toast.error   { border-color: rgba(239,68,68,.3);  color: var(--loss); }
+#toast.info    { border-color: var(--gold-border);   color: var(--gold); }
+
+/* Loading spinner */
+.spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.1); border-top-color: var(--gold); border-radius: 50%; animation: spin .6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Stat row */
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+.stat-box-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .12em; color: var(--steel); text-transform: uppercase; margin-bottom: 8px; }
+.stat-box-val { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--snow); }
+
+/* Modal */
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); z-index: 50; display: none; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; width: 480px; max-width: 94vw; }
+.modal h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">A</div>
+    <span class="logo-text">Aurum</span>
+    <span class="logo-badge">ADMIN</span>
+  </div>
+
+  <span class="nav-label">Manage</span>
+  <button class="nav-btn active" onclick="showPage('users')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    Users
+  </button>
+  <button class="nav-btn" onclick="showPage('holdings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Holdings
+  </button>
+  <button class="nav-btn" onclick="showPage('transactions')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg>
+    Transactions
+  </button>
+  <button class="nav-btn" onclick="showPage('cash')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>
+    Cash
+  </button>
+  <button class="nav-btn" onclick="showPage('setup')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+    Settings
+  </button>
+
+  <div class="sidebar-footer">
+    <div style="margin-bottom:6px"><span class="conn-dot off" id="connDot"></span><span id="connLabel">Not connected</span></div>
+    <div id="connProject" style="color:var(--steel);font-size:9px;word-break:break-all"></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <span class="topbar-title">Admin Panel</span>
+    <div class="topbar-right">
+      <span id="connStatus">⬤ Disconnected</span>
+      <button class="btn btn-gold btn-sm" onclick="loadAllData()" id="refreshBtn" style="display:none">↻ Refresh</button>
+    </div>
+  </header>
+
+  <!-- SETUP / CONNECT PAGE -->
+  <div id="connectScreen" class="setup-screen">
+    <div class="setup-card">
+      <h2>Connect to Supabase</h2>
+      <p>Enter your Supabase project URL and <strong>service role key</strong> (not the anon key) to get full admin access. These are saved only in your browser.</p>
+      <div class="field-label">Project URL</div>
+      <input class="field-input" id="sbUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" type="url">
+      <div class="field-label">Service Role Key</div>
+      <input class="field-input" id="sbKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." type="password">
+      <button class="btn-primary" id="connectBtn" onclick="connectSupabase()">Connect</button>
+      <p style="margin-top:14px;font-size:11px;color:var(--steel)">
+        Find these in Supabase → Project Settings → API.<br>
+        Use the <strong>service_role</strong> key (bypasses RLS so you can see all users).
+      </p>
+    </div>
+  </div>
+
+  <!-- ADMIN CONTENT (hidden until connected) -->
+  <div id="adminContent" style="display:none">
+    <div class="content">
+
+      <!-- USERS PAGE -->
+      <div class="page active" id="page-users">
+        <div class="page-header">
+          <h2>All Users</h2>
+          <p>Every registered account and their current balance</p>
+        </div>
+        <div class="stat-row" id="globalStats">
+          <div class="stat-box"><div class="stat-box-label">Total Users</div><div class="stat-box-val" id="statUsers">—</div></div>
+          <div class="stat-box"><div class="stat-box-label">Total Cash</div><div class="stat-box-val" id="statCash">—</div></div>
+          <div class="stat-box"><div class="stat-box-label">Total Holdings</div><div class="stat-box-val" id="statHoldings">—</div></div>
+          <div class="stat-box"><div class="stat-box-label">Total Transactions</div><div class="stat-box-val" id="statTx">—</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Profiles</span>
+            <input style="background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--snow);font-size:12px;outline:none;width:200px" placeholder="Search by name or email…" oninput="filterUsers(this.value)">
+          </div>
+          <div style="overflow-x:auto">
+            <table class="tbl" id="usersTable">
+              <thead><tr><th>Name</th><th>Email</th><th>Cash Balance</th><th>Joined</th><th>Actions</th></tr></thead>
+              <tbody id="usersTbody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--steel)"><div class="spin"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOLDINGS PAGE -->
+      <div class="page" id="page-holdings">
+        <div class="page-header">
+          <h2>Holdings</h2>
+          <p>All asset positions across every user</p>
+        </div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header"><span class="card-title">Add Holding</span></div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <div class="field-label">User</div>
+                <select class="field-input" id="hUser" style="margin:0"></select>
+              </div>
+              <div class="field">
+                <div class="field-label">Symbol</div>
+                <select class="field-input" id="hSymbol" style="margin:0" onchange="fillAssetMeta()">
+                  <option value="BTC">BTC — Bitcoin</option>
+                  <option value="ETH">ETH — Ethereum</option>
+                  <option value="SOL">SOL — Solana</option>
+                  <option value="TSLA">TSLA — Tesla</option>
+                  <option value="NVDA">NVDA — NVIDIA</option>
+                  <option value="AAPL">AAPL — Apple</option>
+                  <option value="GOLD">GOLD — Gold Spot</option>
+                  <option value="XRP">XRP — Ripple</option>
+                </select>
+              </div>
+              <div class="field">
+                <div class="field-label">Quantity</div>
+                <input class="field-input" id="hQty" type="number" step="any" placeholder="0.5" style="margin:0">
+              </div>
+              <div class="field">
+                <div class="field-label">Avg Buy Price ($)</div>
+                <input class="field-input" id="hAvgPrice" type="number" step="any" placeholder="60000.00" style="margin:0">
+              </div>
+            </div>
+            <button class="btn btn-gold btn-full" style="margin-top:14px" onclick="addHolding()">+ Add Holding</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">All Holdings</span></div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>User</th><th>Symbol</th><th>Quantity</th><th>Avg Buy Price</th><th>Actions</th></tr></thead>
+              <tbody id="holdingsTbody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--steel)"><div class="spin"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS PAGE -->
+      <div class="page" id="page-transactions">
+        <div class="page-header">
+          <h2>Transactions</h2>
+          <p>Log trades, deposits and withdrawals for any user</p>
+        </div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header"><span class="card-title">Add Transaction</span></div>
+          <div class="card-body">
+            <div class="form-grid cols-3">
+              <div class="field">
+                <div class="field-label">User</div>
+                <select class="field-input" id="txUser" style="margin:0"></select>
+              </div>
+              <div class="field">
+                <div class="field-label">Type</div>
+                <select class="field-input" id="txType" style="margin:0" onchange="toggleTxFields()">
+                  <option value="buy">Buy</option>
+                  <option value="sell">Sell</option>
+                  <option value="deposit">Deposit</option>
+                  <option value="withdraw">Withdraw</option>
+                </select>
+              </div>
+              <div class="field">
+                <div class="field-label">Symbol</div>
+                <select class="field-input" id="txSymbol" style="margin:0">
+                  <option value="BTC">BTC</option><option value="ETH">ETH</option>
+                  <option value="SOL">SOL</option><option value="TSLA">TSLA</option>
+                  <option value="NVDA">NVDA</option><option value="AAPL">AAPL</option>
+                  <option value="GOLD">GOLD</option><option value="XRP">XRP</option>
+                  <option value="USD">USD (cash)</option>
+                </select>
+              </div>
+              <div class="field" id="txQtyField">
+                <div class="field-label">Quantity</div>
+                <input class="field-input" id="txQty" type="number" step="any" placeholder="0.5" style="margin:0">
+              </div>
+              <div class="field" id="txPriceField">
+                <div class="field-label">Price at Tx ($)</div>
+                <input class="field-input" id="txPrice" type="number" step="any" placeholder="67000" style="margin:0">
+              </div>
+              <div class="field">
+                <div class="field-label">USD Amount ($)</div>
+                <input class="field-input" id="txUsd" type="number" step="any" placeholder="-33500 or +1000" style="margin:0">
+              </div>
+              <div class="field form-full">
+                <div class="field-label">Note (optional)</div>
+                <input class="field-input" id="txNote" placeholder="e.g. Admin top-up" style="margin:0">
+              </div>
+            </div>
+            <button class="btn btn-gain btn-full" style="margin-top:14px" onclick="addTransaction()">+ Log Transaction</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent Transactions</span></div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>User</th><th>Type</th><th>Symbol</th><th>Qty</th><th>USD</th><th>When</th></tr></thead>
+              <tbody id="txTbody"><tr><td colspan="6" style="text-align:center;padding:30px;color:var(--steel)"><div class="spin"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASH PAGE -->
+      <div class="page" id="page-cash">
+        <div class="page-header">
+          <h2>Cash Management</h2>
+          <p>Update any user's available cash balance directly</p>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Update Cash Balance</span></div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <div class="field-label">Select User</div>
+                <select class="field-input" id="cashUser" style="margin:0" onchange="loadCurrentCash()"></select>
+              </div>
+              <div class="field">
+                <div class="field-label">Current Balance</div>
+                <input class="field-input" id="currentCash" style="margin:0;color:var(--gold)" readonly placeholder="Select a user">
+              </div>
+              <div class="field">
+                <div class="field-label">New Balance ($)</div>
+                <input class="field-input" id="newCash" type="number" step="0.01" placeholder="5000.00" style="margin:0">
+              </div>
+              <div class="field">
+                <div class="field-label">Or Add / Subtract ($)</div>
+                <input class="field-input" id="deltaCash" type="number" step="0.01" placeholder="e.g. +1000 or -500" style="margin:0">
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:14px">
+              <button class="btn btn-gold btn-full" onclick="setCash()">Set Exact Balance</button>
+              <button class="btn btn-gain btn-full" onclick="adjustCash()">Apply +/− Adjustment</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">All User Balances</span></div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>Name</th><th>Email</th><th>Cash</th><th>Quick Set</th></tr></thead>
+              <tbody id="cashTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS PAGE -->
+      <div class="page" id="page-setup">
+        <div class="page-header">
+          <h2>Connection Settings</h2>
+          <p>Update your Supabase credentials</p>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="field-label">Project URL</div>
+            <input class="field-input" id="sbUrlEdit" type="url" placeholder="https://xxxxxxxxxxxx.supabase.co">
+            <div class="field-label">Service Role Key</div>
+            <input class="field-input" id="sbKeyEdit" type="password" placeholder="eyJ...">
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-gold" onclick="updateCreds()">Save & Reconnect</button>
+              <button class="btn btn-loss" onclick="clearCreds()">Disconnect</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /adminContent -->
+</div><!-- /main -->
+
+<!-- EDIT CASH INLINE MODAL -->
+<div class="modal-bg" id="quickCashModal">
+  <div class="modal">
+    <h3>Quick Cash Update</h3>
+    <input type="hidden" id="qcUserId">
+    <div class="field-label">User</div>
+    <input class="field-input" id="qcUserName" readonly>
+    <div class="field-label">New Cash Balance ($)</div>
+    <input class="field-input" id="qcAmount" type="number" step="0.01" placeholder="5000.00">
+    <div class="modal-actions">
+      <button class="btn" style="background:var(--lift);color:var(--steel)" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="quickSetCash()">Update Balance</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────
+let sb = null;
+let allUsers = [];
+
+const ASSET_META = {
+  BTC:  { icon:'fab fa-bitcoin',   color:'#f7931a', name:'Bitcoin'   },
+  ETH:  { icon:'fab fa-ethereum',  color:'#627eea', name:'Ethereum'  },
+  SOL:  { icon:'fas fa-sun',       color:'#9945ff', name:'Solana'    },
+  TSLA: { icon:'fas fa-car',       color:'#e31937', name:'Tesla'     },
+  NVDA: { icon:'fas fa-microchip', color:'#76b900', name:'NVIDIA'    },
+  AAPL: { icon:'fab fa-apple',     color:'#a2aaad', name:'Apple'     },
+  GOLD: { icon:'fas fa-coins',     color:'#c9a84c', name:'Gold Spot' },
+  XRP:  { icon:'fas fa-water',     color:'#00aae4', name:'Ripple'    },
+  USD:  { icon:'fas fa-dollar-sign',color:'#22c55e', name:'Cash'     },
+};
+
+// ─── CONNECT ─────────────────────────────────────────
+function connectSupabase() {
+  const url = document.getElementById('sbUrl').value.trim();
+  const key = document.getElementById('sbKey').value.trim();
+  if (!url || !key) { toast('Enter both URL and key', 'error'); return; }
+  doConnect(url, key);
+}
+
+function doConnect(url, key) {
+  try {
+    sb = supabase.createClient(url, key);
+    localStorage.setItem('aurum_sb_url', url);
+    localStorage.setItem('aurum_sb_key', key);
+    setConnected(true, url);
+    loadAllData();
+  } catch(e) {
+    toast('Connection failed: ' + e.message, 'error');
+  }
+}
+
+function setConnected(ok, url) {
+  document.getElementById('connectScreen').style.display = ok ? 'none' : 'flex';
+  document.getElementById('adminContent').style.display  = ok ? 'block' : 'none';
+  document.getElementById('refreshBtn').style.display    = ok ? '' : 'none';
+  document.getElementById('connStatus').textContent = ok ? '⬤ Connected' : '⬤ Disconnected';
+  document.getElementById('connStatus').style.color = ok ? 'var(--gain)' : 'var(--loss)';
+  document.getElementById('connDot').className = 'conn-dot' + (ok ? '' : ' off');
+  document.getElementById('connLabel').textContent = ok ? 'Connected' : 'Not connected';
+  if (url) {
+    const proj = url.replace('https://','').split('.')[0];
+    document.getElementById('connProject').textContent = proj;
+  }
+  // Pre-fill settings page
+  document.getElementById('sbUrlEdit').value = localStorage.getItem('aurum_sb_url') || '';
+  document.getElementById('sbKeyEdit').value = localStorage.getItem('aurum_sb_key') || '';
+}
+
+function updateCreds() {
+  const url = document.getElementById('sbUrlEdit').value.trim();
+  const key = document.getElementById('sbKeyEdit').value.trim();
+  if (!url || !key) { toast('Both fields required', 'error'); return; }
+  doConnect(url, key);
+  toast('Reconnected!', 'success');
+}
+
+function clearCreds() {
+  localStorage.removeItem('aurum_sb_url');
+  localStorage.removeItem('aurum_sb_key');
+  sb = null;
+  setConnected(false);
+  toast('Disconnected', 'info');
+}
+
+// Auto-connect from localStorage
+window.addEventListener('DOMContentLoaded', () => {
+  const url = localStorage.getItem('aurum_sb_url');
+  const key = localStorage.getItem('aurum_sb_key');
+  if (url && key) doConnect(url, key);
+});
+
+// ─── LOAD ALL DATA ────────────────────────────────────
+async function loadAllData() {
+  await loadUsers();
+  await loadHoldings();
+  await loadTransactions();
+  updateUserSelects();
+}
+
+// ─── USERS ───────────────────────────────────────────
+async function loadUsers() {
+  const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+  if (error) { toast('Error loading users: ' + error.message, 'error'); return; }
+  allUsers = data || [];
+
+  // Global stats
+  const { count: hCount } = await sb.from('holdings').select('*', { count: 'exact', head: true });
+  const { count: tCount } = await sb.from('transactions').select('*', { count: 'exact', head: true });
+  const totalCash = allUsers.reduce((s, u) => s + Number(u.cash || 0), 0);
+  document.getElementById('statUsers').textContent    = allUsers.length;
+  document.getElementById('statCash').textContent     = '$' + totalCash.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  document.getElementById('statHoldings').textContent = hCount || 0;
+  document.getElementById('statTx').textContent       = tCount || 0;
+
+  renderUsers(allUsers);
+  renderCashTable(allUsers);
+}
+
+function renderUsers(users) {
+  const tbody = document.getElementById('usersTbody');
+  if (!users.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--steel)">No users found</td></tr>'; return; }
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td><strong style="color:var(--snow)">${u.first_name || ''} ${u.last_name || ''}</strong><br><span style="font-family:JetBrains Mono;font-size:10px;color:var(--steel)">${u.avatar_initials || '??'}</span></td>
+      <td class="mono" style="color:var(--mist)">${u.email || '—'}</td>
+      <td><span class="badge badge-gold mono">$${Number(u.cash || 0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</span></td>
+      <td class="mono" style="color:var(--steel);font-size:11px">${new Date(u.created_at).toLocaleDateString()}</td>
+      <td>
+        <button class="btn btn-gold btn-sm" onclick="openQuickCash('${u.id}','${(u.first_name||'')+' '+(u.last_name||'')}',${u.cash||0})">Edit Cash</button>
+      </td>
+    </tr>`).join('');
+}
+
+function filterUsers(q) {
+  const filtered = allUsers.filter(u =>
+    (u.email||'').toLowerCase().includes(q.toLowerCase()) ||
+    ((u.first_name||'')+' '+(u.last_name||'')).toLowerCase().includes(q.toLowerCase())
+  );
+  renderUsers(filtered);
+}
+
+function renderCashTable(users) {
+  const tbody = document.getElementById('cashTbody');
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td><strong style="color:var(--snow)">${u.first_name||''} ${u.last_name||''}</strong></td>
+      <td class="mono" style="color:var(--mist);font-size:11px">${u.email||'—'}</td>
+      <td><span class="badge badge-gold mono">$${Number(u.cash||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></td>
+      <td><button class="btn btn-gold btn-sm" onclick="openQuickCash('${u.id}','${(u.first_name||'')+' '+(u.last_name||'')}',${u.cash||0})">Set Cash</button></td>
+    </tr>`).join('');
+}
+
+// ─── HOLDINGS ────────────────────────────────────────
+async function loadHoldings() {
+  const { data, error } = await sb.from('holdings').select('*, profiles(first_name,last_name,email)').order('created_at', { ascending: false });
+  if (error) { toast('Error loading holdings: ' + error.message, 'error'); return; }
+  const rows = data || [];
+  const tbody = document.getElementById('holdingsTbody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--steel)">No holdings yet</td></tr>'; return; }
+  tbody.innerHTML = rows.map(h => {
+    const meta = ASSET_META[h.symbol] || {};
+    const name = h.profiles ? `${h.profiles.first_name||''} ${h.profiles.last_name||''}` : h.user_id.slice(0,8)+'…';
+    return `<tr>
+      <td style="color:var(--snow)">${name}</td>
+      <td><span class="badge" style="background:${meta.color}18;color:${meta.color};border:1px solid ${meta.color}30">${h.symbol}</span></td>
+      <td class="mono">${Number(h.quantity).toFixed(6)}</td>
+      <td class="mono" style="color:var(--gold)">$${Number(h.avg_buy_price).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+      <td><button class="btn btn-loss btn-sm" onclick="deleteHolding('${h.id}')">Remove</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function addHolding() {
+  const userId   = document.getElementById('hUser').value;
+  const symbol   = document.getElementById('hSymbol').value;
+  const qty      = parseFloat(document.getElementById('hQty').value);
+  const avgPrice = parseFloat(document.getElementById('hAvgPrice').value);
+  if (!userId || !symbol || isNaN(qty) || isNaN(avgPrice)) { toast('Fill in all fields', 'error'); return; }
+
+  const meta = ASSET_META[symbol] || {};
+  const { error } = await sb.from('holdings').upsert({
+    user_id: userId, symbol, name: meta.name || symbol,
+    icon: meta.icon || '', color: meta.color || '#5a6880',
+    quantity: qty, avg_buy_price: avgPrice,
+  }, { onConflict: 'user_id,symbol' });
+
+  if (error) { toast('Error: ' + error.message, 'error'); return; }
+  toast(`${symbol} holding added!`, 'success');
+  await loadHoldings();
+  await loadUsers();
+}
+
+async function deleteHolding(id) {
+  if (!confirm('Remove this holding?')) return;
+  const { error } = await sb.from('holdings').delete().eq('id', id);
+  if (error) { toast('Error: ' + error.message, 'error'); return; }
+  toast('Holding removed', 'success');
+  await loadHoldings();
+}
+
+// ─── TRANSACTIONS ─────────────────────────────────────
+async function loadTransactions() {
+  const { data, error } = await sb.from('transactions')
+    .select('*, profiles(first_name,last_name)')
+    .order('created_at', { ascending: false }).limit(50);
+  if (error) { toast('Error loading transactions: ' + error.message, 'error'); return; }
+  const rows = data || [];
+  const tbody = document.getElementById('txTbody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--steel)">No transactions yet</td></tr>'; return; }
+  const typeBadge = { buy:'badge-loss', sell:'badge-gain', deposit:'badge-gain', withdraw:'badge-loss' };
+  tbody.innerHTML = rows.map(t => {
+    const name = t.profiles ? `${t.profiles.first_name||''} ${t.profiles.last_name||''}` : '—';
+    const usd  = t.usd_amount != null ? (t.usd_amount > 0 ? '+' : '') + '$' + Number(t.usd_amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—';
+    const ago  = timeAgo(t.created_at);
+    return `<tr>
+      <td style="color:var(--snow)">${name}</td>
+      <td><span class="badge ${typeBadge[t.type]||'badge-accent'}">${t.type}</span></td>
+      <td class="mono">${t.symbol}</td>
+      <td class="mono" style="color:var(--mist)">${t.quantity ? Number(t.quantity).toFixed(4) : '—'}</td>
+      <td class="mono" style="color:${t.usd_amount>=0?'var(--gain)':'var(--loss)'}">${usd}</td>
+      <td class="mono" style="color:var(--steel);font-size:11px">${ago}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function addTransaction() {
+  const userId  = document.getElementById('txUser').value;
+  const type    = document.getElementById('txType').value;
+  const symbol  = document.getElementById('txSymbol').value;
+  const qty     = parseFloat(document.getElementById('txQty').value) || null;
+  const price   = parseFloat(document.getElementById('txPrice').value) || null;
+  const usd     = parseFloat(document.getElementById('txUsd').value);
+  const note    = document.getElementById('txNote').value;
+  if (!userId || isNaN(usd)) { toast('Select user and enter USD amount', 'error'); return; }
+  const meta = ASSET_META[symbol] || {};
+  const { error } = await sb.from('transactions').insert({
+    user_id: userId, type, symbol,
+    name: meta.name || symbol, icon: meta.icon || '', color: meta.color || '#5a6880',
+    quantity: qty, price_at_tx: price, usd_amount: usd, note,
+  });
+  if (error) { toast('Error: ' + error.message, 'error'); return; }
+  toast('Transaction logged!', 'success');
+  // Clear fields
+  ['txQty','txPrice','txUsd','txNote'].forEach(id => document.getElementById(id).value = '');
+  await loadTransactions();
+}
+
+function toggleTxFields() {
+  const type = document.getElementById('txType').value;
+  const isCash = type === 'deposit' || type === 'withdraw';
+  document.getElementById('txQtyField').style.opacity   = isCash ? '.4' : '1';
+  document.getElementById('txPriceField').style.opacity = isCash ? '.4' : '1';
+}
+
+// ─── CASH ────────────────────────────────────────────
+function updateUserSelects() {
+  const selects = ['hUser','txUser','cashUser'];
+  const opts = allUsers.map(u => `<option value="${u.id}">${u.first_name||''} ${u.last_name||''} (${u.email||''})</option>`).join('');
+  selects.forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = opts; });
+}
+
+function loadCurrentCash() {
+  const uid = document.getElementById('cashUser').value;
+  const user = allUsers.find(u => u.id === uid);
+  if (user) document.getElementById('currentCash').value = '$' + Number(user.cash||0).toFixed(2);
+}
+
+async function setCash() {
+  const uid = document.getElementById('cashUser').value;
+  const val = parseFloat(document.getElementById('newCash').value);
+  if (!uid || isNaN(val)) { toast('Select user and enter amount', 'error'); return; }
+  await updateCash(uid, val);
+}
+
+async function adjustCash() {
+  const uid = document.getElementById('cashUser').value;
+  const delta = parseFloat(document.getElementById('deltaCash').value);
+  if (!uid || isNaN(delta)) { toast('Select user and enter adjustment', 'error'); return; }
+  const user = allUsers.find(u => u.id === uid);
+  if (!user) return;
+  await updateCash(uid, Number(user.cash || 0) + delta);
+}
+
+async function updateCash(userId, newAmount) {
+  const { error } = await sb.from('profiles').update({ cash: newAmount }).eq('id', userId);
+  if (error) { toast('Error: ' + error.message, 'error'); return; }
+  toast(`Cash updated to $${newAmount.toFixed(2)}`, 'success');
+  await loadUsers();
+  loadCurrentCash();
+}
+
+// ─── QUICK CASH MODAL ─────────────────────────────────
+function openQuickCash(id, name, cash) {
+  document.getElementById('qcUserId').value   = id;
+  document.getElementById('qcUserName').value  = name.trim();
+  document.getElementById('qcAmount').value    = Number(cash).toFixed(2);
+  document.getElementById('quickCashModal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('quickCashModal').classList.remove('open');
+}
+async function quickSetCash() {
+  const uid = document.getElementById('qcUserId').value;
+  const val = parseFloat(document.getElementById('qcAmount').value);
+  if (isNaN(val)) { toast('Enter a valid amount', 'error'); return; }
+  await updateCash(uid, val);
+  closeModal();
+}
+
+// ─── NAVIGATION ──────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ─── HELPERS ─────────────────────────────────────────
+function fillAssetMeta() { /* symbol selects are pre-built */ }
+
+function timeAgo(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 60) return m <= 1 ? 'just now' : `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
+function toast(msg, type = 'info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = type;
+  el.style.display = 'block';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+</script>
+</body>
+</html>
