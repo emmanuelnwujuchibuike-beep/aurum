@@ -459,13 +459,13 @@ async function doSignup(e) {
 /* ── Login ───────────────────────────────────────────────── */
 function doLogin(e) {
   e.preventDefault(); clearErrors();
-  const em = document.getElementById('li-em').value.trim();
-  const pw = document.getElementById('li-pw').value;
+  const em = document.getElementById('email').value.trim();
+  const pw = document.getElementById('passwordHash').value;
   if (!em || !pw) { showErr('liErr','liErrMsg','Please enter your email and password.'); return; }
 
   setLoad('li', true);
   setTimeout(() => {
-    const res = AurumDB.auth.login({ email: em, password: pw });
+    const res = AurumDB.auth.login({ email:em, password:pw });
     setLoad('li', false);
     if (!res.ok) { document.getElementById('li-em').classList.add('err'); document.getElementById('li-pw').classList.add('err'); showErr('liErr','liErrMsg', res.error); return; }
     /* ✅ Redirect to dashboard immediately after login */
