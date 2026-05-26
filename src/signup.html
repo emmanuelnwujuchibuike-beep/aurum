@@ -223,7 +223,7 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
           <div class="flex-1 h-px bg-white/[.07]"></div>
         </div>
 
-        <form id="liForm" onsubmit="doLogin(event)" novalidate class="space-y-4 au au3">
+        <form type="submit" id="signupForm" onsubmit="submit(event)" novalidate class="space-y-4 au au3">
           <div>
             <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Email Address</label>
             <div class="inp-icon">
@@ -242,16 +242,8 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
               <button type="button" class="pw-toggle" onclick="togPw('li-pw',this)"><i class="fas fa-eye text-xs"></i></button>
             </div>
           </div>
-          <!-- Demo hint -->
-          <div class="p-3.5 rounded-xl border border-gold/20 flex items-start gap-3" style="background:rgba(201,168,76,.07)">
-            <i class="fas fa-circle-info text-gold text-sm mt-0.5"></i>
-            <div class="flex-1">
-              <p class="font-mono text-[9px] text-gold uppercase tracking-[.1em] mb-1.5">Demo Account</p>
-              <p class="text-xs text-cloud">Email: <span class="font-mono text-snow">demo@aurum.com</span></p>
-              <p class="text-xs text-cloud mt-0.5">Password: <span class="font-mono text-snow">Demo1234</span></p>
-              <button type="button" onclick="fillDemo()" class="mt-2 font-mono text-[10px] text-gold hover:text-gold-bright transition-colors">→ Fill credentials</button>
-            </div>
-          </div>
+          
+          
           <!-- Error -->
           <div id="liErr" class="hidden p-4 bg-loss/10 border border-loss/25 rounded-xl">
             <p class="font-mono text-[11px] text-loss flex items-center gap-2"><i class="fas fa-circle-exclamation"></i><span id="liErrMsg"></span></p>
@@ -279,23 +271,22 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
     <p class="font-mono text-[10px] tracking-[.22em] text-gold uppercase mb-3">Account Created</p>
     <h2 class="font-display text-4xl font-light text-snow mb-3">Welcome to<br><em class="italic text-gold">Aurum Capital</em></h2>
     <p class="text-mist text-sm mb-2">Your account is ready. We've added a</p>
-    <p class="font-display text-3xl text-snow mb-8">$10,000 <span class="text-gold">welcome balance</span></p>
+    <p class="font-display text-3xl text-snow mb-8">$100 <span class="text-gold">welcome balance</span></p>
     <div class="space-y-2 text-left mb-6">
+      
       <div class="flex items-center gap-3 p-3 bg-white/[.03] border border-white/[.06] rounded-xl">
         <i class="fas fa-check-circle text-gain text-sm w-4"></i>
-        <span class="text-sm text-cloud">Demo portfolio seeded with BTC, ETH &amp; TSLA</span>
+        <span class="text-sm text-cloud">$100 cash balance available</span>
       </div>
       <div class="flex items-center gap-3 p-3 bg-white/[.03] border border-white/[.06] rounded-xl">
         <i class="fas fa-check-circle text-gain text-sm w-4"></i>
-        <span class="text-sm text-cloud">$10,000 paper cash balance available</span>
-      </div>
-      <div class="flex items-center gap-3 p-3 bg-white/[.03] border border-white/[.06] rounded-xl">
-        <i class="fas fa-check-circle text-gain text-sm w-4"></i>
-        <span class="text-sm text-cloud">Full access: crypto, stocks &amp; property</span>
+        <span class="text-sm text-cloud">Full access: crypto, stocks &; property</span>
       </div>
     </div>
     <button onclick="window.location.href='dashboard.html'" class="btn-gold text-base py-4" style="box-shadow:0 8px 40px rgba(201,168,76,.3)">
-      <i class="fas fa-gauge-high"></i> Open My Dashboard
+      <a href="dashboard.html" class="flex items-center justify-center gap-2">
+        <i class="fas fa-gauge-high"></i> Open My Dashboard
+      </a>
     </button>
   </div>
 </div>
@@ -465,8 +456,8 @@ async function doSignup(e) {
 /* ── Login ───────────────────────────────────────────────── */
 function doLogin(e) {
   e.preventDefault(); clearErrors();
-  const em = document.getElementById('li-em').value.trim();
-  const pw = document.getElementById('li-pw').value;
+  const em = document.getElementById('email').value.trim();
+  const pw = document.getElementById('passwordHash').value;
   if (!em || !pw) { showErr('liErr','liErrMsg','Please enter your email and password.'); return; }
 
   setLoad('li', true);
@@ -582,7 +573,47 @@ const AurumNav = (() => {
 window.AurumNav = AurumNav;
 </script>
 
+<script>
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
+    // 1. Show a loading state (e.g., change button text)
+    const btn = e.target.querySelector('button');
+    btn.textContent = "Creating Account...";
+    btn.disabled = true;
+
+    const data = {
+        firstName: document.getElementById('firstName').value,
+        phone: document.getElementById('phone').value,
+        // ... include other fields
+    };
+
+    try {
+        const response = await fetch('/.netlify/functions/user-auth', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // 2. SUCCESS: Show your overlay/modal here
+            // Assuming your overlay has an ID like 'successOverlay'
+            document.getElementById('successOverlay').style.display = 'flex';
+        } else {
+            // 3. ERROR: Show error
+            alert("Signup failed: " + result.error);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Server connection error. Please try again.");
+    } finally {
+        // Reset button
+        btn.textContent = "Sign Up";
+        btn.disabled = false;
+    }
+});
+</script>
 
 
 
