@@ -155,7 +155,18 @@
         body: JSON.stringify(entryPayload),
       });
 
+      const contentType = await client.getContentType('aurum');
+      console.log("THE CORRECT FIELD IDS ARE:", JSON.stringify(contentType.fields.map(f => f.id), null, 2));
+
       entry = await createRes.json();
+      const entry = await client.createEntry('aurum', {
+      fields: {
+        // --- CHANGE THIS ---
+        firstName: { 'en-US': data.firstName }, 
+        // -------------------
+        phone: { 'en-US': data.phone }
+    }
+});
 
       if (!createRes.ok) {
         console.error('Create entry failed:', createRes.status, JSON.stringify(entry));
@@ -233,12 +244,12 @@
   return { statusCode: 400, headers: cors, body: JSON.stringify({ ok: false, error: 'Unknown action: ' + action }) };
 };
 
-// In user-auth.js
-console.log("Attempting to create entry in model: aurum");
-console.log("Fields being sent:", JSON.stringify({
-    firstName: { 'en-US': data.firstName },
-    phone: { 'en-US': data.phone }
-}, null, 2));
+// // In user-auth.js
+// console.log("Attempting to create entry in model: aurum");
+// console.log("Fields being sent:", JSON.stringify({
+//     firstName: { 'en-US': data.firstName },
+//     phone: { 'en-US': data.phone }
+// }, null, 2));
 
 
 console.log("Entry created:", JSON.stringify(entry, null, 2));
