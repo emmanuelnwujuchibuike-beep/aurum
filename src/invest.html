@@ -127,7 +127,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 }
 </style>
 </head>
-<body>
+<body class="overflow-x-hidden">
 
 <!-- LOADER -->
 <div id="aurum-loader">
@@ -184,32 +184,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
     <!-- Topbar -->
     <header style="position:sticky;top:0;z-index:40;background:rgba(4,6,8,.94);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.06);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <button id="mobileMenuBtn" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">
-          <i class="fas fa-bars" style="font-size:13px"></i>
-        </button>
-        <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
-          <div id="topLogoMark" style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:12px;cursor:pointer">A</div>
-          <span style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
-        </a>
-      </div>
-      <div style="flex:1;max-width:360px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:9px 16px">
-        <i class="fas fa-search" style="color:#5a6880;font-size:12px"></i>
-        <input type="text" id="searchInput" placeholder="Search BTC, Tesla, London…" style="background:transparent;border:none;outline:none;color:#edf2f8;font-size:13px;flex:1;font-family:'DM Sans',sans-serif">
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <!-- Quick action buttons -->
-        <button onclick="openSwapModal()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'">
-          <i class="fas fa-arrow-right-arrow-left" style="font-size:11px"></i><span class="hide-sm">Swap</span>
-        </button>
-        <button onclick="openPanel('portfolio')" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'">
-          <i class="fas fa-briefcase" style="font-size:11px"></i><span class="hide-sm">Portfolio</span>
-        </button>
-        <div style="text-align:right">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em;text-transform:uppercase">Cash</p>
-          <p id="headerCash" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#edf2f8;font-weight:300">$0.00</p>
+      <div style="margin-top: 12px; display:flex;align-items:center;gap:16px">
+        <div style="display:flex; align-items:center;gap:12px">
+          <button id="mobileMenuBtn" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-bars" style="font-size:13px"></i>
+          </button>
+          <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+            <div id="topLogoMark" style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:12px;cursor:pointer">A</div>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
+          </a>
         </div>
-        <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;cursor:pointer" onclick="openPanel('portfolio')">?</div>
+        <div style="flex:1;max-width:360px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:9px 16px">
+          <i class="fas fa-search" style="color:#5a6880;font-size:12px"></i>
+          <input type="text" id="searchInput" placeholder="Search BTC, Tesla, London…" style="background:transparent;border:none;outline:none;color:#edf2f8;font-size:13px;flex:1;font-family:'DM Sans',sans-serif">
+        </div>
+      </div>
+
+      <div class="hidden md:flex md:align-items-center md:gap-10">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom: 22px">
+          <!-- Quick action buttons -->
+          <button onclick="openSwapModal()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'">
+            <i class="fas fa-arrow-right-arrow-left" style="font-size:11px"></i><span class="hide-sm">Swap</span>
+          </button>
+          <button onclick="openPanel('portfolio')" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'">
+            <i class="fas fa-briefcase" style="font-size:11px"></i><span class="hide-sm">Portfolio</span>
+          </button>
+          <button onclick="openPanel('transactions')" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'">
+            <i class="fas fa-repeat" style="font-size:11px"></i><span class="hide-sm">Transactions</span>
+          </button>
+          <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;cursor:pointer" onclick="openPanel('portfolio')">?</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em;text-transform:uppercase">Cash</p>
+        <p id="headerCash" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#edf2f8;font-weight:300">$0.00</p>
       </div>
     </header>
 
@@ -222,9 +230,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       </div>
       <a href="dashboard.html" class="sbl"><i class="fas fa-gauge-high"></i>Dashboard</a>
       <a href="invest.html" class="sbl on"><i class="fas fa-chart-line"></i>Invest</a>
-      <a href="#" onclick="closeDrawer();openPanel('portfolio')" class="sbl"><i class="fas fa-briefcase"></i>Portfolio</a>
-      <a href="#" onclick="closeDrawer();openPanel('transactions')" class="sbl"><i class="fas fa-repeat"></i>Transactions</a>
-      <a href="#" onclick="closeDrawer();openSwapModal()" class="sbl"><i class="fas fa-arrow-right-arrow-left"></i>Swap Assets</a>
+      <a href="#" onclick="closeDrawer();openPanel('portfolio');return false" class="sbl"><i class="fas fa-briefcase"></i>Portfolio</a>
+      <a href="#" onclick="closeDrawer();openPanel('transactions');return false" class="sbl"><i class="fas fa-repeat"></i>Transactions</a>
+      <a href="#" onclick="closeDrawer();openSwapModal();return false" class="sbl"><i class="fas fa-arrow-right-arrow-left"></i>Swap Assets</a>
       <a href="signup.html" class="sbl"><i class="fas fa-user-circle"></i>Profile</a>
       <a href="#" id="drawerSignOut" class="sbl"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
     </div>
@@ -322,7 +330,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
     <footer style="padding:20px 24px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
       <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em">©️2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
-      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Demo platform · Investment involves risk</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">
     </footer>
   </div>
 </div>
@@ -1217,37 +1225,6 @@ function tickPrices(){
     if(el)el.textContent='$'+fmtPrice(a.price);
     if(modalAsset?.sym===a.sym){setTxt('mi-price','$'+fmtPrice(a.price));updateModalCalc();}
   });
-}
-
-// ══ SECRET ADMIN — KONAMI CODE ════════════════════════
-function setupAdminTrigger(){
-  const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA'];
-  let idx=0,kTimer=null;
-  document.addEventListener('keydown',e=>{
-    if(e.code===KONAMI[idx]){
-      idx++;clearTimeout(kTimer);
-      kTimer=setTimeout(()=>{idx=0;},2000);
-      // Show hint while building combo
-      document.getElementById('kHint').classList.add('show');
-      setTimeout(()=>document.getElementById('kHint').classList.remove('show'),1500);
-      if(idx===KONAMI.length){idx=0;openAdminPanel();}
-    }else{idx=0;}
-  });
-  // Secret: triple-click logo within 800ms
-  let clickCount=0,clickTimer=null;
-  ['logoMark','topLogoMark'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el)return;
-    el.addEventListener('click',()=>{
-      clickCount++;clearTimeout(clickTimer);
-      if(clickCount>=3){clickCount=0;openAdminPanel();}
-      else clickTimer=setTimeout(()=>{clickCount=0;},800);
-    });
-  });
-  // Secret: long press on footer copyright for 3s
-  let pressTimer=null;
-  document.querySelector('footer p')?.addEventListener('mousedown',()=>{pressTimer=setTimeout(openAdminPanel,3000);});
-  document.addEventListener('mouseup',()=>clearTimeout(pressTimer));
 }
 
 function openAdminPanel(){document.getElementById('adminOverlay').classList.add('open');adminLoadUsers();}
