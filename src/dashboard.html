@@ -897,7 +897,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // Falls back to anon if service key not set
 let sbAdmin;
 try {
-  if(SUPABASE_SERVICE_KEY && SUPABASE_SERVICE_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTgwMTQ5MiwiZXhwIjoyMDk1Mzc3NDkyfQ.DbrMwlwK2bLoR7Hm_Dx2xUdxIJhlWzEkPG0lTEzy8Sc'){
+  if(SUPABASE_SERVICE_KEY && SUPABASE_SERVICE_KEY !== 'PASTE_YOUR_SERVICE_ROLE_KEY_HERE'){
     sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
       auth:{ autoRefreshToken:false, persistSession:false }
     });
