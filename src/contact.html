@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurum Capital — Contact</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --void: #040608;
+    --deep: #080c12;
+    --surface: #111820;
+    --lift: #172030;
+    --steel: #5a6880;
+    --mist: #8c9db5;
+    --snow: #edf2f8;
+    --gold: #c9a84c;
+    --gold-bright: #e8c96a;
+    --gold-dim: #a87c28;
+    --gain: #22c55e;
+    --loss: #ef4444;
+    --accent: #627eea;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--void);
+    color: var(--snow);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0; opacity: .025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(201,168,76,.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 10% 60%, rgba(98,126,234,.04) 0%, transparent 50%);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px;
+    background: rgba(4,6,8,.88);
+    backdrop-filter: blur(28px);
+    border-bottom: 1px solid rgba(255,255,255,.055);
+  }
+
+  .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .nav-logo-mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; color: var(--void); font-size: 14px;
+    box-shadow: 0 0 20px rgba(201,168,76,.25);
+  }
+  .nav-wordmark { font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .12em; color: var(--snow); }
+
+  .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; }
+  .nav-links a { font-size: 13px; font-weight: 500; color: var(--steel); text-decoration: none; padding: 8px 14px; border-radius: 10px; transition: all .2s; }
+  .nav-links a:hover { color: var(--snow); background: rgba(255,255,255,.05); }
+  .nav-links a.active { color: var(--gold); background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2); }
+
+  .nav-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 20px; border-radius: 11px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    color: var(--void); font-weight: 600; font-size: 13px; text-decoration: none; transition: opacity .2s;
+  }
+  .nav-cta:hover { opacity: .88; }
+
+  /* ── PAGE LAYOUT ── */
+  .page-wrap {
+    position: relative; z-index: 1;
+    padding-top: 68px;
+  }
+
+  /* ── HERO ── */
+  .contact-hero {
+    padding: 80px 40px 60px;
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: .24em; text-transform: uppercase;
+    color: var(--gold); background: rgba(201,168,76,.08);
+    border: 1px solid rgba(201,168,76,.2); border-radius: 20px;
+    padding: 7px 18px; margin-bottom: 24px;
+    animation: fadeUp .7s ease both;
+  }
+
+  .hero-eyebrow span { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:.25} }
+
+  .contact-hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 5vw, 72px);
+    font-weight: 300; line-height: 1.05;
+    color: var(--snow); margin-bottom: 20px;
+    animation: fadeUp .7s ease .1s both;
+  }
+
+  .contact-hero-title em { font-style: italic; color: var(--gold); }
+
+  .contact-hero-sub {
+    font-size: 16px; color: var(--mist); line-height: 1.75;
+    margin-bottom: 36px;
+    animation: fadeUp .7s ease .2s both;
+  }
+
+  .contact-meta {
+    display: flex; flex-direction: column; gap: 14px;
+    animation: fadeUp .7s ease .3s both;
+  }
+
+  .meta-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px;
+    transition: border-color .2s;
+  }
+
+  .meta-row:hover { border-color: rgba(201,168,76,.2); }
+
+  .meta-icon {
+    width: 36px; height: 36px; border-radius: 11px;
+    background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-size: 13px; flex-shrink: 0;
+  }
+
+  .meta-label { font-size: 10px; color: var(--steel); font-family: 'JetBrains Mono', monospace; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 2px; }
+  .meta-val { font-size: 14px; color: var(--snow); font-weight: 500; }
+
+  /* ── SOCIAL CARDS ── */
+  .hero-social-block {
+    display: flex; flex-direction: column; gap: 16px;
+    animation: fadeUp .7s ease .4s both;
+  }
+
+  .social-strip-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: .18em; color: var(--steel);
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+
+  .social-cards {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+
+  .social-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.07);
+    text-decoration: none;
+    transition: all .25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .social-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity .25s;
+  }
+
+  .social-card:hover::before { opacity: 1; }
+  .social-card:hover { transform: translateY(-2px); }
+
+  .social-card.x-card { background: rgba(0,0,0,.6); }
+  .social-card.x-card::before { background: rgba(0,0,0,.3); }
+  .social-card.x-card:hover { border-color: rgba(255,255,255,.2); }
+
+  .social-card.linkedin-card { background: rgba(10,102,194,.08); }
+  .social-card.linkedin-card::before { background: rgba(10,102,194,.06); }
+  .social-card.linkedin-card:hover { border-color: rgba(10,102,194,.4); }
+
+  .social-card.instagram-card { background: rgba(225,48,108,.05); }
+  .social-card.instagram-card::before { background: rgba(225,48,108,.04); }
+  .social-card.instagram-card:hover { border-color: rgba(225,48,108,.3); }
+
+  .social-card.telegram-card { background: rgba(0,136,204,.06); }
+  .social-card.telegram-card::before { background: rgba(0,136,204,.04); }
+  .social-card.telegram-card:hover { border-color: rgba(0,136,204,.35); }
+
+  .social-card.youtube-card { background: rgba(255,0,0,.05); }
+  .social-card.youtube-card::before { background: rgba(255,0,0,.04); }
+  .social-card.youtube-card:hover { border-color: rgba(255,0,0,.3); }
+
+  .social-card.facebook-card { background: rgba(24,119,242,.05); }
+  .social-card.facebook-card::before { background: rgba(24,119,242,.04); }
+  .social-card.facebook-card:hover { border-color: rgba(24,119,242,.3); }
+
+  .social-icon-wrap {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0; position: relative; z-index: 1;
+  }
+
+  .social-card-text { position: relative; z-index: 1; }
+  .social-card-name { font-size: 13px; font-weight: 600; color: var(--snow); }
+  .social-card-handle { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--steel); margin-top: 1px; }
+  .social-card-arr { margin-left: auto; color: var(--steel); font-size: 10px; position: relative; z-index: 1; transition: transform .2s; }
+  .social-card:hover .social-card-arr { transform: translate(2px,-2px); }
+
+  /* ── AVAILABILITY BANNER ── */
+  .availability-row {
+    background: rgba(34,197,94,.06);
+    border: 1px solid rgba(34,197,94,.2);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+  }
+
+  .avail-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gain); animation: blink 1.5s infinite; }
+  .avail-text { font-size: 13px; color: var(--gain); font-weight: 500; display: flex; align-items: center; gap: 8px; }
+  .avail-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel); letter-spacing: .08em; }
+
+  /* ── MAIN CONTENT ── */
+  .main-grid {
+    max-width: 1300px; margin: 0 auto;
+    padding: 0 40px 80px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* ── CONTACT FORM ── */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .form-card::before {
+    content: '';
+    position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,.06), transparent);
+    pointer-events: none;
+  }
+
+  .form-header {
+    padding: 32px 36px 28px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+
+  .form-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 300; color: var(--snow);
+    margin-bottom: 6px;
+  }
+
+  .form-title em { font-style: italic; color: var(--gold); }
+  .form-sub { font-size: 13px; color: var(--steel); }
+
+  .form-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+
+  .form-tab {
+    flex: 1; padding: 14px 20px;
+    font-size: 13px; font-weight: 500;
+    color: var(--steel); cursor: pointer;
+    border: none; background: none;
+    border-bottom: 2px solid transparent;
+    transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+
+  .form-tab:hover { color: var(--snow); background: rgba(255,255,255,.02); }
+  .form-tab.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(201,168,76,.04); }
+
+  .form-body { padding: 32px 36px 36px; }
+
+  .form-panel { display: none; }
+  .form-panel.active { display: block; }
+
+  /* ── FORM FIELDS ── */
+  .field-group { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .field-group.full { grid-template-columns: 1fr; }
+
+  .field {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+
+  .field label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: .12em; color: var(--steel);
+    text-transform: uppercase;
+  }
+
+  .field input, .field select, .field textarea {
+    background: var(--deep);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--snow);
+    outline: none; transition: border-color .2s, box-shadow .2s;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+
+  .field input::placeholder, .field textarea::placeholder { color: var(--steel); }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: rgba(201,168,76,.4);
+    box-shadow: 0 0 0 3px rgba(201,168,76,.08);
+  }
+
+  .field textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235a6880' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+    cursor: pointer;
+  }
+
+  .field select option { background: var(--surface); }
+
+  .submit-btn {
+    width: 100%; padding: 15px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    color: var(--void); font-weight: 700; font-size: 14px;
+    border: none; cursor: pointer; transition: opacity .2s, transform .1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 20px; letter-spacing: .01em;
+  }
+
+  .submit-btn:hover { opacity: .9; }
+  .submit-btn:active { transform: scale(.99); }
+  .submit-btn.loading { opacity: .7; cursor: not-allowed; }
+
+  .form-privacy {
+    font-size: 11px; color: var(--steel); text-align: center; margin-top: 12px; line-height: 1.6;
+  }
+
+  /* ── SUCCESS STATE ── */
+  .form-success {
+    display: none; text-align: center; padding: 48px 20px;
+  }
+
+  .success-icon {
+    width: 64px; height: 64px; border-radius: 20px;
+    background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 20px;
+    animation: successPop .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+
+  @keyframes successPop { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
+
+  .success-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--snow); margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--mist); line-height: 1.7; max-width: 300px; margin: 0 auto; }
+
+  /* ── RIGHT COLUMN ── */
+  .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── LIVE CHAT ── */
+  .chat-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .chat-header {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--deep);
+  }
+
+  .chat-header-left { display: flex; align-items: center; gap: 12px; }
+
+  .chat-agent-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, #1a2a4a, #0c1830);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold);
+    border: 2px solid rgba(201,168,76,.3); position: relative;
+  }
+
+  .chat-online-dot {
+    position: absolute; bottom: 0; right: 0;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--gain);
+    border: 2px solid var(--deep);
+  }
+
+  .chat-agent-name { font-size: 14px; font-weight: 600; color: var(--snow); }
+  .chat-agent-role { font-size: 11px; color: var(--steel); }
+  .chat-live-badge {
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .1em;
+    color: var(--gain); background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2);
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .chat-live-badge span { width: 5px; height: 5px; border-radius: 50%; background: var(--gain); animation: blink 1.5s infinite; }
+
+  .chat-messages {
+    padding: 20px 20px 14px; display: flex; flex-direction: column; gap: 14px;
+    min-height: 280px; max-height: 320px; overflow-y: auto;
+  }
+
+  .chat-messages::-webkit-scrollbar { width: 3px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,.06); border-radius: 3px; }
+
+  .chat-msg { display: flex; gap: 10px; max-width: 90%; }
+  .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+  }
+
+  .chat-msg.agent .msg-avatar { background: rgba(201,168,76,.15); color: var(--gold); border: 1px solid rgba(201,168,76,.2); font-family: 'Cormorant Garamond', serif; }
+  .chat-msg.user .msg-avatar { background: rgba(98,126,234,.15); color: var(--accent); border: 1px solid rgba(98,126,234,.2); font-size: 11px; }
+
+  .msg-bubble {
+    padding: 11px 14px; border-radius: 16px;
+    font-size: 13px; line-height: 1.55;
+  }
+
+  .chat-msg.agent .msg-bubble {
+    background: var(--lift);
+    border: 1px solid rgba(255,255,255,.06);
+    color: var(--snow);
+    border-top-left-radius: 4px;
+  }
+
+  .chat-msg.user .msg-bubble {
+    background: rgba(201,168,76,.12);
+    border: 1px solid rgba(201,168,76,.2);
+    color: var(--snow);
+    border-top-right-radius: 4px;
+  }
+
+  .msg-time { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel); margin-top: 4px; text-align: right; }
+  .chat-msg.agent .msg-time { text-align: left; }
+
+  .typing-indicator {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 20px 14px; display: none;
+  }
+
+  .typing-dots { display: flex; gap: 4px; }
+  .typing-dots span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--steel); animation: typingBounce 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: .2s; }
+  .typing-dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes typingBounce { 0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)} }
+
+  .chat-input-row {
+    padding: 14px 16px 16px;
+    border-top: 1px solid rgba(255,255,255,.06);
+    display: flex; gap: 10px; align-items: center;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: var(--deep); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 12px; padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--snow);
+    outline: none; transition: border-color .2s;
+  }
+
+  .chat-input::placeholder { color: var(--steel); }
+  .chat-input:focus { border-color: rgba(201,168,76,.35); }
+
+  .chat-send-btn {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    border: none; cursor: pointer; color: var(--void);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; transition: opacity .2s;
+    flex-shrink: 0;
+  }
+
+  .chat-send-btn:hover { opacity: .88; }
+
+  /* ── QUICK ACTIONS ── */
+  .quick-actions {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px; padding: 24px;
+  }
+
+  .qa-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: .16em; color: var(--steel);
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+
+  .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .qa-btn {
+    padding: 14px 16px;
+    background: var(--deep); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px; cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; transition: all .2s;
+  }
+
+  .qa-btn:hover { border-color: rgba(201,168,76,.25); background: rgba(201,168,76,.04); }
+
+  .qa-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+
+  .qa-text-label { font-size: 12px; font-weight: 600; color: var(--snow); }
+  .qa-text-sub { font-size: 10px; color: var(--steel); margin-top: 1px; }
+
+  /* ── TEAM ADVISORS ── */
+  .advisors-section {
+    max-width: 1300px; margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  .advisors-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+  }
+
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 3.5vw, 42px);
+    font-weight: 300; color: var(--snow);
+  }
+
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  .advisor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+
+  .advisor-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 22px; padding: 28px;
+    display: flex; flex-direction: column; gap: 18px;
+    transition: all .3s; position: relative; overflow: hidden;
+  }
+
+  .advisor-card::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,.06), transparent);
+    transition: opacity .3s;
+  }
+
+  .advisor-card:hover { border-color: rgba(201,168,76,.25); transform: translateY(-3px); }
+
+  .advisor-top { display: flex; align-items: center; gap: 14px; }
+
+  .advisor-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; color: var(--gold);
+    border: 2px solid rgba(201,168,76,.25);
+    flex-shrink: 0; position: relative;
+  }
+
+  .advisor-card:nth-child(1) .advisor-avatar { background: linear-gradient(135deg, #0c1830, #122240); }
+  .advisor-card:nth-child(2) .advisor-avatar { background: linear-gradient(135deg, #130c1a, #1a0f24); }
+  .advisor-card:nth-child(3) .advisor-avatar { background: linear-gradient(135deg, #0c1820, #0a1e2a); }
+
+  .advisor-status {
+    position: absolute; bottom: 0; right: 0;
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid var(--surface);
+  }
+
+  .advisor-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--snow); }
+  .advisor-role { font-size: 11px; color: var(--gold); font-weight: 500; }
+  .advisor-spec { font-size: 10px; color: var(--steel); margin-top: 1px; }
+
+  .advisor-bio { font-size: 12px; color: var(--mist); line-height: 1.65; }
+
+  .advisor-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .adv-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .06em;
+    padding: 4px 10px; border-radius: 20px;
+    background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.15); color: var(--gold);
+  }
+
+  .advisor-actions { display: flex; gap: 8px; }
+
+  .adv-btn {
+    flex: 1; padding: 10px;
+    border-radius: 11px; border: none; cursor: pointer;
+    font-size: 12px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: all .2s; text-decoration: none;
+  }
+
+  .adv-btn-primary {
+    background: rgba(201,168,76,.12); color: var(--gold);
+    border: 1px solid rgba(201,168,76,.25);
+  }
+
+  .adv-btn-primary:hover { background: rgba(201,168,76,.2); }
+
+  .adv-btn-secondary {
+    background: rgba(255,255,255,.04); color: var(--steel);
+    border: 1px solid rgba(255,255,255,.07);
+  }
+
+  .adv-btn-secondary:hover { color: var(--snow); border-color: rgba(255,255,255,.15); }
+
+  /* ── GLOBAL OFFICES ── */
+  .offices-section {
+    max-width: 1300px; margin: 0 auto;
+    padding: 0 40px 100px;
+  }
+
+  .offices-header { margin-bottom: 28px; }
+
+  .offices-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  .office-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 20px; padding: 28px 24px;
+    transition: border-color .25s;
+  }
+
+  .office-card:hover { border-color: rgba(201,168,76,.2); }
+
+  .office-flag { font-size: 32px; margin-bottom: 14px; }
+
+  .office-city {
+    font-family: 'Cormorant Garamond', serif; font-size: 22px;
+    color: var(--snow); margin-bottom: 4px;
+  }
+
+  .office-country { font-size: 11px; color: var(--gold); font-weight: 500; margin-bottom: 14px; }
+
+  .office-addr { font-size: 12px; color: var(--steel); line-height: 1.7; margin-bottom: 14px; }
+
+  .office-detail {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11px; color: var(--steel); margin-bottom: 4px;
+  }
+
+  .office-detail i { color: var(--gold); font-size: 10px; }
+
+  /* ── FAQ ── */
+  .faq-section {
+    max-width: 1300px; margin: 0 auto;
+    padding: 0 40px 100px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: start;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    padding: 20px 0; cursor: pointer;
+  }
+
+  .faq-q {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    font-size: 15px; font-weight: 500; color: var(--snow);
+    line-height: 1.4;
+  }
+
+  .faq-chevron { color: var(--gold); font-size: 11px; transition: transform .3s; flex-shrink: 0; }
+  .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+  .faq-a {
+    font-size: 13px; color: var(--mist); line-height: 1.75;
+    max-height: 0; overflow: hidden;
+    transition: max-height .4s ease, padding .4s ease;
+    padding-top: 0;
+  }
+
+  .faq-item.open .faq-a { max-height: 200px; padding-top: 14px; }
+
+  .faq-cta-card {
+    background: linear-gradient(135deg, #0c1830, #0a1428);
+    border: 1px solid rgba(201,168,76,.15);
+    border-radius: 24px; padding: 40px 36px;
+    position: sticky; top: 100px;
+    text-align: center;
+  }
+
+  .faq-cta-icon {
+    width: 64px; height: 64px; border-radius: 20px;
+    background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 20px;
+  }
+
+  .faq-cta-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--snow); margin-bottom: 12px; font-weight: 300; }
+  .faq-cta-title em { font-style: italic; color: var(--gold); }
+  .faq-cta-body { font-size: 13px; color: var(--mist); line-height: 1.7; margin-bottom: 24px; }
+
+  .btn-gold {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 28px; border-radius: 13px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    color: var(--void); font-weight: 600; font-size: 13px;
+    text-decoration: none; border: none; cursor: pointer; transition: opacity .2s; width: 100%; justify-content: center;
+  }
+
+  .btn-gold:hover { opacity: .88; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 28px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; position: relative; z-index: 1;
+  }
+
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel); letter-spacing: .1em; text-transform: uppercase; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+  .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  .gold-line { width:60px; height:1px; background:linear-gradient(90deg,var(--gold),transparent); margin:12px 0 20px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .contact-hero { grid-template-columns: 1fr; gap: 40px; }
+    .main-grid { grid-template-columns: 1fr; }
+    .advisor-grid { grid-template-columns: 1fr 1fr; }
+    .offices-grid { grid-template-columns: 1fr 1fr; }
+    .faq-section { grid-template-columns: 1fr; gap: 40px; }
+    .faq-cta-card { position: static; }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .contact-hero { padding: 40px 20px 30px; }
+    .main-grid { padding: 0 20px 60px; }
+    .advisor-grid { grid-template-columns: 1fr; }
+    .offices-grid { grid-template-columns: 1fr 1fr; }
+    .offices-section { padding: 0 20px 60px; }
+    .advisors-section { padding: 0 20px 60px; }
+    .faq-section { padding: 0 20px 60px; }
+    .social-cards { grid-template-columns: 1fr; }
+    footer { padding: 20px; }
+    .field-group { grid-template-columns: 1fr; }
+    .qa-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="dashboard.html" class="nav-logo">
+    <div class="nav-logo-mark">A</div>
+    <span class="nav-wordmark">Aurum</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="invest.html">Invest</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <a href="dashboard.html" class="nav-cta">
+    <i class="fas fa-gauge-high" style="font-size:11px"></i> Dashboard
+  </a>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="contact-hero">
+    <div>
+      <div class="hero-eyebrow">
+        <span></span> We're here · 24 / 7 Support
+      </div>
+      <h1 class="contact-hero-title">
+        Let's build<br>something <em>together</em>
+      </h1>
+      <p class="contact-hero-sub">
+        Whether you're ready to invest, need guidance on your portfolio, or simply want to learn more — our team of dedicated advisors is standing by to help you at every step.
+      </p>
+
+      <div class="contact-meta">
+        <div class="meta-row">
+          <div class="meta-icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <div class="meta-label">General Enquiries</div>
+            <div class="meta-val">hello@aurumcapital.com</div>
+          </div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-icon"><i class="fas fa-phone"></i></div>
+          <div>
+            <div class="meta-label">Client Services</div>
+            <div class="meta-val">+971 4 000 0000</div>
+          </div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <div class="meta-label">Support Hours</div>
+            <div class="meta-val">Monday – Sunday · 24 Hours</div>
+          </div>
+        </div>
+
+        <div class="availability-row">
+          <div class="avail-text">
+            <div class="avail-dot"></div>
+            Advisors online now
+          </div>
+          <div class="avail-sub">Avg. response: 2 minutes</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- SOCIAL MEDIA -->
+      <div class="hero-social-block">
+        <div class="social-strip-title">// Connect with us</div>
+
+        <div class="social-cards">
+          <a href="#" class="social-card x-card">
+            <div class="social-icon-wrap" style="background:rgba(255,255,255,.08)">
+              <i class="fab fa-x-twitter" style="color:#fff"></i>
+            </div>
+            <div class="social-card-text">
+              <div class="social-card-name">X (Twitter)</div>
+              <div class="social-card-handle">@AurumCapital</div>
+            </div>
+            <i class="fas fa-arrow-up-right social-card-arr"></i>
+          </a>
+
+          <a href="#" class="social-card linkedin-card">
+            <div class="social-icon-wrap" style="background:rgba(10,102,194,.15)">
+              <i class="fab fa-linkedin-in" style="color:#0a66c2"></i>
+            </div>
+            <div class="social-card-text">
+              <div class="social-card-name">LinkedIn</div>
+              <div class="social-card-handle">Aurum Capital</div>
+            </div>
+            <i class="fas fa-arrow-up-right social-card-arr"></i>
+          </a>
+
+          <a href="#" class="social-card instagram-card">
+            <div class="social-icon-wrap" style="background:rgba(225,48,108,.1)">
+              <i class="fab fa-instagram" style="color:#e1306c"></i>
+            </div>
+            <div class="social-card-text">
+              <div class="social-card-name">Instagram</div>
+              <div class="social-card-handle">@aurum.capital</div>
+            </div>
+            <i class="fas fa-arrow-up-right social-card-arr"></i>
+          </a>
+
+          <a href="#" class="social-card telegram-card">
+            <div class="social-icon-wrap" style="background:rgba(0,136,204,.12)">
+              <i class="fab fa-telegram" style="color:#0088cc"></i>
+            </div>
+            <div class="social-card-text">
+              <div class="social-card-name">Telegram</div>
+              <div class="social-card-handle">t.me/AurumCapital</div>
+            </div>
+            <i class="fas fa-arrow-up-right social-card-arr"></i>
+          </a>
+
+          <a href="#" class="social-card youtube-card">
+            <div class="social-icon-wrap" style="background:rgba(255,0,0,.08)">
+              <i class="fab fa-youtube" style="color:#ff0000"></i>
+            </div>
+            <div class="social-card-text">
+              <div class="social-card-name">YouTube</div>
+              <div class="social-card-handle">Aurum Capital TV</div>
+            </div>
+            <i class="fas fa-arrow-up-right social-card-arr"></i>
+          </a>
+
+          <a href="#" class="social-card facebook-card">
+            <div class="social-icon-wrap" style="background:rgba(24,119,242,.1)">
+              <i class="fab fa-facebook-f" style="color:#1877f2"></i>
+            </div>
+            <div class="social-card-text">
+              <div class="social-card-name">Facebook</div>
+              <div class="social-card-handle">AurumCapitalHQ</div>
+            </div>
+            <i class="fas fa-arrow-up-right social-card-arr"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID: FORM + CHAT -->
+  <div class="main-grid">
+
+    <!-- CONTACT FORM -->
+    <div class="form-card reveal">
+      <div class="form-header">
+        <h2 class="form-title">Send us a <em>message</em></h2>
+        <p class="form-sub">We'll respond within 2 hours during business hours, or within 24 hours otherwise.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="form-tabs">
+        <button class="form-tab active" onclick="switchFormTab('general', this)">
+          <i class="fas fa-envelope" style="font-size:11px"></i> General
+        </button>
+        <button class="form-tab" onclick="switchFormTab('investment', this)">
+          <i class="fas fa-chart-line" style="font-size:11px"></i> Investment
+        </button>
+        <button class="form-tab" onclick="switchFormTab('support', this)">
+          <i class="fas fa-headset" style="font-size:11px"></i> Support
+        </button>
+        <button class="form-tab" onclick="switchFormTab('press', this)">
+          <i class="fas fa-newspaper" style="font-size:11px"></i> Press
+        </button>
+      </div>
+
+      <div class="form-body">
+
+        <!-- GENERAL -->
+        <form name="general-form" method="POST" data-netlify="true" class="form-panel active" id="panel-general">
+          <div class="field-group">
+            <div class="field">
+              <label>First Name</label>
+              <input name="general-firstname" type="text" placeholder="James" id="g-firstname">
+            </div>
+            <div class="field">
+              <label>Last Name</label>
+              <input name="general-lastname" type="text" placeholder="Mercer" id="g-lastname">
+            </div>
+          </div>
+          <div class="field-group full" style="margin-bottom:14px">
+            <div class="field">
+              <label>Email Address</label>
+              <input name="general-email" type="email" placeholder="james@example.com" id="g-email">
+            </div>
+          </div>
+          <div class="field-group full" style="margin-bottom:14px">
+            <div class="field">
+              <label>Subject</label>
+              <input name="general-subject" type="text" placeholder="How can we help?" id="g-subject">
+            </div>
+          </div>
+          <div class="field-group full" style="margin-bottom:0">
+            <div class="field">
+              <label>Message</label>
+              <textarea name="general-message" placeholder="Tell us about your enquiry…" id="g-message"></textarea>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn" onclick="submitForm('general')">
+            <i class="fas fa-paper-plane" style="font-size:12px"></i>
+            Send Message
+          </button>
+          <p class="form-privacy">🔒 Your information is encrypted and never shared with third parties.</p>
+        </form>
+
+        <!-- INVESTMENT -->
+        <form name="investment-form" method="POST" data-netlify="true" class="form-panel" id="panel-investment">
+          <div class="field-group">
+            <div class="field">
+              <label>Full Name</label>
+              <input name="investment-name" type="text" placeholder="Your name" id="i-name">
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input name="investment-email" type="email" placeholder="your@email.com" id="i-email">
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field">
+              <label>Investment Budget</label>
+              <select name="investment-budget" id="i-budget">
+                <option value="">Select range</option>
+                <option value="1k-10k">$1,000 – $10,000</option>
+                <option value="10k-50k">$10,000 – $50,000</option>
+                <option value="50k-250k">$50,000 – $250,000</option>
+                <option value="250k-1m">$250,000 – $1,000,000</option>
+                <option value="1m+">$1,000,000+</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Asset Class Interest</label>
+              <select name="investment-asset" id="i-asset">
+                <option value="">Select asset</option>
+                <option value="realestate">Real Estate</option>
+                <option value="crypto">Cryptocurrency</option>
+                <option value="equities">Equities / Stocks</option>
+                <option value="gold">Gold / Commodities</option>
+                <option value="mixed">Mixed Portfolio</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field">
+              <label>Risk Tolerance</label>
+              <select name="investment-risk" id="i-risk">
+                <option value="">Select</option>
+                <option value="conservative">Conservative</option>
+                <option value="moderate">Moderate</option>
+                <option value="aggressive">Aggressive</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Time Horizon</label>
+              <select name="investment-horizon" id="i-horizon">
+                <option value="">Select</option>
+                <option value="short">Short (< 1 year)</option>
+                <option value="medium">Medium (1 – 5 years)</option>
+                <option value="long">Long (5+ years)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group full" style="margin-bottom:0">
+            <div class="field">
+              <label>Additional Context</label>
+              <textarea name="investment-notes" placeholder="Tell us about your investment goals…" id="i-notes" style="min-height:90px"></textarea>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn" onclick="submitForm('investment')">
+            <i class="fas fa-chart-line" style="font-size:12px"></i>
+            Request Advisor Consultation
+          </button>
+          <p class="form-privacy">🔒 Your information is encrypted and never shared with third parties.</p>
+        </form>
+
+        <!-- SUPPORT -->
+        <form name="support-form" method="POST" data-netlify="true" class="form-panel" id="panel-support">
+          <div class="field-group">
+            <div class="field">
+              <label>Your Name</label>
+              <input name="support-name" type="text" placeholder="Name" id="s-name">
+            </div>
+            <div class="field">
+              <label>Account Email</label>
+              <input name="support-email" type="email" placeholder="Account email" id="s-email">
+            </div>
+          </div>
+          <div class="field-group full" style="margin-bottom:14px">
+            <div class="field">
+              <label>Issue Type</label>
+              <select name="support-issue" id="s-issue">
+                <option value="">Select issue type</option>
+                <option value="deposit">Deposit / Withdrawal</option>
+                <option value="trading">Trading & Executions</option>
+                <option value="account">Account Access</option>
+                <option value="kyc">KYC / Verification</option>
+                <option value="portfolio">Portfolio & Holdings</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field">
+              <label>Priority</label>
+              <select name="support-priority" id="s-priority">
+                <option value="normal">Normal</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Transaction ID (if applicable)</label>
+              <input name="support-txid" type="text" placeholder="TXN-XXXXXXXX" id="s-txid">
+            </div>
+          </div>
+          <div class="field-group full" style="margin-bottom:0">
+            <div class="field">
+              <label>Describe the Issue</label>
+              <textarea name="support-description" placeholder="Please describe your issue in detail…" id="s-desc"></textarea>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn" onclick="submitForm('support')">
+            <i class="fas fa-headset" style="font-size:12px"></i>
+            Submit Support Ticket
+          </button>
+          <p class="form-privacy">🔒 Encrypted · Secure · Private</p>
+        </form>
+
+        <!-- PRESS -->
+        <form name="press-form" method="POST" data-netlify="true" class="form-panel" id="panel-press">
+          <div class="field-group">
+            <div class="field">
+              <label>Your Name</label>
+              <input name="press-name" type="text" placeholder="Name" id="p-name">
+            </div>
+            <div class="field">
+              <label>Media Outlet</label>
+              <input name="press-outlet" type="text" placeholder="e.g. Forbes, Bloomberg" id="p-outlet">
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field">
+              <label>Email</label>
+              <input name="press-email" type="email" placeholder="press@media.com" id="p-email">
+            </div>
+            <div class="field">
+              <label>Enquiry Type</label>
+              <select name="press-type" id="p-type">
+                <option value="">Select type</option>
+                <option value="interview">Interview Request</option>
+                <option value="quote">Quote / Comment</option>
+                <option value="feature">Feature Story</option>
+                <option value="data">Data Request</option>
+                <option value="partnership">Media Partnership</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group full" style="margin-bottom:0">
+            <div class="field">
+              <label>Details & Deadline</label>
+              <textarea name="press-message" placeholder="Please share details about your story and any deadline you have…" id="p-details"></textarea>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn" onclick="submitForm('press')">
+            <i class="fas fa-newspaper" style="font-size:12px"></i>
+            Send Press Enquiry
+          </button>
+          <p class="form-privacy">Our press team typically responds within 4 hours.</p>
+        </form>
+
+        <!-- SUCCESS STATE -->
+        <div class="form-success" id="form-success">
+          <div class="success-icon">✓</div>
+          <div class="success-title">Message Sent!</div>
+          <p class="success-sub" id="success-sub-text">Thank you for reaching out. A member of our team will be in touch shortly.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+
+      <!-- LIVE CHAT -->
+      <div class="chat-card reveal" style="transition-delay:.1s">
+        <div class="chat-header">
+          <div class="chat-header-left">
+            <div class="chat-agent-avatar">
+              MR
+              <div class="chat-online-dot"></div>
+            </div>
+            <div>
+              <div class="chat-agent-name">Marcus Reid</div>
+              <div class="chat-agent-role">Senior Client Advisor</div>
+            </div>
+          </div>
+          <div class="chat-live-badge"><span></span> LIVE</div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-msg agent">
+            <div class="msg-avatar">MR</div>
+            <div>
+              <div class="msg-bubble">Good day! I'm Marcus, your dedicated Aurum Capital advisor. How can I assist you today?</div>
+              <div class="msg-time">Just now</div>
+            </div>
+          </div>
+
+          <div class="chat-msg agent">
+            <div class="msg-avatar">MR</div>
+            <div>
+              <div class="msg-bubble">Whether it's portfolio guidance, deposit questions, or investment opportunities — I'm here to help. 🏆</div>
+              <div class="msg-time">Just now</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+          <div class="msg-avatar" style="width:30px;height:30px;border-radius:50%;background:rgba(201,168,76,.15);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:12px;border:1px solid rgba(201,168,76,.2)">MR</div>
+          <div class="typing-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendChatMessage()">
+          <button class="chat-send-btn" onclick="sendChatMessage()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="quick-actions reveal" style="transition-delay:.2s">
+        <div class="qa-title">// Quick Actions</div>
+        <div class="qa-grid">
+          <a href="#" class="qa-btn" onclick="sendQuickMessage('I need help with a deposit')">
+            <div class="qa-icon" style="background:rgba(34,197,94,.1)"><i class="fas fa-dollar-sign" style="color:var(--gain)"></i></div>
+            <div>
+              <div class="qa-text-label">Deposit Help</div>
+              <div class="qa-text-sub">Fund your account</div>
+            </div>
+          </a>
+          <a href="#" class="qa-btn" onclick="sendQuickMessage('I want to learn about investment opportunities')">
+            <div class="qa-icon" style="background:rgba(201,168,76,.1)"><i class="fas fa-chart-line" style="color:var(--gold)"></i></div>
+            <div>
+              <div class="qa-text-label">Invest Now</div>
+              <div class="qa-text-sub">Explore options</div>
+            </div>
+          </a>
+          <a href="#" class="qa-btn" onclick="sendQuickMessage('I have a question about my portfolio')">
+            <div class="qa-icon" style="background:rgba(98,126,234,.1)"><i class="fas fa-briefcase" style="color:var(--accent)"></i></div>
+            <div>
+              <div class="qa-text-label">Portfolio Query</div>
+              <div class="qa-text-sub">Holdings & P&L</div>
+            </div>
+          </a>
+          <a href="#" class="qa-btn" onclick="sendQuickMessage('I need help with KYC or account verification')">
+            <div class="qa-icon" style="background:rgba(239,68,68,.08)"><i class="fas fa-shield-halved" style="color:#ef4444"></i></div>
+            <div>
+              <div class="qa-text-label">Verification</div>
+              <div class="qa-text-sub">KYC & Identity</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TEAM ADVISORS -->
+  <div class="advisors-section">
+    <div class="advisors-header reveal">
+      <div>
+        <div class="section-eyebrow">// Your Advisory Team</div>
+        <div class="gold-line"></div>
+        <h2 class="section-title">Meet our <em>specialists</em></h2>
+      </div>
+      <p style="font-size:13px;color:var(--mist);max-width:320px;line-height:1.7">Book a private 1-on-1 session with a specialist advisor matched to your investment profile.</p>
+    </div>
+
+    <div class="advisor-grid">
+      <div class="advisor-card reveal">
+        <div class="advisor-top">
+          <div class="advisor-avatar">
+            MR
+            <div class="advisor-status" style="background:var(--gain)"></div>
+          </div>
+          <div>
+            <div class="advisor-name">Marcus Reid</div>
+            <div class="advisor-role">Senior Client Advisor</div>
+            <div class="advisor-spec">Real Estate · Wealth Planning</div>
+          </div>
+        </div>
+        <div class="advisor-bio">
+          10 years at CBRE and JLL. Specialist in tokenized real estate and income-generating property portfolios across MENA and Europe.
+        </div>
+        <div class="advisor-tags">
+          <span class="adv-tag">Real Estate</span>
+          <span class="adv-tag">Yield Strategies</span>
+          <span class="adv-tag">MENA</span>
+        </div>
+        <div class="advisor-actions">
+          <button class="adv-btn adv-btn-primary" onclick="sendQuickMessage('I would like to book a session with Marcus Reid')">
+            <i class="fas fa-calendar-check" style="font-size:11px"></i> Book Session
+          </button>
+          <button class="adv-btn adv-btn-secondary" onclick="sendQuickMessage('I would like to chat with Marcus Reid')">
+            <i class="fas fa-message" style="font-size:11px"></i> Chat
+          </button>
+        </div>
+      </div>
+
+      <div class="advisor-card reveal" style="transition-delay:.12s">
+        <div class="advisor-top">
+          <div class="advisor-avatar">
+            PL
+            <div class="advisor-status" style="background:var(--gold)"></div>
+          </div>
+          <div>
+            <div class="advisor-name">Priya Lalwani</div>
+            <div class="advisor-role">Crypto & DeFi Specialist</div>
+            <div class="advisor-spec">Digital Assets · DeFi Strategies</div>
+          </div>
+        </div>
+        <div class="advisor-bio">
+          Former Binance research analyst. Deep expertise in digital assets, DeFi protocols, and crypto portfolio construction for risk-adjusted returns.
+        </div>
+        <div class="advisor-tags">
+          <span class="adv-tag">Crypto</span>
+          <span class="adv-tag">DeFi</span>
+          <span class="adv-tag">Risk Management</span>
+        </div>
+        <div class="advisor-actions">
+          <button class="adv-btn adv-btn-primary" onclick="sendQuickMessage('I would like to book a session with Priya Lalwani')">
+            <i class="fas fa-calendar-check" style="font-size:11px"></i> Book Session
+          </button>
+          <button class="adv-btn adv-btn-secondary" onclick="sendQuickMessage('I would like to chat with Priya Lalwani')">
+            <i class="fas fa-message" style="font-size:11px"></i> Chat
+          </button>
+        </div>
+      </div>
+
+      <div class="advisor-card reveal" style="transition-delay:.24s">
+        <div class="advisor-top">
+          <div class="advisor-avatar">
+            EF
+            <div class="advisor-status" style="background:var(--gain)"></div>
+          </div>
+          <div>
+            <div class="advisor-name">Ethan Fitzgerald</div>
+            <div class="advisor-role">Equities Strategist</div>
+            <div class="advisor-spec">Global Stocks · Macro Research</div>
+          </div>
+        </div>
+        <div class="advisor-bio">
+          Ex-Morgan Stanley equity strategist. Covers global macro and sector rotation strategies across US, European and Asian markets.
+        </div>
+        <div class="advisor-tags">
+          <span class="adv-tag">Equities</span>
+          <span class="adv-tag">Macro</span>
+          <span class="adv-tag">Global Markets</span>
+        </div>
+        <div class="advisor-actions">
+          <button class="adv-btn adv-btn-primary" onclick="sendQuickMessage('I would like to book a session with Ethan Fitzgerald')">
+            <i class="fas fa-calendar-check" style="font-size:11px"></i> Book Session
+          </button>
+          <button class="adv-btn adv-btn-secondary" onclick="sendQuickMessage('I would like to chat with Ethan Fitzgerald')">
+            <i class="fas fa-message" style="font-size:11px"></i> Chat
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOBAL OFFICES -->
+  <div class="offices-section reveal">
+    <div class="offices-header">
+      <div class="section-eyebrow">// Global Presence</div>
+      <div class="gold-line"></div>
+      <h2 class="section-title">Our <em>offices</em></h2>
+    </div>
+
+    <div class="offices-grid">
+      <div class="office-card">
+        <div class="office-flag">🇦🇪</div>
+        <div class="office-city">Dubai</div>
+        <div class="office-country">United Arab Emirates · HQ</div>
+        <div class="office-addr">DIFC Gate Avenue, Level 14<br>Dubai International Financial Centre</div>
+        <div class="office-detail"><i class="fas fa-phone"></i> +971 4 000 0000</div>
+        <div class="office-detail"><i class="fas fa-envelope"></i> dubai@aurumcapital.com</div>
+      </div>
+
+      <div class="office-card">
+        <div class="office-flag">🇬🇧</div>
+        <div class="office-city">London</div>
+        <div class="office-country">United Kingdom</div>
+        <div class="office-addr">One Canada Square, Level 28<br>Canary Wharf, London E14 5AB</div>
+        <div class="office-detail"><i class="fas fa-phone"></i> +44 20 0000 0000</div>
+        <div class="office-detail"><i class="fas fa-envelope"></i> london@aurumcapital.com</div>
+      </div>
+
+      <div class="office-card">
+        <div class="office-flag">🇺🇸</div>
+        <div class="office-city">New York</div>
+        <div class="office-country">United States</div>
+        <div class="office-addr">1 World Trade Center, Suite 8500<br>New York, NY 10007</div>
+        <div class="office-detail"><i class="fas fa-phone"></i> +1 212 000 0000</div>
+        <div class="office-detail"><i class="fas fa-envelope"></i> ny@aurumcapital.com</div>
+      </div>
+
+      <div class="office-card">
+        <div class="office-flag">🇸🇬</div>
+        <div class="office-city">Singapore</div>
+        <div class="office-country">Singapore</div>
+        <div class="office-addr">Marina Bay Financial Centre<br>Tower 1, Level 19, Singapore 018983</div>
+        <div class="office-detail"><i class="fas fa-phone"></i> +65 6000 0000</div>
+        <div class="office-detail"><i class="fas fa-envelope"></i> sg@aurumcapital.com</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <div class="reveal">
+      <div class="section-eyebrow">// FAQ</div>
+      <div class="gold-line"></div>
+      <h2 class="section-title" style="margin-bottom:36px">Common <em>questions</em></h2>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">How long does account verification take? <i class="fas fa-chevron-down faq-chevron"></i></div>
+        <div class="faq-a">KYC verification is typically completed within 1–4 hours. In rare cases, complex cases may take up to 24 hours. You'll receive an email notification as soon as your account is verified and ready to trade.</div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">What is the minimum investment amount? <i class="fas fa-chevron-down faq-chevron"></i></div>
+        <div class="faq-a">Cryptocurrency positions start from as little as $10. Real estate tokenized positions begin at $500, and premium property portfolios from $1,000. Equities and stocks can be accessed from $25 per position.</div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">How are my funds protected? <i class="fas fa-chevron-down faq-chevron"></i></div>
+        <div class="faq-a">Your funds are held in segregated accounts at licensed custodian banks. We employ 256-bit encryption, cold storage for digital assets, and maintain a reserve fund. We are fully regulated by DFSA (Dubai) and FCA (UK).</div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I withdraw my funds at any time? <i class="fas fa-chevron-down faq-chevron"></i></div>
+        <div class="faq-a">Cash balances and crypto holdings can be withdrawn at any time, typically processing within 1–3 business days. Real estate positions have a standard 30-day notice period, in line with industry practice for tokenized property assets.</div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">What are Aurum's fee structures? <i class="fas fa-chevron-down faq-chevron"></i></div>
+        <div class="faq-a">We charge a 0.5% trading fee on crypto and equity positions. Real estate investments carry a 1% annual management fee. There are no deposit fees, and withdrawal fees vary by method. A full fee schedule is available in your account settings.</div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Do you offer white-glove wealth management? <i class="fas fa-chevron-down faq-chevron"></i></div>
+        <div class="faq-a">Yes. Our Aurum Pro tier provides a dedicated relationship manager, personalised investment strategy, priority execution, and access to pre-IPO and off-market real estate opportunities. Minimum portfolio value for Pro is $250,000.</div>
+      </div>
+    </div>
+
+    <!-- FAQ CTA -->
+    <div class="faq-cta-card reveal" style="transition-delay:.15s">
+      <div class="faq-cta-icon">💬</div>
+      <div class="faq-cta-title">Still have <em>questions?</em></div>
+      <div class="faq-cta-body">Our advisors are available 24/7. Whether it's a quick question or a complex investment strategy — we're just a message away.</div>
+      <button class="btn-gold" onclick="document.getElementById('chatInput').focus();document.getElementById('chatInput').scrollIntoView({behavior:'smooth'})">
+        <i class="fas fa-message" style="font-size:12px"></i> Start a Conversation
+      </button>
+      <div style="margin:14px 0;display:flex;align-items:center;gap:10px">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--steel)">OR</span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
+      </div>
+      <a href="mailto:hello@aurumcapital.com" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:var(--mist);font-size:13px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(255,255,255,.16)'" onmouseout="this.style.borderColor='rgba(255,255,255,.08)'">
+        <i class="fas fa-envelope" style="font-size:12px;color:var(--gold)"></i>
+        hello@aurumcapital.com
+      </a>
+    </div>
+  </div>
+
+</div><!-- /.page-wrap -->
+
+<!-- FOOTER -->
+<footer>
+  <p>©2025 Aurum Capital · All Rights Reserved</p>
+  <p>Dubai · London · New York · Singapore</p>
+  <p>Regulated · Secure · Trusted</p>
+</footer>
+
+<script>
+// ── FORM TABS ──
+function switchFormTab(tab, btn) {
+  document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('form-success').style.display = 'none';
+  document.querySelectorAll('.form-panel').forEach(p => p.style.display = '');
+}
+
+// ── FORM SUBMIT ──
+const successMessages = {
+  general: 'Thank you for your message! A member of our team will respond within 2 hours.',
+  investment: 'Excellent! Your consultation request has been received. An advisor matched to your profile will reach out within 1 hour.',
+  support: 'Your support ticket has been created. Our team will prioritize your issue and respond shortly.',
+  press: 'Thanks for reaching out! Our press team will review your enquiry and respond within 4 hours.'
+};
+
+function submitForm(type) {
+  const btn = event.currentTarget;
+  btn.classList.add('loading');
+  btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.2);border-top-color:#040608;border-radius:50%;animation:spin .6s linear infinite"></span> Sending…';
+
+  setTimeout(() => {
+    // Hide all panels + show success
+    document.querySelectorAll('.form-panel').forEach(p => p.style.display = 'none');
+    const success = document.getElementById('form-success');
+    success.style.display = 'block';
+    document.getElementById('success-sub-text').textContent = successMessages[type];
+    btn.classList.remove('loading');
+  }, 1800);
+}
+
+// ── CHAT ──
+const agentReplies = [
+  "Great question! I'd be happy to help you with that. Could you share a bit more detail so I can give you the most accurate guidance?",
+  "Absolutely. For accounts like yours, we typically recommend a diversified approach across real estate and digital assets. Shall I walk you through the options?",
+  "That's a very common concern, and I completely understand. Let me pull up the latest information for you right now.",
+  "Perfect. I've noted that down. Would you also like me to schedule a dedicated 30-minute consultation with one of our senior advisors?",
+  "Excellent choice. The minimum for that investment tier is $1,000, and the current projected yield is 11.4% annually. Would you like to proceed?",
+  "I can see your account is fully verified and ready. I'll flag this as priority for our team. You'll receive a follow-up within 2 hours.",
+  "Wonderful! I'll send you a detailed breakdown via email as well. Is there anything else I can assist you with today?"
+];
+
+let replyIndex = 0;
+let messageCount = 0;
+
+function formatTime() {
+  const now = new Date();
+  return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function appendMessage(text, isUser, avatar = 'MR') {
+  const container = document.getElementById('chatMessages');
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-msg ' + (isUser ? 'user' : 'agent');
+  msgDiv.innerHTML = `
+    <div class="msg-avatar">${avatar}</div>
+    <div>
+      <div class="msg-bubble">${text}</div>
+      <div class="msg-time">${formatTime()}</div>
+    </div>
+  `;
+  container.appendChild(msgDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const indicator = document.getElementById('typingIndicator');
+  indicator.style.display = 'flex';
+  document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+}
+
+function hideTyping() {
+  document.getElementById('typingIndicator').style.display = 'none';
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendMessage(text, true, 'You');
+  input.value = '';
+
+  // Show typing then reply
+  setTimeout(showTyping, 400);
+  setTimeout(() => {
+    hideTyping();
+    const reply = agentReplies[replyIndex % agentReplies.length];
+    appendMessage(reply, false, 'MR');
+    replyIndex++;
+  }, 1800 + Math.random() * 1000);
+}
+
+function sendQuickMessage(text) {
+  document.getElementById('chatInput').value = text;
+  sendChatMessage();
+  document.getElementById('chatMessages').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── FAQ ──
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── SCROLL REVEAL ──
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => observer.observe(el));
+
+// ── INJECT SPIN KEYFRAME ──
+const style = document.createElement('style');
+style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+document.head.appendChild(style);
+</script>
+</body>
+</html>
