@@ -5,118 +5,158 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aurum Capital — Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script>
 tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: {
-        display: ['Cormorant Garamond', 'serif'],
-        body:    ['DM Sans', 'sans-serif'],
-        mono:    ['JetBrains Mono', 'monospace'],
-      },
-      colors: {
-        void:    '#040608',
-        deep:    '#080c12',
-        base:    '#0c1118',
-        surface: '#111820',
-        lift:    '#172030',
-        border:  'rgba(255,255,255,0.07)',
-        steel:   '#5a6880',
-        mist:    '#8c9db5',
-        cloud:   '#c4d0e0',
-        snow:    '#edf2f8',
-        gold:    { DEFAULT:'#c9a84c', bright:'#e8c96a', dim:'rgba(201,168,76,0.12)', glow:'rgba(201,168,76,0.22)' },
-        gain:    { DEFAULT:'#22c55e', dim:'rgba(34,197,94,0.12)' },
-        loss:    { DEFAULT:'#ef4444', dim:'rgba(239,68,68,0.12)' },
-        accent:  { DEFAULT:'#3b82f6', dim:'rgba(59,130,246,0.12)' },
-      },
-      boxShadow: {
-        card: '0 20px 60px rgba(0,0,0,0.45)',
-        gold: '0 4px 28px rgba(201,168,76,0.22)',
-      }
-    }
-  }
+  theme: { extend: {
+    fontFamily: { display:['Cormorant Garamond','serif'], body:['DM Sans','sans-serif'], mono:['JetBrains Mono','monospace'] },
+    colors: { void:'#040608', deep:'#080c12', base:'#0c1118', surface:'#111820', lift:'#172030',
+      steel:'#5a6880', mist:'#8c9db5', cloud:'#c4d0e0', snow:'#edf2f8',
+      gold:{ DEFAULT:'#c9a84c', bright:'#e8c96a', dim:'rgba(201,168,76,0.12)', glow:'rgba(201,168,76,0.22)' },
+      gain:{ DEFAULT:'#22c55e', dim:'rgba(34,197,94,0.12)' },
+      loss:{ DEFAULT:'#ef4444', dim:'rgba(239,68,68,0.12)' },
+      accent:{ DEFAULT:'#3b82f6', dim:'rgba(59,130,246,0.12)' } }
+  }}
 }
 </script>
 <style>
-  body { font-family:'DM Sans',sans-serif; background:#040608; color:#edf2f8; }
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
-    background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
-  }
-  .sidebar-link { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; font-size:.84rem; font-weight:500; color:#5a6880; transition:all .2s; text-decoration:none; }
-  .sidebar-link:hover { background:rgba(255,255,255,.05); color:#edf2f8; }
-  .sidebar-link.on { background:rgba(201,168,76,.12); color:#c9a84c; border:1px solid rgba(201,168,76,.2); }
-  .sidebar-link i { width:16px; text-align:center; }
-  @keyframes drawLine { from{stroke-dashoffset:1000} to{stroke-dashoffset:0} }
-  .chart-line { stroke-dasharray:1000; stroke-dashoffset:1000; animation:drawLine 2s ease forwards .5s; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-  .anim-1{animation:fadeUp .6s ease forwards .1s;opacity:0}
-  .anim-2{animation:fadeUp .6s ease forwards .2s;opacity:0}
-  .anim-3{animation:fadeUp .6s ease forwards .3s;opacity:0}
-  .anim-4{animation:fadeUp .6s ease forwards .4s;opacity:0}
-  .anim-5{animation:fadeUp .6s ease forwards .5s;opacity:0}
-  .anim-6{animation:fadeUp .6s ease forwards .6s;opacity:0}
-  .donut-ring { transition:stroke-dasharray 1.4s cubic-bezier(.16,1,.3,1) .6s; }
-  .stat-card { transition:border-color .25s, transform .25s; }
-  .stat-card:hover { transform:translateY(-2px); }
-  .skeleton { background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:6px; }
-  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-  ::-webkit-scrollbar{width:4px;height:4px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
+body { font-family:'DM Sans',sans-serif; background:#040608; color:#edf2f8; }
+
+/* ══ LOADER ══ */
+#aurum-loader {
+  position:fixed;inset:0;z-index:9999;background:#040608;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  transition:opacity .7s ease, visibility .7s ease;
+}
+#aurum-loader.out{opacity:0;visibility:hidden;pointer-events:none}
+.ld-logo-mark {
+  width:56px;height:56px;border-radius:18px;
+  background:linear-gradient(135deg,#c9a84c,#a87c28);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:22px;
+  box-shadow:0 0 40px rgba(201,168,76,.3);
+  animation:ldPulse 1.8s ease-in-out infinite;
+}
+@keyframes ldPulse{0%,100%{box-shadow:0 0 30px rgba(201,168,76,.2)}50%{box-shadow:0 0 60px rgba(201,168,76,.5)}}
+.ld-wordmark {
+  display:flex;gap:3px;
+  font-family:'Cormorant Garamond',serif;font-size:28px;letter-spacing:.25em;color:#edf2f8;
+}
+.ld-wordmark span{opacity:0;transform:translateY(10px);animation:ldChar .5s ease forwards}
+.ld-wordmark span:nth-child(1){animation-delay:.1s}
+.ld-wordmark span:nth-child(2){animation-delay:.2s}
+.ld-wordmark span:nth-child(3){animation-delay:.3s}
+.ld-wordmark span:nth-child(4){animation-delay:.4s}
+.ld-wordmark span:nth-child(5){animation-delay:.5s}
+@keyframes ldChar{to{opacity:1;transform:none}}
+.ld-bar{width:180px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.ld-fill{height:100%;background:linear-gradient(90deg,#c9a84c,#e8c96a);border-radius:2px;animation:ldFill 1.8s ease-in-out infinite}
+@keyframes ldFill{0%{width:0%;margin-left:0}60%{width:80%;margin-left:0}100%{width:0%;margin-left:100%}}
+.ld-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;color:#5a6880;text-transform:uppercase}
+
+/* ══ SIDEBAR ══ */
+.sidebar-link { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; font-size:.84rem; font-weight:500; color:#5a6880; transition:all .2s; text-decoration:none; }
+.sidebar-link:hover { background:rgba(255,255,255,.05); color:#edf2f8; }
+.sidebar-link.on { background:rgba(201,168,76,.12); color:#c9a84c; border:1px solid rgba(201,168,76,.2); }
+.sidebar-link i { width:16px; text-align:center; }
+
+/* ══ CHART ══ */
+@keyframes drawLine { from{stroke-dashoffset:1000} to{stroke-dashoffset:0} }
+.chart-line { stroke-dasharray:1000; stroke-dashoffset:1000; animation:drawLine 2s ease forwards .5s; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.anim-1{animation:fadeUp .6s ease forwards .1s;opacity:0}
+.anim-2{animation:fadeUp .6s ease forwards .2s;opacity:0}
+.anim-3{animation:fadeUp .6s ease forwards .3s;opacity:0}
+.anim-4{animation:fadeUp .6s ease forwards .4s;opacity:0}
+.anim-5{animation:fadeUp .6s ease forwards .5s;opacity:0}
+.anim-6{animation:fadeUp .6s ease forwards .6s;opacity:0}
+.donut-ring { transition:stroke-dasharray 1.4s cubic-bezier(.16,1,.3,1) .6s; }
+.stat-card { transition:border-color .25s, transform .25s; }
+.stat-card:hover { transform:translateY(-2px); }
+.skeleton { background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:6px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
+
+/* ══ MODALS ══ */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal-box{background:#111820;border:1px solid rgba(255,255,255,.09);border-radius:24px;width:100%;max-width:500px;max-height:94vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.8)}
+
+/* ══ TX RECEIPT ══ */
+.receipt-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.receipt-row:last-child{border-bottom:none}
+.receipt-row .lbl{color:#5a6880}
+.receipt-row .val{font-family:'JetBrains Mono',monospace;font-size:11px;color:#edf2f8;text-align:right;max-width:60%}
+
+/* ══ ADMIN (hidden) ══ */
+.admin-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.97);backdrop-filter:blur(20px);display:none;flex-direction:column;overflow:hidden}
+.admin-overlay.open{display:flex}
+.admin-panel{display:flex;flex-direction:column;height:100%;padding:24px;max-width:1100px;margin:0 auto;width:100%}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(201,168,76,.18)}
+.admin-tbl{width:100%;border-collapse:collapse}
+.admin-tbl th{text-align:left;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06)}
+.admin-tbl td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03)}
+.admin-tbl tr:hover td{background:rgba(255,255,255,.015)}
+
+/* ══ SWAP MODAL ══ */
+.swap-arrow-btn{width:40px;height:40px;border-radius:50%;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);color:#c9a84c;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;margin:0 auto}
+.swap-arrow-btn:hover{background:rgba(201,168,76,.22);transform:rotate(180deg)}
+
+/* Admin hint */
+.admin-hint{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(201,168,76,.0);letter-spacing:.12em;pointer-events:none;transition:color .5s;z-index:100}
+.admin-hint.glow{color:rgba(201,168,76,.45)}
 </style>
 </head>
 <body class="bg-void overflow-x-hidden">
 
-<div class="flex min-h-screen relative z-10">
+<!-- ══ LOADER ══ -->
+<div id="aurum-loader">
+  <div class="ld-logo-mark">A</div>
+  <div class="ld-wordmark">
+    <span>A</span><span>U</span><span>R</span><span>U</span><span>M</span>
+  </div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+  <div class="ld-sub">Loading Dashboard</div>
+</div>
+
+<div id="appRoot" style="display:none" class="flex min-h-screen relative z-10">
 
   <!-- SIDEBAR -->
   <aside class="hidden lg:flex flex-col fixed top-0 left-0 bottom-0 w-60 bg-deep border-r border-white/[.06] z-50 py-6 px-4">
-    <a href="investment.html" class="flex items-center gap-3 px-2 mb-8">
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-void font-bold text-sm font-mono shadow-gold" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
+    <a href="sqladmin.html" class="flex items-center gap-3 px-2 mb-8">
+      <div id="sidebarLogo" style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:14px;flex-shrink:0;cursor:pointer" title="Triple-click for admin">A</div>
       <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
     </a>
-
     <div class="flex flex-col gap-1 flex-1">
       <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
       <a href="dashboard.html" class="sidebar-link on"><i class="fas fa-gauge-high"></i>Dashboard</a>
       <a href="invest.html"    class="sidebar-link"><i class="fas fa-chart-line"></i>Invest</a>
       <a href="#"              class="sidebar-link"><i class="fas fa-briefcase"></i>Portfolio</a>
       <a href="#"              class="sidebar-link"><i class="fas fa-repeat"></i>Transactions</a>
-
       <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-6">Markets</p>
       <a href="#" class="sidebar-link"><i class="fab fa-bitcoin"></i>Crypto</a>
       <a href="#" class="sidebar-link"><i class="fas fa-chart-bar"></i>Stocks</a>
       <a href="#" class="sidebar-link"><i class="fas fa-city"></i>Real Estate</a>
       <a href="#" class="sidebar-link"><i class="fas fa-layer-group"></i>Commodities</a>
-
       <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-6">Account</p>
       <a href="#" class="sidebar-link"><i class="fas fa-user-circle"></i>Profile</a>
-      <a href="#" class="sidebar-link"><i class="fas fa-shield-halved"></i>Security</a>
-      <a href="#" class="sidebar-link"><i class="fas fa-circle-question"></i>Support</a>
+      <a href="dashboard.html" class="sidebar-link"><i class="fas fa-shield-halved"></i>Security</a>
+      <a href="#" data-signout class="sidebar-link"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
     </div>
-
-    <!-- Sidebar user block — populated from Supabase profiles -->
     <div class="border-t border-white/[.06] pt-4 mt-4">
       <div class="flex items-center gap-3 px-2">
-        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void user-avatar-initials"
-             style="background:linear-gradient(135deg,#c9a84c,#a87c28)">…</div>
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void user-avatar-initials" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">…</div>
         <div class="flex-1 min-w-0">
-          <p class="text-snow text-sm font-medium truncate user-display-name" id="nav-user-fullname">Loading…</p>
-          <!--
-            Cash shown here is LIVE from Supabase profiles.cash.
-            Admins can change it via: UPDATE profiles SET cash = X WHERE email = '...';
-          -->
-          <p class="font-mono text-[9px] text-steel truncate" id="nav-cash-display">— available</p>
+          <p class="text-snow text-sm font-medium truncate" id="nav-user-fullname">Loading…</p>
+          <p class="font-mono text-[9px] text-gold truncate" id="nav-cash-display">— available</p>
         </div>
-        <a href="#" data-signout class="text-steel hover:text-snow transition-colors text-xs" title="Sign out">
-          <i class="fas fa-arrow-right-from-bracket"></i>
-        </a>
       </div>
     </div>
   </aside>
@@ -126,8 +166,8 @@ tailwind.config = {
 
     <!-- TOP BAR -->
     <header class="sticky top-0 z-40 bg-void/90 backdrop-blur-xl border-b border-white/[.06] px-6 md:px-8 h-16 flex items-center justify-between gap-4">
-      <a href="investment.html" class="flex lg:hidden items-center gap-2">
-        <div class="w-7 h-7 rounded-lg flex items-center justify-center text-void font-bold text-xs font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
+      <a href="sqladmin.html" class="flex lg:hidden items-center gap-2">
+        <div id="topbarLogo" style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:12px;cursor:pointer">A</div>
         <span class="font-display text-lg tracking-[.1em] text-snow">Aurum</span>
       </a>
       <div class="hidden md:flex items-center gap-3 flex-1 max-w-xs">
@@ -141,29 +181,12 @@ tailwind.config = {
           <i class="fas fa-bell text-sm"></i>
           <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-gold"></span>
         </button>
-        <a href="invest.html" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-void transition-all hover:shadow-gold" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">
+        <a href="invest.html" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-void transition-all hover:opacity-90" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">
           <i class="fas fa-plus text-xs"></i> Invest
         </a>
-        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void lg:hidden user-avatar-initials"
-             style="background:linear-gradient(135deg,#c9a84c,#a87c28)">…</div>
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void lg:hidden user-avatar-initials" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">…</div>
       </div>
     </header>
-
-    <!-- LOW BALANCE BANNER
-         Shown automatically when cash drops below $10 (MIN_TRADE).
-         Hidden by default; dashboard.js reveals it when needed.
-    -->
-    <div id="lowBalanceWarning"
-         class="hidden mx-6 md:mx-8 mt-4 p-4 rounded-2xl border border-loss/30 bg-loss/10 flex items-start gap-3">
-      <i class="fas fa-triangle-exclamation text-loss mt-0.5 flex-shrink-0"></i>
-      <div>
-        <p class="text-loss font-semibold text-sm">Insufficient balance to trade</p>
-        <p class="text-loss/70 text-xs mt-0.5">
-          Your cash balance is too low to open new positions (minimum $10).
-          Please make a deposit or ask your admin to top up your account.
-        </p>
-      </div>
-    </div>
 
     <!-- PAGE BODY -->
     <main class="flex-1 px-6 md:px-8 py-8 space-y-8">
@@ -171,84 +194,63 @@ tailwind.config = {
       <!-- GREETING -->
       <div class="anim-1">
         <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase mb-1">Good morning</p>
-        <!--
-          user-first-name: profiles.first_name (set at signup, editable in Supabase)
-        -->
         <h1 class="font-display text-3xl md:text-4xl font-light text-snow tracking-tight">
           Welcome back, <em class="italic text-gold" id="user-first-name">…</em>
         </h1>
         <p class="text-mist text-sm mt-1">
-          Here's your portfolio performance —
-          <span id="liveDate" class="font-mono text-xs text-steel"></span>
+          Here's your portfolio performance — <span id="liveDate" class="font-mono text-xs text-steel"></span>
         </p>
+      </div>
+
+      <!-- LOW BALANCE BANNER -->
+      <div id="lowBalanceWarning" class="hidden mx-0 p-4 rounded-2xl border border-loss/30 bg-loss/10 flex items-start gap-3">
+        <i class="fas fa-triangle-exclamation text-loss mt-0.5 flex-shrink-0"></i>
+        <div>
+          <p class="text-loss font-semibold text-sm">Insufficient balance to trade</p>
+          <p class="text-loss/70 text-xs mt-0.5">Your cash balance is too low to open new positions (minimum $10). Please make a deposit.</p>
+        </div>
       </div>
 
       <!-- STAT CARDS -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 anim-2">
-
-        <!-- Total Portfolio = portfolioValue + cash (all from Supabase) -->
         <div class="stat-card col-span-2 md:col-span-1 bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gold/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Total Portfolio</p>
-          <p class="font-display text-3xl font-light text-snow tracking-tight" id="totalVal">
-            <span class="skeleton inline-block w-28 h-7">&nbsp;</span>
-          </p>
+          <p class="font-display text-3xl font-light text-snow tracking-tight" id="totalVal"><span class="skeleton inline-block w-28 h-7">&nbsp;</span></p>
           <div class="flex items-center gap-1.5 mt-2">
-            <span class="font-mono text-xs" id="totalPnlSign">▲</span>
-            <span class="font-mono text-xs" id="totalPnlAmt">…</span>
-            <span class="font-mono text-[10px] border border-current/20 px-2 py-0.5 rounded-full" id="totalPnlPct">…</span>
+            <span class="font-mono text-xs text-gain" id="totalPnlSign">▲</span>
+            <span class="font-mono text-xs text-gain" id="totalPnlAmt">—</span>
+            <span class="font-mono text-[10px] border border-gain/20 px-2 py-0.5 rounded-full text-gain" id="totalPnlPct">—</span>
           </div>
           <p class="font-mono text-[9px] text-steel mt-1">All time</p>
         </div>
-
-        <!-- Today P&L (static — hook to daily_pnl column if needed) -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gain/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Today's P&L</p>
-          <p class="font-display text-2xl font-light text-gain tracking-tight">+$1,847</p>
-          <div class="flex items-center gap-1.5 mt-2">
-            <span class="text-gain text-xs font-mono">▲ +0.65%</span>
-          </div>
+          <p class="font-display text-2xl font-light text-gain tracking-tight" id="todayPnl">+$1,847</p>
+          <div class="flex items-center gap-1.5 mt-2"><span class="text-gain text-xs font-mono">▲ +0.65%</span></div>
           <p class="font-mono text-[9px] text-steel mt-1">vs yesterday</p>
         </div>
-
-        <!-- Invested = sum(holdings) at live price (Supabase holdings table) -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-accent/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Invested</p>
-          <p class="font-display text-2xl font-light text-snow tracking-tight" id="investedVal">
-            <span class="skeleton inline-block w-24 h-6">&nbsp;</span>
-          </p>
-          <div class="flex items-center gap-1.5 mt-2">
-            <span class="text-mist text-xs font-mono">Deployed capital</span>
-          </div>
+          <p class="font-display text-2xl font-light text-snow tracking-tight" id="investedVal"><span class="skeleton inline-block w-24 h-6">&nbsp;</span></p>
+          <div class="flex items-center gap-1.5 mt-2"><span class="text-mist text-xs font-mono">Deployed capital</span></div>
           <p class="font-mono text-[9px] text-steel mt-1" id="assetCount">— assets</p>
         </div>
-
-        <!--
-          Cash Balance — source: profiles.cash
-          Admin SQL: UPDATE profiles SET cash = 5000 WHERE email = 'user@example.com';
-          DB trigger credits/debits automatically on every transaction insert.
-        -->
         <div class="stat-card bg-surface border border-white/[.07] rounded-2xl p-5 hover:border-gold/30">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-3">Cash Balance</p>
-          <p class="font-display text-2xl font-light text-snow tracking-tight" id="cashVal">
-            <span class="skeleton inline-block w-24 h-6">&nbsp;</span>
-          </p>
-          <div class="flex items-center gap-1.5 mt-2">
-            <span class="text-gold text-xs font-mono">Available</span>
-          </div>
+          <p class="font-display text-2xl font-light text-snow tracking-tight" id="cashVal"><span class="skeleton inline-block w-24 h-6">&nbsp;</span></p>
+          <div class="flex items-center gap-1.5 mt-2"><span class="text-gold text-xs font-mono">Available</span></div>
           <p class="font-mono text-[9px] text-steel mt-1">Ready to deploy</p>
         </div>
       </div>
 
+      
       <!-- CHART + ALLOCATION -->
       <div class="grid lg:grid-cols-3 gap-6 anim-3">
-
         <div class="lg:col-span-2 bg-surface border border-white/[.07] rounded-2xl overflow-hidden">
           <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/[.06]">
             <div>
               <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">Portfolio Performance</p>
-              <p class="font-display text-xl text-snow font-light">
-                <span id="totalVal2">—</span>
-              </p>
+              <p class="font-display text-xl text-snow font-light"><span id="totalVal2">—</span></p>
             </div>
             <div class="flex gap-1 bg-white/[.04] border border-white/[.07] rounded-xl p-1">
               <button onclick="setRange(this,'1W')" class="px-3 py-1.5 rounded-lg font-mono text-[10px] text-steel hover:text-snow transition-colors">1W</button>
@@ -269,8 +271,7 @@ tailwind.config = {
               <line x1="0" y1="100" x2="680" y2="100" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
               <line x1="0" y1="150" x2="680" y2="150" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
               <path id="chartArea" fill="url(#chartGrad)" d=""/>
-              <path id="chartLine" class="chart-line" fill="none" stroke="#22c55e" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" d=""/>
+              <path id="chartLine" class="chart-line" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d=""/>
               <circle id="chartDot" r="4" fill="#22c55e" stroke="#040608" stroke-width="2"/>
             </svg>
             <div class="flex justify-between px-1 mt-1">
@@ -283,36 +284,21 @@ tailwind.config = {
             </div>
           </div>
         </div>
-
-        <!--
-          Allocation donut — built from Supabase holdings in real-time.
-          Each slice = live price × quantity for that holding.
-        -->
         <div class="bg-surface border border-white/[.07] rounded-2xl p-6">
           <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase mb-1">Allocation</p>
           <p class="font-display text-lg text-snow font-light mb-5">Portfolio Split</p>
           <div class="flex justify-center mb-6">
-            <svg viewBox="0 0 120 120" class="w-36 h-36">
-              <g id="allocationDonut"></g>
-            </svg>
+            <svg viewBox="0 0 120 120" class="w-36 h-36"><g id="allocationDonut"></g></svg>
           </div>
           <div class="space-y-3" id="allocationLegend">
             <div class="flex items-center justify-between"><div class="skeleton w-24 h-3">&nbsp;</div><div class="skeleton w-16 h-3">&nbsp;</div></div>
             <div class="flex items-center justify-between"><div class="skeleton w-20 h-3">&nbsp;</div><div class="skeleton w-16 h-3">&nbsp;</div></div>
-            <div class="flex items-center justify-between"><div class="skeleton w-16 h-3">&nbsp;</div><div class="skeleton w-16 h-3">&nbsp;</div></div>
           </div>
         </div>
       </div>
 
       <!-- HOLDINGS + TRANSACTIONS -->
       <div class="grid lg:grid-cols-5 gap-6 anim-4">
-
-        <!--
-          Holdings table — reads from public.holdings.
-          Admin SQL to add:
-            INSERT INTO holdings (user_id,symbol,name,icon,color,quantity,avg_buy_price)
-            VALUES ('uuid','BTC','Bitcoin','fab fa-bitcoin','#f7931a',0.5,60000);
-        -->
         <div class="lg:col-span-3 bg-surface border border-white/[.07] rounded-2xl overflow-hidden">
           <div class="flex items-center justify-between px-6 py-4 border-b border-white/[.06]">
             <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase">Holdings</p>
@@ -335,48 +321,37 @@ tailwind.config = {
           </div>
         </div>
 
-        <!--
-          Transactions — reads from public.transactions (last 8, newest first).
-          Admin SQL to add:
-            INSERT INTO transactions (user_id,type,symbol,name,icon,color,quantity,price_at_tx,usd_amount)
-            VALUES ('uuid','buy','BTC','Bitcoin','fab fa-bitcoin','#f7931a',0.5,67000,33500);
-          NOTE: inserting a transaction triggers apply_transaction_cash()
-          which adjusts profiles.cash automatically.
-        -->
+        <!-- Transactions (enhanced) -->
         <div class="lg:col-span-2 bg-surface border border-white/[.07] rounded-2xl overflow-hidden">
           <div class="flex items-center justify-between px-6 py-4 border-b border-white/[.06]">
             <p class="font-mono text-[9px] tracking-[.14em] text-steel uppercase">Recent Activity</p>
-            <a href="#" class="font-mono text-[10px] text-steel hover:text-snow transition-colors">View all</a>
+            <button onclick="openAllTxModal()" class="font-mono text-[10px] text-steel hover:text-snow transition-colors">View all →</button>
           </div>
           <div class="divide-y divide-white/[.04]" id="txList">
-            <div class="px-6 py-4 space-y-3">
-              <div class="skeleton w-full h-4">&nbsp;</div>
-              <div class="skeleton w-full h-4">&nbsp;</div>
-              <div class="skeleton w-2/3 h-4">&nbsp;</div>
-            </div>
+            <div class="px-6 py-4 space-y-3"><div class="skeleton w-full h-4">&nbsp;</div><div class="skeleton w-full h-4">&nbsp;</div></div>
           </div>
         </div>
       </div>
 
       <!-- QUICK ACTIONS -->
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 anim-5">
-        <button onclick="window.location='invest.html'"
-                class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gold/30 hover:bg-lift transition-all">
+        <button onclick="window.location='invest.html'" class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gold/30 hover:bg-lift transition-all">
           <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gold text-xl" style="background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2)"><i class="fas fa-arrow-trend-up"></i></div>
           <p class="font-semibold text-snow text-sm">Buy / Invest</p>
           <p class="text-xs text-steel text-center">Deploy capital across markets</p>
         </button>
-        <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gain/30 hover:bg-lift transition-all">
+        <button onclick="openWithdrawModal()" class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-gain/30 hover:bg-lift transition-all">
           <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gain text-xl" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)"><i class="fas fa-money-bill-transfer"></i></div>
           <p class="font-semibold text-snow text-sm">Withdraw</p>
           <p class="text-xs text-steel text-center">Transfer to bank account</p>
         </button>
-        <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-accent/30 hover:bg-lift transition-all">
+        <!-- SWAP — fully functional -->
+        <button onclick="openSwapModal()" class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-accent/30 hover:bg-lift transition-all">
           <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-accent text-xl" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2)"><i class="fas fa-repeat"></i></div>
           <p class="font-semibold text-snow text-sm">Swap</p>
           <p class="text-xs text-steel text-center">Exchange between assets</p>
         </button>
-        <button class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-violet-500/30 hover:bg-lift transition-all">
+        <button onclick="openRebalanceModal()" class="group flex flex-col items-center gap-3 p-6 bg-surface border border-white/[.07] rounded-2xl hover:border-violet-500/30 hover:bg-lift transition-all">
           <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-violet-400 text-xl" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2)"><i class="fas fa-chart-pie"></i></div>
           <p class="font-semibold text-snow text-sm">Rebalance</p>
           <p class="text-xs text-steel text-center">Auto-optimise allocation</p>
@@ -394,21 +369,782 @@ tailwind.config = {
         </div>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/[.04]" id="moversGrid"></div>
       </div>
-
     </main>
 
     <footer class="px-8 py-5 border-t border-white/[.06] flex items-center justify-between flex-wrap gap-3">
-      <p class="font-mono text-[9px] text-steel tracking-[.08em]">©2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
+      <p class="font-mono text-[9px] text-steel tracking-[.08em]">©️2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
       <p class="font-mono text-[9px] text-steel tracking-[.06em]">Prices update every 2s · Past performance ≠ future results</p>
     </footer>
   </div>
 </div>
 
-<!--
-  dashboard.js is an ES module.
-  It imports Supabase from the CDN directly — no separate supabaseClient.js needed.
-  Make sure dashboard.js and dashboard.html are in the same folder.
--->
-<script type="module" src="dashboard.js"></script>
+<!-- ══ SWAP MODAL ══ -->
+<div class="modal-bg" id="swapModal">
+  <div class="modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8;font-weight:300">Swap <em style="font-style:italic;color:#3b82f6">Assets</em></p>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:2px;letter-spacing:.1em">EXCHANGE AT LIVE MARKET RATES</p>
+      </div>
+      <button onclick="closeSwapModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">✕</button>
+    </div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+      <!-- FROM -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em">From</label>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Available: <span id="sw-from-bal" style="color:#edf2f8">—</span></span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <select id="sw-from" onchange="swapUpdateCalc()" style="background:#080c12;border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:10px 12px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;flex:1;cursor:pointer">
+            <option value="CASH">💵 USD (Cash)</option>
+          </select>
+          <input type="number" id="sw-from-amt" step="any" min="1" placeholder="0.00" oninput="swapUpdateCalc()" style="background:#080c12;border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:10px 14px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:16px;outline:none;width:130px;transition:border-color .2s" onfocus="this.style.borderColor='rgba(59,130,246,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.09)'">
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="preset-btn" onclick="swapSetPct(25)">25%</button>
+          <button class="preset-btn" onclick="swapSetPct(50)">50%</button>
+          <button class="preset-btn" onclick="swapSetPct(75)">75%</button>
+          <button class="preset-btn" onclick="swapSetPct(100)">MAX</button>
+        </div>
+      </div>
+
+      <!-- SWAP ARROW -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
+        <button class="swap-arrow-btn" onclick="swapFlip()" title="Flip swap direction">
+          <i class="fas fa-arrow-down-up" style="font-size:14px"></i>
+        </button>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
+      </div>
+<!-- TO -->
+      <div style="background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.12);border-radius:16px;padding:16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em">To</label>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">You receive</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <select id="sw-to" onchange="swapUpdateCalc()" style="background:#080c12;border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:10px 12px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;flex:1;cursor:pointer">
+            <option value="BTC">₿ Bitcoin (BTC)</option>
+            <option value="ETH">⟠ Ethereum (ETH)</option>
+            <option value="SOL">◎ Solana (SOL)</option>
+            <option value="TSLA">🚗 Tesla (TSLA)</option>
+            <option value="NVDA">🔧 NVIDIA (NVDA)</option>
+            <option value="AAPL">🍎 Apple (AAPL)</option>
+            <option value="CASH">💵 USD (Cash)</option>
+          </select>
+          <div style="width:130px;padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:15px;color:#3b82f6;text-align:right" id="sw-to-amt">—</div>
+        </div>
+      </div>
+
+      <!-- Rate + details -->
+      <div style="background:rgba(4,6,8,.5);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:#5a6880">Exchange Rate</span><span id="sw-rate" style="font-family:'JetBrains Mono',monospace;color:#edf2f8;font-size:11px">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:#5a6880">Swap Fee (0.2%)</span><span id="sw-fee" style="font-family:'JetBrains Mono',monospace;color:#5a6880;font-size:11px">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:#5a6880">Slippage est.</span><span id="sw-slip" style="font-family:'JetBrains Mono',monospace;color:#5a6880;font-size:11px">—</span></div>
+        <div style="height:1px;background:rgba(255,255,255,.05);margin:8px 0"></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#5a6880">New Balance After</span><span id="sw-after" style="font-family:'JetBrains Mono',monospace;color:#c9a84c;font-size:11px">—</span></div>
+      </div>
+
+      <!-- Error / warning -->
+      <div id="sw-error" style="display:none;padding:11px 14px;background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.22);border-radius:11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444"></div>
+
+      <button id="sw-confirm" onclick="executeSwap()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s">
+        <i class="fas fa-repeat" style="font-size:13px"></i>
+        <span id="sw-label">Confirm Swap</span>
+        <div id="sw-spin" style="display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>
+      </button>
+      <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Swaps execute at live market prices · 0.2% fee applies</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TX RECEIPT MODAL ══ -->
+<div class="modal-bg" id="receiptModal">
+  <div class="modal-box" style="max-width:440px;background:#080c12;border-color:rgba(34,197,94,.2)">
+    <div style="padding:28px 24px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(34,197,94,.1);border:2px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+        <i id="rc-icon" class="fas fa-check" style="color:#22c55e;font-size:20px"></i>
+      </div>
+      <p id="rc-headline" style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8;font-weight:300;margin-bottom:3px">Transaction Confirmed</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.12em">ORDER EXECUTED SUCCESSFULLY</p>
+    </div>
+    <div style="padding:20px 22px">
+      <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px;margin-bottom:14px">
+        <div class="receipt-row"><span class="lbl">Transaction ID</span><span class="val" id="rc-txid" style="color:#5a6880;font-size:10px;word-break:break-all">—</span></div>
+        <div class="receipt-row"><span class="lbl">Timestamp (UTC)</span><span class="val" id="rc-time">—</span></div>
+        <div class="receipt-row"><span class="lbl">Type</span><span class="val" id="rc-type">—</span></div>
+        <div class="receipt-row"><span class="lbl">Asset</span><span class="val" id="rc-asset">—</span></div>
+        <div class="receipt-row"><span class="lbl">Quantity</span><span class="val" id="rc-qty" style="color:#c9a84c">—</span></div>
+        <div class="receipt-row"><span class="lbl">Exec. Price</span><span class="val" id="rc-price">—</span></div>
+        <div class="receipt-row"><span class="lbl">Gross Amount</span><span class="val" id="rc-gross">—</span></div>
+        <div class="receipt-row"><span class="lbl">Platform Fee</span><span class="val" id="rc-fee">—</span></div>
+        <div class="receipt-row" style="border-bottom:none;padding-top:10px">
+          <span class="lbl" style="color:#edf2f8;font-size:13px">Total Debited</span>
+          <span class="val" id="rc-total" style="color:#ef4444;font-size:13px">—</span>
+        </div>
+      </div>
+      <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.14);border-radius:12px;padding:12px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em">New Cash Balance</span>
+        <span id="rc-newbal" style="font-family:'JetBrains Mono',monospace;font-size:17px;color:#22c55e">—</span>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button onclick="closeReceiptModal()" style="flex:1;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#5a6880;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer">Dismiss</button>
+        <button onclick="closeReceiptModal();window.location='invest.html'" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Invest More</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- ══ ALL TRANSACTIONS MODAL ══ -->
+<div class="modal-bg" id="allTxModal">
+  <div class="modal-box" style="max-width:600px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">Transaction <em style="font-style:italic;color:#c9a84c">History</em></p>
+      <button onclick="closeAllTxModal()" style="width:34px;height:34px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:10px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px">✕</button>
+    </div>
+    <div id="allTxList" style="padding:16px;max-height:60vh;overflow-y:auto">
+      <div style="text-align:center;padding:24px;color:#5a6880;font-family:'JetBrains Mono',monospace;font-size:11px">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WITHDRAW MODAL ══ -->
+<div class="modal-bg" id="withdrawModal">
+  <div class="modal-box" style="max-width:420px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">Withdraw <em style="font-style:italic;color:#22c55e">Funds</em></p>
+      <button onclick="closeWithdrawModal()" style="width:34px;height:34px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:10px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
+      <div style="padding:14px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;text-transform:uppercase">Available Cash</span>
+        <span id="wd-avail" style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#22c55e">$0.00</span>
+      </div>
+      <div>
+        <label style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px">Amount to Withdraw ($)</label>
+        <div style="position:relative">
+          <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#5a6880;font-family:'JetBrains Mono',monospace">$</span>
+          <input type="number" id="wd-amount" step="0.01" placeholder="0.00" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:12px 14px 12px 28px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:17px;outline:none" oninput="wdCalc()">
+        </div>
+      </div>
+      <div style="background:rgba(4,6,8,.5);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:12px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:#5a6880">Withdrawal amount</span><span id="wd-amt-row" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#5a6880">Remaining balance</span><span id="wd-remain" style="font-family:'JetBrains Mono',monospace;color:#c9a84c">—</span></div>
+      </div>
+      <div id="wd-error" style="display:none;padding:10px 13px;background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.22);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444"></div>
+      <p style="font-size:12px;color:#5a6880;text-align:center">Withdraw in 3mins.</p>
+      <button onclick="executeWithdraw()" style="width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);color:#040608;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer"><i class="fas fa-arrow-right-from-bracket" style="margin-right:6px"></i>Withdraw Funds</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script type="module">
+/* ══════════════════════════════════════════════════
+   AURUM CAPITAL — dashboard.html
+   Replace SUPABASE_URL and SUPABASE_ANON below.
+══════════════════════════════════════════════════ */
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── Prices ───────────────────────────────────────────
+const PRICES = {
+  BTC:67430, ETH:3280, SOL:188, BNB:612, XRP:0.72,
+  TSLA:248.50, AAPL:189.30, NVDA:875.20, MSFT:412.70, AMZN:195.50, GOOGL:178.30,
+  CASH:1
+};
+
+const PRICE_CHANGE_24H = {
+  BTC:+2.8, ETH:+1.9, SOL:+3.1, BNB:-0.4, XRP:-1.2,
+  TSLA:+0.6, AAPL:-0.8, NVDA:+2.1, MSFT:+0.3, AMZN:-1.5, GOOGL:+0.9,
+};
+
+const PRICE = {
+  color : (sym) => ASSET_META[sym]?.color || '#888',
+}
+const ASSET_META = {
+  BTC: {name:'Bitcoin',  color:'#f7931a', icon:'fab fa-bitcoin'},
+  ETH: {name:'Ethereum', color:'#627eea', icon:'fab fa-ethereum'},
+  SOL: {name:'Solana',   color:'#9945ff', icon:'fas fa-sun'},
+  BNB: {name:'BNB',      color:'#f3ba2f', icon:'fas fa-coins'},
+  XRP: {name:'Ripple',   color:'#00aae4', icon:'fas fa-water'},
+  TSLA:{name:'Tesla',    color:'#e31937', icon:'fas fa-car'},
+  AAPL:{name:'Apple',    color:'#a2aaad', icon:'fab fa-apple'},
+  NVDA:{name:'NVIDIA',   color:'#76b900', icon:'fas fa-microchip'},
+  MSFT:{name:'Microsoft',color:'#00a4ef', icon:'fab fa-windows'},
+  AMZN:{name:'Amazon',   color:'#ff9900', icon:'fab fa-amazon'},
+  GOOGL:{name:'Alphabet',color:'#4285f4', icon:'fab fa-google'},
+  CASH:{name:'USD Cash', color:'#22c55e', icon:'fas fa-dollar-sign'},
+};
+
+// ── State ─────────────────────────────────────────────
+let authUser   = null;
+let profile    = null;
+let myHoldings = [];
+let adminUsers = [];
+
+const movers = [
+  {sym:'BTC', name:'Bitcoin',  chg:+2.8, price:67430, color:'#f7931a', icon:'fab fa-bitcoin'},
+  {sym:'SOL', name:'Solana',   chg:+3.1, price:188,   color:'#9945ff', icon:'fas fa-sun'},
+  {sym:'NVDA',name:'NVIDIA',   chg:+2.1, price:875,   color:'#76b900', icon:'fas fa-microchip'},
+  {sym:'XRP', name:'Ripple',   chg:-1.2, price:0.72,  color:'#00aae4', icon:'fas fa-water'},
+];
+
+// ── Boot ──────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const loaderDone = new Promise(r => setTimeout(r, 1900));
+
+  document.getElementById('liveDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  const { data: { session } } = await sb.auth.getSession();
+
+  await loaderDone;
+  document.getElementById('aurum-loader').classList.add('out');
+
+  if (!session) { window.location.href = 'signup.html'; return; }
+  authUser = session.user;
+
+  await loadProfile();
+  await loadHoldings();
+  await loadTransactions();
+  renderMovers();
+  drawChart();
+
+  document.getElementById('appRoot').style.display = 'flex';
+
+  document.querySelectorAll('[data-signout]').forEach(el =>
+    el.addEventListener('click', e => { e.preventDefault(); sb.auth.signOut().then(() => window.location.href = 'signup.html'); })
+  );
+
+  setupAdminTrigger();
+
+  // Realtime cash
+  sb.channel('dash-profile')
+    .on('postgres_changes', {event:'UPDATE',schema:'public',table:'profiles',filter:`id=eq.${authUser.id}`},
+      ({new:row}) => { profile = {...profile,...row}; refreshUI(); })
+    .subscribe();
+
+  setInterval(() => {
+    Object.keys(PRICES).forEach(k => { if(k!=='CASH') PRICES[k] *= 1+(Math.random()-.5)*.0009; });
+    if (profile) { buildHoldingsTable(); updateTotals(); }
+  }, 2200);
+});
+
+// ── Load data ─────────────────────────────────────────
+async function loadProfile() {
+  const { data } = await sb.from('profiles').select('*').eq('id', authUser.id).single();
+  if (data) { profile = data; refreshUI(); }
+}
+
+async function loadHoldings() {
+  const { data } = await sb.from('holdings').select('*').eq('user_id', authUser.id).order('created_at', {ascending:false});
+  myHoldings = data || [];
+  buildHoldingsTable();
+  updateTotals();
+  buildDonut();
+}
+
+async function loadTransactions() {
+  const { data } = await sb.from('transactions').select('*').eq('user_id', authUser.id).order('created_at', {ascending:false}).limit(8);
+  renderTxList(data || []);
+}
+
+function refreshUI() {
+  if (!profile) return;
+  const cash = Number(profile.cash || 0);
+  const name = ((profile.first_name||'') + ' ' + (profile.last_name||'')).trim();
+  const ini  = profile.avatar_initials || '?';
+  setTxt('nav-cash-display', '$' + fmtUSD(cash) + ' available');
+  setTxt('nav-user-fullname', name);
+  setTxt('cashVal', '$' + fmtUSD(cash));
+  setTxt('user-first-name', profile.first_name || 'Investor');
+  document.querySelectorAll('.user-avatar-initials').forEach(el => el.textContent = ini);
+  if (cash < 10) document.getElementById('lowBalanceWarning').classList.remove('hidden');
+  else document.getElementById('lowBalanceWarning').classList.add('hidden');
+}
+function updateTotals() {
+  if (!profile) return;
+  const cash    = Number(profile.cash || 0);
+  const portVal = myHoldings.reduce((s,h) => s + Number(h.quantity)*(PRICES[h.symbol]||Number(h.avg_buy_price)), 0);
+  const costBase = myHoldings.reduce((s,h) => s + Number(h.quantity)*Number(h.avg_buy_price), 0);
+  const totalVal  = portVal + cash;
+  const pnl       = portVal - costBase;
+  const pnlPct    = costBase > 0 ? (pnl/costBase*100) : 0;
+  const up        = pnl >= 0;
+
+  setTxt('totalVal', '$' + fmtUSD(totalVal));
+  setTxt('totalVal2', '$' + fmtUSD(totalVal));
+  setTxt('investedVal', '$' + fmtUSD(portVal));
+  setTxt('assetCount', myHoldings.length + ' asset' + (myHoldings.length !== 1 ? 's' : ''));
+  setTxt('totalPnlSign', up ? '▲' : '▼');
+  setTxt('totalPnlAmt', (up?'+':'')+fmtUSD(pnl));
+  setTxt('totalPnlPct', (up?'+':'')+pnlPct.toFixed(2)+'%');
+  ['totalPnlSign','totalPnlAmt','totalPnlPct'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.style.color = up ? '#22c55e' : '#ef4444';
+  });
+}
+
+function buildHoldingsTable() {
+  const tbody = document.getElementById('holdingsTbody');
+  if (!myHoldings.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center"><p class="font-mono text-[11px] text-steel">No positions yet</p><a href="invest.html" class="text-gold font-mono text-[10px] hover:text-gold-bright transition-colors">+ Open first position →</a></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = myHoldings.map(h => {
+    const meta  = ASSET_META[h.symbol] || {name:h.symbol,color:'#5a6880',icon:'fas fa-coins'};
+    const live  = PRICES[h.symbol] || Number(h.avg_buy_price);
+    const val   = Number(h.quantity) * live;
+    const cost  = Number(h.quantity) * Number(h.avg_buy_price);
+    const pnl   = val - cost;
+    const pnlPct= cost > 0 ? (pnl/cost*100) : 0;
+    const up    = pnl >= 0;
+    const qty   = Number(h.quantity);
+    const qStr  = qty < 1 ? qty.toFixed(6) : qty.toFixed(4);
+    return `<tr class="border-b border-white/[.04] hover:bg-white/[.02] transition-colors">
+      <td class="px-6 py-4">
+        <div class="flex items-center gap-3">
+          <div style="width:36px;height:36px;border-radius:11px;background:${meta.color}18;color:${meta.color};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0"><i class="${meta.icon}"></i></div>
+          <div>
+            <p class="font-semibold text-snow text-sm">${h.symbol}</p>
+            <p class="text-steel text-xs font-mono">${qStr} ${h.symbol}</p>
+          </div>
+        </div>
+      </td>
+      <td class="px-4 py-4 text-right">
+        <p class="font-mono text-[12px] text-snow">$${fmtPrice(live)}</p>
+        <p class="font-mono text-[10px] text-steel">avg $${fmtPrice(Number(h.avg_buy_price))}</p>
+      </td>
+      <td class="px-4 py-4 text-right">
+        <p class="font-mono text-[12px]" style="color:${up?'#22c55e':'#ef4444'}">${up?'+':''}${pnlPct.toFixed(2)}%</p>
+        <p class="font-mono text-[10px]" style="color:${up?'#22c55e':'#ef4444'}">${up?'+':'-'}$${fmtUSD(Math.abs(pnl))}</p>
+      </td>
+      <td class="px-6 py-4 text-right">
+        <p class="font-semibold text-snow text-sm">$${fmtUSD(val)}</p>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderTxList(txs) {
+  const el = document.getElementById('txList');
+  if (!txs.length) { el.innerHTML = '<div class="px-6 py-6 text-center font-mono text-[11px] text-steel">No transactions yet</div>'; return; }
+  const typeCfg = { buy:{c:'#ef4444',bg:'rgba(239,68,68,.1)',ico:'fa-arrow-trend-up',lbl:'BUY'}, sell:{c:'#22c55e',bg:'rgba(34,197,94,.1)',ico:'fa-arrow-trend-down',lbl:'SELL'}, deposit:{c:'#22c55e',bg:'rgba(34,197,94,.1)',ico:'fa-plus',lbl:'DEPOSIT'}, withdraw:{c:'#ef4444',bg:'rgba(239,68,68,.1)',ico:'fa-minus',lbl:'WITHDRAW'} };
+  el.innerHTML = txs.map(t => {
+    const cfg = typeCfg[t.type] || {c:'#c9a84c',bg:'rgba(201,168,76,.1)',ico:'fa-circle',lbl:(t.type||'').toUpperCase()};
+    const usd = Number(t.usd_amount||0);
+    const qty = t.quantity ? `${Number(t.quantity).toFixed(4)} ${t.symbol}` : '';
+    const ts  = new Date(t.created_at);
+    const dateStr = ts.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const timeStr = ts.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});
+    const note = t.note || '';
+    const price = t.price_at_tx ? `@ $${fmtPrice(Number(t.price_at_tx))}` : '';
+    return `<div class="px-5 py-4 flex items-start gap-3 hover:bg-white/[.02] transition-colors cursor-pointer" onclick="showTxDetail(${JSON.stringify(JSON.stringify(t))})">
+      <div style="width:36px;height:36px;border-radius:11px;background:${cfg.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">
+        <i class="fas ${cfg.ico}" style="color:${cfg.c};font-size:12px"></i>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 7px;border-radius:5px;background:${cfg.bg};color:${cfg.c}">${cfg.lbl}</span>
+            <span style="font-size:13px;font-weight:500;color:#edf2f8">${t.symbol}</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${usd>=0?'#22c55e':'#ef4444'}">${usd>=0?'+':''  }$${fmtUSD(Math.abs(usd))}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">
+            ${qty ? qty + ' ' : ''}${price ? price : ''}${note ? '· '+note.slice(0,28) : ''}
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${dateStr} ${timeStr}</span>
+        </div>
+      </div>
+    </div>
+    
+    `;
+  }).join('');
+}
+
+window.showTxDetail = function(jsonStr) {
+  const t = JSON.parse(jsonStr);
+  const ts = new Date(t.created_at);
+  const usd = Number(t.usd_amount||0);
+  const qty = t.quantity ? `${Number(t.quantity).toFixed(6)} ${t.symbol}` : 'N/A';
+
+  const iconEl = document.getElementById('rc-icon');
+  iconEl.className = usd >= 0 ? 'fas fa-arrow-down text-gain' : 'fas fa-arrow-up text-loss';
+  iconEl.style.color = usd >= 0 ? '#22c55e' : '#ef4444';
+
+  setTxt('rc-headline', t.type === 'deposit' ? 'Deposit Received' : t.type === 'withdraw' ? 'Withdrawal Processed' : t.type === 'buy' ? 'Purchase Complete' : 'Sale Complete');
+  setTxt('rc-txid',  t.id || 'N/A');
+  setTxt('rc-time',  ts.toUTCString().replace('GMT','UTC'));
+  setTxt('rc-type',  (t.type||'').toUpperCase() + ' ORDER');
+  setTxt('rc-asset', `${t.name||t.symbol} (${t.symbol})`);
+  setTxt('rc-qty',   qty);
+  setTxt('rc-price', t.price_at_tx ? '$'+fmtPrice(Number(t.price_at_tx)) : 'N/A');
+  setTxt('rc-gross', '$'+fmtUSD(Math.abs(usd)));
+  setTxt('rc-fee',   t.note ? (t.note.match(/Fee: \$([0-9.]+)/)?.[1] ? '$'+t.note.match(/Fee: \$([0-9.]+)/)[1] : 'N/A') : 'N/A');
+  setTxt('rc-total', (usd<0?'-':'+')+' $'+fmtUSD(Math.abs(usd)));
+  setTxt('rc-newbal','—');
+  document.getElementById('receiptModal').classList.add('open');
+};
+
+// ── All transactions modal ─────────────────────────────
+window.openAllTxModal = async function() {
+  document.getElementById('allTxModal').classList.add('open');
+  document.getElementById('allTxList').innerHTML = '<div style="text-align:center;padding:24px;color:#5a6880;font-family:JetBrains Mono,monospace;font-size:11px">Loading…</div>';
+  const { data } = await sb.from('transactions').select('*').eq('user_id', authUser.id).order('created_at',{ascending:false}).limit(100);
+  renderAllTx(data||[]);
+};
+window.closeAllTxModal = () => document.getElementById('allTxModal').classList.remove('open');
+function renderAllTx(txs) {
+  if (!txs.length) { document.getElementById('allTxList').innerHTML = '<div style="text-align:center;padding:24px;color:#5a6880;font-family:JetBrains Mono,monospace;font-size:11px">No transactions</div>'; return; }
+  document.getElementById('allTxList').innerHTML = txs.map(t => {
+    const usd = Number(t.usd_amount||0);
+    const ts  = new Date(t.created_at);
+    return `<div style="padding:12px 8px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="showTxDetail(${JSON.stringify(JSON.stringify(t))})" onmouseover="this.style.background='rgba(255,255,255,.02)'" onmouseout="this.style.background='none'">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:5px;background:rgba(201,168,76,.1);color:#c9a84c">${(t.type||'').toUpperCase()}</span>
+          <span style="font-size:13px;font-weight:500;color:#edf2f8">${t.symbol}</span>
+          ${t.quantity ? `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880">${Number(t.quantity).toFixed(4)} units</span>` : ''}
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${ts.toUTCString().replace('GMT','UTC')}${t.price_at_tx ? ' · @ $'+fmtPrice(Number(t.price_at_tx)) : ''}</div>
+        ${t.note ? `<div style="font-size:11px;color:#5a6880;margin-top:2px">${t.note}</div>` : ''}
+      </div>
+      <div style="text-align:right">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${usd>=0?'#22c55e':'#ef4444'}">${usd>=0?'+':''  }$${fmtUSD(Math.abs(usd))}</p>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:2px">click for details →</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+window.closeReceiptModal = () => document.getElementById('receiptModal').classList.remove('open');
+
+// ── SWAP ──────────────────────────────────────────────
+window.openSwapModal = function() {
+  // Populate from dropdown with holdings + CASH
+  const fromSel = document.getElementById('sw-from');
+  const toSel   = document.getElementById('sw-to');
+  fromSel.innerHTML = `<option value="CASH">💵 USD (Cash)</option>` +
+    myHoldings.map(h => `<option value="${h.symbol}">${h.symbol} — ${(ASSET_META[h.symbol]||{}).name||h.symbol}</option>`).join('');
+  document.getElementById('swapModal').classList.add('open');
+  swapUpdateCalc();
+};
+window.closeSwapModal = () => document.getElementById('swapModal').classList.remove('open');
+
+window.swapUpdateCalc = function() {
+  const from   = document.getElementById('sw-from').value;
+  const to     = document.getElementById('sw-to').value;
+  const amt    = parseFloat(document.getElementById('sw-from-amt').value) || 0;
+  const err    = document.getElementById('sw-error');
+  err.style.display = 'none';
+
+  // Available from balance
+  let available = 0;
+  if (from === 'CASH') available = Number(profile?.cash || 0);
+  else {
+    const h = myHoldings.find(x => x.symbol === from);
+    available = h ? Number(h.quantity) * (PRICES[from] || Number(h.avg_buy_price)) : 0;
+  }
+  document.getElementById('sw-from-bal').textContent = from === 'CASH' ? '$'+fmtUSD(available) : `$${fmtUSD(available)} (${(myHoldings.find(x=>x.symbol===from)?.quantity||0)} ${from})`;
+
+  if (from === to) { err.textContent = 'Cannot swap to the same asset.'; err.style.display='block'; setTxt('sw-to-amt','—'); return; }
+  if (amt <= 0) { setTxt('sw-to-amt','—'); setTxt('sw-rate','—'); setTxt('sw-fee','—'); setTxt('sw-slip','—'); setTxt('sw-after','—'); return; }
+
+  // USD value of from amount
+  let fromUSD = from === 'CASH' ? amt : amt * (PRICES[from] || 1);
+
+  if (fromUSD > available + 0.01) { err.textContent = 'Insufficient balance for this swap.'; err.style.display='block'; }
+
+  const fee  = +(fromUSD * 0.002).toFixed(2);
+  const slip = +(fromUSD * 0.0005).toFixed(2);
+  const netUSD = fromUSD - fee - slip;
+  const toPrice = PRICES[to] || 1;
+  const toAmt   = to === 'CASH' ? netUSD : netUSD / toPrice;
+
+  const afterCash = from === 'CASH'
+    ? (Number(profile?.cash||0) - fromUSD - fee - slip)
+    : (Number(profile?.cash||0) - fee - slip + (to==='CASH' ? toAmt : 0));
+
+  setTxt('sw-to-amt', to === 'CASH' ? '$'+fmtUSD(toAmt) : toAmt.toFixed(to==='BTC'?6:4)+' '+to);
+  setTxt('sw-rate',   from==='CASH' ? `$1 → ${(1/toPrice).toFixed(6)} ${to}` : `1 ${from} → ${(PRICES[from]/toPrice).toFixed(4)} ${to}`);
+  setTxt('sw-fee',    '$'+fee.toFixed(2));
+  setTxt('sw-slip',   '$'+slip.toFixed(2));
+  setTxt('sw-after',  '$'+fmtUSD(Math.max(0,afterCash))+' cash');
+};
+
+window.swapFlip = function() {
+  const fromSel = document.getElementById('sw-from');
+  const toSel   = document.getElementById('sw-to');
+  const tmp = fromSel.value;
+  // Find matching option in from
+  const matchOpt = Array.from(fromSel.options).find(o => o.value === toSel.value);
+  if (matchOpt) fromSel.value = toSel.value;
+  toSel.value = tmp;
+  swapUpdateCalc();
+};
+
+window.swapSetPct = function(pct) {
+  const from = document.getElementById('sw-from').value;
+  let bal = from === 'CASH' ? Number(profile?.cash||0) : (myHoldings.find(x=>x.symbol===from)?.quantity||0)*(PRICES[from]||1);
+  document.getElementById('sw-from-amt').value = (bal * pct/100).toFixed(2);
+  swapUpdateCalc();
+};
+
+window.executeSwap = async function() {
+  const from   = document.getElementById('sw-from').value;
+  const to     = document.getElementById('sw-to').value;
+  const amt    = parseFloat(document.getElementById('sw-from-amt').value) || 0;
+  const err    = document.getElementById('sw-error');
+  err.style.display = 'none';
+
+  if (from === to) { err.textContent = 'Cannot swap to the same asset.'; err.style.display='block'; return; }
+  if (amt <= 0) { err.textContent = 'Enter an amount to swap.'; err.style.display='block'; return; }
+
+  let fromUSD = from === 'CASH' ? amt : amt * (PRICES[from]||1);
+  const fromAvail = from === 'CASH' ? Number(profile?.cash||0) : Number(myHoldings.find(x=>x.symbol===from)?.quantity||0)*(PRICES[from]||1);
+  if (fromUSD > fromAvail + 0.01) { err.textContent = 'Insufficient balance.'; err.style.display='block'; return; }
+
+  const fee  = +(fromUSD * 0.002).toFixed(2);
+  const slip = +(fromUSD * 0.0005).toFixed(2);
+  const netUSD = fromUSD - fee - slip;
+  const toPrice = PRICES[to] || 1;
+  const toQty   = to === 'CASH' ? netUSD : netUSD / toPrice;
+  const fromQty = from === 'CASH' ? amt : fromUSD / (PRICES[from]||1);
+
+  document.getElementById('sw-label').style.display = 'none';
+  document.getElementById('sw-spin').style.display = 'block';
+  document.getElementById('sw-confirm').disabled = true;
+try {
+    // Sell "from" asset (or debit cash)
+    await sb.from('transactions').insert({
+      user_id:authUser.id, type:'sell', symbol:from, name:(ASSET_META[from]||{}).name||from,
+      icon:(ASSET_META[from]||{}).icon||'', color:(ASSET_META[from]||{}).color||'#5a6880',
+      quantity: from==='CASH' ? null : fromQty,
+      price_at_tx: from==='CASH' ? 1 : PRICES[from],
+      usd_amount: -fromUSD,
+      note:`Swap ${from}→${to} | Fee:$${fee} Slip:$${slip}`
+    });
+    // Buy "to" asset (or credit cash)
+    await sb.from('transactions').insert({
+      user_id:authUser.id, type:'buy', symbol:to, name:(ASSET_META[to]||{}).name||to,
+      icon:(ASSET_META[to]||{}).icon||'', color:(ASSET_META[to]||{}).color||'#5a6880',
+      quantity: to==='CASH' ? null : toQty,
+      price_at_tx: to==='CASH' ? 1 : toPrice,
+      usd_amount: +netUSD,
+      note:`Swap ${from}→${to} received`
+    });
+
+    await loadProfile();
+    await loadHoldings();
+    await loadTransactions();
+    closeSwapModal();
+    showToast('Swap Complete!', `${from} → ${to} executed successfully`, 'success');
+  } catch(err) {
+    document.getElementById('sw-error').textContent = err.message;
+    document.getElementById('sw-error').style.display = 'block';
+  } finally {
+    document.getElementById('sw-label').style.display = 'inline';
+    document.getElementById('sw-spin').style.display = 'none';
+    document.getElementById('sw-confirm').disabled = false;
+  }
+};
+
+// ── Withdraw ──────────────────────────────────────────
+window.openWithdrawModal = function() {
+  setTxt('wd-avail', '$'+fmtUSD(Number(profile?.cash||0)));
+  document.getElementById('wd-amount').value = '';
+  document.getElementById('wd-amt-row').textContent = '—';
+  document.getElementById('wd-remain').textContent = '—';
+  document.getElementById('wd-error').style.display = 'none';
+  document.getElementById('withdrawModal').classList.add('open');
+};
+window.closeWithdrawModal = () => document.getElementById('withdrawModal').classList.remove('open');
+window.wdCalc = function() {
+  const amt  = parseFloat(document.getElementById('wd-amount').value)||0;
+  const cash = Number(profile?.cash||0);
+  setTxt('wd-amt-row', '$'+fmtUSD(amt));
+  setTxt('wd-remain', '$'+fmtUSD(Math.max(0, cash-amt)));
+  const err = document.getElementById('wd-error');
+  if (amt > cash) { err.textContent = 'Amount exceeds available cash.'; err.style.display='block'; }
+  else err.style.display='none';
+};
+window.executeWithdraw = async function() {
+  const amt  = parseFloat(document.getElementById('wd-amount').value)||0;
+  const cash = Number(profile?.cash||0);
+  if (!amt || amt > cash) { document.getElementById('wd-error').textContent='Invalid amount.'; document.getElementById('wd-error').style.display='block'; return; }
+  await sb.from('transactions').insert({ user_id:authUser.id, type:'withdraw', symbol:'USD', name:'Withdrawal', icon:'fas fa-arrow-right-from-bracket', color:'#ef4444', usd_amount:-amt, note:'Withdrawal via Dashboard' });
+  await loadProfile();
+  closeWithdrawModal();
+  showToast('Withdrawal Processed', `$${fmtUSD(amt)} withdrawal simulated`, 'success');
+};
+
+window.openRebalanceModal = () => showToast('Coming Soon', 'Auto-rebalance feature is in development', 'info');
+
+// ── Chart ─────────────────────────────────────────────
+function drawChart() {
+  const pts = [45,52,48,58,55,62,60,68,65,72,70,78,75,82,79,86,83,88,85,90,87,92];
+  const W=680, H=200, pad=10;
+  const mn=Math.min(...pts),mx=Math.max(...pts),r=mx-mn||1;
+  const path = pts.map((v,i) => {
+    const x=(i/(pts.length-1))*W, y=H-((v-mn)/r)*(H-2*pad)-pad;
+    return (i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);
+  }).join(' ');
+  document.getElementById('chartLine').setAttribute('d', path);
+  document.getElementById('chartArea').setAttribute('d', path+` L${W},${H} L0,${H} Z`);
+  const lastX=(W).toFixed(1), lastY=(H-((pts[pts.length-1]-mn)/r)*(H-2*pad)-pad).toFixed(1);
+  document.getElementById('chartDot').setAttribute('cx', lastX);
+  document.getElementById('chartDot').setAttribute('cy', lastY);
+}
+
+window.setRange = function(btn, range) {
+  document.querySelectorAll('#portfolioChart ~ div ~ div button, .flex.gap-1.bg-white\\/\\[.04\\] button').forEach(b => {
+    b.className = 'px-3 py-1.5 rounded-lg font-mono text-[10px] text-steel hover:text-snow transition-colors';
+  });
+  if(btn){ btn.className = 'px-3 py-1.5 rounded-lg font-mono text-[10px] bg-lift text-snow'; }
+  drawChart();
+};
+
+// ── Donut ─────────────────────────────────────────────
+function buildDonut() {
+  const g = document.getElementById('allocationDonut');
+  const leg = document.getElementById('allocationLegend');
+  if (!myHoldings.length) {
+    g.innerHTML = `<circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="14"/>`;
+    leg.innerHTML = `<p class="font-mono text-[10px] text-steel text-center">No holdings yet</p>`;
+    return;
+  }
+  const vals = myHoldings.map(h => ({sym:h.symbol, val:Number(h.quantity)*(PRICES[h.symbol]||Number(h.avg_buy_price)), color:(ASSET_META[h.symbol]||{color:'#5a6880'}).color}));
+  const total = vals.reduce((s,v)=>s+v.val,0) || 1;
+  const R=44, cx=60, cy=60, circ=2*Math.PI*R;
+  let offset=0, svgParts='', legParts='';
+  vals.forEach(v => {
+    const frac = v.val/total, dash=frac*circ;
+    svgParts += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${v.color}" stroke-width="14" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})" class="donut-ring"/>`;
+    offset += dash;
+    legParts += `<div class="flex items-center justify-between text-xs"><div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:${v.color}"></div><span class="text-mist">${v.sym}</span></div><span class="font-mono text-[10px] text-snow">${(frac*100).toFixed(1)}%</span></div>`;
+  });
+  g.innerHTML = svgParts;
+  leg.innerHTML = legParts;
+}
+
+// ── Movers ────────────────────────────────────────────
+function renderMovers() {
+  document.getElementById('moversGrid').innerHTML = movers.map(m => {
+    const up = m.chg >= 0;
+    return `<div class="p-5 hover:bg-white/[.02] transition-colors">
+      <div class="flex items-center gap-3 mb-3">
+        <div style="width:36px;height:36px;border-radius:11px;background:${m.color}18;color:${m.color};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0"><i class="${m.icon}"></i></div>
+        <div><p class="font-semibold text-snow text-sm">${m.sym}</p><p class="text-steel text-xs">${m.name}</p></div>
+      </div>
+      <p class="font-mono text-lg text-snow font-semibold">$${fmtPrice(m.price)}</p>
+      <span class="font-mono text-xs px-2 py-0.5 rounded-lg" style="background:${up?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};color:${up?'#22c55e':'#ef4444'}">${up?'+':''}${m.chg}%</span>
+    </div>`;
+  }).join('');
+}
+
+// ── Admin panel ───────────────────────────────────────
+function setupAdminTrigger() {
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault(); openAdminPanel(); }
+  });
+  let cc=0, ct=null;
+  ['sidebarLogo','topbarLogo'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('click', () => {
+      cc++;clearTimeout(ct);
+      if(cc>=3){cc=0;openAdminPanel();}
+      else ct=setTimeout(()=>{cc=0;},600);
+    });
+  });
+  document.addEventListener('dblclick', () => {
+    const h=document.getElementById('adminHint');h.classList.add('glow');setTimeout(()=>h.classList.remove('glow'),1800);
+  });
+}
+ window.openAdminPanel = function() {
+  document.getElementById('adminOverlay').classList.add('open');
+  adminLoadUsers();
+};
+window.closeAdminPanel = () => document.getElementById('adminOverlay').classList.remove('open');
+
+window.adminLoadUsers = async function() {
+  document.getElementById('adminUsersTbody').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#5a6880">Loading…</td></tr>';
+  try {
+    const { data: users } = await sb.from('profiles').select('*').order('created_at',{ascending:false});
+    adminUsers = users || [];
+    const { count:hc } = await sb.from('holdings').select('*',{count:'exact',head:true});
+    const { count:tc } = await sb.from('transactions').select('*',{count:'exact',head:true});
+    const totalCash = adminUsers.reduce((s,u)=>s+Number(u.cash||0),0);
+    setTxt('adm-userCount',adminUsers.length);setTxt('adm-totalCash','$'+fmtUSD(totalCash));
+    setTxt('adm-holdingCount',hc||0);setTxt('adm-txCount',tc||0);
+    adminRenderUsers(adminUsers);
+  } catch(err){
+    document.getElementById('adminUsersTbody').innerHTML=`<tr><td colspan="5" style="text-align:center;padding:20px;color:#ef4444">${err.message}</td></tr>`;
+  }
+};
+
+function adminRenderUsers(users) {
+  if(!users.length){document.getElementById('adminUsersTbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#5a6880">No users</td></tr>';return;}
+  document.getElementById('adminUsersTbody').innerHTML = users.map(u=>`
+    <tr>
+      <td style="color:#edf2f8;font-weight:500">${u.first_name||''} ${u.last_name||''}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">${u.email||'—'}</td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:3px 8px;border-radius:6px;background:rgba(201,168,76,.12);color:#c9a84c;border:1px solid rgba(201,168,76,.22)">$${fmtUSD(Number(u.cash||0))}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">${new Date(u.created_at).toLocaleDateString()}</td>
+      <td><button onclick="adminOpenEdit('${u.id}','${(u.first_name||'')+' '+(u.last_name||'')}',${u.cash||0})" style="padding:4px 10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);border-radius:7px;color:#c9a84c;font-size:11px;cursor:pointer">Edit Cash</button></td>
+    </tr>`).join('');
+}
+
+window.adminFilter = q => {
+  const f=q.toLowerCase();
+  adminRenderUsers(adminUsers.filter(u=>(u.email||'').toLowerCase().includes(f)||((u.first_name||'')+' '+(u.last_name||'')).toLowerCase().includes(f)));
+};
+
+window.adminOpenEdit = function(id,name,cash) {
+  const el=document.getElementById('adminCashEdit');el.style.display='flex';
+  setTxt('adminEditName',name.trim());
+  document.getElementById('adminEditUserId').value=id;
+  document.getElementById('adminEditCash').value=Number(cash).toFixed(2);
+};
+
+window.adminSaveCash = async function() {
+  const uid=document.getElementById('adminEditUserId').value;
+  const val=parseFloat(document.getElementById('adminEditCash').value);
+  if(!uid||isNaN(val))return;
+  const{error}=await sb.from('profiles').update({cash:val}).eq('id',uid);
+  if(error){showToast('Error',error.message,'error');return;}
+  showToast('Cash updated','Balance set to $'+fmtUSD(val),'success');
+  document.getElementById('adminCashEdit').style.display='none';
+  adminLoadUsers();
+};
+
+// ── Toast ─────────────────────────────────────────────
+let _tt;
+window.showToast = function(title,sub,type='info'){
+  const t=document.getElementById('toast'),ti=document.getElementById('toast-icon');
+  setTxt('toast-title',title);setTxt('toast-sub',sub||'');
+  const cfg={success:{i:'fa-check',c:'#22c55e',b:'rgba(34,197,94,.15)',br:'rgba(34,197,94,.25)'},error:{i:'fa-triangle-exclamation',c:'#ef4444',b:'rgba(239,68,68,.15)',br:'rgba(239,68,68,.25)'},info:{i:'fa-circle-info',c:'#c9a84c',b:'rgba(201,168,76,.15)',br:'rgba(201,168,76,.25)'}}[type]||{};
+  ti.innerHTML=`<i class="fas ${cfg.i}" style="color:${cfg.c};font-size:13px"></i>`;
+  ti.style.cssText=`width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${cfg.b};border:1px solid ${cfg.br}`;
+  t.style.borderColor=cfg.br;t.style.transform='translateY(0)';t.style.opacity='1';t.style.pointerEvents='auto';
+  clearTimeout(_tt);_tt=setTimeout(()=>{t.style.transform='translateY(20px)';t.style.opacity='0';},4200);
+};
+
+// ── Helpers ───────────────────────────────────────────
+function setTxt(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function fmtUSD(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtPrice(p){if(p>=1000)return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});if(p>=1)return p.toFixed(2);return p.toFixed(4);}
+</script>
 </body>
 </html>
