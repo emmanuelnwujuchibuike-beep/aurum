@@ -5,9 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aurum Capital — Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="input.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{void:'#040608',deep:'#080c12',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',snow:'#edf2f8',gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -78,6 +81,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 /* TX MODAL */
 .tx-modal-box{background:#111820;border:1px solid rgba(255,255,255,.09);border-radius:24px;width:100%;max-width:740px;max-height:90vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.8)}
 
+/* DEPOSIT MODAL — wider for crypto */
+.deposit-modal-box{background:#111820;border:1px solid rgba(255,255,255,.09);border-radius:24px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.8)}
+
 /* TOAST */
 #toast{position:fixed;bottom:28px;right:28px;z-index:600;background:#111820;border-radius:18px;padding:14px 20px;display:flex;align-items:center;gap:14px;min-width:280px;box-shadow:0 20px 60px rgba(0,0,0,.6);transform:translateY(20px);opacity:0;transition:all .35s cubic-bezier(.16,1,.3,1);pointer-events:none}
 #toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
@@ -101,6 +107,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .ad-tag{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;padding:3px 10px;border-radius:20px;text-transform:uppercase}
 .pulse-dot{width:5px;height:5px;border-radius:50%;animation:livePulse 1.5s infinite}
 
+/* ── CRYPTO DEPOSIT STYLES ── */
+.dep-tab{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:12px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .2s;flex:1}
+.dep-tab.active{background:rgba(201,168,76,.12);color:#c9a84c;border:1px solid rgba(201,168,76,.3)}
+.dep-tab:not(.active){background:rgba(255,255,255,.04);color:#5a6880;border:1px solid rgba(255,255,255,.07)}
+.dep-tab:not(.active):hover{background:rgba(255,255,255,.07);color:#edf2f8}
+.coin-select-btn{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#080c12;cursor:pointer;display:flex;align-items:center;gap:9px;transition:all .2s;width:100%}
+.coin-select-btn:hover{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.05)}
+.coin-select-btn.selected{border-color:#c9a84c;background:rgba(201,168,76,.08)}
+.dep-addr-box{background:#080c12;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#edf2f8;word-break:break-all;letter-spacing:.04em;line-height:1.7;cursor:pointer;transition:border-color .2s;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dep-addr-box:hover{border-color:rgba(201,168,76,.3)}
+#dep-qr-wrap{display:flex;align-items:center;justify-content:center;padding:16px;background:#fff;border-radius:16px;width:140px;height:140px;margin:0 auto}
+#dep-qr-wrap canvas,#dep-qr-wrap img{width:108px!important;height:108px!important}
+
 @media(max-width:1024px){
   #sidebar{display:none!important}
   #mainContent{margin-left:0!important}
@@ -113,7 +132,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .grid-stats{grid-template-columns:1fr 1fr!important}
   .ad-grid{grid-template-columns:1fr!important}
 }
-
 /* ══════════════════════════════════════
    HIDDEN ADMIN PANEL — FULL FEATURED
 ══════════════════════════════════════ */
@@ -190,6 +208,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .adm-input::placeholder{color:#5a6880}
 .adm-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235a6880' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 
+/* Price editor rows */
+.price-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.04)}
+.price-row:last-child{border-bottom:none}
+.price-row:hover{background:rgba(255,255,255,.015)}
+
 /* User Drawer */
 .user-drawer{position:fixed;top:60px;right:-520px;width:500px;max-width:100vw;bottom:0;background:#080c12;border-left:1px solid rgba(255,255,255,.07);z-index:1010;transition:right .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
 .user-drawer.open{right:0}
@@ -215,7 +238,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .ripple{position:absolute;width:60px;height:60px;border-radius:50%;background:rgba(201,168,76,.3);pointer-events:none;animation:rippleOut 1s ease-out forwards}
 </style>
 </head>
-<body>
+<body class="overflow-x-hidden">
 
 <!-- LOADER -->
 <div id="aurum-loader">
@@ -276,7 +299,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </a>
       </div>
       <div style="display:flex;align-items:center;gap:12px">
-        <a href="invest.html" class="hidden md:block" style="display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:12px;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(168,124,40,.1));border:1px solid rgba(201,168,76,.3);color:#c9a84c;font-family:'JetBrains Mono',monospace;font-size:.75rem;text-decoration:none;white-space:nowrap"><i class="fas fa-plus" style="font-size:10px"></i>Invest Now</a>
         <div style="text-align:right">
           <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em;text-transform:uppercase">Cash</p>
           <p id="headerCash" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#edf2f8;font-weight:300">$0.00</p>
@@ -383,60 +405,37 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- ═══ AD BANNERS — Real Estate + Crypto ═══ -->
+      <!-- AD BANNERS -->
       <div class="a4 ad-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
-
-        <!-- Real Estate Ad -->
         <div class="ad-banner-re" onclick="window.location.href='invest.html'" style="padding:24px 26px;min-height:160px">
           <div class="ad-glow-gold"></div>
           <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)"></div>
           <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
             <div>
-              <div class="ad-tag" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:#c9a84c;margin-bottom:10px">
-                <div class="pulse-dot" style="background:#c9a84c"></div>
-                REAL ESTATE · LIVE
-              </div>
+              <div class="ad-tag" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:#c9a84c;margin-bottom:10px"><div class="pulse-dot" style="background:#c9a84c"></div>REAL ESTATE · LIVE</div>
               <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300;line-height:1.2">Tokenized Property<br><em style="color:#c9a84c">Yields up to 14.2%</em></h3>
             </div>
-            <div style="width:48px;height:48px;border-radius:14px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <i class="fas fa-city" style="color:#c9a84c;font-size:20px"></i>
-            </div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-city" style="color:#c9a84c;font-size:20px"></i></div>
           </div>
           <div style="display:flex;gap:16px;margin-bottom:16px">
-            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 14px;text-align:center">
-              <p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#22c55e">14.2%</p>
-              <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">MAX APY</p>
-            </div>
-            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 14px;text-align:center">
-              <p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8">$500</p>
-              <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">MIN ENTRY</p>
-            </div>
-            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 14px;text-align:center">
-              <p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8">12+</p>
-              <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">PROPERTIES</p>
-            </div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 14px;text-align:center"><p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#22c55e">14.2%</p><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">MAX APY</p></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 14px;text-align:center"><p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8">$500</p><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">MIN ENTRY</p></div>
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 14px;text-align:center"><p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8">12+</p><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">PROPERTIES</p></div>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between">
             <p style="font-size:11px;color:#5a6880">Dubai · London · New York · Singapore</p>
             <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c;padding:6px 14px;border-radius:8px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2)">Explore <i class="fas fa-arrow-right" style="font-size:9px"></i></span>
           </div>
         </div>
-
-        <!-- Crypto Ad -->
         <div class="ad-banner-crypto" onclick="window.location.href='invest.html'" style="padding:24px 26px;min-height:160px">
           <div class="ad-glow-blue"></div>
           <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,120,234,.3),transparent)"></div>
           <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
             <div>
-              <div class="ad-tag" style="background:rgba(99,120,234,.1);border:1px solid rgba(99,120,234,.2);color:#627eea;margin-bottom:10px">
-                <div class="pulse-dot" style="background:#627eea"></div>
-                CRYPTO · 24/7 MARKETS
-              </div>
+              <div class="ad-tag" style="background:rgba(99,120,234,.1);border:1px solid rgba(99,120,234,.2);color:#627eea;margin-bottom:10px"><div class="pulse-dot" style="background:#627eea"></div>CRYPTO · 24/7 MARKETS</div>
               <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300;line-height:1.2">Bitcoin &amp; Altcoins<br><em style="color:#627eea">Start from $10</em></h3>
             </div>
-            <div style="width:48px;height:48px;border-radius:14px;background:rgba(99,120,234,.1);border:1px solid rgba(99,120,234,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <i class="fab fa-bitcoin" style="color:#f7931a;font-size:22px"></i>
-            </div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(99,120,234,.1);border:1px solid rgba(99,120,234,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fab fa-bitcoin" style="color:#f7931a;font-size:22px"></i></div>
           </div>
           <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
             <span style="display:flex;align-items:center;gap:5px;background:rgba(247,147,26,.08);border:1px solid rgba(247,147,26,.2);border-radius:8px;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#f7931a"><i class="fab fa-bitcoin" style="font-size:9px"></i>BTC <span style="color:#22c55e">+2.8%</span></span>
@@ -478,7 +477,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       </div>
     </main>
 
-    <!-- FOOTER — secret long-press zone -->
+    <!-- FOOTER -->
     <footer style="padding:20px 24px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:relative">
       <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em">©2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
       <div id="secretZone" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:160px;height:44px;cursor:default;-webkit-user-select:none;user-select:none;z-index:5" title=""></div>
@@ -506,7 +505,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       </div>
       <button onclick="closePortfolioModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
-    <!-- Summary strip -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-bottom:1px solid rgba(255,255,255,.07)" id="portSummaryStrip">
       <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.07)">
         <p style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase;margin-bottom:6px">Portfolio Value</p>
@@ -545,7 +543,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         <button onclick="closeTransactionsModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
       </div>
     </div>
-    <!-- Summary Stats -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid rgba(255,255,255,.07)" id="txModalSummary">
       <div style="padding:16px 20px;border-right:1px solid rgba(255,255,255,.06)">
         <p style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:5px">Total Trades</p>
@@ -570,14 +567,30 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
 </div>
 
-<!-- DEPOSIT MODAL -->
+<!-- ═══ DEPOSIT MODAL — REDESIGNED WITH CRYPTO ═══ -->
 <div class="modal-overlay" id="depositModal">
-  <div class="modal-box">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8;font-weight:300">Deposit <em style="font-style:italic;color:#c9a84c">Funds</em></h3>
-      <button onclick="closeDepositModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+  <div class="deposit-modal-box">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">Deposit <em style="font-style:italic;color:#c9a84c">Funds</em></h3>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:3px;letter-spacing:.1em">CHOOSE YOUR METHOD</p>
+      </div>
+      <button onclick="closeDepositModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">✕</button>
     </div>
-    <div style="padding:24px">
+
+    <!-- Tabs -->
+    <div style="padding:16px 24px 0;display:flex;gap:8px">
+      <button class="dep-tab active" id="dep-tab-cash" onclick="switchDepTab('cash')">
+        <i class="fas fa-dollar-sign" style="font-size:12px"></i> Cash Deposit
+      </button>
+      <button class="dep-tab" id="dep-tab-crypto" onclick="switchDepTab('crypto')">
+        <i class="fab fa-bitcoin" style="font-size:12px"></i> Crypto Deposit
+      </button>
+    </div>
+
+    <!-- CASH TAB -->
+    <div id="dep-cash-panel" style="padding:20px 24px 24px">
       <p style="font-size:13px;color:#8c9db5;margin-bottom:16px">Select an amount to add:</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <button onclick="makeDeposit(1000)" style="padding:16px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'"><p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">$1,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Standard</p></button>
@@ -586,11 +599,77 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         <button onclick="makeDeposit(50000)" style="padding:16px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'"><p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">$50,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Elite</p></button>
       </div>
     </div>
+
+    <!-- CRYPTO TAB -->
+    <div id="dep-crypto-panel" style="display:none;padding:20px 24px 24px">
+      <!-- Step 1: Select coin -->
+      <div style="margin-bottom:18px">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5a6880;text-transform:uppercase;margin-bottom:10px">1. Select Cryptocurrency</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="dep-coin-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Step 2: Address + QR -->
+      <div id="dep-address-section" style="display:none">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5a6880;text-transform:uppercase;margin-bottom:10px">2. Send to This Address</p>
+
+        <!-- Warning -->
+        <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px">
+          <i class="fas fa-triangle-exclamation" style="color:#c9a84c;font-size:12px;margin-top:1px;flex-shrink:0"></i>
+          <p style="font-size:11px;color:#8c9db5;line-height:1.6">Only send <span id="dep-warn-coin" style="color:#c9a84c;font-weight:600">BTC</span> to this address. Sending other assets may result in permanent loss.</p>
+        </div>
+
+        <!-- QR + Address -->
+        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap">
+          <div style="flex-shrink:0">
+            <div id="dep-qr-wrap" style="display:flex;align-items:center;justify-content:center;padding:12px;background:#fff;border-radius:14px;width:124px;height:124px">
+              <div id="dep-qr-canvas" style="width:100px;height:100px"></div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:180px">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Deposit Address</p>
+            <div class="dep-addr-box" onclick="copyDepAddress()" title="Click to copy">
+              <span id="dep-address-text" style="flex:1;word-break:break-all;font-size:11px;line-height:1.6">—</span>
+              <i class="fas fa-copy" style="color:#5a6880;font-size:12px;flex-shrink:0"></i>
+            </div>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:8px">Click address to copy · Scan QR with your wallet</p>
+          </div>
+        </div>
+
+        <!-- Network badge -->
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px 14px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span id="dep-coin-icon-display" style="font-size:18px"></span>
+            <div>
+              <p style="font-size:12px;color:#edf2f8;font-weight:500" id="dep-coin-name-display">Bitcoin</p>
+              <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880" id="dep-network-display">BTC Network</p>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Min. Deposit</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c9a84c" id="dep-min-display">0.0001 BTC</p>
+          </div>
+        </div>
+
+        <!-- Confirm button -->
+        <button onclick="confirmCryptoDeposit()" class="promo-btn" style="width:100%;justify-content:center;padding:13px;font-size:13px">
+          <i class="fas fa-check-circle" style="font-size:12px"></i> I've Sent the Payment
+        </button>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-align:center;margin-top:10px;line-height:1.6">Your balance will be updated once your deposit is confirmed by an admin.</p>
+      </div>
+
+      <!-- No address set placeholder -->
+      <div id="dep-no-address" style="display:none;text-align:center;padding:24px">
+        <i class="fas fa-wallet" style="font-size:28px;color:#5a6880;margin-bottom:10px;display:block;opacity:.4"></i>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">No deposit address configured for this coin yet.<br>Please contact support or try another coin.</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-     HIDDEN ADMIN PANEL — FULL CONTROL CENTER
+     HIDDEN ADMIN PANEL
 ═══════════════════════════════════════════════════════ -->
 <div id="ADMIN_PANEL">
   <div class="adm-topbar">
@@ -616,6 +695,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       <span class="adm-nav-label">Finance</span>
       <button class="adm-nav-btn" onclick="admShowPage('cash',this)"><i class="fas fa-dollar-sign"></i>Cash</button>
       <button class="adm-nav-btn" onclick="admShowPage('transactions',this)"><i class="fas fa-list"></i>Transactions</button>
+      <span class="adm-nav-label">Settings</span>
+      <button class="adm-nav-btn" onclick="admShowPage('prices',this)"><i class="fas fa-tags"></i>Live Prices</button>
+      <button class="adm-nav-btn" onclick="admShowPage('addresses',this);admLoadAddresses()"><i class="fas fa-wallet"></i>Crypto Addresses</button>
       <span class="adm-nav-label">Tools</span>
       <button class="adm-nav-btn" onclick="admShowPage('broadcast',this)"><i class="fas fa-bolt"></i>Bulk Actions</button>
     </nav>
@@ -640,6 +722,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
             <button class="adm-btn adm-btn-accent" onclick="admShowPage('transactions',null);setTimeout(()=>highlightAdmNav('transactions'),50)">📋 Log Transaction</button>
             <button class="adm-btn adm-btn-loss" onclick="admShowPage('pnl',null);setTimeout(()=>highlightAdmNav('pnl'),50)">📊 Adjust P&amp;L</button>
             <button class="adm-btn adm-btn-gold" onclick="admShowPage('broadcast',null);setTimeout(()=>highlightAdmNav('broadcast'),50)">⚡ Bulk Actions</button>
+            <button class="adm-btn adm-btn-accent" onclick="admShowPage('prices',null);setTimeout(()=>highlightAdmNav('prices'),50)">💹 Edit Prices</button>
+            <button class="adm-btn adm-btn-gold" onclick="admShowPage('addresses',null);admLoadAddresses()">🔑 Crypto Addresses</button>
           </div>
         </div>
         <div class="adm-card">
@@ -785,6 +869,47 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
+      <!-- ─ LIVE PRICES ─ (NEW) -->
+      <div class="adm-page" id="admp-prices">
+        <div class="adm-page-title">Live Prices</div>
+        <div class="adm-page-sub">Override the live price for any asset — changes reflect immediately on the dashboard and ticker</div>
+        <div class="adm-card">
+          <div class="adm-card-hdr">
+            <span class="adm-card-title">Asset Prices</span>
+            <div style="display:flex;gap:8px">
+              <button class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSaveAllPrices()"><i class="fas fa-save"></i> Save All</button>
+              <button class="adm-btn adm-btn-accent adm-btn-sm" onclick="admResetPrices()"><i class="fas fa-rotate-left"></i> Reset Defaults</button>
+            </div>
+          </div>
+          <div id="adm-prices-body">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:14px 18px;font-size:12px;color:#8c9db5;line-height:1.6">
+          <i class="fas fa-circle-info" style="color:#c9a84c;margin-right:6px"></i>
+          Price changes apply immediately to the current session. Reload the page to restore real-time fluctuations, or save to localStorage to persist across reloads.
+        </div>
+      </div>
+
+      <!-- ─ CRYPTO ADDRESSES ─ (NEW) -->
+      <div class="adm-page" id="admp-addresses">
+        <div class="adm-page-title">Crypto Deposit Addresses</div>
+        <div class="adm-page-sub">Set the wallet addresses users will send crypto deposits to. These appear in the deposit modal with a QR code.</div>
+        <div class="adm-card">
+          <div class="adm-card-hdr">
+            <span class="adm-card-title">Wallet Addresses</span>
+            <button class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSaveAddresses()"><i class="fas fa-save"></i> Save All Addresses</button>
+          </div>
+          <div id="adm-addresses-body" style="padding:8px 0">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div style="background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.15);border-radius:12px;padding:14px 18px;font-size:12px;color:#8c9db5;line-height:1.6">
+          <i class="fas fa-shield-halved" style="color:#22c55e;margin-right:6px"></i>
+          Addresses are stored in localStorage and shown to users in the deposit modal. Always double-check addresses before saving. Leave blank to hide a coin from the deposit options.
+        </div>
+      </div>
+
       <!-- ─ BULK ACTIONS ─ -->
       <div class="adm-page" id="admp-broadcast">
         <div class="adm-page-title">Bulk Actions</div>
@@ -877,44 +1002,35 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 <script>
 // ═══════════════════════════════════════════
 //  SUPABASE CONFIG
-//  For full admin RLS bypass, replace SUPABASE_SERVICE_KEY with your
-//  service_role secret key (from Supabase Dashboard > Settings > API).
-//  The service key bypasses all RLS policies and lets the admin
-//  read/write any row across all tables.
 // ═══════════════════════════════════════════
 const SUPABASE_URL='https://ttwwthfeordsojmcjwxn.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
-
-// ⚠ REPLACE THIS with your actual service_role key from Supabase Dashboard > Settings > API
-// The service_role key bypasses RLS and lets admin see ALL users/data.
-// Never expose this key in client-side code for production — use server-side for real apps.
 const SUPABASE_SERVICE_KEY = '';
 
-// Regular client for authenticated user operations
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-// Admin client — uses service role key to bypass RLS
-// Falls back to anon if service key not set
 let sbAdmin;
 try {
   if(SUPABASE_SERVICE_KEY && SUPABASE_SERVICE_KEY !== 'PASTE_YOUR_SERVICE_ROLE_KEY_HERE'){
-    sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-      auth:{ autoRefreshToken:false, persistSession:false }
-    });
+    sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {auth:{autoRefreshToken:false,persistSession:false}});
     document.getElementById('admRlsNote') && (document.getElementById('admRlsNote').textContent = '🟢 SERVICE KEY · RLS BYPASSED');
-  } else {
-    sbAdmin = sb;
-    // Note will be set after DOM loads
-  }
+  } else { sbAdmin = sb; }
 } catch(e){ sbAdmin = sb; }
 
 let authUser=null, profile=null, myHoldings=[];
 let admAllUsers=[], admAllHoldings=[], admAllTx=[];
 let txDeleteMode=false;
-let allMyTransactions=[]; // full list for transactions modal
+let allMyTransactions=[];
 let txModalFilter='all';
 
-const PRICES={BTC:67430,ETH:3280,SOL:188,BNB:612,XRP:0.72,ADA:0.48,TSLA:248.5,AAPL:189.3,NVDA:875.2,MSFT:412.7,AMZN:195.5,GOOGL:178.3,GOLD:2350};
+// ─── PRICES (mutable, override-able from admin) ───
+const DEFAULT_PRICES={BTC:67430,ETH:3280,SOL:188,BNB:612,XRP:0.72,ADA:0.48,TSLA:248.5,AAPL:189.3,NVDA:875.2,MSFT:412.7,AMZN:195.5,GOOGL:178.3,GOLD:2350};
+let PRICES={...DEFAULT_PRICES};
+
+// Load saved price overrides from localStorage
+(function(){
+  try{const saved=localStorage.getItem('aurum_price_overrides');if(saved){const o=JSON.parse(saved);Object.assign(PRICES,o);}}catch(e){}
+})();
+
 const ASSET_META={
   BTC:{icon:'fab fa-bitcoin',color:'#f7931a',name:'Bitcoin'},ETH:{icon:'fab fa-ethereum',color:'#627eea',name:'Ethereum'},
   SOL:{icon:'fas fa-sun',color:'#9945ff',name:'Solana'},BNB:{icon:'fas fa-coins',color:'#f3ba2f',name:'BNB Chain'},
@@ -924,18 +1040,41 @@ const ASSET_META={
   AMZN:{icon:'fab fa-amazon',color:'#ff9900',name:'Amazon'},GOOGL:{icon:'fab fa-google',color:'#4285f4',name:'Alphabet'},
   GOLD:{icon:'fas fa-gem',color:'#c9a84c',name:'Gold Spot'},USD:{icon:'fas fa-dollar-sign',color:'#22c55e',name:'Cash'},
 };
-const ASSETS_LIST=[
-  {sym:'BTC',name:'Bitcoin',icon:'fab fa-bitcoin',color:'#f7931a',price:67430,chg:2.8,cat:'crypto'},
-  {sym:'ETH',name:'Ethereum',icon:'fab fa-ethereum',color:'#627eea',price:3280,chg:1.4,cat:'crypto'},
-  {sym:'SOL',name:'Solana',icon:'fas fa-sun',color:'#9945ff',price:188,chg:3.1,cat:'crypto'},
-  {sym:'BNB',name:'BNB Chain',icon:'fas fa-coins',color:'#f3ba2f',price:612,chg:-0.9,cat:'crypto'},
-  {sym:'XRP',name:'Ripple',icon:'fas fa-water',color:'#00aae4',price:0.72,chg:-1.2,cat:'crypto'},
-  {sym:'ADA',name:'Cardano',icon:'fas fa-circle-nodes',color:'#3cc8c8',price:0.48,chg:0.8,cat:'crypto'},
-  {sym:'TSLA',name:'Tesla',icon:'fas fa-car',color:'#e31937',price:248.50,chg:-0.6,cat:'stocks'},
-  {sym:'AAPL',name:'Apple',icon:'fab fa-apple',color:'#a2aaad',price:189.30,chg:0.4,cat:'stocks'},
-  {sym:'NVDA',name:'NVIDIA',icon:'fas fa-microchip',color:'#76b900',price:875.20,chg:2.1,cat:'stocks'},
-  {sym:'MSFT',name:'Microsoft',icon:'fab fa-windows',color:'#00a4ef',price:412.70,chg:0.8,cat:'stocks'},
+let ASSETS_LIST=[
+  {sym:'BTC',name:'Bitcoin',icon:'fab fa-bitcoin',color:'#f7931a',price:PRICES.BTC,chg:2.8,cat:'crypto'},
+  {sym:'ETH',name:'Ethereum',icon:'fab fa-ethereum',color:'#627eea',price:PRICES.ETH,chg:1.4,cat:'crypto'},
+  {sym:'SOL',name:'Solana',icon:'fas fa-sun',color:'#9945ff',price:PRICES.SOL,chg:3.1,cat:'crypto'},
+  {sym:'BNB',name:'BNB Chain',icon:'fas fa-coins',color:'#f3ba2f',price:PRICES.BNB,chg:-0.9,cat:'crypto'},
+  {sym:'XRP',name:'Ripple',icon:'fas fa-water',color:'#00aae4',price:PRICES.XRP,chg:-1.2,cat:'crypto'},
+  {sym:'ADA',name:'Cardano',icon:'fas fa-circle-nodes',color:'#3cc8c8',price:PRICES.ADA,chg:0.8,cat:'crypto'},
+  {sym:'TSLA',name:'Tesla',icon:'fas fa-car',color:'#e31937',price:PRICES.TSLA,chg:-0.6,cat:'stocks'},
+  {sym:'AAPL',name:'Apple',icon:'fab fa-apple',color:'#a2aaad',price:PRICES.AAPL,chg:0.4,cat:'stocks'},
+  {sym:'NVDA',name:'NVIDIA',icon:'fas fa-microchip',color:'#76b900',price:PRICES.NVDA,chg:2.1,cat:'stocks'},
+  {sym:'MSFT',name:'Microsoft',icon:'fab fa-windows',color:'#00a4ef',price:PRICES.MSFT,chg:0.8,cat:'stocks'},
 ];
+
+// ─── CRYPTO DEPOSIT ADDRESSES (editable from admin) ───
+const DEPOSIT_COINS=[
+  {sym:'BTC',name:'Bitcoin',icon:'fab fa-bitcoin',color:'#f7931a',network:'BTC Network',min:'0.0001 BTC'},
+  {sym:'ETH',name:'Ethereum',icon:'fab fa-ethereum',color:'#627eea',network:'ERC-20 Network',min:'0.001 ETH'},
+  {sym:'USDT',name:'Tether (USDT)',icon:'fas fa-circle-dollar-to-slot',color:'#26a17b',network:'TRC-20 / ERC-20',min:'10 USDT'},
+  {sym:'BNB',name:'BNB Chain',icon:'fas fa-coins',color:'#f3ba2f',network:'BSC Network',min:'0.01 BNB'},
+  {sym:'SOL',name:'Solana',icon:'fas fa-sun',color:'#9945ff',network:'SOL Network',min:'0.01 SOL'},
+  {sym:'XRP',name:'Ripple',icon:'fas fa-water',color:'#00aae4',network:'XRP Ledger',min:'1 XRP'},
+  {sym:'ADA',name:'Cardano',icon:'fas fa-circle-nodes',color:'#3cc8c8',network:'ADA Network',min:'1 ADA'},
+  {sym:'LTC',name:'Litecoin',icon:'fas fa-coins',color:'#bfbbbb',network:'LTC Network',min:'0.01 LTC'},
+];
+
+// Load saved addresses
+function loadSavedAddresses(){
+  try{const s=localStorage.getItem('aurum_crypto_addresses');return s?JSON.parse(s):{};}catch(e){return{};}
+}
+function saveAddressesToStorage(obj){
+  try{localStorage.setItem('aurum_crypto_addresses',JSON.stringify(obj));}catch(e){}
+}
+let CRYPTO_ADDRESSES=loadSavedAddresses();
+let selectedDepCoin=null;
+let depQrInstance=null;
 
 // ═══════════════════════════════════════════
 //  INIT
@@ -955,13 +1094,13 @@ window.addEventListener('DOMContentLoaded', async()=>{
   showApp();
   buildTicker();
   renderCryptoGrid();
+  buildDepositCoinGrid();
   document.getElementById('signOutBtn').addEventListener('click',doSignOut);
   document.getElementById('drawerSignOut').addEventListener('click',doSignOut);
   document.getElementById('mobileMenuBtn').addEventListener('click',openDrawer);
   document.getElementById('mobileCloseBtn').addEventListener('click',closeDrawer);
   document.getElementById('mobileBackdrop').addEventListener('click',closeDrawer);
   setupSecretGesture();
-  // Update RLS note if key not set
   const rlsEl=document.getElementById('admRlsNote');
   if(rlsEl && sbAdmin===sb) rlsEl.textContent='⚠ ANON KEY · Add service_role key to bypass RLS';
   sb.channel('dash-profile').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:`id=eq.${authUser.id}`},({new:row})=>{profile={...profile,...row};refreshUI();}).subscribe();
@@ -1032,27 +1171,24 @@ function refreshUI(){
 async function openPortfolioModal(){
   document.getElementById('portfolioModal').classList.add('open');
   document.body.style.overflow='hidden';
-  // Load fresh holdings
   const{data:h}=await sb.from('holdings').select('*').eq('user_id',authUser.id);
   const hs=h||[];
-  let portVal=0,pnl=0,costBase=0;
+  let portVal=0,pnl=0;
   hs.forEach(h=>{
     const live=PRICES[h.symbol]||Number(h.avg_buy_price);
     const val=Number(h.quantity)*live;
     const cost=Number(h.quantity)*Number(h.avg_buy_price);
-    portVal+=val;pnl+=val-cost;costBase+=cost;
+    portVal+=val;pnl+=val-cost;
   });
   setTxt('pm-portval','$'+fmtUSD(portVal));
   setTxt('pm-count',hs.length);
   const pnlEl=document.getElementById('pm-pnl');
   pnlEl.textContent=(pnl>=0?'+':'')+'$'+fmtUSD(pnl);
   pnlEl.style.color=pnl>=0?'#22c55e':'#ef4444';
-
   if(!hs.length){
     document.getElementById('portHoldingsContainer').innerHTML='<div style="text-align:center;padding:40px;color:#5a6880"><i class="fas fa-briefcase" style="font-size:32px;margin-bottom:12px;display:block;opacity:.3"></i><p style="font-family:\'JetBrains Mono\',monospace;font-size:11px">No holdings yet</p><a href="invest.html" style="display:inline-block;margin-top:12px;color:#c9a84c;font-family:\'JetBrains Mono\',monospace;font-size:11px;text-decoration:none">Browse investments →</a></div>';
     return;
   }
-
   const html=hs.map(h=>{
     const meta=ASSET_META[h.symbol]||{};
     const live=PRICES[h.symbol]||Number(h.avg_buy_price);
@@ -1066,10 +1202,7 @@ async function openPortfolioModal(){
         <div style="width:44px;height:44px;border-radius:14px;background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><i class="${meta.icon||'fas fa-coins'}"></i></div>
         <div style="flex:1">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-            <div>
-              <p style="font-size:15px;font-weight:600;color:#edf2f8">${h.symbol}</p>
-              <p style="font-size:12px;color:#5a6880">${meta.name||h.symbol}</p>
-            </div>
+            <div><p style="font-size:15px;font-weight:600;color:#edf2f8">${h.symbol}</p><p style="font-size:12px;color:#5a6880">${meta.name||h.symbol}</p></div>
             <div style="text-align:right">
               <p style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#edf2f8;font-weight:300">$${fmtUSD(val)}</p>
               <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${itemPnl>=0?'#22c55e':'#ef4444'}">${itemPnl>=0?'+':''}$${fmtUSD(itemPnl)} (${pct>=0?'+':''}${pct.toFixed(2)}%)</p>
@@ -1078,35 +1211,17 @@ async function openPortfolioModal(){
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
-        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Qty</p>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">${Number(h.quantity).toFixed(4)}</p>
-        </div>
-        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Avg Buy</p>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">$${fmtPrice(Number(h.avg_buy_price))}</p>
-        </div>
-        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Live Price</p>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c9a84c">$${fmtPrice(live)}</p>
-        </div>
-        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Portfolio %</p>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#627eea">${share.toFixed(1)}%</p>
-        </div>
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center"><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Qty</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">${Number(h.quantity).toFixed(4)}</p></div>
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center"><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Avg Buy</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">$${fmtPrice(Number(h.avg_buy_price))}</p></div>
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center"><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Live Price</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c9a84c">$${fmtPrice(live)}</p></div>
+        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center"><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Portfolio %</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#627eea">${share.toFixed(1)}%</p></div>
       </div>
-      <div style="height:4px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${Math.min(share,100)}%;background:linear-gradient(90deg,${meta.color||'#c9a84c'},${meta.color||'#c9a84c'}88);border-radius:4px"></div>
-      </div>
+      <div style="height:4px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden"><div style="height:100%;width:${Math.min(share,100)}%;background:linear-gradient(90deg,${meta.color||'#c9a84c'},${meta.color||'#c9a84c'}88);border-radius:4px"></div></div>
     </div>`;
   }).join('');
-
   document.getElementById('portHoldingsContainer').innerHTML=html;
 }
-function closePortfolioModal(){
-  document.getElementById('portfolioModal').classList.remove('open');
-  document.body.style.overflow='';
-}
+function closePortfolioModal(){document.getElementById('portfolioModal').classList.remove('open');document.body.style.overflow='';}
 
 // ═══════════════════════════════════════════
 //  TRANSACTIONS MODAL
@@ -1114,69 +1229,41 @@ function closePortfolioModal(){
 async function openTransactionsModal(){
   document.getElementById('transactionsModal').classList.add('open');
   document.body.style.overflow='hidden';
-  // Load ALL transactions
   const{data}=await sb.from('transactions').select('*').eq('user_id',authUser.id).order('created_at',{ascending:false});
   allMyTransactions=data||[];
   renderTxModal(allMyTransactions);
   updateTxModalStats(allMyTransactions);
 }
-function closeTransactionsModal(){
-  document.getElementById('transactionsModal').classList.remove('open');
-  document.body.style.overflow='';
-}
+function closeTransactionsModal(){document.getElementById('transactionsModal').classList.remove('open');document.body.style.overflow='';}
 function filterTxModal(type){
   txModalFilter=type;
-  // Update button styles
   ['all','buy','sell','deposit'].forEach(t=>{
     const btn=document.getElementById('txf-'+t);
     if(btn){
-      if(t===type){
-        btn.style.background='rgba(201,168,76,.12)';btn.style.color='#c9a84c';btn.style.borderColor='rgba(201,168,76,.3)';
-      } else {
-        btn.style.background='transparent';btn.style.color='#5a6880';btn.style.borderColor='rgba(255,255,255,.07)';
-      }
+      if(t===type){btn.style.background='rgba(201,168,76,.12)';btn.style.color='#c9a84c';btn.style.borderColor='rgba(201,168,76,.3)';}
+      else{btn.style.background='transparent';btn.style.color='#5a6880';btn.style.borderColor='rgba(255,255,255,.07)';}
     }
   });
   const filtered=type==='all'?allMyTransactions:allMyTransactions.filter(t=>t.type===type);
-  renderTxModal(filtered);
-  updateTxModalStats(filtered);
+  renderTxModal(filtered);updateTxModalStats(filtered);
 }
 function updateTxModalStats(txs){
   let totalInvested=0,totalReceived=0;
-  txs.forEach(t=>{
-    const amt=Number(t.usd_amount||0);
-    if(amt<0)totalInvested+=Math.abs(amt);
-    else totalReceived+=amt;
-  });
+  txs.forEach(t=>{const amt=Number(t.usd_amount||0);if(amt<0)totalInvested+=Math.abs(amt);else totalReceived+=amt;});
   const net=totalReceived-totalInvested;
-  setTxt('txm-total',txs.length);
-  setTxt('txm-invested','$'+fmtUSD(totalInvested));
-  setTxt('txm-received','$'+fmtUSD(totalReceived));
-  const netEl=document.getElementById('txm-net');
-  netEl.textContent=(net>=0?'+':'')+'$'+fmtUSD(Math.abs(net));
-  netEl.style.color=net>=0?'#22c55e':'#ef4444';
+  setTxt('txm-total',txs.length);setTxt('txm-invested','$'+fmtUSD(totalInvested));setTxt('txm-received','$'+fmtUSD(totalReceived));
+  const netEl=document.getElementById('txm-net');netEl.textContent=(net>=0?'+':'')+'$'+fmtUSD(Math.abs(net));netEl.style.color=net>=0?'#22c55e':'#ef4444';
 }
 function renderTxModal(txs){
-  if(!txs.length){
-    document.getElementById('txModalList').innerHTML='<div style="padding:40px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#5a6880">No transactions found</div>';
-    return;
-  }
-  const cfg={
-    buy:{icon:'fa-arrow-trend-up',color:'#22c55e',bg:'rgba(34,197,94,.1)',label:'BUY'},
-    sell:{icon:'fa-arrow-trend-down',color:'#ef4444',bg:'rgba(239,68,68,.1)',label:'SELL'},
-    deposit:{icon:'fa-arrow-down-to-line',color:'#c9a84c',bg:'rgba(201,168,76,.1)',label:'DEPOSIT'},
-    withdraw:{icon:'fa-arrow-up-from-line',color:'#ef4444',bg:'rgba(239,68,68,.1)',label:'WITHDRAW'},
-    swap:{icon:'fa-arrow-right-arrow-left',color:'#627eea',bg:'rgba(98,126,234,.1)',label:'SWAP'},
-  };
+  if(!txs.length){document.getElementById('txModalList').innerHTML='<div style="padding:40px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#5a6880">No transactions found</div>';return;}
+  const cfg={buy:{icon:'fa-arrow-trend-up',color:'#22c55e',bg:'rgba(34,197,94,.1)',label:'BUY'},sell:{icon:'fa-arrow-trend-down',color:'#ef4444',bg:'rgba(239,68,68,.1)',label:'SELL'},deposit:{icon:'fa-arrow-down-to-line',color:'#c9a84c',bg:'rgba(201,168,76,.1)',label:'DEPOSIT'},withdraw:{icon:'fa-arrow-up-from-line',color:'#ef4444',bg:'rgba(239,68,68,.1)',label:'WITHDRAW'},swap:{icon:'fa-arrow-right-arrow-left',color:'#627eea',bg:'rgba(98,126,234,.1)',label:'SWAP'}};
   document.getElementById('txModalList').innerHTML=txs.map(tx=>{
     const c=cfg[tx.type]||{icon:'fa-circle',color:'#5a6880',bg:'rgba(90,104,128,.1)',label:(tx.type||'TX').toUpperCase()};
     const amt=Number(tx.usd_amount||0),isPos=amt>0;
     const d=new Date(tx.created_at);
     const meta=ASSET_META[tx.symbol]||{};
     return`<div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.02)'" onmouseout="this.style.background='transparent'">
-      <div style="width:40px;height:40px;border-radius:13px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <i class="fas ${c.icon}" style="color:${c.color};font-size:14px"></i>
-      </div>
+      <div style="width:40px;height:40px;border-radius:13px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${c.icon}" style="color:${c.color};font-size:14px"></i></div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap">
           <span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:6px;background:${c.bg};color:${c.color};border:1px solid ${c.color}30">${c.label}</span>
@@ -1196,14 +1283,10 @@ function renderTxModal(txs){
     </div>`;
   }).join('');
 }
-
-// Click outside to close modals
 document.addEventListener('click',function(e){
   ['portfolioModal','transactionsModal'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el && el.classList.contains('open') && e.target===el){
-      el.classList.remove('open');document.body.style.overflow='';
-    }
+    if(el && el.classList.contains('open') && e.target===el){el.classList.remove('open');document.body.style.overflow='';}
   });
 });
 
@@ -1228,10 +1311,105 @@ function tickPrices(){
 }
 
 // ═══════════════════════════════════════════
-//  DEPOSIT
+//  DEPOSIT MODAL — FULL REDESIGN
 // ═══════════════════════════════════════════
-function openDepositModal(){document.getElementById('depositModal').classList.add('open');}
-function closeDepositModal(){document.getElementById('depositModal').classList.remove('open');}
+function openDepositModal(){
+  document.getElementById('depositModal').classList.add('open');
+  document.body.style.overflow='hidden';
+  switchDepTab('cash');
+}
+function closeDepositModal(){
+  document.getElementById('depositModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function switchDepTab(tab){
+  document.getElementById('dep-tab-cash').classList.toggle('active',tab==='cash');
+  document.getElementById('dep-tab-crypto').classList.toggle('active',tab==='crypto');
+  document.getElementById('dep-cash-panel').style.display=tab==='cash'?'block':'none';
+  document.getElementById('dep-crypto-panel').style.display=tab==='crypto'?'block':'none';
+  if(tab==='crypto' && !selectedDepCoin) buildDepositCoinGrid();
+}
+
+function buildDepositCoinGrid(){
+  CRYPTO_ADDRESSES=loadSavedAddresses();
+  const grid=document.getElementById('dep-coin-grid');
+  if(!grid)return;
+  grid.innerHTML=DEPOSIT_COINS.map(c=>{
+    const hasAddr=!!(CRYPTO_ADDRESSES[c.sym]&&CRYPTO_ADDRESSES[c.sym].trim());
+    return`<button class="coin-select-btn ${selectedDepCoin===c.sym?'selected':''}" onclick="selectDepCoin('${c.sym}')">
+      <div style="width:32px;height:32px;border-radius:10px;background:${c.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${c.icon}" style="color:${c.color};font-size:15px"></i></div>
+      <div style="flex:1;text-align:left">
+        <p style="font-size:12px;font-weight:600;color:#edf2f8">${c.sym}</p>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${c.name}</p>
+      </div>
+      ${hasAddr?'<i class="fas fa-circle-check" style="color:#22c55e;font-size:11px;flex-shrink:0"></i>':'<i class="fas fa-circle-xmark" style="color:#5a6880;font-size:11px;flex-shrink:0;opacity:.4"></i>'}
+    </button>`;
+  }).join('');
+}
+
+function selectDepCoin(sym){
+  selectedDepCoin=sym;
+  buildDepositCoinGrid();
+  CRYPTO_ADDRESSES=loadSavedAddresses();
+  const addr=(CRYPTO_ADDRESSES[sym]||'').trim();
+  const coin=DEPOSIT_COINS.find(c=>c.sym===sym);
+  const addrSection=document.getElementById('dep-address-section');
+  const noAddrSection=document.getElementById('dep-no-address');
+
+  if(!addr){
+    addrSection.style.display='none';
+    noAddrSection.style.display='block';
+    return;
+  }
+  addrSection.style.display='block';
+  noAddrSection.style.display='none';
+
+  // Update info
+  setTxt('dep-warn-coin',sym);
+  document.getElementById('dep-address-text').textContent=addr;
+  if(coin){
+    document.getElementById('dep-coin-icon-display').innerHTML=`<i class="${coin.icon}" style="color:${coin.color}"></i>`;
+    setTxt('dep-coin-name-display',coin.name);
+    setTxt('dep-network-display',coin.network);
+    setTxt('dep-min-display',coin.min);
+  }
+
+  // Generate QR
+  const qrContainer=document.getElementById('dep-qr-canvas');
+  qrContainer.innerHTML='';
+  try{
+    new QRCode(qrContainer,{text:addr,width:100,height:100,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  }catch(e){
+    qrContainer.innerHTML=`<div style="font-size:9px;color:#5a6880;text-align:center;word-break:break-all;font-family:monospace">${addr.slice(0,20)}…</div>`;
+  }
+}
+
+function copyDepAddress(){
+  const addr=document.getElementById('dep-address-text').textContent;
+  if(!addr||addr==='—')return;
+  navigator.clipboard.writeText(addr).then(()=>showToast('Address Copied!',addr.slice(0,20)+'…','success')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=addr;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    showToast('Address Copied!',addr.slice(0,20)+'…','success');
+  });
+}
+
+async function confirmCryptoDeposit(){
+  if(!selectedDepCoin||!authUser){showToast('Error','Please select a coin first','error');return;}
+  const coin=DEPOSIT_COINS.find(c=>c.sym===selectedDepCoin);
+  try{
+    await sb.from('transactions').insert({
+      user_id:authUser.id,type:'deposit',symbol:selectedDepCoin,
+      name:(coin?coin.name:selectedDepCoin)+' Crypto Deposit',
+      icon:(coin?coin.icon:'fas fa-coins'),color:(coin?coin.color:'#c9a84c'),
+      usd_amount:0,note:`Crypto deposit — ${selectedDepCoin} pending confirmation`
+    });
+    closeDepositModal();
+    showToast('Deposit Submitted!','Your '+selectedDepCoin+' deposit is pending admin confirmation','success');
+    selectedDepCoin=null;
+    loadTransactions();
+  }catch(err){showToast('Error',err.message,'error');}
+}
+
 async function makeDeposit(amt){
   if(!profile)return;
   try{
@@ -1249,7 +1427,7 @@ function openDrawer(){document.getElementById('mobileDrawer').style.display='fle
 function closeDrawer(){document.getElementById('mobileDrawer').style.display='none';document.getElementById('mobileBackdrop').style.display='none';}
 
 // ═══════════════════════════════════════════
-//  SECRET GESTURE — Long-press bottom center
+//  SECRET GESTURE
 // ═══════════════════════════════════════════
 function setupSecretGesture(){
   const zone=document.getElementById('secretZone');
@@ -1273,20 +1451,16 @@ function setupSecretGesture(){
 
 // ═══════════════════════════════════════════
 //  ADMIN PANEL
-//  Uses sbAdmin (service role client) to bypass RLS
 // ═══════════════════════════════════════════
 async function openAdminPanel(){
   document.getElementById('ADMIN_PANEL').classList.add('open');
   await admLoadAll();
+  admRenderPricesPage();
 }
-function closeAdminPanel(){
-  document.getElementById('ADMIN_PANEL').classList.remove('open');
-  closeUserDrawer();
-}
+function closeAdminPanel(){document.getElementById('ADMIN_PANEL').classList.remove('open');closeUserDrawer();}
 async function admLoadAll(){
   await Promise.all([admLoadUsers(),admLoadHoldings(),admLoadTransactions()]);
-  admPopulateSelects();
-  admUpdateStats();
+  admPopulateSelects();admUpdateStats();
 }
 function highlightAdmNav(name){
   document.querySelectorAll('.adm-nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1299,39 +1473,22 @@ function admShowPage(name,btn){
   if(btn)btn.classList.add('active');
 }
 
-// ─ LOAD USERS — uses sbAdmin to bypass RLS and fetch ALL profiles ─
+// ─ LOAD USERS ─
 async function admLoadUsers(){
   let page=0,pageSize=1000,all=[];
   while(true){
     const{data,error}=await sbAdmin.from('profiles').select('*').order('created_at',{ascending:false}).range(page*pageSize,(page+1)*pageSize-1);
-    if(error){
-      // If RLS blocks (service key not set), show helpful message
-      if(error.code==='42501'||error.message.includes('permission')){
-        showToast('RLS Notice','Set service_role key to see all users','info');
-      } else {
-        showToast('Error',error.message,'error');
-      }
-      break;
-    }
-    if(!data||!data.length)break;
-    all=all.concat(data);if(data.length<pageSize)break;page++;
+    if(error){if(error.code==='42501'||error.message.includes('permission')){showToast('RLS Notice','Set service_role key to see all users','info');}else{showToast('Error',error.message,'error');}break;}
+    if(!data||!data.length)break;all=all.concat(data);if(data.length<pageSize)break;page++;
   }
-  admAllUsers=all;
-  admRenderUsers(admAllUsers);
-  admRenderOverviewUsers(admAllUsers.slice(0,6));
-  admRenderCashTable(admAllUsers);
-  setTxt('users-count',admAllUsers.length);
+  admAllUsers=all;admRenderUsers(admAllUsers);admRenderOverviewUsers(admAllUsers.slice(0,6));admRenderCashTable(admAllUsers);setTxt('users-count',admAllUsers.length);
 }
-
 function admRenderUsers(users){
   setTxt('users-count',users.length);
   if(!users.length){document.getElementById('users-tbody').innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:#5a6880">No users found — add your service_role key to bypass RLS</td></tr>';return;}
   document.getElementById('users-tbody').innerHTML=users.map(u=>`
     <tr style="cursor:pointer" onclick="openUserDrawer('${u.id}')">
-      <td><div style="display:flex;align-items:center;gap:10px">
-        <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-weight:700;color:#040608;font-size:11px;flex-shrink:0">${(u.avatar_initials||((u.first_name||'?')[0]+(u.last_name||'?')[0])).toUpperCase()}</div>
-        <strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong>
-      </div></td>
+      <td><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-weight:700;color:#040608;font-size:11px;flex-shrink:0">${(u.avatar_initials||((u.first_name||'?')[0]+(u.last_name||'?')[0])).toUpperCase()}</div><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></div></td>
       <td class="mono" style="color:#8c9db5">${u.email||'—'}</td>
       <td class="mono" style="color:#5a6880;font-size:10px">${u.id?u.id.slice(0,10)+'…':'—'}</td>
       <td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td>
@@ -1344,35 +1501,24 @@ function admRenderUsers(users){
 }
 function admRenderOverviewUsers(users){
   document.getElementById('ovw-users-tbody').innerHTML=users.map(u=>`
-    <tr>
-      <td><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></td>
-      <td class="mono" style="color:#8c9db5;font-size:10px">${u.email||'—'}</td>
-      <td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td>
-      <td class="mono" style="color:#5a6880">${u.created_at?new Date(u.created_at).toLocaleDateString():'—'}</td>
-      <td><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="openQuickCash('${u.id}','${escJs((u.first_name||'')+' '+(u.last_name||''))}',${u.cash||0})">Set Cash</button></td>
-    </tr>`).join('');
+    <tr><td><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></td><td class="mono" style="color:#8c9db5;font-size:10px">${u.email||'—'}</td><td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td><td class="mono" style="color:#5a6880">${u.created_at?new Date(u.created_at).toLocaleDateString():'—'}</td><td><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="openQuickCash('${u.id}','${escJs((u.first_name||'')+' '+(u.last_name||''))}',${u.cash||0})">Set Cash</button></td></tr>`).join('');
 }
-function admFilterUsers(q){
-  const f=q.toLowerCase();
-  admRenderUsers(admAllUsers.filter(u=>(u.email||'').toLowerCase().includes(f)||((u.first_name||'')+' '+(u.last_name||'')).toLowerCase().includes(f)||(u.id||'').includes(f)));
-}
+function admFilterUsers(q){const f=q.toLowerCase();admRenderUsers(admAllUsers.filter(u=>(u.email||'').toLowerCase().includes(f)||((u.first_name||'')+' '+(u.last_name||'')).toLowerCase().includes(f)||(u.id||'').includes(f)));}
 function admExportUsers(){
   const hdr=['ID','First','Last','Email','Cash','Joined'];
   const rows=admAllUsers.map(u=>[u.id,u.first_name||'',u.last_name||'',u.email||'',Number(u.cash||0).toFixed(2),u.created_at||'']);
   const csv=[hdr,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download='aurum-users-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='aurum-users-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
   showToast('Exported',''+admAllUsers.length+' users','success');
 }
 
-// ─ HOLDINGS — uses sbAdmin to bypass RLS ─
+// ─ HOLDINGS ─
 async function admLoadHoldings(){
   let page=0,pageSize=1000,all=[];
   while(true){
     const{data,error}=await sbAdmin.from('holdings').select('*,profiles(first_name,last_name,email)').order('created_at',{ascending:false}).range(page*pageSize,(page+1)*pageSize-1);
     if(error){showToast('Error',error.message,'error');break;}
-    if(!data||!data.length)break;
-    all=all.concat(data);if(data.length<pageSize)break;page++;
+    if(!data||!data.length)break;all=all.concat(data);if(data.length<pageSize)break;page++;
   }
   admAllHoldings=all;setTxt('hold-count',admAllHoldings.length);admRenderHoldings(admAllHoldings);
 }
@@ -1380,30 +1526,17 @@ function admRenderHoldings(rows){
   const tbody=document.getElementById('hold-tbody');
   if(!rows.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:#5a6880">No holdings</td></tr>';return;}
   tbody.innerHTML=rows.map(h=>{
-    const meta=ASSET_META[h.symbol]||{};
-    const live=PRICES[h.symbol]||Number(h.avg_buy_price);
+    const meta=ASSET_META[h.symbol]||{};const live=PRICES[h.symbol]||Number(h.avg_buy_price);
     const val=Number(h.quantity)*live;const cost=Number(h.quantity)*Number(h.avg_buy_price);const pnl=val-cost;
     const name=h.profiles?`${h.profiles.first_name||''} ${h.profiles.last_name||''}`:h.user_id.slice(0,8)+'…';
-    return`<tr>
-      <td style="color:#edf2f8">${esc(name)}</td>
-      <td><span class="badge" style="background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};border:1px solid ${(meta.color||'#5a6880')}30">${h.symbol}</span></td>
-      <td class="mono">${Number(h.quantity).toFixed(6)}</td>
-      <td class="mono" style="color:#c9a84c">$${fmtPrice(Number(h.avg_buy_price))}</td>
-      <td class="mono">$${fmtUSD(val)}</td>
-      <td class="mono" style="color:${pnl>=0?'#22c55e':'#ef4444'}">${pnl>=0?'+':''}$${fmtUSD(pnl)}</td>
-      <td style="display:flex;gap:5px;flex-wrap:wrap">
-        <button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admEditHoldingInline('${h.id}','${h.user_id}','${h.symbol}',${h.quantity},${h.avg_buy_price})">Edit</button>
-        <button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admDeleteHolding('${h.id}')">Del</button>
-      </td>
-    </tr>`;
+    return`<tr><td style="color:#edf2f8">${esc(name)}</td><td><span class="badge" style="background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};border:1px solid ${(meta.color||'#5a6880')}30">${h.symbol}</span></td><td class="mono">${Number(h.quantity).toFixed(6)}</td><td class="mono" style="color:#c9a84c">$${fmtPrice(Number(h.avg_buy_price))}</td><td class="mono">$${fmtUSD(val)}</td><td class="mono" style="color:${pnl>=0?'#22c55e':'#ef4444'}">${pnl>=0?'+':''}$${fmtUSD(pnl)}</td>
+      <td style="display:flex;gap:5px;flex-wrap:wrap"><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admEditHoldingInline('${h.id}','${h.user_id}','${h.symbol}',${h.quantity},${h.avg_buy_price})">Edit</button><button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admDeleteHolding('${h.id}')">Del</button></td></tr>`;
   }).join('');
 }
 function admFilterHoldings(q){const f=q.toLowerCase();admRenderHoldings(admAllHoldings.filter(h=>(h.symbol||'').toLowerCase().includes(f)));}
 async function admAddHolding(){
-  const userId=document.getElementById('h-user').value;
-  const symbol=document.getElementById('h-symbol').value;
-  const qty=parseFloat(document.getElementById('h-qty').value);
-  const avgPrice=parseFloat(document.getElementById('h-avgprice').value);
+  const userId=document.getElementById('h-user').value;const symbol=document.getElementById('h-symbol').value;
+  const qty=parseFloat(document.getElementById('h-qty').value);const avgPrice=parseFloat(document.getElementById('h-avgprice').value);
   if(!userId||!symbol||isNaN(qty)||isNaN(avgPrice)){showToast('Error','Fill all fields','error');return;}
   const meta=ASSET_META[symbol]||{};
   const{error}=await sbAdmin.from('holdings').upsert({user_id:userId,symbol,name:meta.name||symbol,icon:meta.icon||'',color:meta.color||'#5a6880',quantity:qty,avg_buy_price:avgPrice},{onConflict:'user_id,symbol'});
@@ -1482,7 +1615,7 @@ async function admApplyTargetPnl(){
   await admLoadHoldings();admLoadUserPnl();admUpdateStats();
 }
 
-// ─ TRANSACTIONS — uses sbAdmin ─
+// ─ TRANSACTIONS ─
 async function admLoadTransactions(){
   const{data,error}=await sbAdmin.from('transactions').select('*,profiles(first_name,last_name)').order('created_at',{ascending:false}).limit(100);
   if(error){showToast('Error',error.message,'error');return;}
@@ -1495,26 +1628,11 @@ function admRenderTransactions(rows){
   tbody.innerHTML=rows.map(t=>{
     const name=t.profiles?`${t.profiles.first_name||''} ${t.profiles.last_name||''}`:'—';
     const usd=t.usd_amount!=null?(Number(t.usd_amount)>0?'+':'')+'$'+fmtUSD(Math.abs(Number(t.usd_amount))):'—';
-    return`<tr>
-      <td style="color:#edf2f8">${esc(name)}</td>
-      <td><span class="badge ${typeBadge[t.type]||'b-accent'}">${t.type}</span></td>
-      <td class="mono">${t.symbol}</td>
-      <td class="mono" style="color:#8c9db5">${t.quantity?Number(t.quantity).toFixed(4):'—'}</td>
-      <td class="mono" style="color:#5a6880">${t.price_at_tx?'$'+fmtPrice(Number(t.price_at_tx)):'—'}</td>
-      <td class="mono" style="color:${Number(t.usd_amount)>=0?'#22c55e':'#ef4444'}">${usd}</td>
-      <td style="color:#5a6880;font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
-      <td class="mono" style="color:#5a6880">${timeAgo(t.created_at)}</td>
-      <td>${txDeleteMode?`<button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admDeleteTx('${t.id}')">Del</button>`:'—'}</td>
-    </tr>`;
+    return`<tr><td style="color:#edf2f8">${esc(name)}</td><td><span class="badge ${typeBadge[t.type]||'b-accent'}">${t.type}</span></td><td class="mono">${t.symbol}</td><td class="mono" style="color:#8c9db5">${t.quantity?Number(t.quantity).toFixed(4):'—'}</td><td class="mono" style="color:#5a6880">${t.price_at_tx?'$'+fmtPrice(Number(t.price_at_tx)):'—'}</td><td class="mono" style="color:${Number(t.usd_amount)>=0?'#22c55e':'#ef4444'}">${usd}</td><td style="color:#5a6880;font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td><td class="mono" style="color:#5a6880">${timeAgo(t.created_at)}</td><td>${txDeleteMode?`<button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admDeleteTx('${t.id}')">Del</button>`:'—'}</td></tr>`;
   }).join('');
 }
 function admFilterTx(q){const f=q.toLowerCase();admRenderTransactions(admAllTx.filter(t=>(t.symbol||'').toLowerCase().includes(f)||(t.type||'').toLowerCase().includes(f)||(t.note||'').toLowerCase().includes(f)));}
-function admToggleTxDeleteMode(){
-  txDeleteMode=!txDeleteMode;
-  document.getElementById('tx-delete-mode-btn').style.background=txDeleteMode?'rgba(239,68,68,.2)':'';
-  document.getElementById('tx-delete-mode-btn').style.color=txDeleteMode?'#ef4444':'';
-  admRenderTransactions(admAllTx);
-}
+function admToggleTxDeleteMode(){txDeleteMode=!txDeleteMode;document.getElementById('tx-delete-mode-btn').style.background=txDeleteMode?'rgba(239,68,68,.2)':'';document.getElementById('tx-delete-mode-btn').style.color=txDeleteMode?'#ef4444':'';admRenderTransactions(admAllTx);}
 async function admDeleteTx(id){
   if(!confirm('Delete this transaction?'))return;
   const{error}=await sbAdmin.from('transactions').delete().eq('id',id);
@@ -1534,37 +1652,16 @@ async function admAddTransaction(){
   ['tx-qty','tx-price','tx-usd','tx-note'].forEach(id=>document.getElementById(id).value='');
   await admLoadTransactions();await admLoadUsers();admUpdateStats();
 }
-function admToggleTxFields(){
-  const isCash=['deposit','withdraw'].includes(document.getElementById('tx-type').value);
-  document.getElementById('tx-qty-field').style.opacity=isCash?'.35':'1';
-  document.getElementById('tx-price-field').style.opacity=isCash?'.35':'1';
-}
+function admToggleTxFields(){const isCash=['deposit','withdraw'].includes(document.getElementById('tx-type').value);document.getElementById('tx-qty-field').style.opacity=isCash?'.35':'1';document.getElementById('tx-price-field').style.opacity=isCash?'.35':'1';}
 
 // ─ CASH ─
 function admRenderCashTable(users){
   document.getElementById('cash-tbody').innerHTML=users.map(u=>`
-    <tr>
-      <td><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></td>
-      <td class="mono" style="color:#8c9db5;font-size:10px">${u.email||'—'}</td>
-      <td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td>
-      <td><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="openQuickCash('${u.id}','${escJs((u.first_name||'')+' '+(u.last_name||''))}',${u.cash||0})">Set Cash</button></td>
-    </tr>`).join('');
+    <tr><td><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></td><td class="mono" style="color:#8c9db5;font-size:10px">${u.email||'—'}</td><td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td><td><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="openQuickCash('${u.id}','${escJs((u.first_name||'')+' '+(u.last_name||''))}',${u.cash||0})">Set Cash</button></td></tr>`).join('');
 }
-function admLoadCurrentCash(){
-  const uid=document.getElementById('cash-user').value;const user=admAllUsers.find(u=>u.id===uid);
-  if(user)document.getElementById('cash-current').value='$'+Number(user.cash||0).toFixed(2);
-}
-async function admSetCash(){
-  const uid=document.getElementById('cash-user').value;const val=parseFloat(document.getElementById('cash-new').value);
-  if(!uid||isNaN(val)){showToast('Error','Select user and enter amount','error');return;}
-  await admUpdateCash(uid,val);
-}
-async function admAdjustCash(){
-  const uid=document.getElementById('cash-user').value;const delta=parseFloat(document.getElementById('cash-delta').value);
-  if(!uid||isNaN(delta)){showToast('Error','Select user and enter delta','error');return;}
-  const user=admAllUsers.find(u=>u.id===uid);if(!user)return;
-  await admUpdateCash(uid,Number(user.cash||0)+delta);
-}
+function admLoadCurrentCash(){const uid=document.getElementById('cash-user').value;const user=admAllUsers.find(u=>u.id===uid);if(user)document.getElementById('cash-current').value='$'+Number(user.cash||0).toFixed(2);}
+async function admSetCash(){const uid=document.getElementById('cash-user').value;const val=parseFloat(document.getElementById('cash-new').value);if(!uid||isNaN(val)){showToast('Error','Select user and enter amount','error');return;}await admUpdateCash(uid,val);}
+async function admAdjustCash(){const uid=document.getElementById('cash-user').value;const delta=parseFloat(document.getElementById('cash-delta').value);if(!uid||isNaN(delta)){showToast('Error','Select user and enter delta','error');return;}const user=admAllUsers.find(u=>u.id===uid);if(!user)return;await admUpdateCash(uid,Number(user.cash||0)+delta);}
 async function admUpdateCash(userId,newAmount){
   const{error}=await sbAdmin.from('profiles').update({cash:newAmount}).eq('id',userId);
   if(error){showToast('Error',error.message,'error');return;}
@@ -1589,10 +1686,8 @@ async function admBulkCash(){
   if(!confirm(`Apply to ALL ${admAllUsers.length} users? Cannot be undone.`))return;
   let success=0;
   for(const u of admAllUsers){
-    let newVal;
-    if(mode==='set')newVal=amt;else if(mode==='add')newVal=Number(u.cash||0)+amt;else if(mode==='multiply')newVal=Number(u.cash||0)*amt;
-    const{error}=await sbAdmin.from('profiles').update({cash:newVal}).eq('id',u.id);
-    if(!error)success++;
+    let newVal;if(mode==='set')newVal=amt;else if(mode==='add')newVal=Number(u.cash||0)+amt;else if(mode==='multiply')newVal=Number(u.cash||0)*amt;
+    const{error}=await sbAdmin.from('profiles').update({cash:newVal}).eq('id',u.id);if(!error)success++;
   }
   showToast('Bulk cash done!',`Updated ${success} users`,'success');await admLoadUsers();admUpdateStats();
 }
@@ -1620,17 +1715,169 @@ async function admNukeHoldings(){
   showToast('Done','All holdings deleted','success');await admLoadHoldings();admUpdateStats();
 }
 
-// ─ STATS UPDATE ─
+// ─ STATS ─
 function admUpdateStats(){
   const totalCash=admAllUsers.reduce((s,u)=>s+Number(u.cash||0),0);
   const totalPortVal=admAllHoldings.reduce((s,h)=>s+(PRICES[h.symbol]||Number(h.avg_buy_price))*Number(h.quantity),0);
   setTxt('st-users',admAllUsers.length);setTxt('st-cash','$'+fmtUSD(totalCash));setTxt('st-hold',admAllHoldings.length);setTxt('st-tx',admAllTx.length);setTxt('st-portval','$'+fmtUSD(totalPortVal));
 }
 
-// ─ POPULATE SELECTS ─
+// ─ SELECTS ─
 function admPopulateSelects(){
   const opts=admAllUsers.map(u=>`<option value="${u.id}">${esc((u.first_name||'')+' '+(u.last_name||''))} (${u.email||''})</option>`).join('');
   ['h-user','tx-user','cash-user','pnl-user'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+
+// ════════════════════════════════════════════
+//  ADMIN — LIVE PRICES EDITOR (NEW)
+// ════════════════════════════════════════════
+const ALL_EDITABLE_ASSETS=[
+  {sym:'BTC',name:'Bitcoin',icon:'fab fa-bitcoin',color:'#f7931a'},
+  {sym:'ETH',name:'Ethereum',icon:'fab fa-ethereum',color:'#627eea'},
+  {sym:'SOL',name:'Solana',icon:'fas fa-sun',color:'#9945ff'},
+  {sym:'BNB',name:'BNB Chain',icon:'fas fa-coins',color:'#f3ba2f'},
+  {sym:'XRP',name:'Ripple',icon:'fas fa-water',color:'#00aae4'},
+  {sym:'ADA',name:'Cardano',icon:'fas fa-circle-nodes',color:'#3cc8c8'},
+  {sym:'TSLA',name:'Tesla',icon:'fas fa-car',color:'#e31937'},
+  {sym:'AAPL',name:'Apple',icon:'fab fa-apple',color:'#a2aaad'},
+  {sym:'NVDA',name:'NVIDIA',icon:'fas fa-microchip',color:'#76b900'},
+  {sym:'MSFT',name:'Microsoft',icon:'fab fa-windows',color:'#00a4ef'},
+  {sym:'AMZN',name:'Amazon',icon:'fab fa-amazon',color:'#ff9900'},
+  {sym:'GOOGL',name:'Alphabet',icon:'fab fa-google',color:'#4285f4'},
+  {sym:'GOLD',name:'Gold Spot',icon:'fas fa-gem',color:'#c9a84c'},
+];
+
+function admRenderPricesPage(){
+  const body=document.getElementById('adm-prices-body');
+  body.innerHTML=ALL_EDITABLE_ASSETS.map(a=>{
+    const cur=PRICES[a.sym]||DEFAULT_PRICES[a.sym]||0;
+    const def=DEFAULT_PRICES[a.sym]||0;
+    const diff=cur-def;const diffPct=def>0?(diff/def*100):0;
+    return`<div class="price-row">
+      <div style="width:36px;height:36px;border-radius:11px;background:${a.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${a.icon}" style="color:${a.color};font-size:16px"></i></div>
+      <div style="flex:1;min-width:100px">
+        <p style="font-size:13px;font-weight:600;color:#edf2f8">${a.sym}</p>
+        <p style="font-size:11px;color:#5a6880">${a.name}</p>
+      </div>
+      <div style="text-align:right;margin-right:12px;min-width:80px">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;margin-bottom:2px">Default</p>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">$${fmtPrice(def)}</p>
+      </div>
+      <div style="text-align:right;margin-right:12px;min-width:80px">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;margin-bottom:2px">Override</p>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${Math.abs(diffPct)>0.1?(diffPct>0?'#22c55e':'#ef4444'):'#5a6880'}">${Math.abs(diffPct)>0.1?(diffPct>0?'+':'')+diffPct.toFixed(2)+'%':'Default'}</p>
+      </div>
+      <input class="adm-input" id="price-input-${a.sym}" type="number" step="any" value="${cur.toFixed(a.sym==='XRP'||a.sym==='ADA'?4:2)}" style="width:130px;margin-right:8px" oninput="admLivePreviewPrice('${a.sym}',this.value)">
+      <button class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSetSinglePrice('${a.sym}')">Apply</button>
+      <button class="adm-btn adm-btn-sm" style="background:rgba(255,255,255,.04);color:#5a6880;border:1px solid rgba(255,255,255,.07);margin-left:4px" onclick="admResetSinglePrice('${a.sym}')">↺</button>
+    </div>`;
+  }).join('');
+}
+
+function admLivePreviewPrice(sym,val){
+  const n=parseFloat(val);if(isNaN(n)||n<=0)return;
+  // Live-update display elements
+  document.querySelectorAll('.grid-pr-'+sym).forEach(el=>el.textContent='$'+fmtPrice(n));
+  document.querySelectorAll('.tick-price-'+sym).forEach(el=>el.textContent='$'+fmtPrice(n));
+}
+
+function admSetSinglePrice(sym){
+  const inp=document.getElementById('price-input-'+sym);
+  const n=parseFloat(inp.value);
+  if(isNaN(n)||n<=0){showToast('Error','Enter a valid price','error');return;}
+  PRICES[sym]=n;
+  const asset=ASSETS_LIST.find(a=>a.sym===sym);if(asset)asset.price=n;
+  document.querySelectorAll('.grid-pr-'+sym).forEach(el=>el.textContent='$'+fmtPrice(n));
+  document.querySelectorAll('.tick-price-'+sym).forEach(el=>el.textContent='$'+fmtPrice(n));
+  showToast('Price Updated',sym+' → $'+fmtPrice(n),'success');
+  admRenderPricesPage();
+}
+
+function admSaveAllPrices(){
+  const overrides={};
+  ALL_EDITABLE_ASSETS.forEach(a=>{
+    const inp=document.getElementById('price-input-'+a.sym);
+    if(inp){const n=parseFloat(inp.value);if(!isNaN(n)&&n>0){PRICES[a.sym]=n;const asset=ASSETS_LIST.find(x=>x.sym===a.sym);if(asset)asset.price=n;overrides[a.sym]=n;}}
+  });
+  try{localStorage.setItem('aurum_price_overrides',JSON.stringify(overrides));}catch(e){}
+  showToast('All Prices Saved','Changes persist across reloads','success');
+  admRenderPricesPage();loadPortfolioStats();
+}
+
+function admResetSinglePrice(sym){
+  const def=DEFAULT_PRICES[sym];if(!def)return;
+  PRICES[sym]=def;
+  const asset=ASSETS_LIST.find(a=>a.sym===sym);if(asset)asset.price=def;
+  const inp=document.getElementById('price-input-'+sym);if(inp)inp.value=def.toFixed(sym==='XRP'||sym==='ADA'?4:2);
+  // Remove from saved overrides
+  try{const saved=localStorage.getItem('aurum_price_overrides');if(saved){const o=JSON.parse(saved);delete o[sym];localStorage.setItem('aurum_price_overrides',JSON.stringify(o));}}catch(e){}
+  showToast('Price Reset',sym+' back to default $'+fmtPrice(def),'info');
+  admRenderPricesPage();
+}
+
+function admResetPrices(){
+  if(!confirm('Reset all prices to defaults?'))return;
+  Object.assign(PRICES,DEFAULT_PRICES);
+  ASSETS_LIST.forEach(a=>{if(DEFAULT_PRICES[a.sym])a.price=DEFAULT_PRICES[a.sym];});
+  try{localStorage.removeItem('aurum_price_overrides');}catch(e){}
+  showToast('All Prices Reset','Using real-time defaults','info');
+  admRenderPricesPage();loadPortfolioStats();
+}
+
+// ════════════════════════════════════════════
+//  ADMIN — CRYPTO ADDRESSES EDITOR (NEW)
+// ════════════════════════════════════════════
+function admLoadAddresses(){
+  CRYPTO_ADDRESSES=loadSavedAddresses();
+  const body=document.getElementById('adm-addresses-body');
+  body.innerHTML=DEPOSIT_COINS.map(c=>{
+    const addr=CRYPTO_ADDRESSES[c.sym]||'';
+    return`<div style="display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.04)">
+      <div style="width:40px;height:40px;border-radius:13px;background:${c.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${c.icon}" style="color:${c.color};font-size:18px"></i></div>
+      <div style="flex:1;min-width:120px">
+        <p style="font-size:13px;font-weight:600;color:#edf2f8">${c.sym}</p>
+        <p style="font-size:11px;color:#5a6880">${c.name} · <span style="font-family:'JetBrains Mono',monospace;font-size:9px">${c.network}</span></p>
+      </div>
+      <div style="flex:2;min-width:200px">
+        <input class="adm-input" id="addr-input-${c.sym}" placeholder="Enter ${c.sym} wallet address…" value="${esc(addr)}" style="font-size:11px;letter-spacing:.02em">
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSaveSingleAddress('${c.sym}')">Save</button>
+        <button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admClearAddress('${c.sym}')">Clear</button>
+      </div>
+      <div style="width:8px;height:8px;border-radius:50%;background:${addr?'#22c55e':'#5a6880'};flex-shrink:0" id="addr-dot-${c.sym}" title="${addr?'Address set':'No address'}"></div>
+    </div>`;
+  }).join('');
+}
+
+function admSaveSingleAddress(sym){
+  const inp=document.getElementById('addr-input-'+sym);
+  if(!inp)return;
+  const addr=inp.value.trim();
+  CRYPTO_ADDRESSES[sym]=addr;
+  saveAddressesToStorage(CRYPTO_ADDRESSES);
+  const dot=document.getElementById('addr-dot-'+sym);
+  if(dot)dot.style.background=addr?'#22c55e':'#5a6880';
+  showToast(addr?'Address Saved':'Address Cleared',sym+(addr?' address updated':' address removed'),'success');
+  // Refresh the deposit modal coin grid if it's open
+  buildDepositCoinGrid();
+}
+
+function admClearAddress(sym){
+  const inp=document.getElementById('addr-input-'+sym);if(inp)inp.value='';
+  admSaveSingleAddress(sym);
+}
+
+function admSaveAddresses(){
+  const addrs={};
+  DEPOSIT_COINS.forEach(c=>{
+    const inp=document.getElementById('addr-input-'+c.sym);
+    if(inp){const a=inp.value.trim();if(a)addrs[c.sym]=a;}
+  });
+  CRYPTO_ADDRESSES={...addrs};
+  saveAddressesToStorage(CRYPTO_ADDRESSES);
+  showToast('All Addresses Saved','Deposit modal updated','success');
+  admLoadAddresses();buildDepositCoinGrid();
 }
 
 // ─ USER DRAWER ─
@@ -1670,21 +1917,12 @@ async function openUserDrawer(userId){
       ${hs.length?hs.map(h=>{
         const meta=ASSET_META[h.symbol]||{};const live=PRICES[h.symbol]||Number(h.avg_buy_price);
         const val=Number(h.quantity)*live;const pnlH=(live-Number(h.avg_buy_price))*Number(h.quantity);
-        return`<div class="detail-row">
-          <span class="lbl" style="display:flex;align-items:center;gap:6px"><i class="${meta.icon||'fas fa-coins'}" style="color:${meta.color||'#5a6880'};font-size:11px"></i>${h.symbol}</span>
-          <span class="val"><span style="display:block">${Number(h.quantity).toFixed(5)} @ $${fmtPrice(Number(h.avg_buy_price))}</span><span style="display:block;color:#c9a84c;margin-top:1px">≈ $${fmtUSD(val)} <span style="color:${pnlH>=0?'#22c55e':'#ef4444'};margin-left:4px">(${pnlH>=0?'+':''}$${fmtUSD(pnlH)})</span></span></span>
-        </div>`;
+        return`<div class="detail-row"><span class="lbl" style="display:flex;align-items:center;gap:6px"><i class="${meta.icon||'fas fa-coins'}" style="color:${meta.color||'#5a6880'};font-size:11px"></i>${h.symbol}</span><span class="val"><span style="display:block">${Number(h.quantity).toFixed(5)} @ $${fmtPrice(Number(h.avg_buy_price))}</span><span style="display:block;color:#c9a84c;margin-top:1px">≈ $${fmtUSD(val)} <span style="color:${pnlH>=0?'#22c55e':'#ef4444'};margin-left:4px">(${pnlH>=0?'+':''}$${fmtUSD(pnlH)})</span></span></span></div>`;
       }).join(''):'<div style="padding:10px 0;color:#5a6880;font-size:12px">No holdings</div>'}
     </div>
     <div class="detail-section">
       <div class="detail-section-title">Recent Activity (${ts.length})</div>
-      ${ts.length?ts.map(t=>{
-        const usd=Number(t.usd_amount||0);
-        return`<div class="detail-row">
-          <span class="lbl" style="display:flex;align-items:center;gap:6px"><span class="badge ${typeBadge[t.type]||'b-accent'}" style="font-size:9px;padding:2px 6px">${t.type}</span>${t.symbol}</span>
-          <span class="val"><span style="display:block;color:${usd>=0?'#22c55e':'#ef4444'}">${usd>=0?'+':''}$${fmtUSD(Math.abs(usd))}</span><span style="display:block;font-size:9px;color:#5a6880">${timeAgo(t.created_at)}</span></span>
-        </div>`;
-      }).join(''):'<div style="padding:10px 0;color:#5a6880;font-size:12px">No transactions</div>'}
+      ${ts.length?ts.map(t=>{const usd=Number(t.usd_amount||0);return`<div class="detail-row"><span class="lbl" style="display:flex;align-items:center;gap:6px"><span class="badge ${typeBadge[t.type]||'b-accent'}" style="font-size:9px;padding:2px 6px">${t.type}</span>${t.symbol}</span><span class="val"><span style="display:block;color:${usd>=0?'#22c55e':'#ef4444'}">${usd>=0?'+':''}$${fmtUSD(Math.abs(usd))}</span><span style="display:block;font-size:9px;color:#5a6880">${timeAgo(t.created_at)}</span></span></div>`}).join(''):'<div style="padding:10px 0;color:#5a6880;font-size:12px">No transactions</div>'}
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
       <button class="adm-btn adm-btn-gold" style="flex:1" onclick="openQuickCash('${user.id}','${escJs((user.first_name||'')+' '+(user.last_name||''))}',${user.cash||0})">💰 Update Cash</button>

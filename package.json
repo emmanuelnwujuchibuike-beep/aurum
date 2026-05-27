@@ -1,8 +1,9 @@
-
 {
-  "returncode" : 0,
-  "stdout" : "invest.html written\n",
-  "stderr" : ""
-  
+  "returncode": 0,
+  "stdout": "invest.html written\n",
+  "stderr": "",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
 }
-
