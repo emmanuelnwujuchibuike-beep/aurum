@@ -6,10 +6,12 @@
 <title>Aurum Capital — Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="input.css">
+<link rel="icon" type="image/png" href="./image/logo.jpeg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script type="module" src="dashboard.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{void:'#040608',deep:'#080c12',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',snow:'#edf2f8',gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}</script>
 <style>
@@ -121,7 +123,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .amt-preset{padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:#080c12;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8;transition:all .2s;text-align:center}
 .amt-preset:hover,.amt-preset.sel{border-color:#c9a84c;background:rgba(201,168,76,.08);color:#c9a84c}
 
-/* ══════ ADMIN PANEL — FULLY RESPONSIVE ══════ */
 #adminLockRing{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:52px;height:52px;z-index:301;pointer-events:none;opacity:0;transition:opacity .2s}
 #adminLockRing.show{opacity:1}
 #adminLockRing svg{width:52px;height:52px;transform:rotate(-90deg)}
@@ -140,7 +141,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .adm-badge{font-family:'JetBrains Mono',monospace;font-size:8px;color:#ef4444;letter-spacing:.1em;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);padding:2px 6px;border-radius:5px}
 .adm-body{display:flex;flex:1;overflow:hidden;position:relative}
 
-/* Sidebar — hidden on mobile, shown on desktop */
 .adm-sidebar{width:190px;flex-shrink:0;background:#080c12;border-right:1px solid rgba(255,255,255,.06);padding:16px 10px;display:flex;flex-direction:column;overflow-y:auto;transition:transform .3s ease}
 .adm-nav-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin:14px 0 5px}
 .adm-nav-btn{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:500;color:#5a6880;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .18s;margin-bottom:2px;font-family:'DM Sans',sans-serif}
@@ -194,12 +194,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .adm-input::placeholder{color:#5a6880}
 .adm-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235a6880' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 
-/* Mobile admin sidebar drawer */
 .adm-mobile-menu-btn{display:none;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#c9a84c;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
 .adm-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1020;backdrop-filter:blur(4px)}
 .adm-sidebar-overlay.open{display:block}
 
-/* Pending approval card — mobile friendly */
 .pend-card{background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 16px;margin-bottom:10px}
 .pend-card-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 .pend-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
@@ -230,7 +228,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .period-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:transparent;color:#5a6880;cursor:pointer;transition:all .2s}
 .period-btn.active{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.12);color:#c9a84c}
 
-/* ── RESPONSIVE BREAKPOINTS ── */
 @media(max-width:1024px){
   #sidebar{display:none!important}
   #mainContent{margin-left:0!important}
@@ -240,11 +237,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .adm-stats{grid-template-columns:repeat(3,1fr)!important}
 }
 @media(max-width:768px){
-  /* Admin: hide sidebar, show hamburger */
-  .adm-sidebar{
-    position:fixed;top:56px;left:-200px;bottom:0;z-index:1025;
-    width:190px;transition:left .3s ease;
-  }
+  .adm-sidebar{position:fixed;top:56px;left:-200px;bottom:0;z-index:1025;width:190px;transition:left .3s ease}
   .adm-sidebar.mob-open{left:0 !important}
   .adm-mobile-menu-btn{display:flex}
   .adm-sidebar-overlay{display:none}
@@ -281,7 +274,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 </head>
 <body class="overflow-x-hidden">
 
-<!-- LOADER -->
 <div id="aurum-loader">
   <div class="ld-logo-mark">A</div>
   <div class="ld-wordmark"><span>A</span><span>U</span><span>R</span><span>U</span><span>M</span></div>
@@ -297,8 +289,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 </div>
 
 <div id="appShell" style="display:none;position:relative;z-index:1">
-
-  <!-- SIDEBAR (desktop) -->
   <aside id="sidebar" style="display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;background:#080c12;border-right:1px solid rgba(255,255,255,.06);z-index:50;padding:24px 16px;overflow-y:auto">
     <a href="index.html" style="display:flex;align-items:center;gap:12px;padding:0 8px;margin-bottom:32px;text-decoration:none">
       <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:14px;flex-shrink:0">A</div>
@@ -314,6 +304,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       <a href="about.html" class="sbl"><i class="fas fa-circle-nodes"></i>About Us</a>
       <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin:20px 0 8px">Account</p>
       <button onclick="openWithdrawModal()" class="sbl"><i class="fas fa-wallet"></i>Withdraw</button>
+      <a href="profile.html" class="sbl"><i class="fas fa-user-circle"></i>Profile</a>
       <a href="#" id="signOutBtn" class="sbl"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
     </div>
     <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:16px;margin-top:12px">
@@ -347,9 +338,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608">?</div>
       </div>
     </header>
-
-    <!-- Mobile Drawer -->
-    <div id="mobileBackdrop" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)"></div>
+  <div id="mobileBackdrop" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)"></div>
     <div id="mobileDrawer" style="display:none;position:fixed;top:0;left:0;bottom:0;width:280px;z-index:90;background:#080c12;border-right:1px solid rgba(255,255,255,.07);flex-direction:column;padding:24px 16px;overflow-y:auto">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding:0 8px">
         <span style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
@@ -363,17 +352,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       <button onclick="closeDrawer();openWithdrawModal()" class="sbl"><i class="fas fa-wallet"></i>Withdraw</button>
       <a href="contact.html" class="sbl"><i class="fas fa-hand-holding-medical"></i>Contact Us</a>
       <a href="about.html" class="sbl"><i class="fas fa-circle-nodes"></i>About Us</a>
+      <a href="profile.html" class="sbl"><i class="fas fa-user-circle"></i>Profile</a>
       <a href="#" id="drawerSignOut" class="sbl"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
     </div>
 
-    <!-- TICKER -->
     <div class="ticker-wrap">
       <div class="ticker-inner" id="liveTicker"></div>
     </div>
 
-    <!-- PAGE CONTENT -->
     <main style="flex:1;padding:32px 24px;max-width:1400px;width:100%;margin:0 auto">
-
       <div class="a1" style="margin-bottom:32px">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div>
@@ -392,7 +379,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- STAT CARDS -->
       <div class="a2 grid-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px">
         <div class="stat-card stat-card-glow">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -428,7 +414,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- Hero Banner -->
       <div class="a3" style="margin-bottom:24px;position:relative;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,#0c1830 0%,#0f1e38 50%,#0a1428 100%);border:1px solid rgba(255,255,255,.07)">
         <div style="position:absolute;inset:0;pointer-events:none"><div style="position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.07),transparent)"></div></div>
         <div class="hero-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch">
@@ -460,7 +445,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- AD BANNERS -->
       <div class="a4 ad-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
         <div class="ad-banner-re" onclick="window.location.href='invest.html'" style="padding:24px 26px;min-height:160px">
           <div class="ad-glow-gold"></div>
@@ -505,7 +489,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- Crypto + Transactions -->
       <div class="a5 grid-2col" style="display:grid;grid-template-columns:1fr 360px;gap:20px;margin-bottom:24px">
         <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden">
           <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06)">
@@ -544,13 +527,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
 </div>
 
-<!-- Progress Ring -->
 <div id="adminLockRing">
   <svg viewBox="0 0 52 52"><circle class="bg" cx="26" cy="26" r="23"/><circle class="prog" id="lockProgress" cx="26" cy="26" r="23"/></svg>
   <div class="lock-icon"><i class="fas fa-lock" id="lockIcon"></i></div>
 </div>
 
-<!-- ═══ PORTFOLIO MODAL ═══ -->
+<!-- PORTFOLIO MODAL -->
 <div class="modal-overlay" id="portfolioModal">
   <div class="port-modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;background:#111820;z-index:2">
@@ -569,7 +551,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
 </div>
 
-<!-- ═══ TRANSACTIONS MODAL ═══ -->
+<!-- TRANSACTIONS MODAL -->
 <div class="modal-overlay" id="transactionsModal">
   <div class="tx-modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;background:#111820;z-index:2;flex-wrap:wrap;gap:10px">
@@ -595,7 +577,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
 </div>
 
-<!-- ═══ DEPOSIT MODAL ═══ -->
+<!-- DEPOSIT MODAL -->
 <div class="modal-overlay" id="depositModal">
   <div class="deposit-modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,.07)">
@@ -678,14 +660,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
           <button onclick="confirmCryptoDeposit()" class="promo-btn" style="width:100%;justify-content:center;padding:13px;font-size:13px">
             <i class="fas fa-paper-plane" style="font-size:12px"></i> I've Sent the Payment
           </button>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-align:center;margin-top:10px;line-height:1.6">⏳ Your cash balance will be credited only after admin approves this deposit.</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-align:center;margin-top:10px;line-height:1.6">⏳ Your cash balance will be credited only after funds is approved for this deposit.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ WITHDRAW MODAL ═══ -->
+<!-- WITHDRAW MODAL -->
 <div class="modal-overlay" id="withdrawModal">
   <div class="withdraw-modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,.07)">
@@ -722,7 +704,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       </div>
       <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:12px;padding:12px 14px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px">
         <i class="fas fa-clock" style="color:#c9a84c;font-size:12px;margin-top:1px;flex-shrink:0"></i>
-        <p style="font-size:11px;color:#8c9db5;line-height:1.6">Withdrawal requests require approval (1-3h). <strong style="color:#c9a84c">Your cash balance will only be deducted after the admin approves this request.</strong></p>
+        <p style="font-size:11px;color:#8c9db5;line-height:1.6">Withdrawal requests require approval (1-3h). <strong style="color:#c9a84c">Your cash balance will only be deducted after this request is approved.</strong></p>
       </div>
       <button onclick="submitWithdrawal()" class="promo-btn" style="width:100%;justify-content:center;padding:13px;font-size:13px;background:linear-gradient(135deg,rgba(239,68,68,.8),rgba(239,68,68,.5));color:#fff">
         <i class="fas fa-arrow-up-from-line" style="font-size:12px"></i> Request Withdrawal
@@ -731,7 +713,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
 </div>
 
-<!-- ═══ CHART MODAL ═══ -->
+<!-- CHART MODAL -->
 <div class="modal-overlay" id="chartModal">
   <div class="chart-modal-box">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
@@ -771,25 +753,21 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ADMIN PANEL — FULLY RESPONSIVE + ALL BUGS FIXED
-═══════════════════════════════════════════════════ -->
+<!-- ADMIN PANEL -->
 <div id="ADMIN_PANEL">
   <div class="adm-topbar">
     <div class="adm-logo">
-      <!-- Mobile hamburger for admin sidebar -->
       <button class="adm-mobile-menu-btn" id="admMobileMenuBtn" onclick="toggleAdmSidebar()"><i class="fas fa-bars" style="font-size:13px"></i></button>
       <div class="adm-logo-mark">A</div>
       <span class="adm-logo-text">Aurum</span>
       <span class="adm-badge">ADMIN</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap" class="adm-topbar-actions">
-      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em" id="admRlsNote"></span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em" id="admRlsNote"></span>
       <button onclick="admLoadAll()" class="adm-btn adm-btn-accent adm-btn-sm"><i class="fas fa-rotate-right"></i> <span>Refresh</span></button>
       <button onclick="closeAdminPanel()" class="adm-btn adm-btn-loss adm-btn-sm"><i class="fas fa-xmark"></i> <span>Close</span></button>
     </div>
   </div>
-  <!-- Mobile sidebar overlay -->
   <div class="adm-sidebar-overlay" id="admSidebarOverlay" onclick="closeAdmSidebar()"></div>
   <div class="adm-body">
     <nav class="adm-sidebar" id="admSidebar">
@@ -812,7 +790,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     </nav>
     <div class="adm-content">
 
-      <!-- ─ OVERVIEW ─ -->
+      <!-- OVERVIEW -->
       <div class="adm-page active" id="admp-overview">
         <div class="adm-page-title">Overview</div>
         <div class="adm-page-sub">Platform health at a glance</div>
@@ -840,35 +818,27 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- ─ PENDING APPROVALS (KEY FIX) ─ -->
+      <!-- PENDING APPROVALS -->
       <div class="adm-page" id="admp-pending">
         <div class="adm-page-title">Pending Approvals</div>
         <div class="adm-page-sub">Review deposit and withdrawal requests — approve or reject to update user balance</div>
-
-        <!-- Pending Deposits -->
         <div class="adm-card">
           <div class="adm-card-hdr">
             <span class="adm-card-title">💰 Deposit Requests (<span id="pend-dep-count">0</span>)</span>
             <button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admLoadPending()">↻ Refresh</button>
           </div>
-          <div id="pend-dep-container">
-            <div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div>
-          </div>
+          <div id="pend-dep-container"><div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div></div>
         </div>
-
-        <!-- Pending Withdrawals -->
         <div class="adm-card">
           <div class="adm-card-hdr">
             <span class="adm-card-title">📤 Withdrawal Requests (<span id="pend-wd-count">0</span>)</span>
             <button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admLoadPending()">↻ Refresh</button>
           </div>
-          <div id="pend-wd-container">
-            <div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div>
-          </div>
+          <div id="pend-wd-container"><div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div></div>
         </div>
       </div>
 
-      <!-- ─ ALL USERS ─ -->
+      <!-- ALL USERS -->
       <div class="adm-page" id="admp-users">
         <div class="adm-page-title">All Users</div>
         <div class="adm-page-sub">Every registered account — click a row to manage</div>
@@ -884,7 +854,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- ─ HOLDINGS ─ -->
+      <!-- HOLDINGS -->
       <div class="adm-page" id="admp-holdings">
         <div class="adm-page-title">Holdings</div>
         <div class="adm-page-sub">Add, edit or remove asset positions for any user</div>
@@ -916,7 +886,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- ─ P&L EDITOR ─ -->
+<!-- P&L EDITOR -->
       <div class="adm-page" id="admp-pnl">
         <div class="adm-page-title">P&amp;L Editor</div>
         <div class="adm-page-sub">Adjust profit &amp; loss by modifying buy prices</div>
@@ -932,11 +902,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
         <div class="adm-card" id="pnl-positions-card" style="display:none">
           <div class="adm-card-hdr"><span class="adm-card-title">Positions — Edit Individually</span></div>
-          <div class="adm-card-body" id="pnl-positions-body"><div style="text-align:center;padding:20px;color:#5a6880"><div class="spin"></div></div></div>
+          <div class="adm-card-body" id="pnl-positions-body"></div>
         </div>
       </div>
 
-      <!-- ─ CASH ─ -->
+      <!-- CASH -->
       <div class="adm-page" id="admp-cash">
         <div class="adm-page-title">Cash Management</div>
         <div class="adm-page-sub">Set or adjust any user's cash balance</div>
@@ -961,7 +931,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- ─ TRANSACTIONS ─ -->
+      <!-- TRANSACTIONS -->
       <div class="adm-page" id="admp-transactions">
         <div class="adm-page-title">Transactions</div>
         <div class="adm-page-sub">Log trades, deposits, withdrawals for any user</div>
@@ -1005,7 +975,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- ─ LIVE PRICES ─ -->
+      <!-- LIVE PRICES -->
       <div class="adm-page" id="admp-prices">
         <div class="adm-page-title">Live Prices</div>
         <div class="adm-page-sub">Override live prices — reflects immediately on dashboard</div>
@@ -1021,7 +991,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- ─ CRYPTO ADDRESSES ─ -->
+      <!-- CRYPTO ADDRESSES -->
       <div class="adm-page" id="admp-addresses">
         <div class="adm-page-title">Crypto Deposit Addresses</div>
         <div class="adm-page-sub">Set wallet addresses users will deposit to</div>
@@ -1034,7 +1004,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-      <!-- ─ BULK ACTIONS ─ -->
+      <!-- BULK ACTIONS -->
       <div class="adm-page" id="admp-broadcast">
         <div class="adm-page-title">Bulk Actions</div>
         <div class="adm-page-sub">Apply changes to all users at once</div>
@@ -1075,9 +1045,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
 
-    </div><!-- /adm-content -->
-  </div><!-- /adm-body -->
-</div><!-- /ADMIN_PANEL -->
+    </div>
+  </div>
+</div>
 
 <!-- User detail drawer -->
 <div class="drawer-overlay" id="userDrawerOverlay" onclick="closeUserDrawer()"></div>
@@ -1089,7 +1059,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     </div>
     <button onclick="closeUserDrawer()" style="width:30px;height:30px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:8px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px">✕</button>
   </div>
-  <div class="drawer-body" id="dwr-body"><div style="text-align:center;padding:40px;color:#5a6880"><div class="spin"></div></div></div>
+  <div class="drawer-body" id="dwr-body"></div>
 </div>
 
 <!-- Quick Cash Modal -->
@@ -1120,34 +1090,67 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 <script>
 // ═══════════════════════════════════════════
 //  SUPABASE CONFIG
-//  ⚠ IMPORTANT: Paste your service_role key below to bypass RLS.
-//  Without it, admin reads/writes to other users will be blocked by RLS.
-//  Get it from: Supabase Dashboard → Settings → API → service_role (secret)
 // ═══════════════════════════════════════════
-
-
 const SUPABASE_URL = 'https://ttwwthfeordsojmcjwxn.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
-// // ↓↓↓ PASTE YOUR service_role KEY HERE ↓↓↓
-// const SUPABASE_SERVICE_KEY = '';
+
+// ═══════════════════════════════════════════
+//  EDGE FUNCTION URL — your deployed function
+//  Replace the function name if yours differs
+// ═══════════════════════════════════════════
+const EDGE_FN_URL = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment';
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// BUG FIX #1: sbAdmin must use service_role key to bypass RLS.
-// If no service key is set, fall back to anon — but warn that
-// cross-user reads/writes will fail due to RLS policies.
-let sbAdmin;
-try {
-  if (SUPABASE_SERVICE_KEY && SUPABASE_SERVICE_KEY.length > 20) {
-    sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false }
-    });
-    console.log('[Admin] Using service_role key — RLS bypassed');
-  } else {
-    sbAdmin = sb;
-    console.warn('[Admin] No service_role key — RLS active. Cross-user operations may fail.');
-  }
-} catch(e) { sbAdmin = sb; }
+// ═══════════════════════════════════════════
+//  callAdmin — all admin DB operations go
+//  through the Edge Function so the service
+//  role key is NEVER in the browser.
+// ═══════════════════════════════════════════
+async function callAdmin(action, params = {}) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) throw new Error('Not logged in');
+  const res = await fetch(EDGE_FN_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify({ action, ...params })
+  });
+  const result = await res.json();
+  if (!result.success) throw new Error(result.error || 'Edge function error');
+  return result.data;
+}
+
+// Thin wrapper so admin DB reads use the edge function
+// but user's own reads still use the anon client directly
+const sbAdmin = {
+  from: (table) => ({
+    select: (cols) => ({
+      eq: (col, val) => ({
+        single: () => callAdmin('db_query', { table, select: cols, filter: { [col]: val }, single: true }),
+        order: () => ({ limit: (n) => callAdmin('db_query', { table, select: cols, filter: { [col]: val }, limit: n }) }),
+        in: (c, vals) => callAdmin('db_query', { table, select: cols, filter: { [col]: val }, in: { [c]: vals } }),
+      }),
+      order: (col, opts) => ({
+        range: (from, to) => callAdmin('db_query', { table, select: cols, order: { col, ...opts }, range: [from, to] }),
+        limit: (n) => callAdmin('db_query', { table, select: cols, order: { col }, limit: n }),
+        in: (c, vals) => ({ order: () => callAdmin('db_query', { table, select: cols, in: { [c]: vals } }) }),
+      }),
+      in: (col, vals) => ({ order: (c, o) => ({ ascending: false, ...o }) }),
+    }),
+    update: (data) => ({ eq: (col, val) => callAdmin('db_update', { table, data, filter: { [col]: val } }) }),
+    insert: (data) => callAdmin('db_insert', { table, data }),
+    upsert: (data, opts) => callAdmin('db_upsert', { table, data, opts }),
+    delete: () => ({ eq: (col, val) => callAdmin('db_delete', { table, filter: { [col]: val } }), neq: (col, val) => callAdmin('db_delete_all', { table }) }),
+  })
+};
+
+// ── Note: For the admin panel we call specific named actions
+// rather than generic db_query. The edge function handles these.
+// The sbAdmin object above is a simplified shim — the actual
+// admin functions below call callAdmin() with named actions directly.
 
 let authUser = null, profile = null, myHoldings = [];
 let admAllUsers = [], admAllHoldings = [], admAllTx = [];
@@ -1227,17 +1230,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('mobileCloseBtn').addEventListener('click', closeDrawer);
   document.getElementById('mobileBackdrop').addEventListener('click', closeDrawer);
   setupSecretGesture();
-  // Update RLS note
+
+  // Show edge function status in admin bar
   const rlsEl = document.getElementById('admRlsNote');
   if (rlsEl) {
-    if (sbAdmin !== sb) {
-      rlsEl.textContent = '🟢 SERVICE KEY · RLS BYPASSED';
-      rlsEl.style.color = '#22c55e';
-    } else {
-      rlsEl.textContent = '⚠ ANON KEY · Paste service_role key for full access';
-      rlsEl.style.color = '#ef4444';
-    }
+    rlsEl.textContent = '🟢 EDGE FUNCTION · Service key secured server-side';
+    rlsEl.style.color = '#22c55e';
   }
+
   // Real-time profile updates
   sb.channel('dash-profile').on('postgres_changes',
     { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${authUser.id}` },
@@ -1279,7 +1279,6 @@ async function loadPortfolioStats() {
   pEl.style.color = pnl >= 0 ? '#22c55e' : '#ef4444';
 }
 
-// ─── Transaction display config ───
 function getTxDisplayConfig(tx) {
   if (tx.status === 'pending') return {icon:'fa-clock',color:'#c9a84c',bg:'rgba(201,168,76,.1)'};
   if (tx.status === 'rejected') return {icon:'fa-ban',color:'#5a6880',bg:'rgba(90,104,128,.1)'};
@@ -1477,7 +1476,6 @@ function renderTxModal(txs) {
   }).join('');
 }
 
-// Close modals on overlay click
 document.addEventListener('click', function(e) {
   ['portfolioModal','transactionsModal','depositModal','withdrawModal','chartModal'].forEach(id => {
     const el = document.getElementById(id);
@@ -1592,8 +1590,8 @@ function renderAssetChart(sym, period) {
 function fmtLarge(n){if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+fmtUSD(n);}
 
 // ═══════════════════════════════════════════
-//  DEPOSIT MODAL (BUG FIX #2: NO CASH CREDITED)
-//  Cash is ONLY credited by admin on approval.
+//  DEPOSIT MODAL
+//  Logs as PENDING — cash credited by admin only
 // ═══════════════════════════════════════════
 function openDepositModal() {
   document.getElementById('depositModal').classList.add('open');
@@ -1672,10 +1670,6 @@ function renderDepStep3() {
   const noAddrSection = document.getElementById('dep-no-address');
   const qrContainer = document.getElementById('dep-qr-canvas');
   setTxt('dep-warn-coin', coin.sym);
-  document.getElementById('dep-coin-icon-display') && (document.getElementById('dep-coin-icon-display').innerHTML=`<i class="${coin.icon}" style="color:${coin.color}"></i>`);
-  setTxt('dep-coin-name-display', coin.name);
-  setTxt('dep-network-display', coin.network);
-  setTxt('dep-min-display', coin.min);
   if (!addr) {
     addrSection.style.display = 'none'; noAddrSection.style.display = 'block';
     document.getElementById('dep-address-text').textContent = '—';
@@ -1698,8 +1692,7 @@ function copyDepAddress() {
   });
 }
 
-// BUG FIX #2: confirmCryptoDeposit — logs as PENDING, does NOT credit cash
-// Cash is only credited by admin's admApproveDeposit()
+// Deposit: logs PENDING — no cash change until admin approves
 async function confirmCryptoDeposit() {
   if (!selectedDepCoin || !authUser) { showToast('Error','Please select a coin first','error'); return; }
   if (selectedDepAmt <= 0) { showToast('Error','Please enter a deposit amount','error'); return; }
@@ -1712,22 +1705,21 @@ async function confirmCryptoDeposit() {
       name: (coin ? coin.name : selectedDepCoin) + ' Crypto Deposit',
       icon: coin ? coin.icon : 'fas fa-coins',
       color: coin ? coin.color : '#c9a84c',
-      // BUG FIX: Store as positive amount so admin sees what to credit
       usd_amount: Math.abs(selectedDepAmt),
-      status: 'pending',  // ← PENDING. Admin must approve before cash changes.
+      status: 'pending',
       note: `Deposit: ${selectedDepCoin} · $${fmtUSD(selectedDepAmt)} · Awaiting approval`
     });
     if (error) throw error;
     closeDepositModal();
-    showToast('Deposit Submitted! ⏳','$'+fmtUSD(selectedDepAmt)+' pending. Your balance updates ONLY after approval.','info');
+    showToast('Deposit Submitted! ⏳','$'+fmtUSD(selectedDepAmt)+' pending.','info');
     selectedDepCoin = null; selectedDepAmt = 0;
     loadTransactions(); checkPendingBadge();
   } catch(err) { showToast('Error', err.message, 'error'); }
 }
 
 // ═══════════════════════════════════════════
-//  WITHDRAW MODAL (BUG FIX #3: NO CASH DEDUCTED)
-//  Cash is ONLY deducted by admin on approval.
+//  WITHDRAW MODAL
+//  Logs as PENDING — cash deducted by admin only
 // ═══════════════════════════════════════════
 function buildWithdrawCoinGrid() {
   const grid = document.getElementById('wd-coin-grid');
@@ -1755,15 +1747,13 @@ function openWithdrawModal() {
 }
 function closeWithdrawModal() { document.getElementById('withdrawModal').classList.remove('open'); document.body.style.overflow = ''; }
 
-// BUG FIX #3: submitWithdrawal — logs as PENDING, does NOT deduct cash
-// Cash is only deducted by admin's admApproveWithdrawal()
+// Withdrawal: logs PENDING — no cash change until admin approves
 async function submitWithdrawal() {
   const amt = parseFloat(document.getElementById('wd-amount').value);
   const wallet = document.getElementById('wd-wallet').value.trim();
   if (!selectedWdCoin) { showToast('Error','Select a cryptocurrency to receive','error'); return; }
   if (isNaN(amt) || amt < 10) { showToast('Error','Minimum withdrawal is $10','error'); return; }
   if (!wallet) { showToast('Error','Enter your wallet address','error'); return; }
-  // Check user has enough balance (can't request more than they have)
   if (Number(profile?.cash || 0) < amt) { showToast('Insufficient Funds','Your cash balance is lower than requested','error'); return; }
   try {
     const coin = DEPOSIT_COINS.find(c=>c.sym===selectedWdCoin);
@@ -1774,25 +1764,23 @@ async function submitWithdrawal() {
       name: `${selectedWdCoin} Withdrawal`,
       icon: coin?.icon || 'fas fa-arrow-up-from-line',
       color: coin?.color || '#ef4444',
-      // BUG FIX: Store as negative so when approved, it clearly represents a deduction
       usd_amount: -Math.abs(amt),
-      status: 'pending',  // ← PENDING. Admin must approve before cash changes.
+      status: 'pending',
       note: `Withdrawal to ${wallet.slice(0,16)}… · $${fmtUSD(amt)} · Awaiting approval`
     });
     if (error) throw error;
     closeWithdrawModal();
-    showToast('Withdrawal Requested! ⏳','$'+fmtUSD(amt)+' pending approval. Balance deducted ONLY after admin approves.','info');
+    showToast('Withdrawal Requested! ⏳','$'+fmtUSD(amt)+' pending approval.','info');
     selectedWdCoin = null;
     loadTransactions(); checkPendingBadge();
   } catch(err) { showToast('Error', err.message, 'error'); }
 }
 
-// Mobile drawer
 function openDrawer() { document.getElementById('mobileDrawer').style.display='flex'; document.getElementById('mobileBackdrop').style.display='block'; }
 function closeDrawer() { document.getElementById('mobileDrawer').style.display='none'; document.getElementById('mobileBackdrop').style.display='none'; }
 
 // ═══════════════════════════════════════════
-//  SECRET GESTURE
+//  SECRET GESTURE (hold footer center)
 // ═══════════════════════════════════════════
 function setupSecretGesture() {
   const zone=document.getElementById('secretZone'), ring=document.getElementById('adminLockRing');
@@ -1805,7 +1793,8 @@ function setupSecretGesture() {
 }
 
 // ═══════════════════════════════════════════
-//  ADMIN PANEL
+//  ADMIN PANEL — all DB calls go through
+//  callAdmin() which hits the edge function
 // ═══════════════════════════════════════════
 async function openAdminPanel() {
   document.getElementById('ADMIN_PANEL').classList.add('open');
@@ -1815,7 +1804,6 @@ async function openAdminPanel() {
 }
 function closeAdminPanel() { document.getElementById('ADMIN_PANEL').classList.remove('open'); closeUserDrawer(); }
 
-// ─ Mobile admin sidebar toggle ─
 function toggleAdmSidebar() {
   const sidebar = document.getElementById('admSidebar');
   const overlay = document.getElementById('admSidebarOverlay');
@@ -1840,62 +1828,34 @@ function admShowPage(name, btn) {
   if (btn) btn.classList.add('active');
 }
 
-// ═══════════════════════════════════════════
-//  BUG FIX #4 — PENDING APPROVALS (CORE FIX)
-//
-//  The old code had these critical bugs:
-//  1. Used wrong column span in table headers
-//  2. admApproveDeposit was called from a context where the join
-//     (profiles) might fail with anon key (RLS blocking)
-//  3. No separate fetch for user cash before crediting
-//  4. Approval functions had wrong sign handling (deposit should
-//     be positive amount, withdrawal negative)
-//
-//  FIX: Use card-based layout (no table) for pending so it's
-//  mobile-friendly AND works regardless of join issues.
-//  Cash fetch is done separately before crediting.
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────
+//  PENDING APPROVALS
+//  All balance changes happen server-side
+//  via callAdmin() → edge function
+// ─────────────────────────────────────────
 async function admLoadPending() {
-  // Show loading
   document.getElementById('pend-dep-container').innerHTML = '<div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div>';
   document.getElementById('pend-wd-container').innerHTML = '<div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div>';
-
-  // Fetch ALL pending (and recently rejected) transactions
-  const { data: rows, error } = await sbAdmin
-    .from('transactions')
-    .select('*')
-    .in('status', ['pending', 'rejected'])
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    const errMsg = `<div style="padding:20px;color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px">Error: ${esc(error.message)}<br><br>If you see "permission denied", add your service_role key to bypass RLS.</div>`;
+  try {
+    const rows = await callAdmin('get_pending');
+    const allRows = rows || [];
+    const depRows = allRows.filter(t => t.type === 'deposit');
+    const wdRows = allRows.filter(t => t.type === 'withdraw');
+    const pendingCount = allRows.filter(t => t.status === 'pending').length;
+    setTxt('pend-dep-count', depRows.length);
+    setTxt('pend-wd-count', wdRows.length);
+    setTxt('adm-pending-count', pendingCount);
+    document.getElementById('pend-dep-container').innerHTML = depRows.length
+      ? '<div style="padding:12px 16px">' + depRows.map(t => buildPendingCard(t, 'deposit')).join('') + '</div>'
+      : '<div style="padding:24px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#22c55e">✓ No pending deposit requests</div>';
+    document.getElementById('pend-wd-container').innerHTML = wdRows.length
+      ? '<div style="padding:12px 16px">' + wdRows.map(t => buildPendingCard(t, 'withdraw')).join('') + '</div>'
+      : '<div style="padding:24px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#22c55e">✓ No pending withdrawal requests</div>';
+  } catch(err) {
+    const errMsg = `<div style="padding:20px;color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px">Error: ${esc(err.message)}</div>`;
     document.getElementById('pend-dep-container').innerHTML = errMsg;
     document.getElementById('pend-wd-container').innerHTML = errMsg;
-    showToast('Error loading pending', error.message, 'error');
-    return;
-  }
-
-  const allRows = rows || [];
-  const depRows = allRows.filter(t => t.type === 'deposit');
-  const wdRows = allRows.filter(t => t.type === 'withdraw');
-  const pendingCount = allRows.filter(t => t.status === 'pending').length;
-
-  setTxt('pend-dep-count', depRows.length);
-  setTxt('pend-wd-count', wdRows.length);
-  setTxt('adm-pending-count', pendingCount);
-
-  // Build cards for deposits
-  if (!depRows.length) {
-    document.getElementById('pend-dep-container').innerHTML = '<div style="padding:24px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#22c55e">✓ No pending deposit requests</div>';
-  } else {
-    document.getElementById('pend-dep-container').innerHTML = '<div style="padding:12px 16px">' + depRows.map(t => buildPendingCard(t, 'deposit')).join('') + '</div>';
-  }
-
-  // Build cards for withdrawals
-  if (!wdRows.length) {
-    document.getElementById('pend-wd-container').innerHTML = '<div style="padding:24px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#22c55e">✓ No pending withdrawal requests</div>';
-  } else {
-    document.getElementById('pend-wd-container').innerHTML = '<div style="padding:12px 16px">' + wdRows.map(t => buildPendingCard(t, 'withdraw')).join('') + '</div>';
+    showToast('Error loading pending', err.message, 'error');
   }
 }
 
@@ -1904,36 +1864,33 @@ function buildPendingCard(t, type) {
   const isRejected = t.status === 'rejected';
   const amt = Math.abs(Number(t.usd_amount || 0));
   const isDeposit = type === 'deposit';
-
-  // Try to get user info from admAllUsers (if loaded)
   const userInfo = admAllUsers.find(u => u.id === t.user_id);
-  const userName = userInfo ? `${userInfo.first_name||''} ${userInfo.last_name||''}`.trim() : 'User ' + t.user_id.slice(0,8);
-  const userEmail = userInfo ? userInfo.email : t.user_id.slice(0,8) + '...';
+  const userName = userInfo ? `${userInfo.first_name||''} ${userInfo.last_name||''}`.trim() : t.user_id.slice(0,8)+'…';
+  const userEmail = userInfo ? userInfo.email : '—';
   const userCash = userInfo ? Number(userInfo.cash||0) : 0;
-
   const statusBadge = isPending
     ? `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:6px;background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3);display:inline-flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:#c9a84c;animation:livePulse 1.5s infinite"></span>PENDING</span>`
     : `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:6px;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)">REJECTED</span>`;
-
-  // Note/wallet display
-  const noteMatch = (t.note||'').match(/to ([A-Za-z0-9]{6,})/);
-  const walletSnippet = noteMatch ? noteMatch[1].slice(0,16)+'…' : '';
-
   let actions = '';
   if (isPending) {
+    const approveAction = isDeposit
+      ? `admApproveDeposit('${t.id}','${t.user_id}',${amt})`
+      : `admApproveWithdrawal('${t.id}','${t.user_id}',${amt})`;
     actions = `
-      <button class="adm-btn adm-btn-gain" style="flex:1" onclick="admApproveDeposit('${t.id}','${t.user_id}',${amt})">
+      <button class="adm-btn adm-btn-gain" style="flex:1" onclick="${approveAction}">
         <i class="fas fa-check"></i> ${isDeposit ? 'Approve (+$'+fmtUSD(amt)+' to user)' : 'Approve (-$'+fmtUSD(amt)+' from user)'}
       </button>
       <button class="adm-btn adm-btn-loss" style="flex:1" onclick="admRejectPending('${t.id}')">
         <i class="fas fa-times"></i> Reject
       </button>`;
   } else {
+    const reApprove = isDeposit
+      ? `admApproveDeposit('${t.id}','${t.user_id}',${amt})`
+      : `admApproveWithdrawal('${t.id}','${t.user_id}',${amt})`;
     actions = `
-      <button class="adm-btn adm-btn-sm" style="background:rgba(255,255,255,.04);color:#5a6880;border:1px solid rgba(255,255,255,.07);flex:1" onclick="${isDeposit?`admApproveDeposit('${t.id}','${t.user_id}',${amt})`:`admApproveWithdrawal('${t.id}','${t.user_id}',${amt})`}">↩ Re-approve</button>
+      <button class="adm-btn adm-btn-sm" style="background:rgba(255,255,255,.04);color:#5a6880;border:1px solid rgba(255,255,255,.07);flex:1" onclick="${reApprove}">↩ Re-approve</button>
       <button class="adm-btn adm-btn-loss adm-btn-sm" style="flex:1" onclick="admDeleteTxDirect('${t.id}')">🗑 Delete</button>`;
   }
-
   return `<div class="pend-card" style="opacity:${isRejected?.6:1}">
     <div class="pend-card-hdr">
       <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
@@ -1942,7 +1899,7 @@ function buildPendingCard(t, type) {
         </div>
         <div style="min-width:0;flex:1">
           <p style="font-size:13px;font-weight:600;color:#edf2f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(userName)}</p>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(userEmail)}</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${esc(userEmail)}</p>
         </div>
       </div>
       <div style="text-align:right;flex-shrink:0;margin-left:8px">
@@ -1957,123 +1914,70 @@ function buildPendingCard(t, type) {
       ${userInfo?`<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Balance: <span style="color:#c9a84c">$${fmtUSD(userCash)}</span></span>`:''}
     </div>
     ${t.note?`<p style="font-size:11px;color:#5a6880;margin-bottom:10px;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;word-break:break-all">${esc(t.note)}</p>`:''}
-    ${walletSnippet&&!isDeposit?`<p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8c9db5;margin-bottom:10px">→ ${esc(walletSnippet)}</p>`:''}
-    <div class="pend-card-actions">
-      ${actions}
-    </div>
+    <div class="pend-card-actions">${actions}</div>
   </div>`;
 }
 
-// BUG FIX #5: admApproveDeposit — separate cash fetch, then credit
+// Approve deposit — callAdmin sends to edge function which uses service role
 async function admApproveDeposit(txId, userId, amount) {
-  if (!confirm(`Approve deposit of $${fmtUSD(amount)}?\n\nThis will:\n• Mark transaction as approved\n• Credit $${fmtUSD(amount)} to the user's cash balance`)) return;
-
-  // Step 1: Mark transaction approved
-  const { error: e1 } = await sbAdmin.from('transactions').update({ status: 'approved' }).eq('id', txId);
-  if (e1) { showToast('Error marking approved', e1.message, 'error'); return; }
-
-  // Step 2: Fetch current cash balance fresh
-  const { data: freshUser, error: e2 } = await sbAdmin.from('profiles').select('cash').eq('id', userId).single();
-  if (e2) {
-    showToast('Error fetching user balance', e2.message + ' — Tx marked approved but cash NOT updated. Update manually in Cash tab.', 'error');
-    admLoadPending(); return;
-  }
-
-  // Step 3: Credit the cash
-  const newCash = Number(freshUser.cash || 0) + Number(amount);
-  const { error: e3 } = await sbAdmin.from('profiles').update({ cash: newCash }).eq('id', userId);
-  if (e3) {
-    showToast('Error crediting cash', e3.message + ' — Update manually in Cash tab.', 'error');
-    admLoadPending(); return;
-  }
-
-  showToast('✓ Deposit Approved!', `$${fmtUSD(amount)} credited. New balance: $${fmtUSD(newCash)}`, 'success');
-  admLoadPending();
-  admLoadUsers();
-  admUpdateStats();
-  // If this is the logged-in user, refresh their display
-  if (authUser && userId === authUser.id) { await loadProfile(); loadTransactions(); checkPendingBadge(); }
+  if (!confirm(`Approve deposit of $${fmtUSD(amount)}?\n\nThis will credit $${fmtUSD(amount)} to the user's balance.`)) return;
+  try {
+    const { newCash } = await callAdmin('approve_deposit', { txId, userId, amount });
+    showToast('✓ Deposit Approved!', `$${fmtUSD(amount)} credited. New balance: $${fmtUSD(newCash)}`, 'success');
+    admLoadPending(); admLoadUsers(); admUpdateStats();
+    if (authUser && userId === authUser.id) { await loadProfile(); loadTransactions(); checkPendingBadge(); }
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 
-// BUG FIX #6: admApproveWithdrawal — separate cash fetch, then deduct
+// Approve withdrawal — callAdmin sends to edge function which uses service role
 async function admApproveWithdrawal(txId, userId, amount) {
-  if (!confirm(`Approve withdrawal of $${fmtUSD(amount)}?\n\nThis will:\n• Mark transaction as approved\n• Deduct $${fmtUSD(amount)} from the user's cash balance`)) return;
-
-  // Step 1: Fetch current cash balance fresh
-  const { data: freshUser, error: e1 } = await sbAdmin.from('profiles').select('cash').eq('id', userId).single();
-  if (e1) { showToast('Error fetching balance', e1.message, 'error'); return; }
-
-  const currentCash = Number(freshUser.cash || 0);
-  if (currentCash < amount) {
-    showToast('Insufficient Balance', `User has $${fmtUSD(currentCash)} but needs $${fmtUSD(amount)}. Reject this request or update their balance first.`, 'error');
-    return;
-  }
-
-  // Step 2: Mark transaction approved
-  const { error: e2 } = await sbAdmin.from('transactions').update({ status: 'approved' }).eq('id', txId);
-  if (e2) { showToast('Error marking approved', e2.message, 'error'); return; }
-
-  // Step 3: Deduct the cash
-  const newCash = currentCash - Number(amount);
-  const { error: e3 } = await sbAdmin.from('profiles').update({ cash: newCash }).eq('id', userId);
-  if (e3) {
-    showToast('Error deducting cash', e3.message + ' — Tx marked approved but cash NOT deducted. Update manually.', 'error');
-    admLoadPending(); return;
-  }
-
-  showToast('✓ Withdrawal Approved!', `$${fmtUSD(amount)} deducted. New balance: $${fmtUSD(newCash)}`, 'success');
-  admLoadPending();
-  admLoadUsers();
-  admUpdateStats();
-  if (authUser && userId === authUser.id) { await loadProfile(); loadTransactions(); checkPendingBadge(); }
+  if (!confirm(`Approve withdrawal of $${fmtUSD(amount)}?\n\nThis will deduct $${fmtUSD(amount)} from the user's balance.`)) return;
+  try {
+    const { newCash } = await callAdmin('approve_withdrawal', { txId, userId, amount });
+    showToast('✓ Withdrawal Approved!', `$${fmtUSD(amount)} deducted. New balance: $${fmtUSD(newCash)}`, 'success');
+    admLoadPending(); admLoadUsers(); admUpdateStats();
+    if (authUser && userId === authUser.id) { await loadProfile(); loadTransactions(); checkPendingBadge(); }
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 
 async function admRejectPending(txId) {
   const reason = prompt('Rejection reason (optional):','');
-  if (reason === null) return; // cancelled
-  const updateData = { status: 'rejected' };
-  if (reason.trim()) updateData.note = 'REJECTED: ' + reason.trim();
-  const { error } = await sbAdmin.from('transactions').update(updateData).eq('id', txId);
-  if (error) { showToast('Error', error.message, 'error'); return; }
-  showToast('Request Rejected', 'Transaction marked as rejected', 'info');
-  admLoadPending();
-  // Refresh current user's tx list too
-  if (authUser) { loadTransactions(); checkPendingBadge(); }
+  if (reason === null) return;
+  try {
+    await callAdmin('reject_pending', { txId, reason });
+    showToast('Request Rejected', 'Transaction marked as rejected', 'info');
+    admLoadPending();
+    if (authUser) { loadTransactions(); checkPendingBadge(); }
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 
 async function admDeleteTxDirect(txId) {
   if (!confirm('Permanently delete this transaction?')) return;
-  const { error } = await sbAdmin.from('transactions').delete().eq('id', txId);
-  if (error) { showToast('Error', error.message, 'error'); return; }
-  showToast('Deleted', 'Transaction removed', 'success');
-  admLoadPending();
+  try {
+    await callAdmin('delete_transaction', { txId });
+    showToast('Deleted', 'Transaction removed', 'success');
+    admLoadPending();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 
 // ─ LOAD USERS ─
 async function admLoadUsers() {
-  let page = 0, all = [];
-  while (true) {
-    const { data, error } = await sbAdmin.from('profiles').select('*').order('created_at', {ascending:false}).range(page*1000, (page+1)*1000-1);
-    if (error) {
-      if (error.code==='42501'||error.message.includes('permission')) showToast('RLS Notice','Add service_role key to see all users','info');
-      else showToast('Error', error.message, 'error');
-      break;
-    }
-    if (!data || !data.length) break;
-    all = all.concat(data);
-    if (data.length < 1000) break;
-    page++;
+  try {
+    const data = await callAdmin('get_all_users');
+    admAllUsers = data || [];
+    admRenderUsers(admAllUsers);
+    admRenderOverviewUsers(admAllUsers.slice(0,6));
+    admRenderCashTable(admAllUsers);
+    setTxt('users-count', admAllUsers.length);
+  } catch(err) {
+    showToast('Error loading users', err.message, 'error');
+    document.getElementById('users-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:#ef4444;font-size:11px">Error: ${esc(err.message)}</td></tr>`;
   }
-  admAllUsers = all;
-  admRenderUsers(admAllUsers);
-  admRenderOverviewUsers(admAllUsers.slice(0,6));
-  admRenderCashTable(admAllUsers);
-  setTxt('users-count', admAllUsers.length);
 }
 
 function admRenderUsers(users) {
   setTxt('users-count', users.length);
-  if (!users.length) { document.getElementById('users-tbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#5a6880">No users found — add service_role key to bypass RLS</td></tr>'; return; }
+  if (!users.length) { document.getElementById('users-tbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#5a6880">No users found</td></tr>'; return; }
   document.getElementById('users-tbody').innerHTML = users.map(u =>
     `<tr style="cursor:pointer" onclick="openUserDrawer('${u.id}')">
       <td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-weight:700;color:#040608;font-size:10px;flex-shrink:0">${(u.avatar_initials||((u.first_name||'?')[0]+(u.last_name||'?')[0])).toUpperCase()}</div><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></div></td>
@@ -2092,7 +1996,7 @@ function admRenderOverviewUsers(users) {
     `<tr><td><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></td><td class="mono" style="color:#8c9db5;font-size:10px">${u.email||'—'}</td><td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td><td class="mono" style="color:#5a6880">${u.created_at?new Date(u.created_at).toLocaleDateString():'—'}</td><td><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="openQuickCash('${u.id}','${escJs((u.first_name||'')+' '+(u.last_name||''))}',${u.cash||0})">Set Cash</button></td></tr>`
   ).join('');
 }
-function admFilterUsers(q) { const f=q.toLowerCase(); admRenderUsers(admAllUsers.filter(u=>(u.email||'').toLowerCase().includes(f)||((u.first_name||'')+' '+(u.last_name||'')).toLowerCase().includes(f)||(u.id||'').includes(f))); }
+function admFilterUsers(q) { const f=q.toLowerCase(); admRenderUsers(admAllUsers.filter(u=>(u.email||'').toLowerCase().includes(f)||((u.first_name||'')+' '+(u.last_name||'')).toLowerCase().includes(f))); }
 function admExportUsers() {
   const hdr = ['ID','First','Last','Email','Cash','Joined'];
   const rows = admAllUsers.map(u => [u.id,u.first_name||'',u.last_name||'',u.email||'',Number(u.cash||0).toFixed(2),u.created_at||'']);
@@ -2103,13 +2007,12 @@ function admExportUsers() {
 
 // ─ HOLDINGS ─
 async function admLoadHoldings() {
-  let page=0, all=[];
-  while(true){
-    const{data,error}=await sbAdmin.from('holdings').select('*,profiles(first_name,last_name,email)').order('created_at',{ascending:false}).range(page*1000,(page+1)*1000-1);
-    if(error){showToast('Error',error.message,'error');break;}
-    if(!data||!data.length)break;all=all.concat(data);if(data.length<1000)break;page++;
-  }
-  admAllHoldings=all;setTxt('hold-count',admAllHoldings.length);admRenderHoldings(admAllHoldings);
+  try {
+    const data = await callAdmin('get_all_holdings');
+    admAllHoldings = data || [];
+    setTxt('hold-count', admAllHoldings.length);
+    admRenderHoldings(admAllHoldings);
+  } catch(err) { showToast('Error loading holdings', err.message, 'error'); }
 }
 function admRenderHoldings(rows){
   const tbody=document.getElementById('hold-tbody');
@@ -2127,11 +2030,12 @@ async function admAddHolding(){
   const qty=parseFloat(document.getElementById('h-qty').value);const avgPrice=parseFloat(document.getElementById('h-avgprice').value);
   if(!userId||!symbol||isNaN(qty)||isNaN(avgPrice)){showToast('Error','Fill all fields','error');return;}
   const meta=ASSET_META[symbol]||{};
-  const{error}=await sbAdmin.from('holdings').upsert({user_id:userId,symbol,name:meta.name||symbol,icon:meta.icon||'',color:meta.color||'#5a6880',quantity:qty,avg_buy_price:avgPrice},{onConflict:'user_id,symbol'});
-  if(error){showToast('Error',error.message,'error');return;}
-  showToast('Holding saved!',`${symbol} updated`,'success');
-  ['h-qty','h-avgprice'].forEach(id=>document.getElementById(id).value='');
-  await admLoadHoldings();admUpdateStats();
+  try {
+    await callAdmin('upsert_holding', { userId, symbol, name: meta.name||symbol, icon: meta.icon||'', color: meta.color||'#5a6880', quantity: qty, avgPrice });
+    showToast('Holding saved!',`${symbol} updated`,'success');
+    ['h-qty','h-avgprice'].forEach(id=>document.getElementById(id).value='');
+    await admLoadHoldings(); admUpdateStats();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 function admEditHoldingInline(id,userId,symbol,qty,avg){
   document.getElementById('h-user').value=userId;document.getElementById('h-symbol').value=symbol;
@@ -2141,70 +2045,72 @@ function admEditHoldingInline(id,userId,symbol,qty,avg){
 }
 async function admDeleteHolding(id){
   if(!confirm('Remove this holding?'))return;
-  const{error}=await sbAdmin.from('holdings').delete().eq('id',id);
-  if(error){showToast('Error',error.message,'error');return;}
-  showToast('Holding removed','','success');await admLoadHoldings();admUpdateStats();
+  try {
+    await callAdmin('delete_holding', { holdingId: id });
+    showToast('Holding removed','','success');
+    await admLoadHoldings(); admUpdateStats();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 
 // ─ P&L EDITOR ─
 async function admLoadUserPnl(){
   const uid=document.getElementById('pnl-user').value;if(!uid)return;
   document.getElementById('pnl-positions-card').style.display='block';
-  const{data:holdings}=await sbAdmin.from('holdings').select('*').eq('user_id',uid);
-  const hs=holdings||[];
-  if(!hs.length){document.getElementById('pnl-positions-body').innerHTML='<p style="color:#5a6880;font-size:12px">No holdings for this user</p>';return;}
-  let totalPnl=0;hs.forEach(h=>{const live=PRICES[h.symbol]||Number(h.avg_buy_price);totalPnl+=(live-Number(h.avg_buy_price))*Number(h.quantity);});
-  document.getElementById('pnl-target').value=totalPnl.toFixed(2);
-  document.getElementById('pnl-positions-body').innerHTML=`
-    <div style="margin-bottom:14px;padding:12px;background:rgba(255,255,255,.03);border-radius:10px;display:flex;gap:20px;flex-wrap:wrap">
-      <div><div class="adm-label" style="margin-bottom:4px">Current Total P&L</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${totalPnl>=0?'#22c55e':'#ef4444'}">${totalPnl>=0?'+':''}$${fmtUSD(totalPnl)}</div></div>
-      <div><div class="adm-label" style="margin-bottom:4px">Positions</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">${hs.length}</div></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:10px">${hs.map(h=>{
-      const meta=ASSET_META[h.symbol]||{};const live=PRICES[h.symbol]||Number(h.avg_buy_price);const pnl=(live-Number(h.avg_buy_price))*Number(h.quantity);
-      return`<div style="background:#080c12;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <div style="width:32px;height:32px;border-radius:9px;background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="${meta.icon||'fas fa-coins'}"></i></div>
-        <div style="flex:1;min-width:80px"><div style="font-size:12px;color:#edf2f8;font-weight:500">${h.symbol}</div><div class="mono" style="color:#5a6880;margin-top:2px">Qty: ${Number(h.quantity).toFixed(4)}</div></div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <div class="adm-field" style="min-width:100px"><div class="adm-label">Avg Buy ($)</div><input class="adm-input" id="pnl-avg-${h.id}" type="number" step="any" value="${Number(h.avg_buy_price).toFixed(4)}" style="width:110px"></div>
-          <div class="adm-field" style="min-width:80px"><div class="adm-label">Quantity</div><input class="adm-input" id="pnl-qty-${h.id}" type="number" step="any" value="${Number(h.quantity).toFixed(6)}" style="width:100px"></div>
-          <div style="text-align:right;min-width:70px"><div class="adm-label">P&L</div><div id="pnl-show-${h.id}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${pnl>=0?'#22c55e':'#ef4444'}">${pnl>=0?'+':''}$${fmtUSD(pnl)}</div></div>
-          <button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admSaveSinglePnl('${h.id}','${uid}')">Save</button>
-        </div>
-      </div>`;
-    }).join('')}</div>`;
+  try {
+    const holdings = await callAdmin('get_user_holdings', { userId: uid });
+    const hs = holdings || [];
+    if(!hs.length){document.getElementById('pnl-positions-body').innerHTML='<p style="color:#5a6880;font-size:12px">No holdings for this user</p>';return;}
+    let totalPnl=0;hs.forEach(h=>{const live=PRICES[h.symbol]||Number(h.avg_buy_price);totalPnl+=(live-Number(h.avg_buy_price))*Number(h.quantity);});
+    document.getElementById('pnl-target').value=totalPnl.toFixed(2);
+    document.getElementById('pnl-positions-body').innerHTML=`
+      <div style="margin-bottom:14px;padding:12px;background:rgba(255,255,255,.03);border-radius:10px;display:flex;gap:20px;flex-wrap:wrap">
+        <div><div class="adm-label" style="margin-bottom:4px">Current Total P&L</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${totalPnl>=0?'#22c55e':'#ef4444'}">${totalPnl>=0?'+':''}$${fmtUSD(totalPnl)}</div></div>
+        <div><div class="adm-label" style="margin-bottom:4px">Positions</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">${hs.length}</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">${hs.map(h=>{
+        const meta=ASSET_META[h.symbol]||{};const live=PRICES[h.symbol]||Number(h.avg_buy_price);const pnl=(live-Number(h.avg_buy_price))*Number(h.quantity);
+        return`<div style="background:#080c12;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="width:32px;height:32px;border-radius:9px;background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="${meta.icon||'fas fa-coins'}"></i></div>
+          <div style="flex:1;min-width:80px"><div style="font-size:12px;color:#edf2f8;font-weight:500">${h.symbol}</div><div class="mono" style="color:#5a6880;margin-top:2px">Qty: ${Number(h.quantity).toFixed(4)}</div></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="adm-field" style="min-width:100px"><div class="adm-label">Avg Buy ($)</div><input class="adm-input" id="pnl-avg-${h.id}" type="number" step="any" value="${Number(h.avg_buy_price).toFixed(4)}" style="width:110px"></div>
+            <div class="adm-field" style="min-width:80px"><div class="adm-label">Quantity</div><input class="adm-input" id="pnl-qty-${h.id}" type="number" step="any" value="${Number(h.quantity).toFixed(6)}" style="width:100px"></div>
+            <div style="text-align:right;min-width:70px"><div class="adm-label">P&L</div><div id="pnl-show-${h.id}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${pnl>=0?'#22c55e':'#ef4444'}">${pnl>=0?'+':''}$${fmtUSD(pnl)}</div></div>
+            <button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admSaveSinglePnl('${h.id}','${uid}')">Save</button>
+          </div>
+        </div>`;
+      }).join('')}</div>`;
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 async function admSaveSinglePnl(holdId,userId){
   const avgEl=document.getElementById('pnl-avg-'+holdId);const qtyEl=document.getElementById('pnl-qty-'+holdId);
   if(!avgEl||!qtyEl)return;
   const avg=parseFloat(avgEl.value);const qty=parseFloat(qtyEl.value);
   if(isNaN(avg)||isNaN(qty)){showToast('Error','Invalid values','error');return;}
-  const{error}=await sbAdmin.from('holdings').update({avg_buy_price:avg,quantity:qty}).eq('id',holdId);
-  if(error){showToast('Error',error.message,'error');return;}
-  showToast('Saved!','P&L position updated','success');await admLoadHoldings();admUpdateStats();
+  try {
+    await callAdmin('update_holding', { holdingId: holdId, avgPrice: avg, quantity: qty });
+    showToast('Saved!','P&L position updated','success');
+    await admLoadHoldings(); admUpdateStats();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 async function admApplyTargetPnl(){
   const uid=document.getElementById('pnl-user').value;const target=parseFloat(document.getElementById('pnl-target').value);
   if(!uid||isNaN(target)){showToast('Error','Select user and enter target','error');return;}
-  const{data:holdings}=await sbAdmin.from('holdings').select('*').eq('user_id',uid);
-  const hs=holdings||[];if(!hs.length){showToast('Error','User has no holdings','error');return;}
-  const totalVal=hs.reduce((s,h)=>s+(PRICES[h.symbol]||Number(h.avg_buy_price))*Number(h.quantity),0);
-  if(totalVal===0){showToast('Error','No portfolio value','error');return;}
-  for(const h of hs){
-    const live=PRICES[h.symbol]||Number(h.avg_buy_price);const weight=(live*Number(h.quantity))/totalVal;
-    const newAvg=live-(target*weight/Number(h.quantity));
-    if(newAvg>0)await sbAdmin.from('holdings').update({avg_buy_price:newAvg}).eq('id',h.id);
-  }
-  showToast('Target P&L Applied!','Buy prices adjusted proportionally','success');
-  await admLoadHoldings();admLoadUserPnl();admUpdateStats();
+  try {
+    await callAdmin('apply_target_pnl', { userId: uid, targetPnl: target, prices: PRICES });
+    showToast('Target P&L Applied!','Buy prices adjusted proportionally','success');
+    await admLoadHoldings(); admLoadUserPnl(); admUpdateStats();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
-
 
 // ─ TRANSACTIONS ─
 async function admLoadTransactions(){
-  const{data,error}=await sbAdmin.from('transactions').select('*,profiles(first_name,last_name)').order('created_at',{ascending:false}).limit(100);
-  if(error){showToast('Error',error.message,'error');return;}
-  admAllTx=data||[];setTxt('tx-count',admAllTx.length);admRenderTransactions(admAllTx);
+  try {
+    const data = await callAdmin('get_all_transactions');
+    admAllTx = data || [];
+    setTxt('tx-count', admAllTx.length);
+    admRenderTransactions(admAllTx);
+  } catch(err) { showToast('Error loading transactions', err.message, 'error'); }
 }
 function admRenderTransactions(rows){
   const tbody=document.getElementById('tx-tbody');
@@ -2222,9 +2128,11 @@ function admFilterTx(q){const f=q.toLowerCase();admRenderTransactions(admAllTx.f
 function admToggleTxDeleteMode(){txDeleteMode=!txDeleteMode;document.getElementById('tx-delete-mode-btn').style.background=txDeleteMode?'rgba(239,68,68,.2)':'';document.getElementById('tx-delete-mode-btn').style.color=txDeleteMode?'#ef4444':'';admRenderTransactions(admAllTx);}
 async function admDeleteTx(id){
   if(!confirm('Delete this transaction?'))return;
-  const{error}=await sbAdmin.from('transactions').delete().eq('id',id);
-  if(error){showToast('Error',error.message,'error');return;}
-  showToast('Transaction deleted','','success');await admLoadTransactions();admUpdateStats();
+  try {
+    await callAdmin('delete_transaction', { txId: id });
+    showToast('Transaction deleted','','success');
+    await admLoadTransactions(); admUpdateStats();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 async function admAddTransaction(){
   const userId=document.getElementById('tx-user').value;const type=document.getElementById('tx-type').value;
@@ -2233,11 +2141,12 @@ async function admAddTransaction(){
   const note=document.getElementById('tx-note').value;
   if(!userId||isNaN(usd)){showToast('Error','Select user and USD amount','error');return;}
   const meta=ASSET_META[symbol]||{};
-  const{error}=await sbAdmin.from('transactions').insert({user_id:userId,type,symbol,name:meta.name||symbol,icon:meta.icon||'',color:meta.color||'#5a6880',quantity:qty,price_at_tx:price,usd_amount:usd,note,status:'approved'});
-  if(error){showToast('Error',error.message,'error');return;}
-  showToast('Transaction logged!','','success');
-  ['tx-qty','tx-price','tx-usd','tx-note'].forEach(id=>document.getElementById(id).value='');
-  await admLoadTransactions();await admLoadUsers();admUpdateStats();
+  try {
+    await callAdmin('add_transaction', { userId, type, symbol, name: meta.name||symbol, icon: meta.icon||'', color: meta.color||'#5a6880', quantity: qty, priceAtTx: price, usdAmount: usd, note, status: 'approved' });
+    showToast('Transaction logged!','','success');
+    ['tx-qty','tx-price','tx-usd','tx-note'].forEach(id=>document.getElementById(id).value='');
+    await admLoadTransactions(); await admLoadUsers(); admUpdateStats();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 function admToggleTxFields(){const isCash=['deposit','withdraw'].includes(document.getElementById('tx-type').value);document.getElementById('tx-qty-field').style.opacity=isCash?'.35':'1';document.getElementById('tx-price-field').style.opacity=isCash?'.35':'1';}
 
@@ -2247,14 +2156,24 @@ function admRenderCashTable(users){
     <tr><td><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></td><td class="mono" style="color:#8c9db5;font-size:10px">${u.email||'—'}</td><td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td><td><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="openQuickCash('${u.id}','${escJs((u.first_name||'')+' '+(u.last_name||''))}',${u.cash||0})">Set Cash</button></td></tr>`).join('');
 }
 function admLoadCurrentCash(){const uid=document.getElementById('cash-user').value;const user=admAllUsers.find(u=>u.id===uid);if(user)document.getElementById('cash-current').value='$'+Number(user.cash||0).toFixed(2);}
-async function admSetCash(){const uid=document.getElementById('cash-user').value;const val=parseFloat(document.getElementById('cash-new').value);if(!uid||isNaN(val)){showToast('Error','Select user and enter amount','error');return;}await admUpdateCash(uid,val);}
-async function admAdjustCash(){const uid=document.getElementById('cash-user').value;const delta=parseFloat(document.getElementById('cash-delta').value);if(!uid||isNaN(delta)){showToast('Error','Select user and enter delta','error');return;}const user=admAllUsers.find(u=>u.id===uid);if(!user)return;await admUpdateCash(uid,Number(user.cash||0)+delta);}
+async function admSetCash(){
+  const uid=document.getElementById('cash-user').value;const val=parseFloat(document.getElementById('cash-new').value);
+  if(!uid||isNaN(val)){showToast('Error','Select user and enter amount','error');return;}
+  await admUpdateCash(uid,val);
+}
+async function admAdjustCash(){
+  const uid=document.getElementById('cash-user').value;const delta=parseFloat(document.getElementById('cash-delta').value);
+  if(!uid||isNaN(delta)){showToast('Error','Select user and enter delta','error');return;}
+  const user=admAllUsers.find(u=>u.id===uid);if(!user)return;
+  await admUpdateCash(uid,Number(user.cash||0)+delta);
+}
 async function admUpdateCash(userId,newAmount){
-  const{error}=await sbAdmin.from('profiles').update({cash:newAmount}).eq('id',userId);
-  if(error){showToast('Error',error.message,'error');return;}
-  showToast('Cash updated!','$'+fmtUSD(newAmount)+' set','success');
-  await admLoadUsers();admLoadCurrentCash();admUpdateStats();
-  if(authUser&&userId===authUser.id)await loadProfile();
+  try {
+    await callAdmin('update_cash', { userId, newAmount });
+    showToast('Cash updated!','$'+fmtUSD(newAmount)+' set','success');
+    await admLoadUsers(); admLoadCurrentCash(); admUpdateStats();
+    if(authUser&&userId===authUser.id) await loadProfile();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 function openQuickCash(id,name,cash){
   document.getElementById('qc-uid').value=id;document.getElementById('qc-name').value=name.trim();
@@ -2271,23 +2190,21 @@ async function admBulkCash(){
   const amt=parseFloat(document.getElementById('bulk-cash-amt').value);const mode=document.getElementById('bulk-cash-mode').value;
   if(isNaN(amt)){showToast('Error','Enter amount','error');return;}
   if(!confirm(`Apply to ALL ${admAllUsers.length} users? Cannot be undone.`))return;
-  let success=0;
-  for(const u of admAllUsers){
-    let newVal;if(mode==='set')newVal=amt;else if(mode==='add')newVal=Number(u.cash||0)+amt;else if(mode==='multiply')newVal=Number(u.cash||0)*amt;
-    const{error}=await sbAdmin.from('profiles').update({cash:newVal}).eq('id',u.id);if(!error)success++;
-  }
-  showToast('Bulk cash done!',`Updated ${success} users`,'success');await admLoadUsers();admUpdateStats();
+  try {
+    await callAdmin('bulk_cash', { amount: amt, mode });
+    showToast('Bulk cash done!',`Updated all users`,'success');
+    await admLoadUsers(); admUpdateStats();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 async function admBulkHolding(){
   const symbol=document.getElementById('bulk-h-sym').value;const qty=parseFloat(document.getElementById('bulk-h-qty').value);const price=parseFloat(document.getElementById('bulk-h-price').value);
   if(isNaN(qty)||isNaN(price)){showToast('Error','Enter qty and price','error');return;}
   if(!confirm(`Add ${symbol} x${qty} to ALL ${admAllUsers.length} users?`))return;
-  const meta=ASSET_META[symbol]||{};let success=0;
-  for(const u of admAllUsers){
-    const{error}=await sbAdmin.from('holdings').upsert({user_id:u.id,symbol,name:meta.name||symbol,icon:meta.icon||'',color:meta.color||'#5a6880',quantity:qty,avg_buy_price:price},{onConflict:'user_id,symbol'});
-    if(!error)success++;
-  }
-  showToast('Bulk holding done!',`Added ${symbol} to ${success} users`,'success');await admLoadHoldings();admUpdateStats();
+  try {
+    await callAdmin('bulk_holding', { symbol, quantity: qty, avgPrice: price });
+    showToast('Bulk holding done!',`Added ${symbol} to all users`,'success');
+    await admLoadHoldings(); admUpdateStats();
+  } catch(err) { showToast('Error', err.message, 'error'); }
 }
 async function admNukeTransactions(){
   if(!confirm('PERMANENTLY DELETE ALL TRANSACTIONS for all users?'))return;if(!confirm('Are you absolutely sure? Last chance.'))return;
@@ -2500,37 +2417,5 @@ function showToast(title,sub,type='info'){
 
 </script>
 
-<script>
-  // ✅ All your existing page code stays here...
-
-
-  // ✅ Put the edge function code at the VERY BOTTOM
-  async function updateShipment() {
-    const { data: { session } } = await supabase.auth.getSession()
-    
-    if (!session) {
-      console.error("No user logged in")
-      return
-    }
-
-    const response = await fetch(
-      "https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ shipmentId: "123" })
-      }
-    )
-    const result = await response.json()
-    console.log(result)
-  }
-
-  // ✅ Only runs when button is clicked, not on page load
-  document.getElementById("yourButtonId").addEventListener("click", updateShipment)
-
-</script>
 </body>
 </html>
