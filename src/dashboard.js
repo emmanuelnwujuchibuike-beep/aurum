@@ -150,10 +150,10 @@ async function init() {
   const holdings     = holdingsRes.data ?? [];
   const transactions = txRes.data ?? [];
 
-  // Show welcome bonus banner if first login
-  if (profile.welcome_bonus_active && Number(profile.cash) > 0) {
-    showBanner(`🎉 Welcome bonus of ${fmtUSD(profile.cash)} credited to your account!`, 'info');
-  }
+  // // Show welcome bonus banner if first login
+  // if (profile.welcome_bonus_active && Number(profile.cash) > 0) {
+  //   showBanner(`🎉 Welcome bonus of ${fmtUSD(profile.cash)} credited to your account!`, 'info');
+  // }
 
   // Render everything
   renderProfile(profile);
