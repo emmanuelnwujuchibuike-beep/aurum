@@ -2,6 +2,18 @@
    AURUM CAPITAL — BACKEND ENGINE  (aurum-server.js)
    LocalStorage-based auth + portfolio + transactions system
 ═══════════════════════════════════════════════════════════ */
+const response = await fetch(
+  "https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${session.access_token}` // ✅ User JWT, not service key
+    },
+    body: JSON.stringify({ shipmentId: "123" })
+  }
+)
+
 
 const AurumDB = (() => {
 

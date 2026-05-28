@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aurum Capital — Contact</title>
+<link rel="icon" type="image/png" href="./image/favicon.webp">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -947,7 +948,7 @@
     <div class="form-card reveal">
       <div class="form-header">
         <h2 class="form-title">Send us a <em>message</em></h2>
-        <p class="form-sub">We'll respond within 2 hours during business hours, or within 24 hours otherwise.</p>
+        <p class="form-sub">We'll respond within 20 minutes during business hours, or within 2 hours otherwise.</p>
       </div>
 
       <!-- Tabs -->
@@ -998,7 +999,7 @@
               <textarea name="general-message" placeholder="Tell us about your enquiry…" id="g-message"></textarea>
             </div>
           </div>
-          <button type="submit" class="submit-btn" onclick="submitForm('general')">
+          <button class="submit-btn" onclick="submitForm('general')">
             <i class="fas fa-paper-plane" style="font-size:12px"></i>
             Send Message
           </button>
@@ -1166,7 +1167,7 @@
             <i class="fas fa-newspaper" style="font-size:12px"></i>
             Send Press Enquiry
           </button>
-          <p class="form-privacy">Our press team typically responds within 4 hours.</p>
+          <p class="form-privacy">Our press team typically responds within 30 minutes.</p>
         </form>
 
         <!-- SUCCESS STATE -->
@@ -1500,10 +1501,10 @@ function switchFormTab(tab, btn) {
 
 // ── FORM SUBMIT ──
 const successMessages = {
-  general: 'Thank you for your message! A member of our team will respond within 2 hours.',
-  investment: 'Excellent! Your consultation request has been received. An advisor matched to your profile will reach out within 1 hour.',
+  general: 'Thank you for your message! A member of our team will respond within 5 minutes.',
+  investment: 'Excellent! Your consultation request has been received. An advisor matched to your profile will reach out within 10 minutes.',
   support: 'Your support ticket has been created. Our team will prioritize your issue and respond shortly.',
-  press: 'Thanks for reaching out! Our press team will review your enquiry and respond within 4 hours.'
+  press: 'Thanks for reaching out! Our press team will review your enquiry and respond within 30 minutes.'
 };
 
 function submitForm(type) {
