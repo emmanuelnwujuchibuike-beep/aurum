@@ -118,7 +118,7 @@ serve(async (req: Request) => {
 
         <p style="color:#8c9db5;line-height:1.7">If you believe this is an error or need assistance, please contact our support team.</p>
 
-        <a href="https://auruminvest.netlify.app/dashboard.html"
+        <a href="https://auruminvest.netlify.app/contact.html"
            style="display:inline-block;margin-top:24px;padding:14px 28px;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px">
           Contact Support →
         </a>
