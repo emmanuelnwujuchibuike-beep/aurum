@@ -64,7 +64,7 @@ serve(async (req: Request) => {
               </table>
             </div>
 
-            <a href="https://YOUR-SITE-URL/dashboard.html" 
+            <a href="https://auruminvest.netlify.app/dashboard.html" 
                style="display:inline-block;padding:14px 28px;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px">
               Open Admin Panel →
             </a>
