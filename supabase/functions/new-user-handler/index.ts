@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-serve(async (req: Request) => {
+serve async (req: Request) => 
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
