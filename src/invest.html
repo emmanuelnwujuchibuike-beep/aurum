@@ -14,55 +14,115 @@
 <script>tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{void:'#040608',deep:'#080c12',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',snow:'#edf2f8',gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#040608;color:#edf2f8;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(201,168,76,.06),transparent)}
+:root{
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,.12);--gold-border:rgba(201,168,76,.22);
+  --bg-void:#040608;--bg-deep:#080c12;--bg-surface:#111820;--bg-lift:#172030;
+  --text-snow:#edf2f8;--text-mist:#8c9db5;--text-steel:#5a6880;
+  --gain:#22c55e;--loss:#ef4444;
+  --radius-card:22px;--radius-modal:26px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg-void);color:var(--text-snow);min-height:100vh;overflow-x:hidden}
 
-/* LOADER */
-#aurum-loader{position:fixed;inset:0;z-index:9999;background:#040608;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .6s ease,visibility .6s ease}
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 90% 60% at 50% -10%,rgba(201,168,76,.07),transparent),
+             radial-gradient(ellipse 60% 40% at 100% 80%,rgba(201,168,76,.03),transparent);
+}
+
+/* ── LOADER ── */
+#aurum-loader{position:fixed;inset:0;z-index:9999;background:#040608;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .7s ease,visibility .7s ease}
 #aurum-loader.out{opacity:0;visibility:hidden;pointer-events:none}
-.ld-logo-mark{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:22px;box-shadow:0 0 40px rgba(201,168,76,.3);animation:ldPulse 1.8s ease-in-out infinite}
-@keyframes ldPulse{0%,100%{box-shadow:0 0 30px rgba(201,168,76,.2)}50%{box-shadow:0 0 60px rgba(201,168,76,.5)}}
-.ld-wordmark{display:flex;gap:3px;font-family:'Cormorant Garamond',serif;font-size:28px;letter-spacing:.25em;color:#edf2f8}
-.ld-wordmark span{opacity:0;transform:translateY(10px);animation:ldChar .5s ease forwards}
+.ld-logo-mark{width:60px;height:60px;border-radius:20px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:24px;animation:ldPulse 1.8s ease-in-out infinite;box-shadow:0 0 60px rgba(201,168,76,.25)}
+@keyframes ldPulse{0%,100%{box-shadow:0 0 40px rgba(201,168,76,.2)}50%{box-shadow:0 0 80px rgba(201,168,76,.55)}}
+.ld-wordmark{display:flex;gap:3px;font-family:'Cormorant Garamond',serif;font-size:30px;letter-spacing:.3em;color:#edf2f8}
+.ld-wordmark span{opacity:0;transform:translateY(12px);animation:ldChar .5s ease forwards}
 .ld-wordmark span:nth-child(1){animation-delay:.1s}.ld-wordmark span:nth-child(2){animation-delay:.2s}.ld-wordmark span:nth-child(3){animation-delay:.3s}.ld-wordmark span:nth-child(4){animation-delay:.4s}.ld-wordmark span:nth-child(5){animation-delay:.5s}
 @keyframes ldChar{to{opacity:1;transform:none}}
-.ld-bar{width:180px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-.ld-fill{height:100%;background:linear-gradient(90deg,#c9a84c,#e8c96a);border-radius:2px;animation:ldFill 1.8s ease-in-out infinite}
-@keyframes ldFill{0%{width:0%;margin-left:0}60%{width:80%;margin-left:0}100%{width:0%;margin-left:100%}}
-.ld-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;color:#5a6880;text-transform:uppercase}
+.ld-bar{width:200px;height:1px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.ld-fill{height:100%;background:linear-gradient(90deg,transparent,#c9a84c,#e8c96a,transparent);animation:ldFill 1.8s ease-in-out infinite}
+@keyframes ldFill{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+.ld-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.28em;color:#5a6880;text-transform:uppercase}
 
-/* NAV */
-.sbl{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;font-size:.84rem;font-weight:500;color:#5a6880;transition:all .2s;text-decoration:none;margin-bottom:2px}
-.sbl:hover{background:rgba(255,255,255,.05);color:#edf2f8}
-.sbl.on{background:rgba(201,168,76,.12);color:#c9a84c;border:1px solid rgba(201,168,76,.22)}
+/* ── NAV ── */
+.sbl{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;font-size:.84rem;font-weight:500;color:#5a6880;transition:all .2s;text-decoration:none;margin-bottom:2px;border:1px solid transparent}
+.sbl:hover{background:rgba(255,255,255,.04);color:#edf2f8}
+.sbl.on{background:rgba(201,168,76,.1);color:#c9a84c;border-color:rgba(201,168,76,.2)}
 .sbl i{width:16px;text-align:center;flex-shrink:0}
 
-/* CARDS */
-.invest-card{background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s}
-.invest-card:hover{border-color:rgba(201,168,76,.3);transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.invest-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 18px;border-radius:12px;font-size:.82rem;font-weight:600;color:#040608;background:linear-gradient(135deg,#c9a84c,#a87c28);border:none;cursor:pointer;transition:all .2s}
-.invest-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.3)}
-.invest-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+/* ── PREMIUM CARD ── */
+.invest-card{
+  background:linear-gradient(145deg,#131c28 0%,#0f1720 100%);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--radius-card);
+  overflow:hidden;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+  position:relative;
+}
+.invest-card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;border-radius:var(--radius-card);
+  background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 60%);
+  z-index:0;
+}
+.invest-card:hover{
+  border-color:rgba(201,168,76,.35);
+  transform:translateY(-4px);
+  box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 0 1px rgba(201,168,76,.12),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.invest-card>*{position:relative;z-index:1}
 
-/* TABS */
-.tab-chip{padding:7px 18px;border-radius:30px;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#5a6880;cursor:pointer;transition:all .2s}
-.tab-chip:hover{color:#edf2f8;background:rgba(255,255,255,.07)}
-.tab-chip.on{background:rgba(201,168,76,.14);color:#c9a84c;border-color:rgba(201,168,76,.3)}
+/* ── PROPERTY CARD ── */
+.prop-card{
+  background:#111820;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--radius-card);
+  overflow:hidden;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+  cursor:pointer;
+}
+.prop-card:hover{
+  border-color:rgba(201,168,76,.4);
+  transform:translateY(-5px);
+  box-shadow:0 40px 100px rgba(0,0,0,.8),0 0 0 1px rgba(201,168,76,.15);
+}
+.prop-img-wrap{position:relative;height:220px;overflow:hidden}
+.prop-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease,filter .4s}
+.prop-card:hover .prop-img-wrap img{transform:scale(1.06);filter:brightness(.85)}
+.prop-img-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(8,12,18,.98) 0%,rgba(8,12,18,.5) 45%,rgba(8,12,18,.1) 100%);
+}
+.prop-img-top{position:absolute;top:14px;left:14px;right:14px;display:flex;align-items:center;justify-content:space-between}
+.prop-img-bottom{position:absolute;bottom:16px;left:16px;right:16px}
 
-/* PANEL TABS */
+/* ── INVEST BUTTON ── */
+.invest-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:12px 18px;border-radius:14px;
+  font-size:.82rem;font-weight:600;color:#040608;
+  background:linear-gradient(135deg,#c9a84c 0%,#e8c96a 50%,#a87c28 100%);
+  background-size:200% 100%;background-position:100% 0;
+  border:none;cursor:pointer;transition:all .3s;
+  letter-spacing:.02em;
+}
+.invest-btn:hover{background-position:0 0;transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.4)}
+.invest-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── TABS ── */
+.tab-chip{padding:7px 18px;border-radius:30px;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.06em;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:#5a6880;cursor:pointer;transition:all .25s}
+.tab-chip:hover{color:#edf2f8;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15)}
+.tab-chip.on{background:rgba(201,168,76,.12);color:#c9a84c;border-color:rgba(201,168,76,.3);box-shadow:0 0 20px rgba(201,168,76,.12)}
 .ptab{padding:8px 20px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.06em;color:#5a6880;cursor:pointer;transition:all .2s;border:none;background:transparent}
 .ptab:hover{color:#edf2f8}
 .ptab.on{background:rgba(201,168,76,.12);color:#c9a84c}
 
-/* MODALS */
-.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.82);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:16px}
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.88);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
-.modal-box{background:#111820;border:1px solid rgba(255,255,255,.09);border-radius:24px;width:100%;max-width:520px;max-height:94vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.8)}
-
-/* RECEIPT */
-.receipt-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.92);backdrop-filter:blur(16px);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:linear-gradient(155deg,#0e1622 0%,#0a1018 100%);border:1px solid rgba(255,255,255,.09);border-radius:var(--radius-modal);width:100%;max-width:560px;max-height:94vh;overflow-y:auto;box-shadow:0 60px 120px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.05)}
+.receipt-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.94);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:16px}
 .receipt-overlay.open{display:flex}
-.receipt-box{background:#080c12;border:1px solid rgba(201,168,76,.2);border-radius:28px;width:100%;max-width:440px;max-height:94vh;overflow-y:auto;box-shadow:0 0 80px rgba(201,168,76,.08)}
+.receipt-box{background:linear-gradient(155deg,#080e18,#060c12);border:1px solid rgba(201,168,76,.2);border-radius:var(--radius-modal);width:100%;max-width:440px;max-height:94vh;overflow-y:auto;box-shadow:0 0 100px rgba(201,168,76,.07)}
 .receipt-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
 .receipt-row:last-child{border-bottom:none}
 .receipt-row .lbl{color:#5a6880;font-size:12px}
@@ -71,81 +131,130 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .receipt-row .val.gain{color:#22c55e}
 .receipt-row .val.loss{color:#ef4444}
 
-/* SIDE PANEL */
-.side-panel{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100vw;background:#080c12;border-left:1px solid rgba(255,255,255,.07);z-index:150;transform:translateX(100%);transition:transform .35s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
+/* ── SIDE PANEL ── */
+.side-panel{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100vw;background:linear-gradient(180deg,#09101a 0%,#060c12 100%);border-left:1px solid rgba(255,255,255,.07);z-index:150;transform:translateX(100%);transition:transform .38s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
 .side-panel.open{transform:translateX(0)}
-.panel-backdrop{position:fixed;inset:0;z-index:140;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:none}
+.panel-backdrop{position:fixed;inset:0;z-index:140;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);display:none}
 .panel-backdrop.open{display:block}
 
-/* SWAP */
-.swap-box{background:#111820;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px}
-.swap-arrow{width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;margin:0 auto;position:relative;z-index:1}
-.swap-arrow:hover{background:rgba(201,168,76,.2);transform:rotate(180deg)}
+/* ── SWAP ── */
+.swap-box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px;transition:border-color .2s}
+.swap-box:focus-within{border-color:rgba(201,168,76,.3)}
+.swap-arrow{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;margin:0 auto;position:relative;z-index:1}
+.swap-arrow:hover{background:rgba(201,168,76,.25);transform:rotate(180deg) scale(1.1);box-shadow:0 0 20px rgba(201,168,76,.3)}
 
-/* ADMIN */
-.admin-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.97);backdrop-filter:blur(20px);display:none;flex-direction:column;overflow:hidden}
+/* ── STAT BOX ── */
+.stat-box{background:linear-gradient(145deg,#111820,#0d1520);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:18px 22px;transition:border-color .25s,box-shadow .25s}
+.stat-box:hover{border-color:rgba(201,168,76,.2);box-shadow:0 10px 40px rgba(0,0,0,.4)}
+
+/* ── CHART PERIOD BTNS ── */
+.period-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:transparent;color:#5a6880;cursor:pointer;transition:all .2s}
+.period-btn:hover{color:#edf2f8;border-color:rgba(255,255,255,.18)}
+.period-btn.active{background:rgba(201,168,76,.14);border-color:rgba(201,168,76,.35);color:#c9a84c;box-shadow:0 0 15px rgba(201,168,76,.1)}
+
+/* ── PRICE FLASH ── */
+@keyframes flashGreen{0%{color:#22c55e;text-shadow:0 0 16px rgba(34,197,94,.8)}100%{color:#edf2f8;text-shadow:none}}
+@keyframes flashRed{0%{color:#ef4444;text-shadow:0 0 16px rgba(239,68,68,.8)}100%{color:#edf2f8;text-shadow:none}}
+.flash-up{animation:flashGreen 1.2s ease forwards}
+.flash-down{animation:flashRed 1.2s ease forwards}
+
+/* ── LIVE BADGE ── */
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:livePulse 1.6s infinite;display:inline-block}
+
+/* ── YIELD BADGE ── */
+.yield-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:5px 12px;border-radius:20px;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.25);white-space:nowrap;font-weight:600}
+
+/* ── SECTION HEADER ── */
+.sec-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.sec-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;margin-bottom:6px}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:#edf2f8}
+.sec-title em{font-style:italic;color:#c9a84c}
+
+/* ── ADMIN ── */
+.admin-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.97);backdrop-filter:blur(24px);display:none;flex-direction:column;overflow:hidden}
 .admin-overlay.open{display:flex}
 .admin-tbl{width:100%;border-collapse:collapse}
 .admin-tbl th{text-align:left;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.07)}
 .admin-tbl td{padding:12px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03)}
 .admin-tbl tr:hover td{background:rgba(255,255,255,.02)}
 
-/* TX ROW */
+/* ── TX ── */
 .tx-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .2s}
 .tx-row:hover{background:rgba(255,255,255,.03)}
+.holding-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;border-radius:10px;margin:0 4px}
+.holding-row:hover{background:rgba(255,255,255,.03)}
 
-/* MISC */
-.preset-btn{flex:1;padding:7px 0;border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;cursor:pointer;transition:all .18s}
-.preset-btn:hover{background:rgba(201,168,76,.12);color:#c9a84c;border-color:rgba(201,168,76,.25)}
-.yield-badge{display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:4px 10px;border-radius:20px;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.22);white-space:nowrap}
-.stat-box{background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:16px 20px}
-input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:rgba(255,255,255,.08);outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#c9a84c;border:2px solid #040608}
+/* ── RANGE ── */
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:4px;background:rgba(255,255,255,.08);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#e8c96a);border:2px solid #040608;box-shadow:0 2px 8px rgba(201,168,76,.4)}
+
+/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.a1{animation:fadeUp .5s ease forwards .05s;opacity:0}
-.a2{animation:fadeUp .5s ease forwards .15s;opacity:0}
-.a3{animation:fadeUp .5s ease forwards .25s;opacity:0}
-.a4{animation:fadeUp .5s ease forwards .35s;opacity:0}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:4px}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.a1{animation:fadeUp .6s ease forwards .05s;opacity:0}
+.a2{animation:fadeUp .6s ease forwards .18s;opacity:0}
+.a3{animation:fadeUp .6s ease forwards .3s;opacity:0}
+.a4{animation:fadeUp .6s ease forwards .42s;opacity:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{animation:spin .7s linear infinite}
-.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:10px}
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.03) 25%,rgba(255,255,255,.07) 50%,rgba(255,255,255,.03) 75%);background-size:200% 100%;animation:shimmer 1.8s infinite;border-radius:14px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── MISC ── */
 #authGate{position:fixed;inset:0;z-index:998;background:#040608;display:flex;align-items:center;justify-content:center}
-#toast{position:fixed;bottom:28px;right:28px;z-index:600;background:#111820;border-radius:18px;padding:14px 20px;display:flex;align-items:center;gap:14px;min-width:280px;box-shadow:0 20px 60px rgba(0,0,0,.6);transform:translateY(20px);opacity:0;transition:all .35s cubic-bezier(.16,1,.3,1);pointer-events:none}
+#toast{position:fixed;bottom:28px;right:28px;z-index:600;background:#111820;border-radius:18px;padding:14px 20px;display:flex;align-items:center;gap:14px;min-width:280px;box-shadow:0 20px 60px rgba(0,0,0,.7);transform:translateY(20px);opacity:0;transition:all .38s cubic-bezier(.16,1,.3,1);pointer-events:none;border:1px solid rgba(255,255,255,.07)}
 #toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
-.holding-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;border-radius:8px;padding-left:8px;padding-right:8px}
-.holding-row:hover{background:rgba(255,255,255,.03)}
-@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-/* Price flash */
-@keyframes flashGreen{0%{color:#22c55e;text-shadow:0 0 12px rgba(34,197,94,.6)}100%{color:#edf2f8;text-shadow:none}}
-@keyframes flashRed{0%{color:#ef4444;text-shadow:0 0 12px rgba(239,68,68,.6)}100%{color:#edf2f8;text-shadow:none}}
-.flash-up{animation:flashGreen .9s ease forwards}
-.flash-down{animation:flashRed .9s ease forwards}
-
-/* ── CHART MODAL (premium) ── */
-.chart-modal-overlay{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.88);backdrop-filter:blur(16px);display:none;align-items:center;justify-content:center;padding:16px}
-.chart-modal-overlay.open{display:flex}
-.chart-modal-box{background:#0a0f18;border:1px solid rgba(255,255,255,.09);border-radius:28px;width:100%;max-width:780px;max-height:92vh;overflow-y:auto;box-shadow:0 60px 120px rgba(0,0,0,.9)}
-.period-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:transparent;color:#5a6880;cursor:pointer;transition:all .2s}
-.period-btn:hover{color:#edf2f8;border-color:rgba(255,255,255,.15)}
-.period-btn.active{background:rgba(201,168,76,.14);border-color:rgba(201,168,76,.35);color:#c9a84c}
-.chart-stat-pill{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:12px 16px;text-align:center;transition:border-color .2s}
-.chart-stat-pill:hover{border-color:rgba(255,255,255,.14)}
-
+.preset-btn{flex:1;padding:8px 0;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;cursor:pointer;transition:all .2s}
+.preset-btn:hover{background:rgba(201,168,76,.1);color:#c9a84c;border-color:rgba(201,168,76,.25)}
 .k-hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(201,168,76,0);letter-spacing:.14em;pointer-events:none;transition:color .6s;white-space:nowrap}
 .k-hint.show{color:rgba(201,168,76,.45)}
+
+/* ── CRYPTO CARD CHART ── */
+.mini-chart-wrap{position:relative;height:52px;margin:-4px 0 12px}
+.mini-chart-wrap canvas{width:100%!important;height:52px!important}
+
+/* ── PRICE TAG ── */
+.price-tag{font-family:'JetBrains Mono',monospace;font-size:22px;color:#edf2f8;font-weight:600;transition:color .4s}
+.chg-badge{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border-radius:8px;white-space:nowrap;transition:all .3s}
+
+/* ── FUNDED BAR ── */
+.funded-bar{height:3px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.07);margin-top:4px}
+.funded-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#c9a84c,#e8c96a);transition:width .6s ease}
+
+/* ── MODAL CHART AREA ── */
+.modal-chart-container{background:rgba(4,8,14,.8);border:1px solid rgba(255,255,255,.06);border-radius:18px;overflow:hidden}
+.modal-chart-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid rgba(255,255,255,.05)}
+.modal-chart-stat{padding:10px 14px;border-right:1px solid rgba(255,255,255,.04)}
+.modal-chart-stat:last-child{border-right:none}
+.modal-chart-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.modal-chart-stat .val{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* ── TOPBAR INPUT ── */
+.search-wrap{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:9px 16px;transition:border-color .2s}
+.search-wrap:focus-within{border-color:rgba(201,168,76,.3)}
+
+/* ── GLOW SEPARATOR ── */
+.gold-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.25),transparent);margin:32px 0}
 
 @media(max-width:768px){
   .side-panel{width:100vw}
   #mainContent{margin-left:0!important}
+  .modal-chart-stats{grid-template-columns:repeat(2,1fr)}
+  .modal-chart-stat:nth-child(2){border-right:none}
+  .modal-chart-stat:nth-child(3){border-top:1px solid rgba(255,255,255,.04)}
+}
+@media(max-width:640px){
+  .hide-sm{display:none}
+  #toast{left:16px;right:16px;min-width:unset;bottom:16px}
 }
 </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
 <!-- LOADER -->
 <div id="aurum-loader">
@@ -157,7 +266,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 <div id="authGate" style="display:none">
   <div style="text-align:center">
-    <div style="width:48px;height:48px;margin:0 auto 16px;border-radius:14px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:18px">A</div>
+    <div style="width:52px;height:52px;margin:0 auto 16px;border-radius:16px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:20px">A</div>
     <p style="font-family:'JetBrains Mono',monospace;color:#5a6880;font-size:11px;letter-spacing:.2em">VERIFYING SESSION…</p>
   </div>
 </div>
@@ -165,10 +274,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div id="appShell" style="display:none;position:relative;z-index:1">
 
   <!-- SIDEBAR -->
-  <aside id="sidebar" style="display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;background:#080c12;border-right:1px solid rgba(255,255,255,.06);z-index:50;padding:24px 16px;overflow-y:auto">
+  <aside id="sidebar" style="display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;background:linear-gradient(180deg,#080c12,#060a10);border-right:1px solid rgba(255,255,255,.06);z-index:50;padding:24px 16px;overflow-y:auto">
     <a href="index.html" style="display:flex;align-items:center;gap:12px;padding:0 8px;margin-bottom:32px;text-decoration:none">
       <div id="logoMark" style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:14px;flex-shrink:0;cursor:pointer" title="Secret">A</div>
-      <span style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.12em;color:#edf2f8">Aurum</span>
     </a>
     <div style="flex:1">
       <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin-bottom:8px">Overview</p>
@@ -192,7 +301,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div id="sbAvatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;flex-shrink:0">?</div>
         <div style="min-width:0;flex:1">
           <p id="sbName" style="color:#edf2f8;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">…</p>
-          <p id="sbCash" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">$0.00 available</p>
+          <p id="sbCash" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c">$0.00 available</p>
         </div>
       </div>
     </div>
@@ -201,50 +310,36 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <!-- MAIN -->
   <div id="mainContent" style="margin-left:0;display:flex;flex-direction:column;min-height:100vh">
 
-    <!-- Topbar -->
-    <header style="position:sticky;top:0;z-index:40;background:rgba(4,6,8,.94);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.06);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px">
-      <div style="margin-top:12px;display:flex;align-items:center;gap:16px">
-        <div style="display:flex;align-items:center;gap:12px">
-          <button id="mobileMenuBtn" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">
-            <i class="fas fa-bars" style="font-size:13px"></i>
-          </button>
-          <a href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
-            <div id="topLogoMark" style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:12px;cursor:pointer">A</div>
-            <span style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
-          </a>
-        </div>
-        <div style="flex:1;max-width:360px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:9px 16px">
-          <i class="fas fa-search" style="color:#5a6880;font-size:12px"></i>
+    <!-- TOPBAR -->
+    <header style="position:sticky;top:0;z-index:40;background:rgba(4,6,8,.92);backdrop-filter:blur(28px);border-bottom:1px solid rgba(255,255,255,.06);height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px">
+      <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0">
+        <button id="mobileMenuBtn" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-bars" style="font-size:13px"></i></button>
+        <a href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0">
+          <div id="topLogoMark" style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:12px;cursor:pointer">A</div>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.12em;color:#edf2f8">Aurum</span>
+        </a>
+        <div class="search-wrap" style="flex:1;max-width:340px">
+          <i class="fas fa-search" style="color:#5a6880;font-size:12px;flex-shrink:0"></i>
           <input type="text" id="searchInput" placeholder="Search BTC, Tesla, London…" style="background:transparent;border:none;outline:none;color:#edf2f8;font-size:13px;flex:1;font-family:'DM Sans',sans-serif">
         </div>
       </div>
-      <div class="hidden md:flex md:item-center md:gap-10 pt-8">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px">
-          <button onclick="openSwapModal()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'">
-            <i class="fas fa-arrow-right-arrow-left" style="font-size:11px"></i><span class="hide-sm">Swap</span>
-          </button>
-          <button onclick="openPanel('portfolio')" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'">
-            <i class="fas fa-briefcase" style="font-size:11px"></i><span class="hide-sm">Portfolio</span>
-          </button>
-          <button onclick="openPanel('transactions')" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'">
-            <i class="fas fa-repeat" style="font-size:11px"></i><span class="hide-sm">Transactions</span>
-          </button>
-          <!-- FIXED: cashBal display in header -->
-          <div style="text-align:right">
-            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em;text-transform:uppercase">Cash</p>
-            <p id="headerCash" style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8;font-weight:300">$0.00</p>
-          </div>
-          <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;cursor:pointer" onclick="openPanel('portfolio')">?</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onclick="openSwapModal()" class="hide-sm" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'"><i class="fas fa-arrow-right-arrow-left" style="font-size:11px"></i><span>Swap</span></button>
+        <button onclick="openPanel('portfolio')" class="hide-sm" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'"><i class="fas fa-briefcase" style="font-size:11px"></i><span>Portfolio</span></button>
+        <div style="text-align:right;flex-shrink:0">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;letter-spacing:.1em;text-transform:uppercase">Cash</p>
+          <p id="headerCash" style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8;font-weight:300">$0.00</p>
         </div>
+        <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;cursor:pointer;flex-shrink:0" onclick="openPanel('portfolio')">?</div>
       </div>
     </header>
 
-    <!-- Mobile drawer -->
-    <div id="mobileBackdrop" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)"></div>
+    <!-- MOBILE DRAWER -->
+    <div id="mobileBackdrop" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)"></div>
     <div id="mobileDrawer" style="display:none;position:fixed;top:0;left:0;bottom:0;width:280px;z-index:90;background:#080c12;border-right:1px solid rgba(255,255,255,.07);flex-direction:column;padding:24px 16px;overflow-y:auto">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding:0 8px">
-        <span style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
-        <button id="mobileCloseBtn" style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-xmark" style="font-size:12px"></i></button>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.12em;color:#edf2f8">Aurum</span>
+        <button id="mobileCloseBtn" style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-xmark" style="font-size:12px"></i></button>
       </div>
       <a href="dashboard.html" class="sbl"><i class="fas fa-gauge-high"></i>Dashboard</a>
       <a href="invest.html" class="sbl on"><i class="fas fa-chart-line"></i>Invest</a>
@@ -257,100 +352,107 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <a href="#" id="drawerSignOut" class="sbl"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
     </div>
 
-    <!-- PAGE BODY -->
-    <main style="flex:1;padding:32px 24px;max-width:1400px;width:100%">
+<!-- PAGE BODY -->
+    <main style="flex:1;padding:36px 28px;max-width:1440px;width:100%;margin:0 auto">
 
-      <div class="a1" style="margin-bottom:28px">
-        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;color:#5a6880;text-transform:uppercase;margin-bottom:6px">// Investment Centre</p>
-        <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:300;color:#edf2f8;margin-bottom:6px">
-          Choose your <em style="font-style:italic;color:#c9a84c">next position</em>
+      <!-- HERO -->
+      <div class="a1" style="margin-bottom:32px">
+        <p class="sec-eyebrow">// Investment Centre</p>
+        <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,4vw,52px);font-weight:300;color:#edf2f8;line-height:1.1;margin-bottom:10px">
+          Deploy capital.<br><em style="font-style:italic;color:#c9a84c">Build wealth.</em>
         </h1>
-        <p style="color:#8c9db5;font-size:13px">Deploy capital across crypto, global equities, and prime real estate.</p>
+        <p style="color:#5a6880;font-size:14px;max-width:480px">Live crypto markets, global equities, and tokenized prime real estate — all in one platform.</p>
       </div>
 
-      <!-- Stats strip -->
-      <div class="a2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:32px">
+      <!-- STATS -->
+      <div class="a2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:36px">
         <div class="stat-box">
           <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:8px">Cash Available</p>
-          <!-- FIXED: was cashBal (conflict), now inv-cashBal -->
-          <p id="inv-cashBal" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">$0.00</p>
-          <button onclick="openDepositModal()" style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c;background:none;border:none;cursor:pointer;padding:0">+ Add funds</button>
+          <p id="inv-cashBal" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#edf2f8;font-weight:300">$0.00</p>
+          <button onclick="openDepositModal()" style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c;background:none;border:none;cursor:pointer;padding:0;letter-spacing:.05em">+ Add funds</button>
         </div>
         <div class="stat-box" style="cursor:pointer" onclick="openPanel('portfolio')">
           <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:8px">Portfolio Value</p>
-          <p id="portVal" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">$0.00</p>
+          <p id="portVal" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#edf2f8;font-weight:300">$0.00</p>
           <p style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880">View holdings →</p>
         </div>
         <div class="stat-box" style="cursor:pointer" onclick="openPanel('portfolio')">
           <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:8px">Positions</p>
-          <p id="posCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">0</p>
+          <p id="posCount" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#edf2f8;font-weight:300">0</p>
+          <p style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880">Active holdings</p>
         </div>
         <div class="stat-box" style="cursor:pointer" onclick="openPanel('transactions')">
           <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-bottom:8px">All-time Trades</p>
-          <p id="txCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">0</p>
+          <p id="txCount" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#edf2f8;font-weight:300">0</p>
           <p style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880">View history →</p>
         </div>
       </div>
 
-      <!-- Filter tabs + Swap button -->
-      <div class="a3" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px;align-items:center;justify-content:space-between">
+      <!-- FILTER + SWAP -->
+      <div class="a3" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:40px;align-items:center;justify-content:space-between">
         <div style="display:flex;flex-wrap:wrap;gap:8px" id="filterTabs">
           <button class="tab-chip on" data-filter="all" onclick="setFilter('all',this)">All Markets</button>
-          <button class="tab-chip" data-filter="crypto" onclick="setFilter('crypto',this)">Cryptocurrency</button>
-          <button class="tab-chip" data-filter="stocks" onclick="setFilter('stocks',this)">Global Stocks</button>
-          <button class="tab-chip" data-filter="property" onclick="setFilter('property',this)">Real Estate</button>
+          <button class="tab-chip" data-filter="crypto" onclick="setFilter('crypto',this)"><i class="fab fa-bitcoin" style="margin-right:5px;font-size:11px"></i>Cryptocurrency</button>
+          <button class="tab-chip" data-filter="stocks" onclick="setFilter('stocks',this)"><i class="fas fa-chart-bar" style="margin-right:5px;font-size:11px"></i>Global Stocks</button>
+          <button class="tab-chip" data-filter="property" onclick="setFilter('property',this)"><i class="fas fa-city" style="margin-right:5px;font-size:11px"></i>Real Estate</button>
         </div>
-        <button onclick="openSwapModal()" style="display:flex;align-items:center;gap:8px;padding:9px 20px;border-radius:12px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);color:#c9a84c;font-family:'JetBrains Mono',monospace;font-size:.75rem;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(201,168,76,.18)'" onmouseout="this.style.background='rgba(201,168,76,.1)'">
+        <button onclick="openSwapModal()" style="display:flex;align-items:center;gap:8px;padding:9px 20px;border-radius:12px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);color:#c9a84c;font-family:'JetBrains Mono',monospace;font-size:.75rem;cursor:pointer;transition:all .25s;white-space:nowrap" onmouseover="this.style.background='rgba(201,168,76,.2)';this.style.boxShadow='0 0 20px rgba(201,168,76,.2)'" onmouseout="this.style.background='rgba(201,168,76,.1)';this.style.boxShadow='none'">
           <i class="fas fa-arrow-right-arrow-left"></i>Swap Assets
         </button>
       </div>
 
-      <!-- Crypto section -->
-      <section id="sec-crypto" style="margin-bottom:48px" class="a4">
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px">
+      <!-- CRYPTO -->
+      <section id="sec-crypto" class="a4" style="margin-bottom:56px">
+        <div class="sec-header">
           <div>
-            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5a6880;text-transform:uppercase;margin-bottom:4px">// Cryptocurrency</p>
-            <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#edf2f8">Digital <em style="font-style:italic;color:#c9a84c">Assets</em></h2>
+            <p class="sec-eyebrow">// Cryptocurrency</p>
+            <h2 class="sec-title">Digital <em>Assets</em></h2>
           </div>
-          <span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#22c55e;letter-spacing:.08em">
-            <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:livePulse 1.5s infinite"></span>LIVE
-          </span>
+          <div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#22c55e;letter-spacing:.1em;padding:5px 12px;border-radius:20px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.18)">
+            <span class="live-dot"></span>LIVE PRICES
+          </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" id="cryptoGrid">
-          <div class="skeleton" style="height:210px"></div><div class="skeleton" style="height:210px"></div><div class="skeleton" style="height:210px"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px" id="cryptoGrid">
+          <div class="skeleton" style="height:240px"></div><div class="skeleton" style="height:240px"></div><div class="skeleton" style="height:240px"></div>
         </div>
       </section>
 
-      <!-- Stocks section -->
-      <section id="sec-stocks" style="margin-bottom:48px">
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px">
+      <div class="gold-sep"></div>
+
+      <!-- STOCKS -->
+      <section id="sec-stocks" style="margin-bottom:56px">
+        <div class="sec-header">
           <div>
-            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5a6880;text-transform:uppercase;margin-bottom:4px">// Global Equities</p>
-            <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#edf2f8">Stock <em style="font-style:italic;color:#c9a84c">Market</em></h2>
+            <p class="sec-eyebrow">// Global Equities</p>
+            <h2 class="sec-title">Stock <em>Market</em></h2>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" id="stocksGrid">
-          <div class="skeleton" style="height:210px"></div><div class="skeleton" style="height:210px"></div><div class="skeleton" style="height:210px"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px" id="stocksGrid">
+          <div class="skeleton" style="height:240px"></div><div class="skeleton" style="height:240px"></div><div class="skeleton" style="height:240px"></div>
         </div>
       </section>
 
-      <!-- Property section -->
-      <section id="sec-property" style="margin-bottom:48px">
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px">
+      <div class="gold-sep"></div>
+
+      <!-- PROPERTY -->
+      <section id="sec-property" style="margin-bottom:56px">
+        <div class="sec-header">
           <div>
-            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5a6880;text-transform:uppercase;margin-bottom:4px">// Real Estate Fund</p>
-            <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:#edf2f8">Prime <em style="font-style:italic;color:#c9a84c">Properties</em></h2>
+            <p class="sec-eyebrow">// Real Estate Fund</p>
+            <h2 class="sec-title">Prime <em>Properties</em></h2>
           </div>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);padding:4px 12px;border-radius:20px">Tokenized · From $500</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.22);padding:5px 14px;border-radius:20px">Tokenized · From $500</span>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" id="propertyGrid">
-          <div class="skeleton" style="height:270px"></div><div class="skeleton" style="height:270px"></div><div class="skeleton" style="height:270px"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px" id="propertyGrid">
+          <div class="skeleton" style="height:380px"></div><div class="skeleton" style="height:380px"></div><div class="skeleton" style="height:380px"></div>
         </div>
       </section>
+
     </main>
 
-    <footer style="padding:20px 24px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em">©️2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
+    <footer style="padding:22px 28px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.08em">©2025 AURUM CAPITAL · ALL RIGHTS RESERVED</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Investment involves risk</p>
     </footer>
   </div>
 </div>
@@ -363,14 +465,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <button class="ptab on" id="ptab-portfolio" onclick="switchPanelTab('portfolio')">Portfolio</button>
       <button class="ptab" id="ptab-transactions" onclick="switchPanelTab('transactions')">Transactions</button>
     </div>
-    <button onclick="closePanel()" style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">
-      <i class="fas fa-xmark" style="font-size:12px"></i>
-    </button>
+    <button onclick="closePanel()" style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-xmark" style="font-size:12px"></i></button>
   </div>
   <div id="pane-portfolio" style="flex:1;overflow-y:auto;padding:20px 0">
-    <div style="padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,.05)">
+    <div style="padding:0 20px 18px;border-bottom:1px solid rgba(255,255,255,.05)">
       <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Total Value</p>
-      <p id="pf-total" style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#edf2f8;font-weight:300">$0.00</p>
+      <p id="pf-total" style="font-family:'Cormorant Garamond',serif;font-size:38px;color:#edf2f8;font-weight:300">$0.00</p>
       <div style="display:flex;gap:6px;margin-top:10px">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border-radius:8px;background:rgba(34,197,94,.1);color:#22c55e" id="pf-pnl-badge">+$0.00</span>
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.04);color:#5a6880" id="pf-pos-badge">0 positions</span>
@@ -378,16 +478,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
     <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.05)">
       <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Allocation</p>
-      <div style="height:8px;border-radius:8px;overflow:hidden;display:flex;gap:2px" id="alloc-bar">
-        <div style="flex:1;background:rgba(255,255,255,.06);border-radius:8px"></div>
-      </div>
+      <div style="height:6px;border-radius:6px;overflow:hidden;display:flex;gap:2px" id="alloc-bar"><div style="flex:1;background:rgba(255,255,255,.06);border-radius:6px"></div></div>
       <div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap" id="alloc-legend"></div>
     </div>
     <div style="padding:16px 0">
       <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;padding:0 20px">Holdings</p>
-      <div id="holdings-list">
-        <div style="padding:32px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">Loading…</div>
-      </div>
+      <div id="holdings-list"><div style="padding:32px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">Loading…</div></div>
     </div>
   </div>
   <div id="pane-transactions" style="flex:1;overflow-y:auto;display:none">
@@ -399,18 +495,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <button onclick="filterTx('swap')" class="tab-chip" id="txf-swap" style="padding:5px 12px;font-size:.65rem">Swaps</button>
       </div>
     </div>
-    <div id="tx-list-panel">
-      <div style="padding:32px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">Loading…</div>
-    </div>
+    <div id="tx-list-panel"><div style="padding:32px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">Loading…</div></div>
   </div>
 </div>
 
-<!-- ══ TX DETAIL MODAL ══ -->
+<!-- ══ TX DETAIL ══ -->
 <div class="receipt-overlay" id="txDetailModal">
   <div class="receipt-box" style="max-width:420px">
     <div style="padding:24px 24px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between">
       <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">Transaction <em style="color:#c9a84c;font-style:italic">Detail</em></p>
-      <button onclick="closeTxDetail()" style="width:32px;height:32px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-xmark" style="font-size:12px"></i></button>
+      <button onclick="closeTxDetail()" style="width:32px;height:32px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:10px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-xmark" style="font-size:12px"></i></button>
     </div>
     <div style="padding:20px 24px">
       <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:16px">
@@ -430,30 +524,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <!-- ══ SWAP MODAL ══ -->
 <div class="modal-overlay" id="swapModal">
   <div class="modal-box" style="max-width:460px">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:26px 26px 20px;border-bottom:1px solid rgba(255,255,255,.07)">
       <div>
-        <p style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">Swap <em style="font-style:italic;color:#c9a84c">Assets</em></p>
-        <p style="color:#5a6880;font-size:12px;margin-top:2px">Convert your holdings instantly</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#edf2f8;font-weight:300">Swap <em style="font-style:italic;color:#c9a84c">Assets</em></p>
+        <p style="color:#5a6880;font-size:12px;margin-top:2px">Convert your holdings instantly at market price</p>
       </div>
-      <button onclick="closeSwapModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+      <button onclick="closeSwapModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
-    <div style="padding:24px;display:flex;flex-direction:column;gap:12px">
+    <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
       <div>
         <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">From</p>
         <div class="swap-box">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <select id="sw-from" onchange="updateSwapCalc()" style="background:#080c12;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 12px;outline:none;cursor:pointer;flex:1;margin-right:12px">
-              <option value="">Select asset…</option>
-            </select>
-            <div style="text-align:right">
-              <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Balance</p>
-              <p id="sw-from-bal" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c9a84c">—</p>
-            </div>
+            <select id="sw-from" onchange="updateSwapCalc()" style="background:#080c12;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 12px;outline:none;cursor:pointer;flex:1;margin-right:12px"><option value="">Select asset…</option></select>
+            <div style="text-align:right"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Balance</p><p id="sw-from-bal" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c9a84c">—</p></div>
           </div>
-          <div style="position:relative">
-            <input type="number" id="sw-from-amt" placeholder="0.00" oninput="updateSwapCalc()" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:22px;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='rgba(201,168,76,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'">
-          </div>
-          <div style="display:flex;gap:6px;margin-top:8px">
+          <input type="number" id="sw-from-amt" placeholder="0.00" oninput="updateSwapCalc()" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:22px;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='rgba(201,168,76,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.07)'">
+          <div style="display:flex;gap:6px;margin-top:10px">
             <button class="preset-btn" onclick="swSetPct(25)">25%</button>
             <button class="preset-btn" onclick="swSetPct(50)">50%</button>
             <button class="preset-btn" onclick="swSetPct(75)">75%</button>
@@ -461,68 +548,62 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
           </div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="flex:1;height:1px;background:rgba(255,255,255,.05)"></div>
-        <div class="swap-arrow" onclick="swapDirection()">
-          <i class="fas fa-arrow-down" style="color:#c9a84c;font-size:12px"></i>
-        </div>
-        <div style="flex:1;height:1px;background:rgba(255,255,255,.05)"></div>
-      </div>
+      <div style="display:flex;align-items:center;gap:10px"><div style="flex:1;height:1px;background:rgba(255,255,255,.05)"></div><div class="swap-arrow" onclick="swapDirection()"><i class="fas fa-arrow-down" style="color:#c9a84c;font-size:12px"></i></div><div style="flex:1;height:1px;background:rgba(255,255,255,.05)"></div></div>
       <div>
         <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">To</p>
         <div class="swap-box">
-          <select id="sw-to" onchange="updateSwapCalc()" style="width:100%;background:#080c12;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 12px;outline:none;cursor:pointer;margin-bottom:12px">
-            <option value="">Select target asset…</option>
-          </select>
+          <select id="sw-to" onchange="updateSwapCalc()" style="width:100%;background:#080c12;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 12px;outline:none;cursor:pointer;margin-bottom:12px"><option value="">Select target asset…</option></select>
           <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 16px">
             <p id="sw-receive" style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#c9a84c">—</p>
             <p id="sw-rate" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;margin-top:4px">Select assets to see rate</p>
           </div>
         </div>
       </div>
-      <div style="background:rgba(4,6,8,.6);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px">
+      <div style="background:rgba(4,6,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px">
         <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:#5a6880">Swap fee (0.3%)</span><span id="sw-fee" style="font-family:'JetBrains Mono',monospace;color:#5a6880">—</span></div>
         <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#5a6880">Net received</span><span id="sw-net" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">—</span></div>
       </div>
-      <div id="sw-insuf" style="display:none;padding:10px 14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px">
-        <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444"><i class="fas fa-triangle-exclamation" style="margin-right:6px"></i>Insufficient balance for this swap</p>
-      </div>
-      <button id="sw-confirm" onclick="confirmSwap()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s">
+      <div id="sw-insuf" style="display:none;padding:10px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px"><p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444"><i class="fas fa-triangle-exclamation" style="margin-right:6px"></i>Insufficient balance</p></div>
+      <button id="sw-confirm" onclick="confirmSwap()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .25s">
         <span id="sw-label"><i class="fas fa-arrow-right-arrow-left" style="font-size:12px;margin-right:4px"></i>Confirm Swap</span>
         <div id="sw-spin" style="display:none;width:18px;height:18px;border:2px solid rgba(4,6,8,.2);border-top-color:#040608;border-radius:50%" class="spinner"></div>
       </button>
-      <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.06em">Swaps execute at live market prices</p>
     </div>
   </div>
 </div>
 
-<!-- ══ INVEST MODAL (with premium chart) ══ -->
+<!-- ══ INVEST MODAL (PREMIUM) ══ -->
 <div class="modal-overlay" id="investModal">
-  <div class="modal-box" style="max-width:560px">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
+  <div class="modal-box" style="max-width:580px">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:26px 26px 20px;border-bottom:1px solid rgba(255,255,255,.07)">
       <div style="display:flex;align-items:center;gap:16px">
-        <div id="mi-icon" style="width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px"></div>
+        <div id="mi-icon" style="width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:24px"></div>
         <div>
-          <p id="mi-sym" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">—</p>
+          <p id="mi-sym" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#edf2f8;font-weight:300">—</p>
           <p id="mi-name" style="color:#5a6880;font-size:13px">—</p>
         </div>
       </div>
-      <button onclick="closeInvestModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">✕</button>
+      <button onclick="closeInvestModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">✕</button>
     </div>
+
     <div style="padding:24px;display:flex;flex-direction:column;gap:20px">
-      <!-- Price + change row -->
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px">
-        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em">Live Price</span>
+
+      <!-- Live price row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px">
+        <div>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Live Price</p>
+          <p id="mi-price" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#edf2f8;font-weight:600">—</p>
+        </div>
         <div style="text-align:right">
-          <p id="mi-price" style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#edf2f8;font-weight:500">—</p>
-          <p id="mi-chg" style="font-family:'JetBrains Mono',monospace;font-size:10px">—</p>
+          <p id="mi-chg" style="font-family:'JetBrains Mono',monospace;font-size:13px;padding:5px 12px;border-radius:10px">—</p>
+          <p id="mi-chg-sub" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">24h change</p>
         </div>
       </div>
 
-<!-- ── PREMIUM CHART AREA ── -->
-      <div id="mi-chart-wrap" style="display:none;background:#080c12;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden">
-        <!-- Period pills -->
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px">
+      <!-- PREMIUM CHART -->
+      <div id="mi-chart-wrap" style="display:none" class="modal-chart-container">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px">
           <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.1em;text-transform:uppercase">Price Chart</span>
           <div style="display:flex;gap:4px" id="mi-periods">
             <button class="period-btn active" onclick="setInvestPeriod('1D',this)">1D</button>
@@ -532,43 +613,32 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
             <button class="period-btn" onclick="setInvestPeriod('1Y',this)">1Y</button>
           </div>
         </div>
-        <!-- Stats strip above chart -->
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)" id="mi-chart-stats">
-          <div style="padding:8px 12px;border-right:1px solid rgba(255,255,255,.04)">
-            <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:3px">24H High</p>
-            <p id="mi-stat-high" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#22c55e">—</p>
-          </div>
-          <div style="padding:8px 12px;border-right:1px solid rgba(255,255,255,.04)">
-            <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:3px">24H Low</p>
-            <p id="mi-stat-low" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444">—</p>
-          </div>
-          <div style="padding:8px 12px;border-right:1px solid rgba(255,255,255,.04)">
-            <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:3px">Mkt Cap</p>
-            <p id="mi-stat-mcap" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#edf2f8">—</p>
-          </div>
-          <div style="padding:8px 12px">
-            <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:3px">Volume</p>
-            <p id="mi-stat-vol" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#edf2f8">—</p>
-          </div>
+        <div class="modal-chart-stats" id="mi-chart-stats">
+          <div class="modal-chart-stat"><div class="lbl">24H High</div><p id="mi-stat-high" class="val" style="color:#22c55e">—</p></div>
+          <div class="modal-chart-stat"><div class="lbl">24H Low</div><p id="mi-stat-low" class="val" style="color:#ef4444">—</p></div>
+          <div class="modal-chart-stat"><div class="lbl">Mkt Cap</div><p id="mi-stat-mcap" class="val" style="color:#edf2f8">—</p></div>
+          <div class="modal-chart-stat"><div class="lbl">Volume 24H</div><p id="mi-stat-vol" class="val" style="color:#edf2f8">—</p></div>
         </div>
-        <!-- Canvas -->
-        <div style="padding:8px 12px 14px;height:180px;position:relative">
-          <canvas id="investChartCanvas" style="width:100%;height:100%"></canvas>
+        <div style="padding:6px 14px 16px;height:200px;position:relative">
+          <canvas id="investChartCanvas"></canvas>
         </div>
       </div>
 
-      <div id="mi-type-info" style="display:none;padding:14px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:14px">
-        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#c9a84c;text-transform:uppercase;margin-bottom:6px">Property Investment</p>
-        <p id="mi-type-desc" style="font-size:13px;color:#c4d0e0">Earn rental income + capital appreciation</p>
+      <!-- Property info -->
+      <div id="mi-type-info" style="display:none;padding:16px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:16px">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#c9a84c;text-transform:uppercase;margin-bottom:6px">Property Investment</p>
+        <p id="mi-type-desc" style="font-size:13px;color:#c4d0e0;line-height:1.6">Earn rental income + capital appreciation</p>
       </div>
+
+      <!-- Amount input -->
       <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase">Investment (USD)</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase">Investment Amount (USD)</label>
           <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#edf2f8">Balance: <span id="mi-bal" style="color:#c9a84c">$0</span></span>
         </div>
-        <div style="position:relative">
-          <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#5a6880;font-family:'JetBrains Mono',monospace;font-size:13px">$</span>
-          <input type="number" id="mi-amount" value="500" min="10" step="10" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px 14px 32px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:20px;outline:none;transition:border-color .2s" oninput="updateModalCalc()" onfocus="this.style.borderColor='rgba(201,168,76,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+        <div style="position:relative;display:flex;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;transition:border-color .2s" onfocusin="this.style.borderColor='rgba(201,168,76,.45)'" onfocusout="this.style.borderColor='rgba(255,255,255,.08)'">
+          <span style="padding:0 16px;color:#5a6880;font-family:'JetBrains Mono',monospace;font-size:14px;border-right:1px solid rgba(255,255,255,.06);align-self:stretch;display:flex;align-items:center">$</span>
+          <input type="number" id="mi-amount" value="500" min="10" step="10" style="flex:1;background:transparent;border:none;padding:16px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:22px;outline:none" oninput="updateModalCalc()">
         </div>
         <div style="display:flex;gap:6px;margin-top:10px">
           <button class="preset-btn" onclick="setModalAmt(100)">$100</button>
@@ -578,29 +648,36 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
           <button class="preset-btn" onclick="setModalAmt(5000)">$5K</button>
         </div>
       </div>
+
+      <!-- Slider -->
       <div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
           <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase">% of Balance</label>
           <span id="mi-pct" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c">0%</span>
         </div>
         <input type="range" id="mi-slider" min="0" max="100" value="0" step="1" oninput="sliderToAmt(this.value)">
       </div>
-      <div style="background:rgba(4,6,8,.6);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px">
-        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase;margin-bottom:12px">Order Summary</p>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">You invest</span><span id="os-invest" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">$0.00</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">You receive</span><span id="os-get" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">—</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">Market price</span><span id="os-mktprice" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">—</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">Platform fee (0.1%)</span><span id="os-fee" style="font-family:'JetBrains Mono',monospace;color:#5a6880">$0.00</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">Slippage est. (0.05%)</span><span id="os-slip" style="font-family:'JetBrains Mono',monospace;color:#5a6880">$0.00</span></div>
-        <div style="height:1px;background:rgba(255,255,255,.06);margin-bottom:8px"></div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:#5a6880;font-size:13px">Total deducted</span><span id="os-total" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#edf2f8">$0.00</span></div>
+
+      <!-- Order summary -->
+      <div style="background:rgba(4,6,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:18px">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase;margin-bottom:14px">Order Summary</p>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">You invest</span><span id="os-invest" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">$0.00</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">You receive</span><span id="os-get" style="font-family:'JetBrains Mono',monospace;color:#c9a84c">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">Market price</span><span id="os-mktprice" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">Platform fee (0.1%)</span><span id="os-fee" style="font-family:'JetBrains Mono',monospace;color:#5a6880">$0.00</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">Slippage est. (0.05%)</span><span id="os-slip" style="font-family:'JetBrains Mono',monospace;color:#5a6880">$0.00</span></div>
+        <div style="height:1px;background:rgba(255,255,255,.06);margin-bottom:10px"></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="color:#5a6880;font-size:13px">Total deducted</span><span id="os-total" style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:#edf2f8">$0.00</span></div>
         <div style="display:flex;justify-content:space-between"><span style="color:#5a6880;font-size:13px">Remaining balance</span><span id="os-remain" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#c9a84c">$0.00</span></div>
       </div>
-      <div id="mi-insuf" style="display:none;padding:12px 16px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:12px;align-items:center;gap:10px">
+
+      <!-- Insufficient -->
+      <div id="mi-insuf" style="display:none;padding:12px 16px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;align-items:center;gap:10px">
         <i class="fas fa-triangle-exclamation" style="color:#ef4444;font-size:13px;flex-shrink:0"></i>
         <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444">Insufficient balance. <button onclick="openDepositModal()" style="background:none;border:none;color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;text-decoration:underline">Add funds →</button></p>
       </div>
-      <button id="mi-confirm" onclick="confirmInvestment()" style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px">
+
+      <button id="mi-confirm" onclick="confirmInvestment()" class="invest-btn" style="padding:16px;font-size:15px;border-radius:16px">
         <span id="mi-label"><i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Confirm Investment</span>
         <div id="mi-spin" style="display:none;width:18px;height:18px;border:2px solid rgba(4,6,8,.2);border-top-color:#040608;border-radius:50%" class="spinner"></div>
       </button>
@@ -609,17 +686,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   </div>
 </div>
 
-<!-- ══ RECEIPT MODAL ══ -->
+<!-- ══ RECEIPT ══ -->
 <div class="receipt-overlay" id="receiptModal">
   <div class="receipt-box">
-    <div style="padding:32px 28px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
-      <div style="width:64px;height:64px;border-radius:50%;background:rgba(34,197,94,.12);border:2px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:ldPulse 2s ease-in-out infinite">
-        <i class="fas fa-check" style="color:#22c55e;font-size:24px"></i>
+    <div style="padding:36px 28px 22px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
+      <div style="width:70px;height:70px;border-radius:50%;background:rgba(34,197,94,.1);border:2px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:ldPulse 2s ease-in-out infinite">
+        <i class="fas fa-check" style="color:#22c55e;font-size:26px"></i>
       </div>
-      <p style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300;margin-bottom:4px">Order Executed</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#edf2f8;font-weight:300;margin-bottom:4px">Order Executed</p>
       <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;letter-spacing:.1em">TRANSACTION CONFIRMED</p>
     </div>
-    <div style="padding:20px 24px">
+    <div style="padding:22px 26px">
       <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:16px;margin-bottom:16px">
         <div class="receipt-row"><span class="lbl">Transaction ID</span><span class="val" id="rc-txid" style="font-size:10px;color:#5a6880">—</span></div>
         <div class="receipt-row"><span class="lbl">Timestamp (UTC)</span><span class="val" id="rc-time">—</span></div>
@@ -630,17 +707,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div class="receipt-row"><span class="lbl">Gross Amount</span><span class="val" id="rc-gross">—</span></div>
         <div class="receipt-row"><span class="lbl">Platform Fee (0.1%)</span><span class="val" id="rc-fee">—</span></div>
         <div class="receipt-row"><span class="lbl">Slippage (0.05%)</span><span class="val" id="rc-slip">—</span></div>
-        <div class="receipt-row" style="border-bottom:none;padding-top:14px">
-          <span class="lbl" style="font-size:13px;color:#edf2f8;font-weight:500">Total Debited</span>
-          <span class="val loss" id="rc-total" style="font-size:14px">—</span>
-        </div>
+        <div class="receipt-row" style="border-bottom:none;padding-top:14px"><span class="lbl" style="font-size:13px;color:#edf2f8;font-weight:500">Total Debited</span><span class="val loss" id="rc-total" style="font-size:14px">—</span></div>
       </div>
       <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:14px;padding:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
         <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em">New Cash Balance</span>
         <span id="rc-newbal" style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#22c55e">$0.00</span>
       </div>
       <div style="display:flex;gap:10px">
-        <button onclick="closeReceiptModal()" style="flex:1;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#5a6880;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer">Close</button>
+        <button onclick="closeReceiptModal()" style="flex:1;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:#5a6880;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer">Close</button>
         <button onclick="closeReceiptModal();openPanel('portfolio')" style="flex:1;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">View Portfolio</button>
       </div>
     </div>
@@ -650,32 +724,29 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <!-- ══ DEPOSIT MODAL ══ -->
 <div class="modal-overlay" id="depositModal">
   <div class="modal-box" style="max-width:400px">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8;font-weight:300">Deposit <em style="font-style:italic;color:#c9a84c">Funds</em></h3>
-      <button onclick="closeDepositModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:26px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300">Deposit <em style="font-style:italic;color:#c9a84c">Funds</em></h3>
+      <button onclick="closeDepositModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
     <div style="padding:24px">
-      <p style="font-size:13px;color:#8c9db5;margin-bottom:16px">Select an amount to add to your account (demo):</p>
+      <p style="font-size:13px;color:#8c9db5;margin-bottom:18px">Select an amount to add to your account:</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <button onclick="makeDeposit(1000)" style="padding:16px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'"><p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">$1,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Standard</p></button>
-        <button onclick="makeDeposit(5000)" style="padding:16px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'"><p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">$5,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Plus</p></button>
-        <button onclick="makeDeposit(10000)" style="padding:16px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.25);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s"><p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#c9a84c">$10,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c;margin-top:4px">Premium</p></button>
-        <button onclick="makeDeposit(50000)" style="padding:16px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'"><p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">$50,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Elite</p></button>
+        <button onclick="makeDeposit(1000)" style="padding:18px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:16px;cursor:pointer;text-align:center;transition:all .25s" onmouseover="this.style.borderColor='rgba(201,168,76,.35)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)';this.style.transform='none'"><p style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8">$1,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Standard</p></button>
+        <button onclick="makeDeposit(5000)" style="padding:18px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:16px;cursor:pointer;text-align:center;transition:all .25s" onmouseover="this.style.borderColor='rgba(201,168,76,.35)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)';this.style.transform='none'"><p style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8">$5,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Plus</p></button>
+        <button onclick="makeDeposit(10000)" style="padding:18px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.25);border-radius:16px;cursor:pointer;text-align:center;transition:all .25s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'"><p style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#c9a84c">$10,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c;margin-top:4px">Premium</p></button>
+        <button onclick="makeDeposit(50000)" style="padding:18px;background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:16px;cursor:pointer;text-align:center;transition:all .25s" onmouseover="this.style.borderColor='rgba(201,168,76,.35)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)';this.style.transform='none'"><p style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8">$50,000</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;margin-top:4px">Elite</p></button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══ ADMIN OVERLAY ══ -->
+<!-- ══ ADMIN ══ -->
 <div class="admin-overlay" id="adminOverlay">
   <div style="flex:1;overflow-y:auto;padding:28px;max-width:1200px;margin:0 auto;width:100%">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(201,168,76,.2)">
       <div style="display:flex;align-items:center;gap:16px">
         <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:14px">A</div>
-        <div>
-          <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">Admin <em style="color:#c9a84c;font-style:italic">Panel</em></p>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.1em">RESTRICTED ACCESS</p>
-        </div>
+        <div><p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">Admin <em style="color:#c9a84c;font-style:italic">Panel</em></p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.1em">RESTRICTED ACCESS</p></div>
       </div>
       <button onclick="closeAdminPanel()" style="padding:8px 18px;border-radius:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer">✕ Close</button>
     </div>
@@ -685,13 +756,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Holdings</p><p id="adm-holdingCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8">0</p></div>
       <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Transactions</p><p id="adm-txCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8">0</p></div>
     </div>
-    <!-- ASSET PRICE EDITOR -->
     <div style="background:#111820;border:1px solid rgba(201,168,76,.2);border-radius:16px;overflow:hidden;margin-bottom:24px">
       <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#c9a84c;text-transform:uppercase">Live Asset Prices</p>
-          <p style="font-size:12px;color:#5a6880;margin-top:3px">Changes push to Supabase — all pages update instantly via realtime</p>
-        </div>
+        <div><p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#c9a84c;text-transform:uppercase">Live Asset Prices</p><p style="font-size:12px;color:#5a6880;margin-top:3px">Changes sync instantly to all pages via Supabase realtime</p></div>
         <div style="display:flex;gap:8px">
           <button onclick="adminPriceTabShow('crypto')" id="apt-crypto" style="padding:5px 12px;border-radius:8px;background:rgba(201,168,76,.14);border:1px solid rgba(201,168,76,.3);color:#c9a84c;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer">Crypto</button>
           <button onclick="adminPriceTabShow('stocks')" id="apt-stocks" style="padding:5px 12px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#5a6880;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer">Stocks</button>
@@ -699,19 +766,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       </div>
       <div id="admin-price-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:rgba(255,255,255,.04)"></div>
     </div>
-    <!-- Users table -->
     <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden">
       <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:12px;align-items:center">
         <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase;flex:1">User Accounts</p>
         <input type="text" placeholder="Search users…" oninput="adminFilterUsers(this.value)" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 14px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
         <button onclick="adminLoadUsers()" style="padding:9px 16px;border-radius:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:#c9a84c;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer">↻ Refresh</button>
       </div>
-      <div style="overflow-x:auto">
-        <table class="admin-tbl">
-          <thead><tr><th>Name</th><th>Email</th><th>Cash Balance</th><th>Joined</th><th>Actions</th></tr></thead>
-          <tbody id="adminUsersTbody"></tbody>
-        </table>
-      </div>
+      <div style="overflow-x:auto"><table class="admin-tbl"><thead><tr><th>Name</th><th>Email</th><th>Cash Balance</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="adminUsersTbody"></tbody></table></div>
     </div>
     <div id="adminCashEdit" style="display:none;margin-top:16px;background:#111820;border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:20px;flex-direction:column;gap:12px">
       <p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8">Edit balance for <em style="color:#c9a84c;font-style:italic" id="adminEditName">—</em></p>
@@ -726,12 +787,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   </div>
 </div>
 
-<!-- Toast -->
+<!-- TOAST -->
 <div id="toast">
   <div id="toast-icon"></div>
   <div><p id="toast-title" style="font-size:13px;font-weight:600;color:#edf2f8"></p><p id="toast-sub" style="font-size:11px;color:#5a6880;margin-top:2px"></p></div>
 </div>
-
 <div class="k-hint" id="kHint">↑ ↑ ↓ ↓ ← → ← → B A · ADMIN</div>
 
 <script>
@@ -744,43 +804,49 @@ let authUser=null,profile=null,myHoldings=[],modalAsset=null,liveFilter='all';
 let allTransactions=[],txFilter='all',adminUsers=[];
 let activePanelTab='portfolio';
 let adminPriceTab='crypto';
-// ─── Chart state for invest modal ───
 let investChartInstance=null;
 let investChartPeriod='1D';
+let _invPriceUpdatedAt = {}; // sym → ms timestamp of last Supabase push
 
-// ── ASSET DEFINITIONS ──────────────────────────────────────────────────────
+// ── ASSET DEFINITIONS ──────────────────────────────────────────────────
 const CRYPTO=[
-  {sym:'BTC',name:'Bitcoin',cat:'crypto',icon:'fab fa-bitcoin',color:'#f7931a',price:67430,chg:+2.8,desc:'Trading value, can be higher or lower than actual price'},
-  {sym:'ETH',name:'Ethereum',cat:'crypto',icon:'fab fa-ethereum',color:'#627eea',price:3280,chg:+1.4,desc:'Smart contract platform powering DeFi'},
-  {sym:'SOL',name:'Solana',cat:'crypto',icon:'fas fa-sun',color:'#9945ff',price:188,chg:+3.1,desc:'High-speed Layer-1 blockchain'},
-  {sym:'BNB',name:'BNB Chain',cat:'crypto',icon:'fas fa-coins',color:'#f3ba2f',price:612,chg:-0.9,desc:'Binance ecosystem utility token'},
-  {sym:'XRP',name:'Ripple',cat:'crypto',icon:'fas fa-water',color:'#00aae4',price:0.72,chg:-1.2,desc:'Cross-border payment settlement'},
-  {sym:'ADA',name:'Cardano',cat:'crypto',icon:'fas fa-circle-nodes',color:'#3cc8c8',price:0.48,chg:+0.8,desc:'Research-driven proof-of-stake chain'},
+  {sym:'BTC',name:'Bitcoin',cat:'crypto',icon:'fab fa-bitcoin',color:'#f7931a',price:67430,chg:+2.8,desc:'The original decentralised digital currency — digital gold.'},
+  {sym:'ETH',name:'Ethereum',cat:'crypto',icon:'fab fa-ethereum',color:'#627eea',price:3280,chg:+1.4,desc:'Smart contract platform powering the decentralised web.'},
+  {sym:'SOL',name:'Solana',cat:'crypto',icon:'fas fa-sun',color:'#9945ff',price:188,chg:+3.1,desc:'High-speed Layer-1 blockchain built for scale.'},
+  {sym:'BNB',name:'BNB Chain',cat:'crypto',icon:'fas fa-coins',color:'#f3ba2f',price:612,chg:-0.9,desc:'Binance ecosystem utility token and DeFi hub.'},
+  {sym:'XRP',name:'Ripple',cat:'crypto',icon:'fas fa-water',color:'#00aae4',price:0.72,chg:-1.2,desc:'Institutional cross-border payment settlement.'},
+  {sym:'ADA',name:'Cardano',cat:'crypto',icon:'fas fa-circle-nodes',color:'#3cc8c8',price:0.48,chg:+0.8,desc:'Research-driven proof-of-stake smart contract chain.'},
 ];
 const STOCKS=[
-  {sym:'TSLA',name:'Tesla Inc.',cat:'stocks',icon:'fas fa-car',color:'#e31937',price:248.50,chg:-0.6,desc:'EV manufacturer and energy company'},
-  {sym:'AAPL',name:'Apple Inc.',cat:'stocks',icon:'fab fa-apple',color:'#a2aaad',price:189.30,chg:+0.4,desc:"World's most valuable tech brand"},
-  {sym:'NVDA',name:'NVIDIA',cat:'stocks',icon:'fas fa-microchip',color:'#76b900',price:875.20,chg:+2.1,desc:'AI chip leader powering the GPU revolution'},
-  {sym:'MSFT',name:'Microsoft',cat:'stocks',icon:'fab fa-windows',color:'#00a4ef',price:412.70,chg:+0.8,desc:'Cloud, AI and enterprise software'},
-  {sym:'AMZN',name:'Amazon',cat:'stocks',icon:'fab fa-amazon',color:'#ff9900',price:195.50,chg:-0.3,desc:'Global e-commerce and AWS cloud'},
-  {sym:'GOOGL',name:'Alphabet',cat:'stocks',icon:'fab fa-google',color:'#4285f4',price:178.30,chg:+0.6,desc:'Search, YouTube, and Google Cloud'},
+  {sym:'TSLA',name:'Tesla Inc.',cat:'stocks',icon:'fas fa-car',color:'#e31937',price:248.50,chg:-0.6,desc:'EV manufacturer, energy storage and autonomous vehicles.'},
+  {sym:'AAPL',name:'Apple Inc.',cat:'stocks',icon:'fab fa-apple',color:'#a2aaad',price:189.30,chg:+0.4,desc:"World's most valuable technology brand by market cap."},
+  {sym:'NVDA',name:'NVIDIA Corp.',cat:'stocks',icon:'fas fa-microchip',color:'#76b900',price:875.20,chg:+2.1,desc:'AI chip leader powering the global GPU revolution.'},
+  {sym:'MSFT',name:'Microsoft',cat:'stocks',icon:'fab fa-windows',color:'#00a4ef',price:412.70,chg:+0.8,desc:'Cloud computing, AI and enterprise software.'},
+  {sym:'AMZN',name:'Amazon',cat:'stocks',icon:'fab fa-amazon',color:'#ff9900',price:195.50,chg:-0.3,desc:'Global e-commerce giant and AWS cloud leader.'},
+  {sym:'GOOGL',name:'Alphabet Inc.',cat:'stocks',icon:'fab fa-google',color:'#4285f4',price:178.30,chg:+0.6,desc:'Google Search, YouTube, Cloud and Waymo.'},
 ];
+
+// Property images — real Unsplash photos (free, no auth)
 const PROPERTY=[
-  {sym:'LOND',name:'The Shard Tower Suite',cat:'property',icon:'fas fa-building',color:'#c9a84c',price:500,yield_:9.2,location:'Southwark, London SE1',type:'Commercial',minEntry:500,valuation:'$2.4M',funded:62},
-  {sym:'DXB',name:'Burj Khalifa Residences',cat:'property',icon:'fas fa-city',color:'#e8c96a',price:1000,yield_:11.4,location:'Downtown Dubai, UAE',type:'Hospitality',minEntry:1000,valuation:'$5.1M',funded:48},
-  {sym:'NYC',name:'One Manhattan West',cat:'property',icon:'fas fa-building-columns',color:'#a0c0e8',price:500,yield_:7.8,location:'Hudson Yards, NY 10001',type:'Residential',minEntry:500,valuation:'$8.7M',funded:91},
-  {sym:'DXB2',name:'Palm Jumeirah Villa',cat:'property',icon:'fas fa-umbrella-beach',color:'#f3ba2f',price:2000,yield_:13.5,location:'Palm Jumeirah, Dubai',type:'Luxury Villa',minEntry:2000,valuation:'$12.1M',funded:35},
-  {sym:'SGP',name:'Marina Bay Tower',cat:'property',icon:'fas fa-water',color:'#3cc8c8',price:500,yield_:8.9,location:'Marina Bay, Singapore',type:'Commercial',minEntry:500,valuation:'$3.8M',funded:60},
-  {sym:'PAR',name:'Champs-Élysées Office',cat:'property',icon:'fas fa-tower-broadcast',color:'#627eea',price:1000,yield_:10.2,location:'8th Arrondissement, Paris',type:'Office',minEntry:1000,valuation:'$6.2M',funded:55},
+  {sym:'LOND',name:'The Shard Tower Suite',cat:'property',icon:'fas fa-building',color:'#c9a84c',price:500,yield_:9.2,location:'Southwark, London SE1',type:'Commercial',minEntry:500,valuation:'$2.4M',funded:62,
+   img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&q=80',imgAlt:'London skyline The Shard'},
+  {sym:'DXB',name:'Burj Khalifa Residences',cat:'property',icon:'fas fa-city',color:'#e8c96a',price:1000,yield_:11.4,location:'Downtown Dubai, UAE',type:'Hospitality',minEntry:1000,valuation:'$5.1M',funded:48,
+   img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80',imgAlt:'Dubai skyline Burj Khalifa'},
+  {sym:'NYC',name:'One Manhattan West',cat:'property',icon:'fas fa-building-columns',color:'#a0c0e8',price:500,yield_:7.8,location:'Hudson Yards, NY 10001',type:'Residential',minEntry:500,valuation:'$8.7M',funded:91,
+   img:'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=600&q=80',imgAlt:'New York City skyline Manhattan'},
+  {sym:'DXB2',name:'Palm Jumeirah Villa',cat:'property',icon:'fas fa-umbrella-beach',color:'#f3ba2f',price:2000,yield_:13.5,location:'Palm Jumeirah, Dubai',type:'Luxury Villa',minEntry:2000,valuation:'$12.1M',funded:35,
+   img:'./image/palm.jpg',imgAlt:'Palm Jumeirah Dubai luxury villa'},
+  {sym:'SGP',name:'Marina Bay Tower',cat:'property',icon:'fas fa-water',color:'#3cc8c8',price:500,yield_:8.9,location:'Marina Bay, Singapore',type:'Commercial',minEntry:500,valuation:'$3.8M',funded:60,
+   img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&q=80',imgAlt:'Marina Bay Sands Singapore'},
+  {sym:'PAR',name:'Champs-Élysées Office',cat:'property',icon:'fas fa-tower-broadcast',color:'#627eea',price:1000,yield_:10.2,location:'8th Arrondissement, Paris',type:'Office',minEntry:1000,valuation:'$6.2M',funded:55,
+   img:'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80',imgAlt:'Paris Eiffel Tower Champs Elysees'},
 ];
 const ALL_ASSETS=[...CRYPTO,...STOCKS,...PROPERTY];
-
-// ── MARKET CAP MULTIPLIERS (for realistic chart stats) ─────────────────────
 const MCAP={BTC:1920e9,ETH:395e9,SOL:82e9,BNB:90e9,XRP:38e9,ADA:17e9,TSLA:790e9,AAPL:2900e9,NVDA:2160e9,MSFT:3070e9,AMZN:2050e9,GOOGL:2230e9};
 
-// ── BOOT ──────────────────────────────────────────────────────────────────
+// ── BOOT ──────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded',async()=>{
-  const loaderDone=new Promise(r=>setTimeout(r,1800));
+  const loaderDone=new Promise(r=>setTimeout(r,1900));
   const{data:{session}}=await sb.auth.getSession();
   await loaderDone;
   document.getElementById('aurum-loader').classList.add('out');
@@ -808,91 +874,93 @@ window.addEventListener('DOMContentLoaded',async()=>{
       profile={...profile,...row};refreshUI();
     }).subscribe();
 
-  // ── Real-time price sync from dashboard admin ──────────────────────────
+  // ── REALTIME: Admin price changes sync here instantly ──
   sb.channel('invest-asset-prices')
     .on('postgres_changes',{event:'*',schema:'public',table:'asset_prices'},({new:row})=>{
       if(!row||!row.sym)return;
       applyPriceUpdate(row.sym,Number(row.price),Number(row.chg||0));
     }).subscribe();
 
-  setInterval(tickPrices,2200);
+  setInterval(tickPrices,3000);
 });
 
-// ── PRICE DB ──────────────────────────────────────────────────────────────
+// ── PRICE DB ────────────────────────────────────────────────────────────
 async function loadPricesFromDB(){
   try{
-    const{data,error}=await sb.from('asset_prices').select('*');
-    if(error||!data)return;
+    const{data}=await sb.from('asset_prices').select('*');
+    if(!data)return;
     data.forEach(row=>{
-      const asset=ALL_ASSETS.find(a=>a.sym===row.sym);
-      if(asset){asset.price=Number(row.price);if(row.chg!==undefined)asset.chg=Number(row.chg);}
+      const a=ALL_ASSETS.find(x=>x.sym===row.sym);
+      if(a){a.price=Number(row.price);if(row.chg!==undefined)a.chg=Number(row.chg);}
     });
   }catch(e){}
 }
 
+// ── APPLY PRICE UPDATE (from realtime or admin push) ──────────────────
 function applyPriceUpdate(sym,newPrice,newChg){
-  const asset=ALL_ASSETS.find(a=>a.sym===sym);
-  if(!asset)return;
+  const asset=ALL_ASSETS.find(a=>a.sym===sym);if(!asset)return;
   const oldPrice=asset.price;
   asset.price=newPrice;
+  _invPriceUpdatedAt[sym] = Date.now();
   if(newChg!==undefined)asset.chg=newChg;
 
-  // Flash on card
-  const prEl=document.getElementById('cc-pr-'+sym)||document.getElementById('sc-pr-'+sym);
+  // Update price display on card
+  const prEl=document.getElementById('card-pr-'+sym);
   if(prEl){
     prEl.textContent='$'+fmtPrice(newPrice);
     prEl.classList.remove('flash-up','flash-down');
     void prEl.offsetWidth;
     prEl.classList.add(newPrice>=oldPrice?'flash-up':'flash-down');
-    setTimeout(()=>prEl.classList.remove('flash-up','flash-down'),1000);
+    setTimeout(()=>prEl.classList.remove('flash-up','flash-down'),1400);
   }
-  const chgEl=document.getElementById('cc-chg-'+sym)||document.getElementById('sc-chg-'+sym);
+  // Update chg badge
+  const chgEl=document.getElementById('card-chg-'+sym);
   if(chgEl){
     const up=newChg>=0;
     chgEl.textContent=(up?'+':'')+newChg.toFixed(2)+'%';
     chgEl.style.background=up?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)';
     chgEl.style.color=up?'#22c55e':'#ef4444';
+    chgEl.style.borderColor=up?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)';
   }
-
-  // Update invest modal if open for this asset
+  // Update invest modal if open for this sym
   if(modalAsset?.sym===sym){
-    setTxt('mi-price','$'+fmtPrice(newPrice));
+    const priceEl=document.getElementById('mi-price');
+    if(priceEl){priceEl.textContent='$'+fmtPrice(newPrice);priceEl.classList.remove('flash-up','flash-down');void priceEl.offsetWidth;priceEl.classList.add(newPrice>=oldPrice?'flash-up':'flash-down');setTimeout(()=>priceEl.classList.remove('flash-up','flash-down'),1400);}
     const chEl=document.getElementById('mi-chg');
-    if(chEl){chEl.textContent=(newChg>=0?'+':'')+newChg.toFixed(2)+'%';chEl.style.color=newChg>=0?'#22c55e':'#ef4444';}
+    if(chEl){chEl.textContent=(newChg>=0?'+':'')+newChg.toFixed(2)+'%';chEl.style.color=newChg>=0?'#22c55e':'#ef4444';chEl.style.background=newChg>=0?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)';}
     updateModalCalc();
-    // Refresh chart with new price
+    // Re-render chart with new price
     renderInvestChart(sym,investChartPeriod);
+    // Update chart stats
+    setTxt('mi-stat-high','$'+fmtPrice(newPrice*1.032));
+    setTxt('mi-stat-low','$'+fmtPrice(newPrice*0.971));
   }
-
   renderPortfolioPanel();
+  // Recalc portfolio val
   const liveMap={};ALL_ASSETS.forEach(a=>liveMap[a.sym]=a.price);
-  const portVal=myHoldings.reduce((s,h)=>s+Number(h.quantity)*(liveMap[h.symbol]||Number(h.avg_buy_price)),0);
-  setTxt('portVal','$'+fmtUSD(portVal));
-
+  const pv=myHoldings.reduce((s,h)=>s+Number(h.quantity)*(liveMap[h.symbol]||Number(h.avg_buy_price)),0);
+  setTxt('portVal','$'+fmtUSD(pv));
+  // Toast only for significant moves
   const pctMove=Math.abs((newPrice-oldPrice)/oldPrice*100);
-  if(pctMove>2)showToast(`${sym} ${newPrice>oldPrice?'▲':'▼'} ${pctMove.toFixed(1)}%`,'Price pushed by admin','info');
+  if(pctMove>1.5)showToast(`${sym} ${newPrice>oldPrice?'▲':'▼'} ${pctMove.toFixed(1)}%`,`New price: $${fmtPrice(newPrice)}`,'info');
 }
 
-// ── ADMIN: Save price to Supabase (triggers realtime everywhere) ──────────
+// ── ADMIN PRICE PUSH ────────────────────────────────────────────────────
 async function adminSavePrice(sym,price,chg){
   const{error}=await sb.from('asset_prices').upsert({sym,price:Number(price),chg:Number(chg),updated_at:new Date().toISOString()},{onConflict:'sym'});
   if(error){showToast('Price save failed',error.message,'error');return false;}
   return true;
 }
-
-// ── ADMIN PRICE TABS ──────────────────────────────────────────────────────
 function adminPriceTabShow(tab){
   adminPriceTab=tab;
   ['crypto','stocks'].forEach(t=>{
-    const btn=document.getElementById('apt-'+t);
-    if(!btn)return;
+    const btn=document.getElementById('apt-'+t);if(!btn)return;
     btn.style.background=t===tab?'rgba(201,168,76,.14)':'rgba(255,255,255,.04)';
     btn.style.borderColor=t===tab?'rgba(201,168,76,.3)':'rgba(255,255,255,.08)';
     btn.style.color=t===tab?'#c9a84c':'#5a6880';
   });
   adminRenderPriceGrid();
 }
-
 function adminRenderPriceGrid(){
   const assets=adminPriceTab==='crypto'?CRYPTO:STOCKS;
   document.getElementById('admin-price-grid').innerHTML=assets.map(a=>{
@@ -906,91 +974,62 @@ function adminRenderPriceGrid(){
       <div style="display:flex;gap:8px;align-items:center">
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">$</span>
         <input id="adm-price-${a.sym}" type="number" value="${a.price.toFixed(a.price>=1?2:6)}" step="${a.price>=1000?10:a.price>=1?0.01:0.0001}"
-          style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s"
-          onfocus="this.style.borderColor='rgba(201,168,76,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'"
+          style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:8px 10px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s"
+          onfocus="this.style.borderColor='rgba(201,168,76,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.07)'"
           onkeydown="if(event.key==='Enter')adminPushPrice('${a.sym}')">
         <input id="adm-chg-${a.sym}" type="number" value="${a.chg.toFixed(2)}" step="0.01" placeholder="chg%"
-          style="width:72px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s"
-          onfocus="this.style.borderColor='rgba(201,168,76,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'"
+          style="width:72px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:8px 10px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s"
+          onfocus="this.style.borderColor='rgba(201,168,76,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.07)'"
           onkeydown="if(event.key==='Enter')adminPushPrice('${a.sym}')">
-        <button onclick="adminPushPrice('${a.sym}')"
-          style="padding:8px 14px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);border:none;color:#040608;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">
-          Push
-        </button>
+        <button onclick="adminPushPrice('${a.sym}')" style="padding:8px 14px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);border:none;color:#040608;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">Push</button>
       </div>
     </div>`;
   }).join('');
 }
-
 async function adminPushPrice(sym){
   const priceEl=document.getElementById('adm-price-'+sym);
   const chgEl=document.getElementById('adm-chg-'+sym);
   if(!priceEl)return;
-  const price=parseFloat(priceEl.value);
-  const chg=parseFloat(chgEl?.value||0);
+  const price=parseFloat(priceEl.value);const chg=parseFloat(chgEl?.value||0);
   if(isNaN(price)||price<=0){showToast('Invalid price','Enter a valid number','error');return;}
   const btn=priceEl.parentElement.querySelector('button');
   if(btn){btn.textContent='…';btn.disabled=true;}
   const ok=await adminSavePrice(sym,price,chg);
   if(btn){btn.textContent='Push';btn.disabled=false;}
-  if(ok){
-    applyPriceUpdate(sym,price,chg);
-    showToast('Price updated',`${sym} → $${fmtPrice(price)} (${chg>=0?'+':''}${chg.toFixed(2)}%)`,'success');
-    setTimeout(adminRenderPriceGrid,200);
-  }
+  if(ok){applyPriceUpdate(sym,price,chg);showToast('Price updated',`${sym} → $${fmtPrice(price)} (${chg>=0?'+':''}${chg.toFixed(2)}%)`,'success');setTimeout(adminRenderPriceGrid,200);}
 }
 
-// ── DATA ──────────────────────────────────────────────────────────────────
-async function loadProfile(){
-  const{data,error}=await sb.from('profiles').select('*').eq('id',authUser.id).single();
-  if(!error){profile=data;refreshUI();}
-}
+// ── DATA LOAD ────────────────────────────────────────────────────────────
+async function loadProfile(){const{data,error}=await sb.from('profiles').select('*').eq('id',authUser.id).single();if(!error){profile=data;refreshUI();}}
 async function loadPortfolioStats(){
   const{data:h}=await sb.from('holdings').select('*').eq('user_id',authUser.id);
   myHoldings=h||[];
   const{count:txc}=await sb.from('transactions').select('id',{count:'exact',head:true}).eq('user_id',authUser.id);
   const liveMap={};ALL_ASSETS.forEach(a=>liveMap[a.sym]=a.price);
-  const portVal=myHoldings.reduce((s,h)=>s+Number(h.quantity)*(liveMap[h.symbol]||Number(h.avg_buy_price)),0);
-  setTxt('portVal','$'+fmtUSD(portVal));setTxt('posCount',myHoldings.length);setTxt('txCount',txc||0);
+  const pv=myHoldings.reduce((s,h)=>s+Number(h.quantity)*(liveMap[h.symbol]||Number(h.avg_buy_price)),0);
+  setTxt('portVal','$'+fmtUSD(pv));setTxt('posCount',myHoldings.length);setTxt('txCount',txc||0);
   renderPortfolioPanel();
 }
-async function loadTransactions(){
-  const{data}=await sb.from('transactions').select('*').eq('user_id',authUser.id).order('created_at',{ascending:false}).limit(100);
-  allTransactions=data||[];renderTxPanel();
-}
+async function loadTransactions(){const{data}=await sb.from('transactions').select('*').eq('user_id',authUser.id).order('created_at',{ascending:false}).limit(100);allTransactions=data||[];renderTxPanel();}
 
-// FIXED: refreshUI now correctly targets inv-cashBal and headerCash
 function refreshUI(){
   if(!profile)return;
   const cash=Number(profile.cash||0);
   const name=((profile.first_name||'')+' '+(profile.last_name||'')).trim()||'User';
   const ini=profile.avatar_initials||'?';
-  setTxt('inv-cashBal','$'+fmtUSD(cash));
-  setTxt('headerCash','$'+fmtUSD(cash));
-  setTxt('mi-bal','$'+fmtUSD(cash));
-  setTxt('sbCash','$'+fmtUSD(cash)+' available');
-  setTxt('sbName',name);
+  setTxt('inv-cashBal','$'+fmtUSD(cash));setTxt('headerCash','$'+fmtUSD(cash));
+  setTxt('mi-bal','$'+fmtUSD(cash));setTxt('sbCash','$'+fmtUSD(cash)+' available');setTxt('sbName',name);
   ['sbAvatar','mobAvatarWrap'].forEach(id=>setTxt(id,ini));
 }
 function showApp(){
   document.getElementById('appShell').style.display='block';
-  if(window.innerWidth>=1024){
-    document.getElementById('sidebar').style.display='flex';
-    document.getElementById('mainContent').style.marginLeft='240px';
-  }
+  if(window.innerWidth>=1024){document.getElementById('sidebar').style.display='flex';document.getElementById('mainContent').style.marginLeft='240px';}
 }
 async function doSignOut(){await sb.auth.signOut();window.location.href='signup.html';}
 
-// ── SIDE PANEL ────────────────────────────────────────────────────────────
-function openPanel(tab){
-  document.getElementById('panelBackdrop').classList.add('open');
-  document.getElementById('sidePanel').classList.add('open');
-  switchPanelTab(tab||activePanelTab);
-}
-function closePanel(){
-  document.getElementById('panelBackdrop').classList.remove('open');
-  document.getElementById('sidePanel').classList.remove('open');
-}
+// ── PANEL ────────────────────────────────────────────────────────────────
+function openPanel(tab){document.getElementById('panelBackdrop').classList.add('open');document.getElementById('sidePanel').classList.add('open');switchPanelTab(tab||activePanelTab);}
+function closePanel(){document.getElementById('panelBackdrop').classList.remove('open');document.getElementById('sidePanel').classList.remove('open');}
 function switchPanelTab(tab){
   activePanelTab=tab;
   document.getElementById('pane-portfolio').style.display=tab==='portfolio'?'block':'none';
@@ -999,93 +1038,69 @@ function switchPanelTab(tab){
   document.getElementById('ptab-transactions').classList.toggle('on',tab==='transactions');
 }
 
-// ── PORTFOLIO PANEL ───────────────────────────────────────────────────────
+// ── PORTFOLIO PANEL ──────────────────────────────────────────────────────
 function renderPortfolioPanel(){
   if(!myHoldings.length){
     setTxt('pf-total','$0.00');setTxt('pf-pnl-badge','+$0.00');setTxt('pf-pos-badge','0 positions');
     document.getElementById('holdings-list').innerHTML='<div style="padding:32px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#5a6880">No holdings yet.<br><button onclick="closePanel()" style="margin-top:10px;color:#c9a84c;background:none;border:none;cursor:pointer;font-family:\'JetBrains Mono\',monospace;font-size:11px">Browse assets →</button></div>';
-    document.getElementById('alloc-bar').innerHTML='<div style="flex:1;background:rgba(255,255,255,.06);border-radius:8px"></div>';
-    document.getElementById('alloc-legend').innerHTML='';
-    return;
+    document.getElementById('alloc-bar').innerHTML='<div style="flex:1;background:rgba(255,255,255,.06);border-radius:6px"></div>';
+    document.getElementById('alloc-legend').innerHTML='';return;
   }
   const liveMap={};ALL_ASSETS.forEach(a=>liveMap[a.sym]=a.price);
   let total=0,cryptoV=0,stocksV=0,propV=0,pnl=0;
   myHoldings.forEach(h=>{
-    const cur=liveMap[h.symbol]||Number(h.avg_buy_price);
-    const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);
+    const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);
     total+=val;pnl+=val-cost;
     const asset=ALL_ASSETS.find(a=>a.sym===h.symbol);
     if(asset?.cat==='crypto')cryptoV+=val;else if(asset?.cat==='stocks')stocksV+=val;else propV+=val;
   });
   setTxt('pf-total','$'+fmtUSD(total));
   const pnlEl=document.getElementById('pf-pnl-badge');
-  pnlEl.textContent=(pnl>=0?'+':'')+' $'+fmtUSD(Math.abs(pnl));
-  pnlEl.style.color=pnl>=0?'#22c55e':'#ef4444';
-  pnlEl.style.background=pnl>=0?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)';
+  pnlEl.textContent=(pnl>=0?'+':'')+' $'+fmtUSD(Math.abs(pnl));pnlEl.style.color=pnl>=0?'#22c55e':'#ef4444';pnlEl.style.background=pnl>=0?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)';
   setTxt('pf-pos-badge',myHoldings.length+' position'+(myHoldings.length!==1?'s':''));
-  const segments=[];
-  if(cryptoV>0)segments.push({label:'Crypto',val:cryptoV,color:'#f7931a'});
-  if(stocksV>0)segments.push({label:'Stocks',val:stocksV,color:'#4285f4'});
-  if(propV>0)segments.push({label:'Real Estate',val:propV,color:'#c9a84c'});
-  document.getElementById('alloc-bar').innerHTML=segments.map(s=>`<div style="flex:${s.val};background:${s.color};border-radius:4px;min-width:4px"></div>`).join('')||'<div style="flex:1;background:rgba(255,255,255,.06);border-radius:8px"></div>';
-  document.getElementById('alloc-legend').innerHTML=segments.map(s=>{
-    const pct=total>0?((s.val/total)*100).toFixed(1):0;
-    return`<span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880"><span style="width:8px;height:8px;border-radius:2px;background:${s.color};flex-shrink:0"></span>${s.label} ${pct}%</span>`;
-  }).join('');
+  const segs=[];if(cryptoV>0)segs.push({label:'Crypto',val:cryptoV,color:'#f7931a'});if(stocksV>0)segs.push({label:'Stocks',val:stocksV,color:'#4285f4'});if(propV>0)segs.push({label:'Real Estate',val:propV,color:'#c9a84c'});
+  document.getElementById('alloc-bar').innerHTML=segs.map(s=>`<div style="flex:${s.val};background:${s.color};border-radius:4px;min-width:4px"></div>`).join('')||'<div style="flex:1;background:rgba(255,255,255,.06);border-radius:6px"></div>';
+  document.getElementById('alloc-legend').innerHTML=segs.map(s=>`<span style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880"><span style="width:8px;height:8px;border-radius:2px;background:${s.color};flex-shrink:0"></span>${s.label} ${total>0?((s.val/total)*100).toFixed(1):0}%</span>`).join('');
   document.getElementById('holdings-list').innerHTML=myHoldings.map(h=>{
-    const cur=liveMap[h.symbol]||Number(h.avg_buy_price);
-    const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);
-    const chg=cost>0?((val-cost)/cost*100):0;const up=chg>=0;
+    const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);const chg=cost>0?((val-cost)/cost*100):0;const up=chg>=0;
     const asset=ALL_ASSETS.find(a=>a.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};
     return`<div class="holding-row" onclick="openInvestModal('${h.symbol}')">
       <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
         <div style="width:36px;height:36px;border-radius:12px;background:${asset.color}18;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${asset.icon}"></i></div>
         <div style="min-width:0"><p style="font-weight:600;color:#edf2f8;font-size:13px">${h.symbol}</p><p style="color:#5a6880;font-size:11px;font-family:'JetBrains Mono',monospace">${Number(h.quantity)<1?Number(h.quantity).toFixed(6):Number(h.quantity).toFixed(4)} units</p></div>
       </div>
-      <div style="text-align:right">
-        <p style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#edf2f8">$${fmtUSD(val)}</p>
-        <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${up?'#22c55e':'#ef4444'}">${up?'+':''}${chg.toFixed(2)}%</p>
-      </div>
+      <div style="text-align:right"><p style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#edf2f8">$${fmtUSD(val)}</p><p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${up?'#22c55e':'#ef4444'}">${up?'+':''}${chg.toFixed(2)}%</p></div>
     </div>`;
   }).join('');
 }
 
-// ── TX PANEL ──────────────────────────────────────────────────────────────
-function filterTx(f){
-  txFilter=f;
-  ['all','buy','deposit','swap'].forEach(k=>document.getElementById('txf-'+k)?.classList.toggle('on',k===f));
-  renderTxPanel();
-}
+// ── TX PANEL ─────────────────────────────────────────────────────────────
+function filterTx(f){txFilter=f;['all','buy','deposit','swap'].forEach(k=>document.getElementById('txf-'+k)?.classList.toggle('on',k===f));renderTxPanel();}
 function renderTxPanel(){
   const filtered=txFilter==='all'?allTransactions:allTransactions.filter(t=>t.type===txFilter);
   if(!filtered.length){document.getElementById('tx-list-panel').innerHTML='<div style="padding:32px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#5a6880">No transactions found</div>';return;}
-  const typeConfig={buy:{icon:'fa-arrow-trend-up',color:'#22c55e',bg:'rgba(34,197,94,.1)',label:'Buy'},deposit:{icon:'fa-arrow-down-to-line',color:'#c9a84c',bg:'rgba(201,168,76,.1)',label:'Deposit'},swap:{icon:'fa-arrow-right-arrow-left',color:'#627eea',bg:'rgba(98,126,234,.1)',label:'Swap'},sell:{icon:'fa-arrow-trend-down',color:'#ef4444',bg:'rgba(239,68,68,.1)',label:'Sell'}};
+  const cfg={buy:{icon:'fa-arrow-trend-up',color:'#22c55e',bg:'rgba(34,197,94,.1)',label:'Buy'},deposit:{icon:'fa-arrow-down-to-line',color:'#c9a84c',bg:'rgba(201,168,76,.1)',label:'Deposit'},swap:{icon:'fa-arrow-right-arrow-left',color:'#627eea',bg:'rgba(98,126,234,.1)',label:'Swap'},sell:{icon:'fa-arrow-trend-down',color:'#ef4444',bg:'rgba(239,68,68,.1)',label:'Sell'}};
   document.getElementById('tx-list-panel').innerHTML=filtered.map(tx=>{
-    const cfg=typeConfig[tx.type]||{icon:'fa-circle',color:'#5a6880',bg:'rgba(90,104,128,.1)',label:tx.type};
-    const amt=Number(tx.usd_amount||0);const isPos=amt>0;
-    const date=new Date(tx.created_at);
+    const c=cfg[tx.type]||{icon:'fa-circle',color:'#5a6880',bg:'rgba(90,104,128,.1)',label:tx.type};
+    const amt=Number(tx.usd_amount||0);const isPos=amt>0;const date=new Date(tx.created_at);
     return`<div class="tx-row" onclick='showTxDetail(${JSON.stringify(tx)})'>
-      <div style="width:36px;height:36px;border-radius:12px;background:${cfg.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${cfg.icon}" style="color:${cfg.color};font-size:13px"></i></div>
-      <div style="flex:1;min-width:0"><p style="font-size:13px;font-weight:500;color:#edf2f8">${cfg.label} ${tx.symbol||''}</p><p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880">${date.toLocaleDateString()} · ${date.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}</p></div>
-      <div style="text-align:right"><p style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${isPos?'#22c55e':'#ef4444'}">${isPos?'+':''} $${fmtUSD(Math.abs(amt))}</p><i class="fas fa-chevron-right" style="color:#5a6880;font-size:10px;margin-top:4px;display:block"></i></div>
+      <div style="width:36px;height:36px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${c.icon}" style="color:${c.color};font-size:13px"></i></div>
+      <div style="flex:1;min-width:0"><p style="font-size:13px;font-weight:500;color:#edf2f8">${c.label} ${tx.symbol||''}</p><p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880">${date.toLocaleDateString()} · ${date.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}</p></div>
+      <div style="text-align:right"><p style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${isPos?'#22c55e':'#ef4444'}">${isPos?'+':'-'}$${fmtUSD(Math.abs(amt))}</p><i class="fas fa-chevron-right" style="color:#5a6880;font-size:10px;margin-top:4px;display:block"></i></div>
     </div>`;
   }).join('');
 }
 function showTxDetail(tx){
   const amt=Number(tx.usd_amount||0);const isPos=amt>0;
-  setTxt('td-id',tx.id||'—');setTxt('td-type',(tx.type||'—').toUpperCase());
-  setTxt('td-asset',(tx.name||'—')+' ('+tx.symbol+')');
-  const qty=Number(tx.quantity||0);setTxt('td-qty',qty<1?qty.toFixed(6):qty.toFixed(4));
-  setTxt('td-price',tx.price_at_tx?'$'+fmtPrice(Number(tx.price_at_tx)):'—');
-  const amtEl=document.getElementById('td-amount');
-  amtEl.textContent=(isPos?'+':'')+' $'+fmtUSD(Math.abs(amt));amtEl.className='val '+(isPos?'gain':'loss');
-  setTxt('td-date',new Date(tx.created_at).toUTCString().replace('GMT','UTC'));
-  setTxt('td-note',tx.note||'—');
+  setTxt('td-id',tx.id||'—');setTxt('td-type',(tx.type||'—').toUpperCase());setTxt('td-asset',(tx.name||'—')+' ('+tx.symbol+')');
+  const qty=Number(tx.quantity||0);setTxt('td-qty',qty<1?qty.toFixed(6):qty.toFixed(4));setTxt('td-price',tx.price_at_tx?'$'+fmtPrice(Number(tx.price_at_tx)):'—');
+  const amtEl=document.getElementById('td-amount');amtEl.textContent=(isPos?'+':'-')+' $'+fmtUSD(Math.abs(amt));amtEl.className='val '+(isPos?'gain':'loss');
+  setTxt('td-date',new Date(tx.created_at).toUTCString().replace('GMT','UTC'));setTxt('td-note',tx.note||'—');
   document.getElementById('txDetailModal').classList.add('open');
 }
 function closeTxDetail(){document.getElementById('txDetailModal').classList.remove('open');}
 
-// ── CARDS ─────────────────────────────────────────────────────────────────
+// ── CARD RENDERING ────────────────────────────────────────────────────────
 function renderCards(){
   const q=(document.getElementById('searchInput').value||'').toLowerCase();
   const show=s=>liveFilter==='all'||liveFilter===s;
@@ -1097,68 +1112,101 @@ function renderCards(){
 }
 function renderGrid(arr,fn,empty){return arr.length?arr.map(fn).join(''):`<div style="grid-column:1/-1;padding:32px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">${empty}</div>`;}
 function toggleSection(id,show){document.getElementById(id).style.display=show?'':'none';}
-function setFilter(f,btnOrStr){
+function setFilter(f,btn){
   liveFilter=f;
   document.querySelectorAll('.tab-chip').forEach(b=>b.classList.remove('on'));
-  const btn=typeof btnOrStr==='object'?btnOrStr:document.querySelector(`[data-filter="${f}"]`);
-  if(btn)btn.classList.add('on');
+  const b=typeof btn==='object'?btn:document.querySelector(`[data-filter="${f}"]`);if(b)b.classList.add('on');
   renderCards();
   if(f!=='all'){const el=document.getElementById('sec-'+f);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 }
 
+// ── SPARKLINE DATA ────────────────────────────────────────────────────────
+function genSpark(up,n=20){let v=50,pts=[];for(let i=0;i<n;i++){v+=(Math.random()-.5+(up?.3:-.3))*9;v=Math.max(5,Math.min(95,v));pts.push(v);}return pts;}
+function sparkPath(pts,W=130,H=46){const mn=Math.min(...pts),mx=Math.max(...pts),r=mx-mn||1;return pts.map((v,i)=>{const x=(i/(pts.length-1))*W,y=H-((v-mn)/r)*(H-6)-3;return(i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);}).join(' ');}
+
+// ── CRYPTO CARD (PREMIUM) ─────────────────────────────────────────────────
 function cryptoCard(a){
   const up=a.chg>=0;const sp=sparkPath(genSpark(up));
   const owned=myHoldings.find(h=>h.symbol===a.sym);
-  const ownedBadge=owned?`<div style="position:absolute;top:12px;right:12px;font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 8px;border-radius:20px;background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.25)">OWNED</div>`:'';
-  return`<div class="invest-card" style="position:relative"><div style="padding:20px">
-    ${ownedBadge}
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:44px;height:44px;border-radius:14px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><i class="${a.icon}"></i></div>
-        <div><p style="font-weight:600;color:#edf2f8;font-size:15px">${a.sym}</p><p style="color:#5a6880;font-size:12px">${a.name}</p></div>
+  return`<div class="invest-card" style="padding:22px">
+    ${owned?`<div style="position:absolute;top:14px;right:14px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 10px;border-radius:20px;background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3);letter-spacing:.08em">OWNED</div>`:''}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:13px">
+        <div style="width:48px;height:48px;border-radius:16px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 16px ${a.color}20"><i class="${a.icon}"></i></div>
+        <div>
+          <p style="font-weight:700;color:#edf2f8;font-size:16px;letter-spacing:.01em">${a.sym}</p>
+          <p style="color:#5a6880;font-size:12px;margin-top:1px">${a.name}</p>
+        </div>
       </div>
-      <span id="cc-chg-${a.sym}" style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 8px;border-radius:8px;background:${up?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};color:${up?'#22c55e':'#ef4444'}">${up?'+':''}${a.chg.toFixed(2)}%</span>
+      <span id="card-chg-${a.sym}" class="chg-badge" style="background:${up?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};color:${up?'#22c55e':'#ef4444'};border:1px solid ${up?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)'}">${up?'+':''}${a.chg.toFixed(2)}%</span>
     </div>
-    <p style="font-size:12px;color:#5a6880;margin-bottom:12px;line-height:1.5">${a.desc}</p>
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px">
-      <p id="cc-pr-${a.sym}" style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#edf2f8;font-weight:600">$${fmtPrice(a.price)}</p>
-      <svg viewBox="0 0 140 44" width="80" height="28" style="overflow:visible;cursor:pointer" onclick="openInvestModal('${a.sym}')" title="View chart">
-        <path stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="${up?'rgba(34,197,94,.06)':'rgba(239,68,68,.06)'}" d="${sp} L140,44 L0,44 Z"/>
-        <path stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.5" fill="none" d="${sp}"/>
+    <p style="font-size:12px;color:#5a6880;margin-bottom:16px;line-height:1.6">${a.desc}</p>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4px">
+      <p id="card-pr-${a.sym}" class="price-tag">$${fmtPrice(a.price)}</p>
+      <svg viewBox="0 0 130 46" width="90" height="36" style="overflow:visible;cursor:pointer;opacity:.9" onclick="openInvestModal('${a.sym}')" title="View chart">
+        <defs>
+          <linearGradient id="sg-${a.sym}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${up?'#22c55e':'#ef4444'}" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="${up?'#22c55e':'#ef4444'}" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.6" fill="url(#sg-${a.sym})" d="${sp} L130,46 L0,46 Z"/>
+        <path stroke="${up?'#22c55e':'#ef4444'}" stroke-width="1.6" fill="none" d="${sp}"/>
       </svg>
     </div>
-    <div style="display:flex;gap:8px">
-      <button class="invest-btn" onclick="openInvestModal('${a.sym}')"><i class="fas fa-plus" style="font-size:11px"></i>Invest</button>
-      ${owned?`<button onclick="openSwapFrom('${a.sym}')" style="width:40px;height:38px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s" onmouseover="this.style.color='#c9a84c'" onmouseout="this.style.color='#5a6880'"><i class="fas fa-arrow-right-arrow-left" style="font-size:12px"></i></button>`:''}
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="invest-btn" style="padding:12px 18px" onclick="openInvestModal('${a.sym}')"><i class="fas fa-bolt" style="font-size:11px"></i>Invest</button>
+      ${owned?`<button onclick="openSwapFrom('${a.sym}')" style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#5a6880;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(201,168,76,.35)';this.style.color='#c9a84c'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)';this.style.color='#5a6880'" title="Swap"><i class="fas fa-arrow-right-arrow-left" style="font-size:12px"></i></button>`:''}
     </div>
-  </div></div>`;
+  </div>`;
 }
 function stockCard(a){return cryptoCard(a);}
+
+// ── PROPERTY CARD (PREMIUM with real images) ──────────────────────────────
 function propertyCard(a){
   const owned=myHoldings.find(h=>h.symbol===a.sym);
-  return`<div class="invest-card">
-    <div style="height:140px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0c1830,#172040)">
-      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:80px;opacity:.12"><i class="${a.icon}" style="color:${a.color}"></i></div>
-      <div style="position:absolute;inset:0;background:linear-gradient(to top,#111820 0%,rgba(17,24,32,.2) 60%,transparent 100%)"></div>
-      ${owned?`<div style="position:absolute;top:12px;right:12px;font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 8px;border-radius:20px;background:rgba(201,168,76,.2);color:#c9a84c;border:1px solid rgba(201,168,76,.35)">OWNED</div>`:''}
-      <div style="position:absolute;bottom:12px;left:16px;right:16px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Funded</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c">${a.funded}%</span></div>
-        <div style="height:3px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden"><div style="height:100%;width:${a.funded}%;background:linear-gradient(90deg,#c9a84c,#e8c96a);border-radius:4px"></div></div>
+  const fundedPct=a.funded;
+  return`<div class="prop-card" onclick="openInvestModal('${a.sym}')">
+    <div class="prop-img-wrap">
+      <img src="${a.img}" alt="${a.imgAlt}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.nextElementSibling&&(this.nextElementSibling.nextElementSibling.style.background='linear-gradient(135deg,#0c1830,#172040)')">
+      <div class="prop-img-overlay"></div>
+      <div class="prop-img-top">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:4px 10px;border-radius:20px;background:rgba(8,12,18,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);color:#8c9db5;letter-spacing:.08em;text-transform:uppercase">${a.type}</span>
+        ${owned?`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:4px 10px;border-radius:20px;background:rgba(201,168,76,.2);backdrop-filter:blur(8px);border:1px solid rgba(201,168,76,.4);color:#c9a84c;letter-spacing:.08em">OWNED</span>`:''}
+      </div>
+      <div class="prop-img-bottom">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.5)">Funded</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c">${fundedPct}%</span>
+        </div>
+        <div class="funded-bar"><div class="funded-fill" style="width:${fundedPct}%"></div></div>
       </div>
     </div>
-    <div style="padding:18px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
-        <div><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">${a.type}</p>
-        <p style="font-family:'Cormorant Garamond',serif;font-size:17px;color:#edf2f8;font-weight:300">${a.name}</p></div>
-        <span class="yield-badge"><i class="fas fa-percent" style="font-size:8px"></i>${a.yield_}% APY</span>
+    <div style="padding:20px 22px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:10px">
+        <div>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8;font-weight:300;line-height:1.2">${a.name}</p>
+          <p style="font-size:12px;color:#5a6880;margin-top:4px;display:flex;align-items:center;gap:5px"><i class="fas fa-location-dot" style="color:#c9a84c;font-size:10px"></i>${a.location}</p>
+        </div>
+        <span class="yield-badge"><i class="fas fa-percent" style="font-size:9px"></i>${a.yield_}% APY</span>
       </div>
-      <p style="font-size:12px;color:#5a6880;margin-bottom:14px;display:flex;align-items:center;gap:6px"><i class="fas fa-location-dot" style="color:#c9a84c;font-size:10px"></i>${a.location}</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-        <div style="text-align:center;padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px"><p style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#c9a84c">${a.yield_}%</p><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">Yield</p></div>
-        <div style="text-align:center;padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px"><p style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#edf2f8">${a.valuation}</p><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">Value</p></div>
-        <div style="text-align:center;padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px"><p style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#edf2f8">$${a.minEntry.toLocaleString()}</p><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:2px">Min</p></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0">
+        <div style="text-align:center;padding:10px 8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:17px;color:#22c55e;font-weight:300">${a.yield_}%</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:3px;letter-spacing:.06em">YIELD</p>
+        </div>
+        <div style="text-align:center;padding:10px 8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:17px;color:#edf2f8;font-weight:300">${a.valuation}</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:3px;letter-spacing:.06em">VALUE</p>
+        </div>
+        <div style="text-align:center;padding:10px 8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:17px;color:#c9a84c;font-weight:300">$${a.minEntry.toLocaleString()}</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;margin-top:3px;letter-spacing:.06em">MIN</p>
+        </div>
       </div>
-      <button class="invest-btn" onclick="openInvestModal('${a.sym}')"><i class="fas fa-building" style="font-size:11px;margin-right:4px"></i>Invest in Property</button>
+      <button class="invest-btn" style="padding:12px;font-size:13px" onclick="event.stopPropagation();openInvestModal('${a.sym}')">
+        <i class="fas fa-building" style="font-size:11px"></i>Invest in Property
+      </button>
     </div>
   </div>`;
 }
@@ -1170,35 +1218,26 @@ function openInvestModal(sym){
   const a=modalAsset;const isProp=a.cat==='property';
   const iconEl=document.getElementById('mi-icon');
   iconEl.innerHTML=`<i class="${a.icon}"></i>`;
-  iconEl.style.cssText=`width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;background:${a.color}18;color:${a.color}`;
+  iconEl.style.cssText=`width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:24px;background:${a.color}18;color:${a.color};box-shadow:0 4px 20px ${a.color}25`;
   setTxt('mi-sym',a.sym);setTxt('mi-name',a.name);
   const chgEl=document.getElementById('mi-chg');
-  if(isProp){setTxt('mi-price',a.yield_+'% APY');chgEl.textContent='Annual rental yield';chgEl.style.color='#c9a84c';}
-  else{setTxt('mi-price','$'+fmtPrice(a.price));chgEl.textContent=(a.chg>=0?'+':'')+a.chg.toFixed(2)+'%';chgEl.style.color=a.chg>=0?'#22c55e':'#ef4444';}
+  if(isProp){setTxt('mi-price',a.yield_+'% APY');chgEl.textContent='Annual rental yield';chgEl.style.color='#c9a84c';chgEl.style.background='rgba(201,168,76,.1)';}
+  else{setTxt('mi-price','$'+fmtPrice(a.price));chgEl.textContent=(a.chg>=0?'+':'')+a.chg.toFixed(2)+'%';chgEl.style.color=a.chg>=0?'#22c55e':'#ef4444';chgEl.style.background=a.chg>=0?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)';}
   setTxt('mi-bal','$'+fmtUSD(Number(profile.cash)));
   document.getElementById('mi-type-info').style.display=isProp?'block':'none';
-  if(isProp)setTxt('mi-type-desc',`Earn ${a.yield_}% annual yield. Min entry: $${a.minEntry.toLocaleString()}.`);
+  if(isProp)setTxt('mi-type-desc',`Earn ${a.yield_}% annual yield paid monthly. Minimum entry: $${a.minEntry.toLocaleString()}. Asset value: ${a.valuation}.`);
   const minAmt=isProp?a.minEntry:MIN_TRADE;
   document.getElementById('mi-amount').min=minAmt;
   document.getElementById('mi-amount').value=Math.max(minAmt,500);
-
-  // Show chart for crypto/stocks only
   const chartWrap=document.getElementById('mi-chart-wrap');
   if(!isProp){
     chartWrap.style.display='block';
     investChartPeriod='1D';
     document.querySelectorAll('#mi-periods .period-btn').forEach(b=>{b.classList.remove('active');if(b.textContent==='1D')b.classList.add('active');});
-    // Populate stats
-    const hi=(a.price*1.032);const lo=(a.price*0.971);
-    setTxt('mi-stat-high','$'+fmtPrice(hi));setTxt('mi-stat-low','$'+fmtPrice(lo));
+    setTxt('mi-stat-high','$'+fmtPrice(a.price*1.032));setTxt('mi-stat-low','$'+fmtPrice(a.price*0.971));
     const mcapBase=MCAP[sym]||5e9;setTxt('mi-stat-mcap',fmtLarge(mcapBase));setTxt('mi-stat-vol',fmtLarge(mcapBase*0.028));
-    // Small delay so modal is visible before chart renders
-    setTimeout(()=>renderInvestChart(sym,'1D'),60);
-  }else{
-    chartWrap.style.display='none';
-    if(investChartInstance){investChartInstance.destroy();investChartInstance=null;}
-  }
-
+    setTimeout(()=>renderInvestChart(sym,'1D'),80);
+  }else{chartWrap.style.display='none';if(investChartInstance){investChartInstance.destroy();investChartInstance=null;}}
   updateModalCalc();
   document.getElementById('investModal').classList.add('open');
 }
@@ -1207,7 +1246,6 @@ function closeInvestModal(){
   if(investChartInstance){investChartInstance.destroy();investChartInstance=null;}
   modalAsset=null;
 }
-
 function setInvestPeriod(period,btn){
   investChartPeriod=period;
   document.querySelectorAll('#mi-periods .period-btn').forEach(b=>b.classList.remove('active'));
@@ -1215,157 +1253,66 @@ function setInvestPeriod(period,btn){
   if(modalAsset)renderInvestChart(modalAsset.sym,period);
 }
 
-// ── PREMIUM CHART RENDERER ─────────────────────────────────────────────────
+// ── PREMIUM CHART ─────────────────────────────────────────────────────────
 function generateRealisticPriceData(basePrice,period,assetChg){
-  const configs={
-    '1D':{points:96,volatility:0.0018,drift:assetChg/100/96},
-    '1W':{points:168,volatility:0.0028,drift:assetChg/100/168*4},
-    '1M':{points:120,volatility:0.005,drift:assetChg/100/120*20},
-    '3M':{points:90,volatility:0.008,drift:assetChg/100/90*60},
-    '1Y':{points:252,volatility:0.014,drift:assetChg/100/252*200},
-  };
+  const configs={'1D':{points:96,vol:0.0018,drift:assetChg/100/96},'1W':{points:168,vol:0.0028,drift:assetChg/100/168*4},'1M':{points:120,vol:0.005,drift:assetChg/100/120*20},'3M':{points:90,vol:0.008,drift:assetChg/100/90*60},'1Y':{points:252,vol:0.014,drift:assetChg/100/252*200}};
   const cfg=configs[period]||configs['1D'];
-
-  // Generate Brownian-motion-style price walk with mean reversion
-  // Start price slightly below current so it trends toward current
-  let price=basePrice*(0.88+Math.random()*0.06);
-  const prices=[price];
-  const n=cfg.points;
-
+  let price=basePrice*(0.86+Math.random()*0.07);const prices=[price];const n=cfg.points;
   for(let i=1;i<n;i++){
-    // Mean reversion pull toward current price
-    const target=basePrice;
-    const reversion=(target-price)/price*0.04;
-    // Random walk with drift
-    const rand=(Math.random()+Math.random()+Math.random()-1.5)*cfg.volatility; // Box-Muller approx
-    const jump=i>0&&Math.random()<0.005?(Math.random()-.5)*cfg.volatility*8:0; // rare jump
-    price=price*(1+rand+cfg.drift+reversion+jump);
-    price=Math.max(price,basePrice*0.5); // floor
-    prices.push(price);
+    const target=basePrice;const reversion=(target-price)/price*0.045;
+    const rand=(Math.random()+Math.random()+Math.random()-1.5)*cfg.vol;
+    const jump=Math.random()<0.004?(Math.random()-.5)*cfg.vol*9:0;
+    price=price*(1+rand+cfg.drift+reversion+jump);price=Math.max(price,basePrice*0.45);prices.push(price);
   }
-  // Force last point to exactly current price
   prices[prices.length-1]=basePrice;
-
-  // Build time labels
   const now=new Date();
   const labels=prices.map((_,i)=>{
     const ratio=i/(n-1);
-    if(period==='1D'){const ms=ratio*86400000;const d=new Date(now-86400000+ms);return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');}
-    if(period==='1W'){const ms=ratio*7*86400000;const d=new Date(now-7*86400000+ms);return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+d.getHours()+'h';}
-    if(period==='1M'){const ms=ratio*30*86400000;const d=new Date(now-30*86400000+ms);return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];}
-    if(period==='3M'){const ms=ratio*90*86400000;const d=new Date(now-90*86400000+ms);return d.getDate()+'/'+String(d.getMonth()+1).padStart(2,'0');}
-    const ms=ratio*365*86400000;const d=new Date(now-365*86400000+ms);return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear().toString().slice(2);
+    if(period==='1D'){const d=new Date(now-86400000+ratio*86400000);return d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();}
+    if(period==='1W'){const d=new Date(now-7*86400000+ratio*7*86400000);return['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];}
+    if(period==='1M'){const d=new Date(now-30*86400000+ratio*30*86400000);return d.getDate()+'/'+String(d.getMonth()+1).padStart(2,'0');}
+    if(period==='3M'){const d=new Date(now-90*86400000+ratio*90*86400000);return d.getDate()+'/'+(d.getMonth()+1);}
+    const d=new Date(now-365*86400000+ratio*365*86400000);return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
   });
-
-  // Sparse labels
   const step=Math.ceil(n/8);
-  const sparseLabels=labels.map((l,i)=>i%step===0?l:'');
-  return{prices,labels:sparseLabels};
+  return{prices,labels:labels.map((l,i)=>i%step===0?l:'')};
 }
 
 function renderInvestChart(sym,period){
-  const asset=ALL_ASSETS.find(a=>a.sym===sym);
-  if(!asset)return;
+  const asset=ALL_ASSETS.find(a=>a.sym===sym);if(!asset)return;
   if(investChartInstance){investChartInstance.destroy();investChartInstance=null;}
-  const canvas=document.getElementById('investChartCanvas');
-  if(!canvas)return;
+  const canvas=document.getElementById('investChartCanvas');if(!canvas)return;
   const ctx=canvas.getContext('2d');
   const{prices,labels}=generateRealisticPriceData(asset.price,period,asset.chg);
   const isUp=prices[prices.length-1]>=prices[0];
   const lineColor=isUp?'#22c55e':'#ef4444';
-
-  // Gradient fill
-  const grad=ctx.createLinearGradient(0,0,0,canvas.offsetHeight||180);
-  grad.addColorStop(0,isUp?'rgba(34,197,94,0.22)':'rgba(239,68,68,0.22)');
-  grad.addColorStop(0.7,isUp?'rgba(34,197,94,0.04)':'rgba(239,68,68,0.04)');
+  const grad=ctx.createLinearGradient(0,0,0,canvas.offsetHeight||200);
+  grad.addColorStop(0,isUp?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)');
+  grad.addColorStop(0.65,isUp?'rgba(34,197,94,.04)':'rgba(239,68,68,.04)');
   grad.addColorStop(1,'rgba(0,0,0,0)');
-
-  // Segment data (color per segment for premium look)
-  const segColors=prices.map((_,i)=>{
-    if(i===0)return lineColor;
-    return prices[i]>=prices[i-1]?'#22c55e':'#ef4444';
-  });
-
   investChartInstance=new Chart(ctx,{
     type:'line',
-    data:{
-      labels,
-      datasets:[{
-        data:prices,
-        borderColor:lineColor,
-        borderWidth:1.8,
-        fill:true,
-        backgroundColor:grad,
-        tension:0.38,
-        pointRadius:0,
-        pointHoverRadius:5,
-        pointHoverBackgroundColor:'#edf2f8',
-        pointHoverBorderColor:lineColor,
-        pointHoverBorderWidth:2,
-        segment:{
-          borderColor:ctx=>{
-            const i=ctx.p0DataIndex;
-            return prices[i+1]>=prices[i]?'#22c55e':'#ef4444';
-          }
-        }
-      }]
-    },
+    data:{labels,datasets:[{data:prices,borderColor:lineColor,borderWidth:1.8,fill:true,backgroundColor:grad,tension:0.36,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#edf2f8',pointHoverBorderColor:lineColor,pointHoverBorderWidth:2,
+      segment:{borderColor:ctx=>{const i=ctx.p0DataIndex;return prices[i+1]>=prices[i]?'#22c55e':'#ef4444';}}}]},
     options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      animation:{duration:600,easing:'easeInOutQuart'},
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:700,easing:'easeInOutQuart'},
       interaction:{intersect:false,mode:'index'},
       plugins:{
         legend:{display:false},
-        tooltip:{
-          backgroundColor:'rgba(8,12,18,0.96)',
-          borderColor:'rgba(201,168,76,0.3)',
-          borderWidth:1,
-          titleFont:{family:'JetBrains Mono',size:9},
-          bodyFont:{family:'JetBrains Mono',size:13},
-          titleColor:'#5a6880',
-          bodyColor:'#edf2f8',
-          padding:12,
-          cornerRadius:10,
-          displayColors:false,
-          callbacks:{
-            title:(items)=>items[0].label||'',
-            label:(item)=>'$'+fmtPrice(item.raw),
-            afterLabel:(item)=>{
-              const pct=((item.raw-prices[0])/prices[0]*100);
-              return (pct>=0?'+':'')+pct.toFixed(2)+'% from open';
-            }
-          }
+        tooltip:{backgroundColor:'rgba(8,12,18,.97)',borderColor:'rgba(201,168,76,.25)',borderWidth:1,titleFont:{family:'JetBrains Mono',size:9},bodyFont:{family:'JetBrains Mono',size:13},titleColor:'#5a6880',bodyColor:'#edf2f8',padding:12,cornerRadius:10,displayColors:false,
+          callbacks:{title:i=>i[0].label||'',label:i=>'$'+fmtPrice(i.raw),afterLabel:i=>{const pct=((i.raw-prices[0])/prices[0]*100);return(pct>=0?'+':'')+pct.toFixed(2)+'% from open';}}
         }
       },
       scales:{
-        x:{
-          grid:{color:'rgba(255,255,255,.03)',drawBorder:false},
-          ticks:{color:'#5a6880',font:{family:'JetBrains Mono',size:8},maxRotation:0,maxTicksLimit:8},
-          border:{display:false}
-        },
-        y:{
-          grid:{color:'rgba(255,255,255,.05)',drawBorder:false},
-          ticks:{
-            color:'#5a6880',
-            font:{family:'JetBrains Mono',size:8},
-            callback:(v)=>'$'+fmtPrice(v),
-            maxTicksLimit:5
-          },
-          position:'right',
-          border:{display:false}
-        }
+        x:{grid:{color:'rgba(255,255,255,.03)',drawBorder:false},ticks:{color:'#5a6880',font:{family:'JetBrains Mono',size:8},maxRotation:0,maxTicksLimit:8},border:{display:false}},
+        y:{grid:{color:'rgba(255,255,255,.04)',drawBorder:false},ticks:{color:'#5a6880',font:{family:'JetBrains Mono',size:8},callback:v=>'$'+fmtPrice(v),maxTicksLimit:5},position:'right',border:{display:false}}
       }
     }
   });
 }
 
-function fmtLarge(n){
-  if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';
-  if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';
-  if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';
-  return'$'+fmtUSD(n);
-}
+function fmtLarge(n){if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+fmtUSD(n);}
 
 // ── MODAL CALC ────────────────────────────────────────────────────────────
 function updateModalCalc(){
@@ -1385,41 +1332,88 @@ function updateModalCalc(){
   const insuf=amt+fee+slip>cash||amt<MIN_TRADE;
   document.getElementById('mi-insuf').style.display=insuf?'flex':'none';
   document.getElementById('mi-confirm').disabled=insuf;
-  document.getElementById('mi-confirm').style.opacity=insuf?'.5':'1';
+  document.getElementById('mi-confirm').style.opacity=insuf?'.45':'1';
 }
 function setModalAmt(v){document.getElementById('mi-amount').value=v;updateModalCalc();}
 function sliderToAmt(p){if(!profile)return;document.getElementById('mi-amount').value=Math.floor(Number(profile.cash)*(p/100));updateModalCalc();}
 
 async function confirmInvestment(){
   if(!modalAsset||!profile)return;
-  const a=modalAsset;const amt=parseFloat(document.getElementById('mi-amount').value)||0;
-  const fee=+(amt*0.001).toFixed(2);const slip=+(amt*0.0005).toFixed(2);
-  const total=+(amt+fee+slip).toFixed(2);const cash=Number(profile.cash);
+  const a=modalAsset;
+  const amt=parseFloat(document.getElementById('mi-amount').value)||0;
+  const fee=+(amt*0.001).toFixed(2);
+  const slip=+(amt*0.0005).toFixed(2);
+  const total=+(amt+fee+slip).toFixed(2);
+  const cash=Number(profile.cash);
   if(total>cash){showToast('Insufficient balance','Deposit funds to continue','error');return;}
   if(amt<MIN_TRADE){showToast(`Minimum trade is $${MIN_TRADE}`,'','error');return;}
-  document.getElementById('mi-label').style.display='none';
-  document.getElementById('mi-spin').style.display='flex';
-  document.getElementById('mi-confirm').disabled=true;
-  const qty=amt/a.price;const execTime=new Date();
+  document.getElementById('mi-label').style.display='none';document.getElementById('mi-spin').style.display='flex';document.getElementById('mi-confirm').disabled=true;
+  const qty=amt/a.price;
+  const execTime=new Date();
   try{
-    const{data:txData,error:txErr}=await sb.from('transactions').insert({user_id:authUser.id,type:'buy',symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,price_at_tx:a.price,usd_amount:-total,note:`Buy ${a.sym} @ $${fmtPrice(a.price)} | Fee: $${fee} | Slip: $${slip}`}).select().single();
+    const{data:txData,error:txErr}=await sb.from('transactions').insert({
+      user_id:authUser.id,
+      type:'buy',
+      symbol:a.sym,
+      name:a.name,
+      icon:a.icon,
+      color:a.color,
+      quantity:qty,
+      price_at_tx:a.price,
+      usd_amount:-total,
+      note:`Buy ${a.sym} @ $${fmtPrice(a.price)} | Fee: $${fee} | Slip: $${slip}`
+    }).select().single();
     if(txErr)throw txErr;
+
     const existing=myHoldings.find(h=>h.symbol===a.sym);
     if(existing){
       const newQty=Number(existing.quantity)+qty;
       const newAvg=(Number(existing.avg_buy_price)*Number(existing.quantity)+a.price*qty)/newQty;
-      const{error:hErr}=await sb.from('holdings').update({quantity:newQty,avg_buy_price:+newAvg.toFixed(2),current_price:a.price,updated_at:new Date().toISOString()}).eq('id',existing.id);
+      const{error:hErr}=await sb.from('holdings').update({
+        quantity:newQty,
+        avg_buy_price:+newAvg.toFixed(6),
+        updated_at:new Date().toISOString()
+      }).eq('id',existing.id);
       if(hErr)throw hErr;
-    }else{
-      const{error:hErr}=await sb.from('holdings').insert({user_id:authUser.id,symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,avg_buy_price:a.price,current_price:a.price});
+    } else {
+      const{error:hErr}=await sb.from('holdings').insert({
+        user_id:authUser.id,
+        symbol:a.sym,
+        name:a.name,
+        icon:a.icon,
+        color:a.color,
+        quantity:qty,
+        avg_buy_price:a.price
+      });
       if(hErr)throw hErr;
     }
-    await loadProfile();await loadPortfolioStats();await loadTransactions();
+
+    const newCash=+(cash-total).toFixed(2);
+    const{error:cashErr}=await sb.from('profiles').update({cash:newCash}).eq('id',authUser.id);
+    if(cashErr)throw cashErr;
+
+    await loadProfile();
+    await loadPortfolioStats();
+    await loadTransactions();
+
     closeInvestModal();
-    const newCash=Number(profile.cash);
-    showReceipt({txId:txData?.id||'N/A',time:execTime,type:'Market Buy',asset:`${a.name} (${a.sym})`,qty:qty<1?qty.toFixed(6):qty.toFixed(4),sym:a.sym,price:fmtPrice(a.price),gross:amt.toFixed(2),fee:fee.toFixed(2),slip:slip.toFixed(2),total:total.toFixed(2),newCash});
-  }catch(err){showToast('Transaction failed',err.message||'Please try again','error');}
-  finally{
+    showReceipt({
+      txId:txData?.id||'N/A',
+      time:execTime,
+      type:'Market Buy',
+      asset:`${a.name} (${a.sym})`,
+      qty:qty<1?qty.toFixed(6):qty.toFixed(4),
+      sym:a.sym,
+      price:fmtPrice(a.price),
+      gross:amt.toFixed(2),
+      fee:fee.toFixed(2),
+      slip:slip.toFixed(2),
+      total:total.toFixed(2),
+      newCash:newCash
+    });
+  }catch(err){
+    showToast('Transaction failed',err.message||'Please try again','error');
+  }finally{
     document.getElementById('mi-label').style.display='flex';
     document.getElementById('mi-label').innerHTML='<i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Confirm Investment';
     document.getElementById('mi-spin').style.display='none';
@@ -1446,99 +1440,82 @@ async function makeDeposit(amt){
   try{
     const{error}=await sb.from('transactions').insert({user_id:authUser.id,type:'deposit',symbol:'USD',name:'Cash Deposit',icon:'fas fa-dollar-sign',color:'#22c55e',usd_amount:amt,note:'Manual deposit via Invest page'});
     if(error)throw error;
-    await loadProfile();await loadTransactions();
-    closeDepositModal();showToast('Deposit Successful','$'+amt.toLocaleString()+' added to your balance','success');
+    await loadProfile();await loadTransactions();closeDepositModal();showToast('Deposit Successful','$'+amt.toLocaleString()+' added to your balance','success');
   }catch(err){showToast('Deposit failed',err.message,'error');}
 }
 
 // ── SWAP ──────────────────────────────────────────────────────────────────
 function buildSwapSelects(){
-  const tradeableAssets=[...CRYPTO,...STOCKS];
-  const opts=tradeableAssets.map(a=>`<option value="${a.sym}">${a.sym} — ${a.name}</option>`).join('');
-  ['sw-from','sw-to'].forEach(id=>{
-    const el=document.getElementById(id);
-    const curr=el.innerHTML;
-    el.innerHTML=curr.split('</option>')[0]+'</option>'+opts;
-  });
+  const opts=[...CRYPTO,...STOCKS].map(a=>`<option value="${a.sym}">${a.sym} — ${a.name}</option>`).join('');
+  ['sw-from','sw-to'].forEach(id=>{const el=document.getElementById(id);const first=el.innerHTML.split('</option>')[0]+'</option>';el.innerHTML=first+opts;});
 }
 function openSwapModal(){document.getElementById('swapModal').classList.add('open');}
 function openSwapFrom(sym){openSwapModal();document.getElementById('sw-from').value=sym;updateSwapFromBal();updateSwapCalc();}
 function closeSwapModal(){document.getElementById('swapModal').classList.remove('open');}
 function updateSwapFromBal(){
-  const sym=document.getElementById('sw-from').value;
-  const holding=myHoldings.find(h=>h.symbol===sym);
-  const asset=ALL_ASSETS.find(a=>a.sym===sym);
-  if(holding&&asset){const val=Number(holding.quantity)*asset.price;setTxt('sw-from-bal','$'+fmtUSD(val)+' ('+Number(holding.quantity).toFixed(6)+' '+sym+')');}
+  const sym=document.getElementById('sw-from').value;const h=myHoldings.find(x=>x.symbol===sym);const asset=ALL_ASSETS.find(a=>a.sym===sym);
+  if(h&&asset){setTxt('sw-from-bal','$'+fmtUSD(Number(h.quantity)*asset.price)+' ('+Number(h.quantity).toFixed(6)+' '+sym+')');}
   else{setTxt('sw-from-bal','No holdings');}
 }
 function updateSwapCalc(){
   updateSwapFromBal();
   const fromSym=document.getElementById('sw-from').value;const toSym=document.getElementById('sw-to').value;
   const amt=parseFloat(document.getElementById('sw-from-amt').value)||0;
-  const fromAsset=ALL_ASSETS.find(a=>a.sym===fromSym);const toAsset=ALL_ASSETS.find(a=>a.sym===toSym);
-  const holding=myHoldings.find(h=>h.symbol===fromSym);
-  if(!fromAsset||!toAsset||!amt){setTxt('sw-receive','—');setTxt('sw-rate','Select assets to see rate');setTxt('sw-fee','—');setTxt('sw-net','—');document.getElementById('sw-insuf').style.display='none';return;}
-  const usdVal=amt*fromAsset.price;const fee=+(usdVal*0.003).toFixed(2);const netUSD=usdVal-fee;const receive=netUSD/toAsset.price;
-  const avail=holding?Number(holding.quantity):0;const insuf=amt>avail;
+  const fa=ALL_ASSETS.find(a=>a.sym===fromSym);const ta=ALL_ASSETS.find(a=>a.sym===toSym);const h=myHoldings.find(x=>x.symbol===fromSym);
+  if(!fa||!ta||!amt){setTxt('sw-receive','—');setTxt('sw-rate','Select assets to see rate');setTxt('sw-fee','—');setTxt('sw-net','—');document.getElementById('sw-insuf').style.display='none';return;}
+  const usdVal=amt*fa.price;const fee=+(usdVal*0.003).toFixed(2);const netUSD=usdVal-fee;const receive=netUSD/ta.price;
+  const avail=h?Number(h.quantity):0;const insuf=amt>avail;
   document.getElementById('sw-insuf').style.display=insuf?'block':'none';
   document.getElementById('sw-confirm').disabled=insuf||!fromSym||!toSym||!amt;
   setTxt('sw-receive',receive<1?receive.toFixed(6):receive.toFixed(4)+' '+toSym);
-  setTxt('sw-rate','1 '+fromSym+' = '+(fromAsset.price/toAsset.price).toFixed(6)+' '+toSym);
+  setTxt('sw-rate','1 '+fromSym+' = '+(fa.price/ta.price).toFixed(6)+' '+toSym);
   setTxt('sw-fee','$'+fmtUSD(fee));setTxt('sw-net',(receive<1?receive.toFixed(6):receive.toFixed(4))+' '+toSym);
 }
-function swSetPct(pct){
-  const sym=document.getElementById('sw-from').value;
-  const holding=myHoldings.find(h=>h.symbol===sym);
-  if(holding)document.getElementById('sw-from-amt').value=(Number(holding.quantity)*pct/100).toFixed(6);
-  updateSwapCalc();
-}
-function swapDirection(){
-  const f=document.getElementById('sw-from').value,t=document.getElementById('sw-to').value;
-  document.getElementById('sw-from').value=t;document.getElementById('sw-to').value=f;
-  document.getElementById('sw-from-amt').value='';updateSwapCalc();
-}
+function swSetPct(pct){const sym=document.getElementById('sw-from').value;const h=myHoldings.find(x=>x.symbol===sym);if(h)document.getElementById('sw-from-amt').value=(Number(h.quantity)*pct/100).toFixed(6);updateSwapCalc();}
+function swapDirection(){const f=document.getElementById('sw-from').value,t=document.getElementById('sw-to').value;document.getElementById('sw-from').value=t;document.getElementById('sw-to').value=f;document.getElementById('sw-from-amt').value='';updateSwapCalc();}
 async function confirmSwap(){
   const fromSym=document.getElementById('sw-from').value,toSym=document.getElementById('sw-to').value;
   const amt=parseFloat(document.getElementById('sw-from-amt').value)||0;
-  const fromAsset=ALL_ASSETS.find(a=>a.sym===fromSym),toAsset=ALL_ASSETS.find(a=>a.sym===toSym);
-  if(!fromAsset||!toAsset||!amt||!profile)return;
-  const fromHolding=myHoldings.find(h=>h.symbol===fromSym);
-  if(!fromHolding||Number(fromHolding.quantity)<amt){showToast('Insufficient holdings','','error');return;}
+  const fa=ALL_ASSETS.find(a=>a.sym===fromSym),ta=ALL_ASSETS.find(a=>a.sym===toSym);
+  if(!fa||!ta||!amt||!profile)return;
+  const fh=myHoldings.find(h=>h.symbol===fromSym);
+  if(!fh||Number(fh.quantity)<amt){showToast('Insufficient holdings','','error');return;}
   document.getElementById('sw-label').style.display='none';document.getElementById('sw-spin').style.display='flex';document.getElementById('sw-confirm').disabled=true;
-  const usdVal=amt*fromAsset.price,fee=+(usdVal*0.003).toFixed(2),netUSD=usdVal-fee,receive=netUSD/toAsset.price;
+  const usdVal=amt*fa.price,fee=+(usdVal*0.003).toFixed(2),netUSD=usdVal-fee,receive=netUSD/ta.price;
   try{
-    const newFromQty=Number(fromHolding.quantity)-amt;
-    if(newFromQty<=0.0000001){await sb.from('holdings').delete().eq('id',fromHolding.id);}
-    else{await sb.from('holdings').update({quantity:newFromQty,updated_at:new Date().toISOString()}).eq('id',fromHolding.id);}
-    const toHolding=myHoldings.find(h=>h.symbol===toSym);
-    if(toHolding){const newQty=Number(toHolding.quantity)+receive;const newAvg=(Number(toHolding.avg_buy_price)*Number(toHolding.quantity)+toAsset.price*receive)/newQty;await sb.from('holdings').update({quantity:newQty,avg_buy_price:+newAvg.toFixed(2),current_price:toAsset.price,updated_at:new Date().toISOString()}).eq('id',toHolding.id);}
-    else{await sb.from('holdings').insert({user_id:authUser.id,symbol:toSym,name:toAsset.name,icon:toAsset.icon,color:toAsset.color,quantity:receive,avg_buy_price:toAsset.price,current_price:toAsset.price});}
-    await sb.from('transactions').insert({user_id:authUser.id,type:'swap',symbol:toSym,name:`Swap ${fromSym}→${toSym}`,icon:toAsset.icon,color:toAsset.color,quantity:receive,price_at_tx:toAsset.price,usd_amount:0,note:`Swapped ${amt.toFixed(6)} ${fromSym} → ${receive.toFixed(6)} ${toSym} | Fee: $${fee.toFixed(2)}`});
+    const newFromQty=Number(fh.quantity)-amt;
+    if(newFromQty<=0.0000001){await sb.from('holdings').delete().eq('id',fh.id);}
+    else{await sb.from('holdings').update({quantity:newFromQty,updated_at:new Date().toISOString()}).eq('id',fh.id);}
+    const th=myHoldings.find(h=>h.symbol===toSym);
+    if(th){const nq=Number(th.quantity)+receive;const na=(Number(th.avg_buy_price)*Number(th.quantity)+ta.price*receive)/nq;await sb.from('holdings').update({quantity:nq,avg_buy_price:+na.toFixed(6),updated_at:new Date().toISOString()}).eq('id',th.id);}
+    else{await sb.from('holdings').insert({user_id:authUser.id,symbol:toSym,name:ta.name,icon:ta.icon,color:ta.color,quantity:receive,avg_buy_price:ta.price});}
+    await sb.from('transactions').insert({user_id:authUser.id,type:'swap',symbol:toSym,name:`Swap ${fromSym}→${toSym}`,icon:ta.icon,color:ta.color,quantity:receive,price_at_tx:ta.price,usd_amount:0,note:`Swapped ${amt.toFixed(6)} ${fromSym} → ${receive.toFixed(6)} ${toSym} | Fee: $${fee.toFixed(2)}`});
     await loadPortfolioStats();await loadTransactions();
     closeSwapModal();showToast('Swap Complete',`${amt.toFixed(4)} ${fromSym} → ${receive.toFixed(4)} ${toSym}`,'success');
   }catch(err){showToast('Swap failed',err.message,'error');}
   finally{document.getElementById('sw-label').style.display='flex';document.getElementById('sw-spin').style.display='none';document.getElementById('sw-confirm').disabled=false;}
 }
 
-// ── MOBILE ────────────────────────────────────────────────────────────────
+// ── MOBILE DRAWER ─────────────────────────────────────────────────────────
 function openDrawer(){document.getElementById('mobileDrawer').style.display='flex';document.getElementById('mobileBackdrop').style.display='block';}
 function closeDrawer(){document.getElementById('mobileDrawer').style.display='none';document.getElementById('mobileBackdrop').style.display='none';}
 
-// ── PRICE TICK (local simulation) ──────────────────────────────────────────
+// ── PRICE TICK (local simulation between admin pushes) ─────────────────────
 function tickPrices(){
+  const FREEZE_MS=8000;
+  const now=Date.now();
   [...CRYPTO,...STOCKS].forEach(a=>{
-    a.price*=1+(Math.random()-.5)*0.0009;
-    const el=document.getElementById('cc-pr-'+a.sym)||document.getElementById('sc-pr-'+a.sym);
+    const lastPush=_invPriceUpdatedAt[a.sym]||0;
+    if(now-lastPush<FREEZE_MS) return;
+    a.price*=1+(Math.random()-.5)*0.0003;
+    const el=document.getElementById('card-pr-'+a.sym);
     if(el)el.textContent='$'+fmtPrice(a.price);
     if(modalAsset?.sym===a.sym){setTxt('mi-price','$'+fmtPrice(a.price));updateModalCalc();}
   });
 }
 
-// ── ADMIN PANEL ───────────────────────────────────────────────────────────
-function openAdminPanel(){
-  document.getElementById('adminOverlay').classList.add('open');
-  adminLoadUsers();adminPriceTabShow('crypto');
-}
+// ── ADMIN ─────────────────────────────────────────────────────────────────
+function openAdminPanel(){document.getElementById('adminOverlay').classList.add('open');adminLoadUsers();adminPriceTabShow('crypto');}
 function closeAdminPanel(){document.getElementById('adminOverlay').classList.remove('open');}
 async function adminLoadUsers(){
   document.getElementById('adminUsersTbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#5a6880">Loading…</td></tr>';
@@ -1549,8 +1526,7 @@ async function adminLoadUsers(){
     const{count:hc}=await sb.from('holdings').select('*',{count:'exact',head:true});
     const{count:tc}=await sb.from('transactions').select('*',{count:'exact',head:true});
     const totalCash=adminUsers.reduce((s,u)=>s+Number(u.cash||0),0);
-    setTxt('adm-userCount',adminUsers.length);setTxt('adm-totalCash','$'+fmtUSD(totalCash));
-    setTxt('adm-holdingCount',hc||0);setTxt('adm-txCount',tc||0);
+    setTxt('adm-userCount',adminUsers.length);setTxt('adm-totalCash','$'+fmtUSD(totalCash));setTxt('adm-holdingCount',hc||0);setTxt('adm-txCount',tc||0);
     adminRenderUsers(adminUsers);
   }catch(err){document.getElementById('adminUsersTbody').innerHTML=`<tr><td colspan="5" style="text-align:center;padding:20px;color:#ef4444">${err.message}</td></tr>`;}
 }
@@ -1565,52 +1541,34 @@ function adminRenderUsers(users){
   </tr>`).join('');
 }
 function adminFilterUsers(q){const f=q.toLowerCase();adminRenderUsers(adminUsers.filter(u=>(u.email||'').toLowerCase().includes(f)||((u.first_name||'')+' '+(u.last_name||'')).toLowerCase().includes(f)));}
-function adminOpenEdit(id,name,cash){
-  document.getElementById('adminCashEdit').style.display='flex';
-  setTxt('adminEditName',name.trim());
-  document.getElementById('adminEditUserId').value=id;
-  document.getElementById('adminEditCash').value=Number(cash).toFixed(2);
-}
+function adminOpenEdit(id,name,cash){document.getElementById('adminCashEdit').style.display='flex';setTxt('adminEditName',name.trim());document.getElementById('adminEditUserId').value=id;document.getElementById('adminEditCash').value=Number(cash).toFixed(2);}
 async function adminSaveCash(){
-  const uid=document.getElementById('adminEditUserId').value;
-  const val=parseFloat(document.getElementById('adminEditCash').value);
+  const uid=document.getElementById('adminEditUserId').value;const val=parseFloat(document.getElementById('adminEditCash').value);
   if(!uid||isNaN(val))return;
   const{error}=await sb.from('profiles').update({cash:val}).eq('id',uid);
   if(error){showToast('Error',error.message,'error');return;}
-  showToast('Cash updated',`Balance set to $${fmtUSD(val)}`,'success');
-  document.getElementById('adminCashEdit').style.display='none';
-  adminLoadUsers();
+  showToast('Cash updated',`Balance set to $${fmtUSD(val)}`,'success');document.getElementById('adminCashEdit').style.display='none';adminLoadUsers();
 }
 
 // ── KONAMI / ADMIN TRIGGER ────────────────────────────────────────────────
 function setupAdminTrigger(){
   const seq=[38,38,40,40,37,39,37,39,66,65];let pos=0,hint=false;
   document.addEventListener('keydown',e=>{
-    if(e.keyCode===seq[pos]){pos++;if(!hint){hint=true;document.getElementById('kHint').classList.add('show');}}
-    else{pos=0;}
+    if(e.keyCode===seq[pos]){pos++;if(!hint){hint=true;document.getElementById('kHint').classList.add('show');}}else pos=0;
     if(pos===seq.length){pos=0;openAdminPanel();}
   });
   let clicks=0,ct;
-  document.getElementById('logoMark')?.addEventListener('click',()=>{
-    clicks++;clearTimeout(ct);ct=setTimeout(()=>clicks=0,600);
-    if(clicks>=3){clicks=0;openAdminPanel();}
-  });
-  document.getElementById('topLogoMark')?.addEventListener('click',()=>{
-    clicks++;clearTimeout(ct);ct=setTimeout(()=>clicks=0,600);
-    if(clicks>=3){clicks=0;openAdminPanel();}
+  ['logoMark','topLogoMark'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('click',()=>{clicks++;clearTimeout(ct);ct=setTimeout(()=>clicks=0,600);if(clicks>=3){clicks=0;openAdminPanel();}});
   });
 }
-
-// ── SPARKLINE (card decorations only) ─────────────────────────────────────
-function genSpark(up,n=11){let v=50,pts=[];for(let i=0;i<n;i++){v+=(Math.random()-.5+(up?.3:-.3))*10;v=Math.max(5,Math.min(95,v));pts.push(v);}return pts;}
-function sparkPath(pts,W=140,H=44){const mn=Math.min(...pts),mx=Math.max(...pts),r=mx-mn||1;return pts.map((v,i)=>{const x=(i/(pts.length-1))*W,y=H-((v-mn)/r)*(H-6)-3;return(i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);}).join(' ');}
 
 // ── TOAST ─────────────────────────────────────────────────────────────────
 let _tt;
 function showToast(title,sub,type='info'){
   const t=document.getElementById('toast'),ti=document.getElementById('toast-icon');
   setTxt('toast-title',title);setTxt('toast-sub',sub||'');
-  const cfg={success:{i:'fa-check',c:'#22c55e',b:'rgba(34,197,94,.15)',br:'rgba(34,197,94,.25)'},error:{i:'fa-triangle-exclamation',c:'#ef4444',b:'rgba(239,68,68,.15)',br:'rgba(239,68,68,.25)'},info:{i:'fa-circle-info',c:'#c9a84c',b:'rgba(201,168,76,.15)',br:'rgba(201,168,76,.25)'}}[type]||{};
+  const cfg={success:{i:'fa-check',c:'#22c55e',b:'rgba(34,197,94,.12)',br:'rgba(34,197,94,.25)'},error:{i:'fa-triangle-exclamation',c:'#ef4444',b:'rgba(239,68,68,.12)',br:'rgba(239,68,68,.25)'},info:{i:'fa-circle-info',c:'#c9a84c',b:'rgba(201,168,76,.12)',br:'rgba(201,168,76,.25)'}}[type]||{i:'fa-circle-info',c:'#5a6880',b:'rgba(90,104,128,.12)',br:'rgba(90,104,128,.25)'};
   ti.innerHTML=`<i class="fas ${cfg.i}" style="color:${cfg.c};font-size:13px"></i>`;
   ti.style.cssText=`width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${cfg.b};border:1px solid ${cfg.br}`;
   t.style.borderColor=cfg.br;t.classList.add('show');
@@ -1621,6 +1579,14 @@ function showToast(title,sub,type='info'){
 function setTxt(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function fmtUSD(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtPrice(p){if(p>=1000)return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});if(p>=1)return p.toFixed(2);return p.toFixed(4);}
+
+// Close modals on overlay click
+document.addEventListener('click',e=>{
+  ['swapModal','investModal','depositModal','txDetailModal'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&el.classList.contains('open')&&e.target===el){el.classList.remove('open');if(id==='investModal')closeInvestModal();}
+  });
+});
 </script>
 </body>
 </html>
