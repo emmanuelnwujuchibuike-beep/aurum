@@ -2154,7 +2154,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         });
         if (error) throw error;
         closeDepositModal();
-        showToast('Deposit Submitted! ⏳','$'+fmtUSD(selectedDepAmt)+' pending — balance updates only after admin approval.','info');
+        showToast('Deposit Submitted! ⏳','$'+fmtUSD(selectedDepAmt)+' pending — balance updates only after approval.','info');
         selectedDepCoin = null; selectedDepAmt = 0;
         loadTransactions(); checkPendingBadge();
       } catch(err) { showToast('Error', err.message, 'error'); }
@@ -2208,7 +2208,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         });
         if (error) throw error;
         closeWithdrawModal();
-        showToast('Withdrawal Requested! ⏳','$'+fmtUSD(amt)+' pending — balance deducted only after admin approval.','info');
+        showToast('Withdrawal Requested! ⏳','$'+fmtUSD(amt)+' pending — balance deducted only after approval.','info');
         selectedWdCoin = null; loadTransactions(); checkPendingBadge();
       } catch(err) { showToast('Error', err.message, 'error'); }
     }

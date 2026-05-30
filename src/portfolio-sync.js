@@ -339,7 +339,7 @@
 <div id="ps-panel">
   <div class="ps-hdr">
     <div>
-      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">My Portfolio</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">My Trading/Portfolio</p>
       <p id="ps-sub" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;margin-top:2px">—</p>
     </div>
     <button class="ps-close-x" onclick="PortfolioSync.closePanel()">✕</button>
