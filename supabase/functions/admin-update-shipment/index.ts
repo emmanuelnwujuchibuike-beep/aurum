@@ -143,6 +143,98 @@ serve(async (req: Request) => {
       if (error) throw error
       result = data
 
+            /**
+       * ADD THESE CASES to your existing admin-update-shipment edge function
+       * inside the main switch/if-else block that handles `action`.
+       *
+       * These allow portfolio-sync.js to close trades + admin to manage them
+       * via the service-role key (never exposed to the browser).
+       */
+
+      // ── close_trade ────────────────────────────────────────────────────────
+      // Called when a user closes a CFD position via portfolio-sync.js
+      if (action === 'close_trade') {
+        const { tradeId, closePrice, pnl, returnAmount, userId } = params;
+
+        // 1. Mark trade as closed
+        const { error: tradeErr } = await supabaseAdmin
+          .from('open_trades')
+          .update({
+            status:      'closed',
+            close_price: closePrice,
+            closed_at:   new Date().toISOString(),
+          })
+          .eq('id', tradeId);
+        if (tradeErr) throw tradeErr;
+
+        // 2. Add return amount back to user cash
+        const { data: profile, error: profErr } = await supabaseAdmin
+          .from('profiles')
+          .select('cash')
+          .eq('id', userId)
+          .single();
+        if (profErr) throw profErr;
+
+        const newCash = Number(profile.cash || 0) + returnAmount;
+        const { error: cashErr } = await supabaseAdmin
+          .from('profiles')
+          .update({ cash: newCash })
+          .eq('id', userId);
+        if (cashErr) throw cashErr;
+
+        return { success: true, data: { newCash } };
+      }
+
+      // ── get_open_trades ────────────────────────────────────────────────────
+      if (action === 'get_open_trades') {
+        const { userId } = params;
+        const { data, error } = await supabaseAdmin
+          .from('open_trades')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('status', 'open')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        return { success: true, data };
+      }
+
+      // ── get_all_open_trades (admin view) ──────────────────────────────────
+      if (action === 'get_all_open_trades') {
+        const { data, error } = await supabaseAdmin
+          .from('open_trades')
+          .select(`
+            *,
+            profiles:user_id (first_name, last_name, email)
+          `)
+          .eq('status', 'open')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        return { success: true, data };
+      }
+
+      // ── admin_close_trade ─────────────────────────────────────────────────
+      if (action === 'admin_close_trade') {
+        const { tradeId, closePrice, pnl, returnAmount, userId } = params;
+
+        const { error: tradeErr } = await supabaseAdmin
+          .from('open_trades')
+          .update({
+            status:      'closed',
+            close_price: closePrice,
+            closed_at:   new Date().toISOString(),
+          })
+          .eq('id', tradeId);
+        if (tradeErr) throw tradeErr;
+
+        if (returnAmount != null && userId) {
+          const { data: p } = await supabaseAdmin.from('profiles').select('cash').eq('id', userId).single();
+          const newCash = Number(p?.cash || 0) + returnAmount;
+          await supabaseAdmin.from('profiles').update({ cash: newCash }).eq('id', userId);
+        }
+
+        return { success: true, data: { closed: true } };
+      }
+
     // ── GET USER TRANSACTIONS ────────────────────────
     } else if (action === "get_user_transactions") {
       const { userId, limit = 15 } = body
