@@ -4,39 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aurum Capital — Precision Investment Platform</title>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <!-- Icons / UI libs -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="output.css">
   <link rel="stylesheet" href="input.css">
-  <link rel="icon" type="image/png" href="./image/logo.jpeg" class="">
-  <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <script type="modules" src="signup.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind (browser build — dev only) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="./image/logo.jpeg">
+
+  <!-- ★ SUPABASE SDK — MUST load before price-sync.js ★ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
+
 <body class="overflow-x-hidden">
- 
+
+  <!-- ── LOADER ─────────────────────────────────────────── -->
   <div id="loader">
     <div class="ld-logo">
       <div class="loader-icon">
         <span>A</span><span>U</span><span>R</span><span>U</span><span>M</span>
         <span style="display:inline-block;width:.5ch"></span>
       </div>
-      
-    
     </div>
     <div class="ld-line"><div class="ld-fill"></div></div>
     <div class="ld-sub">Precision Investment Platform</div>
   </div>
 
+  <!-- ── HEADER ─────────────────────────────────────────── -->
   <header id="mainHeader">
     <a href="#" class="logo">
       <div class="logo-mark">A</div>
@@ -58,10 +65,12 @@
     </button>
   </header>
 
+  <!-- ── LIVE TICKER ────────────────────────────────────── -->
   <div class="ticker-bar">
     <div class="ticker-inner" id="tickerInner"></div>
   </div>
 
+  <!-- ── MOBILE DRAWER ──────────────────────────────────── -->
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <div class="drawer" id="drawer">
     <a href="#markets">Markets</a>
@@ -72,12 +81,16 @@
     <a href="signup.html" style="margin-top:12px;background:linear-gradient(135deg,var(--gold),#a87c28);color:var(--void);font-weight:600;border:none;text-align:center">Open Account</a>
   </div>
 
+  <!-- ══════════════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════════════ -->
   <section class="hero">
     <div class="hero-grid"></div>
     <div class="hero-orb-1"></div>
     <div class="hero-orb-2"></div>
 
     <div class="hero-inner">
+      <!-- Left copy -->
       <div>
         <div class="hero-label reveal">Institutional-Grade Platform</div>
         <h1 class="hero-title reveal">
@@ -86,7 +99,8 @@
           <strong>Shape Tomorrow</strong>
         </h1>
         <p class="hero-sub reveal">
-          Access crypto, equities, and prime real estate through a single precision platform. Built for sophisticated investors who demand more.
+          Access crypto, equities, and prime real estate through a single precision platform.
+          Built for sophisticated investors who demand more.
         </p>
         <div class="hero-ctas reveal">
           <a href="invest.html" class="btn-primary">
@@ -114,19 +128,33 @@
         </div>
       </div>
 
+      <!--
+        ★ PORTFOLIO CARD ★
+        hero-port-val  → total live value  (BTC·0.8 + ETH·8.5 + XRP·8000 + $28,040 cash)
+        hero-port-chg  → weighted % change
+        pr-BTC / chg-BTC, pr-XRP / chg-XRP → individual live prices
+        All three IDs are updated by window.onPriceUpdate in script.js
+      -->
       <div class="portfolio-card reveal">
         <div class="pc-header">
           <div>
             <div class="pc-label">Portfolio Value</div>
-            <div class="pc-value">$94,320</div>
+            <!-- ★ live total — updated by updateHeroPortfolio() -->
+            <div class="pc-value" id="hero-port-val">$94,320.00</div>
           </div>
-          <div class="pc-change up">+4.6%</div>
+          <!-- ★ live weighted change badge -->
+          <div class="pc-change up" id="hero-port-chg">+2.4%</div>
         </div>
+
+        <!-- Sparkline decoration (static SVG shape, cosmetic only) -->
         <div style="padding:24px;">
           <svg class="sparkline" viewBox="0 0 320 80" preserveAspectRatio="none">
-            <path d="M0,50 C60,40 120,20 180,34 C240,48 280,28 320,20" fill="none" stroke="rgba(201,168,76,0.9)" stroke-width="3"/>
+            <path d="M0,50 C60,40 120,20 180,34 C240,48 280,28 320,20"
+                  fill="none" stroke="rgba(201,168,76,0.9)" stroke-width="3"/>
           </svg>
         </div>
+
+        <!-- BTC row -->
         <div class="asset-row">
           <div class="asset-icon" style="background:#f7931a22;color:#f7931a">₿</div>
           <div class="asset-info">
@@ -134,10 +162,13 @@
             <div class="asset-name">Dominant crypto exposure</div>
           </div>
           <div class="asset-right">
-            <div class="asset-price">$77,430</div>
-            <div class="asset-chg up">+2.8%</div>
+            <!-- ★ live BTC price -->
+            <div class="asset-price" id="pr-BTC">$77,430.00</div>
+            <div class="asset-chg up" id="chg-BTC">+2.8%</div>
           </div>
         </div>
+
+        <!-- XRP row -->
         <div class="asset-row">
           <div class="asset-icon" style="background:#00aae422;color:#00aae4">X</div>
           <div class="asset-info">
@@ -145,14 +176,19 @@
             <div class="asset-name">High-growth digital payments</div>
           </div>
           <div class="asset-right">
-            <div class="asset-price">$0.72</div>
-            <div class="asset-chg dn">-1.2%</div>
+            <!-- ★ live XRP price -->
+            <div class="asset-price" id="pr-XRP">$1.72</div>
+            <div class="asset-chg dn" id="chg-XRP">-1.2%</div>
           </div>
         </div>
       </div>
+      <!-- /portfolio-card -->
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════════════════════
+       LIVE MARKETS
+  ══════════════════════════════════════════════════════ -->
   <section class="section-shell markets-section" id="markets">
     <div class="section-inner">
       <div class="section-label">Live Markets</div>
@@ -168,6 +204,9 @@
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════════════════════
+       INVESTMENT VERTICALS
+  ══════════════════════════════════════════════════════ -->
   <section class="section-shell" id="invest">
     <div class="section-inner">
       <div class="section-label">Investment Verticals</div>
@@ -226,6 +265,9 @@
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════════════════════
+       FEATURED ASSETS TABLE
+  ══════════════════════════════════════════════════════ -->
   <section class="section-shell assets-section" id="assets">
     <div class="section-inner">
       <div class="section-label">Featured Assets</div>
@@ -249,12 +291,16 @@
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════════════════════
+       PROPERTY SPOTLIGHT
+  ══════════════════════════════════════════════════════ -->
   <section class="section-shell" id="property">
     <div class="section-inner">
       <div class="section-label">Property Spotlight</div>
       <h2 class="section-title reveal">Prime Real Estate Exposure</h2>
       <p class="section-sub reveal">Direct access to property investments across leading global markets.</p>
       <div class="property-grid reveal">
+
         <div class="prop-card">
           <div class="prop-img" style="background-image: url(./image/frankfurt.jpg); background-position: center; background-size: cover;">
             <div class="prop-overlay"></div>
@@ -268,14 +314,8 @@
               <button class="tbl-btn"><a href="invest.html">Invest</a></button>
             </div>
             <div class="prop-meta">
-              <div class="prop-meta-item">
-                <div class="prop-meta-val gold">7.3%</div>
-                <div class="prop-meta-lbl">Target Yield</div>
-              </div>
-              <div class="prop-meta-item">
-                <div class="prop-meta-val">$500K - $650K</div>
-                <div class="prop-meta-lbl">Asset Value</div>
-              </div>
+              <div class="prop-meta-item"><div class="prop-meta-val gold">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div>
+              <div class="prop-meta-item"><div class="prop-meta-val">$500K - $650K</div><div class="prop-meta-lbl">Asset Value</div></div>
             </div>
           </div>
         </div>
@@ -293,14 +333,8 @@
               <button class="tbl-btn"><a href="invest.html">Invest</a></button>
             </div>
             <div class="prop-meta">
-              <div class="prop-meta-item">
-                <div class="prop-meta-val gold">7.3%</div>
-                <div class="prop-meta-lbl">Target Yield</div>
-              </div>
-              <div class="prop-meta-item">
-                <div class="prop-meta-val">$550K - $750K</div>
-                <div class="prop-meta-lbl">Asset Value</div>
-              </div>
+              <div class="prop-meta-item"><div class="prop-meta-val gold">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div>
+              <div class="prop-meta-item"><div class="prop-meta-val">$550K - $750K</div><div class="prop-meta-lbl">Asset Value</div></div>
             </div>
           </div>
         </div>
@@ -318,14 +352,8 @@
               <button class="tbl-btn"><a href="invest.html">Invest</a></button>
             </div>
             <div class="prop-meta">
-              <div class="prop-meta-item">
-                <div class="prop-meta-val gold">7.3%</div>
-                <div class="prop-meta-lbl">Target Yield</div>
-              </div>
-              <div class="prop-meta-item">
-                <div class="prop-meta-val">$25M - $30M</div>
-                <div class="prop-meta-lbl">Asset Value</div>
-              </div>
+              <div class="prop-meta-item"><div class="prop-meta-val gold">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div>
+              <div class="prop-meta-item"><div class="prop-meta-val">$25M - $30M</div><div class="prop-meta-lbl">Asset Value</div></div>
             </div>
           </div>
         </div>
@@ -343,18 +371,11 @@
               <button class="tbl-btn"><a href="invest.html">Invest</a></button>
             </div>
             <div class="prop-meta">
-              <div class="prop-meta-item">
-                <div class="prop-meta-val gold">7.3%</div>
-                <div class="prop-meta-lbl">Target Yield</div>
-              </div>
-              <div class="prop-meta-item">
-                <div class="prop-meta-val">$10M - $15M</div>
-                <div class="prop-meta-lbl">Asset Value</div>
-              </div>
+              <div class="prop-meta-item"><div class="prop-meta-val gold">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div>
+              <div class="prop-meta-item"><div class="prop-meta-val">$10M - $15M</div><div class="prop-meta-lbl">Asset Value</div></div>
             </div>
           </div>
         </div>
-
 
         <div class="prop-card">
           <div class="prop-img" style="background-image: url(./image/burwood.jpg); background-position: center; background-size: cover;">
@@ -369,14 +390,8 @@
               <button class="tbl-btn"><a href="invest.html">Invest</a></button>
             </div>
             <div class="prop-meta">
-              <div class="prop-meta-item">
-                <div class="prop-meta-val gold">6.8%</div>
-                <div class="prop-meta-lbl">Target Yield</div>
-              </div>
-              <div class="prop-meta-item">
-                <div class="prop-meta-val">$2.2M</div>
-                <div class="prop-meta-lbl">Asset Value</div>
-              </div>
+              <div class="prop-meta-item"><div class="prop-meta-val gold">6.8%</div><div class="prop-meta-lbl">Target Yield</div></div>
+              <div class="prop-meta-item"><div class="prop-meta-val">$2.2M</div><div class="prop-meta-lbl">Asset Value</div></div>
             </div>
           </div>
         </div>
@@ -394,31 +409,32 @@
               <button class="tbl-btn"><a href="invest.html">Invest</a></button>
             </div>
             <div class="prop-meta">
-              <div class="prop-meta-item">
-                <div class="prop-meta-val gold">8.1%</div>
-                <div class="prop-meta-lbl">Target Yield</div>
-              </div>
-              <div class="prop-meta-item">
-                <div class="prop-meta-val">$7M</div>
-                <div class="prop-meta-lbl">Asset Value</div>
-              </div>
+              <div class="prop-meta-item"><div class="prop-meta-val gold">8.1%</div><div class="prop-meta-lbl">Target Yield</div></div>
+              <div class="prop-meta-item"><div class="prop-meta-val">$7M</div><div class="prop-meta-lbl">Asset Value</div></div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════════════════════
+       CTA BAND
+  ══════════════════════════════════════════════════════ -->
   <section class="cta-band">
     <div class="cta-inner reveal">
       <div>
         <h2 class="cta-title">Create a portfolio with precision, scale, and insight.</h2>
         <p class="cta-sub">Join Aurum Capital for direct access to differentiated asset classes and proprietary allocation tools of institutional caliber.</p>
       </div>
-      <a href="#" class="btn-primary">Create Account</a>
+      <a href="signup.html" class="btn-primary">Create Account</a>
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════ -->
   <footer>
     <div class="footer-inner">
       <div class="footer-grid">
@@ -452,7 +468,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <div class="footer-legal">© 2016 Aurum Capital. All rights reserved.</div>
+        <div class="footer-legal">©️ 2016 Aurum Capital. All rights reserved.</div>
         <div class="footer-social">
           <a class="social-btn" href="#"><i class="fab fa-twitter"></i></a>
           <a class="social-btn" href="#"><i class="fab fa-linkedin-in"></i></a>
@@ -465,139 +481,41 @@
     </div>
   </footer>
 
+  <!-- ══════════════════════════════════════════════════════
+       SCRIPTS
+       ORDER MATTERS:
+         1. price-sync.js  — listens to Supabase, calls window.onPriceUpdate
+         2. script.js      — defines window.onPriceUpdate + builds UI
+       Supabase SDK is already in <head> so price-sync starts immediately.
+  ══════════════════════════════════════════════════════ -->
+  <script src="price-sync.js"></script>
+  <script src="script.js" defer></script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script>
-  
-</script>
-
+  <!-- ── Page-level UI (loader, header compact, mobile drawer) ── -->
   <script>
-    
-/* ── LOADER ───────────────────────────────────────────── */
-window.addEventListener('load',()=>{
-  setTimeout(()=>{document.getElementById('loader').classList.add('out');},1800);
-});
-
-/* ── HEADER COMPACT ───────────────────────────────────── */
-window.addEventListener('scroll',()=>{
-  document.getElementById('mainHeader').classList.toggle('compact',scrollY>60);
-},{passive:true});
-
-/* ── MOBILE DRAWER ────────────────────────────────────── */
-const mobBtn=document.getElementById('mobBtn'),drawer=document.getElementById('drawer'),doverlay=document.getElementById('drawerOverlay');
-mobBtn.addEventListener('click',()=>{drawer.classList.toggle('on');doverlay.classList.toggle('on')});
-doverlay.addEventListener('click',()=>{drawer.classList.remove('on');doverlay.classList.remove('on')});
-  </script>
-
-  <script>
-    /* ═══════════════════════════════════════════════════════
-   AURUM CAPITAL — SHARED NAV COMPONENT  (aurum-nav.js)
-   Include after server.js on every protected page.
-   Call: AurumNav.init(activeLink)
-═══════════════════════════════════════════════════════ */
-const AurumNav = (() => {
-
-  function init(activeLink = ''){
-    const user = AurumDB.auth.currentUser();
-    if(!user){ AurumDB.auth.requireAuth(); return null; }
-
-    /* Load platform settings for fee/key config */
-    AurumDB.contentful.getSettings().catch(()=>{});
-
-    /* Inject sidebar HTML into #sidebar placeholder if present */
-    const sidebar = document.getElementById('aurum-sidebar');
-    if(sidebar) sidebar.innerHTML = buildSidebar(activeLink, user);
-
-    /* Update topbar user elements */
-    setEl('nav-user-initials', user.avatarInitials || '?');
-    setEl('nav-user-name',     user.firstName + ' ' + user.lastName);
-    setEl('nav-user-cash',     '$' + fmt(user.cash) + ' available');
-    setEl('nav-cash-display',  '$' + fmt(user.cash));
-
-    /* Wire sign-out buttons (any element with data-signout) */
-    document.querySelectorAll('[data-signout]').forEach(el => {
-      el.addEventListener('click', e => { e.preventDefault(); AurumDB.signOut(); });
+    /* LOADER */
+    window.addEventListener('load', () => {
+      setTimeout(() => { document.getElementById('loader').classList.add('out'); }, 1800);
     });
 
-    return user;
-  }
+    /* HEADER compact on scroll */
+    window.addEventListener('scroll', () => {
+      document.getElementById('mainHeader').classList.toggle('compact', scrollY > 60);
+    }, { passive: true });
 
-  function buildSidebar(active, user){
-    const links = [
-      { href:'dashboard.html',     icon:'fa-gauge-high',         label:'Dashboard',    key:'dashboard' },
-      { href:'invest.html',        icon:'fa-chart-line',         label:'Invest',       key:'invest' },
-      { href:'transactions.html',  icon:'fa-clock-rotate-left',  label:'Transactions', key:'transactions' },
-      { href:'signup.html',        icon:'fa-user-circle',        label:'My Account',   key:'account' },
-    ];
-    const marketLinks = [
-      { href:'invest.html#crypto',   icon:'fab fa-bitcoin',  label:'Crypto' },
-      { href:'invest.html#stocks',   icon:'fa-chart-bar',    label:'Stocks' },
-      { href:'invest.html#property', icon:'fa-city',         label:'Real Estate' },
-    ];
-
-    const navItem = ({ href, icon, label, key }) =>
-      `<a href="${href}" class="sbl${active===key?' on':''}" ${key==='account'?'':''}><i class="${icon.startsWith('fab')?icon:'fas '+icon}"></i>${label}</a>`;
-
-    return `
-      <a href="investment.html" class="flex items-center gap-3 px-2 mb-8">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-void font-bold text-sm font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
-        <span class="font-display text-xl tracking-[.1em] text-snow">Aurum</span>
-      </a>
-      <div class="flex flex-col gap-1 flex-1 overflow-y-auto">
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2">Overview</p>
-        ${links.map(navItem).join('')}
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Markets</p>
-        ${marketLinks.map(l=>`<a href="${l.href}" class="sbl"><i class="${l.icon.startsWith('fab')?l.icon:'fas '+l.icon}"></i>${l.label}</a>`).join('')}
-        <p class="font-mono text-[9px] tracking-[.18em] text-steel uppercase px-2 mb-2 mt-5">Account</p>
-        <a href="signup.html" class="sbl"><i class="fas fa-user-shield"></i>Profile</a>
-        <a href="#" class="sbl" data-signout><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
-      </div>
-      <div class="border-t border-white/[.06] pt-4 mt-3">
-        <div class="flex items-center gap-3 px-2">
-          <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-void flex-shrink-0"
-               style="background:linear-gradient(135deg,#c9a84c,#a87c28)">${user.avatarInitials||'?'}</div>
-          <div class="min-w-0 flex-1">
-            <p class="text-snow text-sm font-medium truncate">${user.firstName} ${user.lastName}</p>
-            <p class="font-mono text-[9px] text-gold truncate" id="nav-user-cash">$${fmt(user.cash)} available</p>
-          </div>
-        </div>
-      </div>`;
-  }
-
-  function setEl(id, text){
-    const el = document.getElementById(id);
-    if(el) el.textContent = text;
-  }
-
-  function fmt(p){
-    if(!p && p!==0) return '0.00';
-    if(p>=1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    return parseFloat(p).toFixed(2);
-  }
-
-  return { init };
-})();
-window.AurumNav = AurumNav;
+    /* MOBILE DRAWER */
+    const mobBtn    = document.getElementById('mobBtn');
+    const drawer    = document.getElementById('drawer');
+    const doverlay  = document.getElementById('drawerOverlay');
+    mobBtn.addEventListener('click', () => {
+      drawer.classList.toggle('on');
+      doverlay.classList.toggle('on');
+    });
+    doverlay.addEventListener('click', () => {
+      drawer.classList.remove('on');
+      doverlay.classList.remove('on');
+    });
   </script>
 
-
-
-
-
-  <script src="server.js"></script>
-  <script src="script.js" defer></script>
 </body>
 </html>

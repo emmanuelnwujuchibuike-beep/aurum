@@ -261,8 +261,6 @@ serve(async (req: Request) => {
       result = {}
 
     // ── SAVE CRYPTO ADDRESS ──────────────────────────
-    //    This is what the Save button calls.
-    //    Writes to crypto_addresses table in DB.
     } else if (action === "save_address") {
       const { symbol, address } = body
       const { error } = await svc.from("crypto_addresses").upsert(
@@ -271,6 +269,39 @@ serve(async (req: Request) => {
       )
       if (error) throw error
       result = {}
+
+    // ── SAVE ASSET PRICE ─────────────────────────────
+    // Called by both dashboard.html and invest.html admin panels
+    // Using service role so it bypasses RLS — guaranteed to work
+    } else if (action === "save_price") {
+      const { sym, price, chg } = body
+      if (!sym || isNaN(Number(price)) || Number(price) <= 0) {
+        throw new Error("Invalid price data: sym=" + sym + " price=" + price)
+      }
+      const { error } = await svc.from("asset_prices").upsert(
+        { sym, price: Number(price), chg: Number(chg || 0), updated_at: new Date().toISOString() },
+        { onConflict: "sym" }
+      )
+      if (error) throw error
+      result = { sym, price: Number(price), chg: Number(chg || 0) }
+
+    // ── SAVE ALL PRICES (batch) ──────────────────────
+    // Accepts array: [{ sym, price, chg }]
+    } else if (action === "save_prices_batch") {
+      const { rows } = body
+      if (!Array.isArray(rows) || !rows.length) throw new Error("No price rows provided")
+      const validRows = rows
+        .filter((r: Record<string, unknown>) => r.sym && !isNaN(Number(r.price)) && Number(r.price) > 0)
+        .map((r: Record<string, unknown>) => ({
+          sym: r.sym,
+          price: Number(r.price),
+          chg: Number(r.chg || 0),
+          updated_at: new Date().toISOString()
+        }))
+      if (!validRows.length) throw new Error("No valid price rows")
+      const { error } = await svc.from("asset_prices").upsert(validRows, { onConflict: "sym" })
+      if (error) throw error
+      result = { saved: validRows.length }
 
     } else {
       return new Response(

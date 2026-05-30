@@ -1123,52 +1123,59 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 
 
 <script src="price-sync.js"></script>
-
 <script>
-    // ═══════════════════════════════════════════
-    //  SUPABASE CONFIG
-    // ═══════════════════════════════════════════
-    const SUPABASE_URL = 'https://ttwwthfeordsojmcjwxn.supabase.co';
+    // dashboard.js  — loaded as <script type="module" src="dashboard.js"> on dashboard.html
+    // All admin price saves go through the edge function (service role key never in browser)
+    // Price updates broadcast to ALL pages via price-sync.js + Supabase realtime
+
+    const SUPABASE_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
-    const EDGE_FN_URL = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment';
+    const EDGE_FN_URL   = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment';
 
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // ═══════════════════════════════════════════
-    //  callAdmin — ALL privileged DB ops go through
-    //  the Edge Function. Service key NEVER in browser.
-    // ═══════════════════════════════════════════
+    // ─── callAdmin ────────────────────────────────────────────────────────────
+    // FIX: refreshes session before every call so expired tokens never cause
+    //      silent 401 / "Not logged in" failures.
     async function callAdmin(action, params = {}) {
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) throw new Error('Not logged in');
+      const { data: { session }, error: sessErr } = await sb.auth.getSession();
+      let activeSession = session;
+
+      if (sessErr || !activeSession) {
+        const { data: refreshed, error: refErr } = await sb.auth.refreshSession();
+        if (refErr || !refreshed?.session) throw new Error('Session expired — please sign in again.');
+        activeSession = refreshed.session;
+      }
+
       const res = await fetch(EDGE_FN_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${activeSession.access_token}`
         },
         body: JSON.stringify({ action, ...params })
       });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => res.statusText);
+        throw new Error(`HTTP ${res.status}: ${text}`);
+      }
+
       const result = await res.json();
-      if (!result.success) throw new Error(result.error || 'Edge function error');
+      if (!result.success) throw new Error(result.error || 'Edge function returned failure');
       return result.data;
     }
 
+    // ─── State ────────────────────────────────────────────────────────────────
     let authUser = null, profile = null, myHoldings = [];
     let admAllUsers = [], admAllHoldings = [], admAllTx = [];
     let txDeleteMode = false;
     let allMyTransactions = [];
     let txModalFilter = 'all';
 
-    // ─── PRICES ───
-    // DEFAULT_PRICES are fallback values only — actual prices always come from Supabase
     const DEFAULT_PRICES = {BTC:67430,ETH:3280,SOL:188,BNB:612,XRP:0.72,ADA:0.48,TSLA:248.5,AAPL:189.3,NVDA:875.2,MSFT:412.7,AMZN:195.5,GOOGL:178.3,GOLD:2350};
     let PRICES = {...DEFAULT_PRICES};
-
-    // Tracks when each sym last received a Supabase push — tickPrices() won't simulate over these
     let _priceUpdatedAt = {};
-
-    // ── NO localStorage bootstrap here — prices always loaded from Supabase ──
 
     const ASSET_META = {
       BTC:{icon:'fab fa-bitcoin',color:'#f7931a',name:'Bitcoin'},ETH:{icon:'fab fa-ethereum',color:'#627eea',name:'Ethereum'},
@@ -1179,6 +1186,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       AMZN:{icon:'fab fa-amazon',color:'#ff9900',name:'Amazon'},GOOGL:{icon:'fab fa-google',color:'#4285f4',name:'Alphabet'},
       GOLD:{icon:'fas fa-gem',color:'#c9a84c',name:'Gold Spot'},USD:{icon:'fas fa-dollar-sign',color:'#22c55e',name:'Cash'},
     };
+
     let ASSETS_LIST = [
       {sym:'BTC',name:'Bitcoin',icon:'fab fa-bitcoin',color:'#f7931a',price:PRICES.BTC,chg:2.8,cat:'crypto'},
       {sym:'ETH',name:'Ethereum',icon:'fab fa-ethereum',color:'#627eea',price:PRICES.ETH,chg:1.4,cat:'crypto'},
@@ -1203,43 +1211,57 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       {sym:'LTC',name:'Litecoin',icon:'fas fa-coins',color:'#bfbbbb',network:'LTC Network',min:'0.01 LTC'},
     ];
 
-    // Addresses always loaded from DB — never localStorage
     let CRYPTO_ADDRESSES = {};
-
-    async function loadAddressesFromDb() {
-      try {
-        const { data, error } = await sb.from('crypto_addresses').select('symbol, address');
-        if (error) throw error;
-        CRYPTO_ADDRESSES = {};
-        (data || []).forEach(row => { CRYPTO_ADDRESSES[row.symbol] = row.address || ''; });
-      } catch(e) {
-        console.warn('Could not load addresses from DB:', e.message);
-        CRYPTO_ADDRESSES = {};
-      }
-    }
-
-    // ── Load prices from Supabase asset_prices table ──
-    async function loadPricesFromDB() {
-      try {
-        const { data, error } = await sb.from('asset_prices').select('*');
-        if (error) throw error;
-        (data || []).forEach(row => {
-          if (!row.sym) return;
-          PRICES[row.sym] = Number(row.price);
-          _priceUpdatedAt[row.sym] = Date.now();
-          const asset = ASSETS_LIST.find(a => a.sym === row.sym);
-          if (asset) {
-            asset.price = Number(row.price);
-            if (row.chg !== undefined) asset.chg = Number(row.chg);
-          }
-        });
-      } catch(e) {
-        console.warn('loadPricesFromDB:', e.message);
-      }
-    }
-
     let selectedDepCoin = null, selectedDepAmt = 0, selectedWdCoin = null;
     let activeChartInstance = null, activeChartAsset = null, activeChartPeriod = '1D';
+
+    // ─── Buy/Sell state ──────────────────────────────────────────────────
+    let tradeModalAsset = null, tradeModalType = 'buy';
+
+    // ═══════════════════════════════════════════
+    //  price-sync.js hook — receives live updates
+    // ═══════════════════════════════════════════
+    window.onPriceUpdate = function(sym, newPrice, newChg) {
+      PRICES[sym] = newPrice;
+      _priceUpdatedAt[sym] = Date.now();
+      const asset = ASSETS_LIST.find(a => a.sym === sym);
+      if (asset) { asset.price = newPrice; asset.chg = newChg; }
+
+      // Update crypto watchlist grid
+      const prEl = document.getElementById('grid-pr-' + sym);
+      if (prEl) {
+        const oldTxt = prEl.textContent;
+        prEl.textContent = '$' + fmtPrice(newPrice);
+        prEl.classList.remove('flash-up-dash', 'flash-down-dash');
+        void prEl.offsetWidth;
+        const wasUp = !oldTxt || newPrice >= parseFloat(oldTxt.replace(/[$,]/g,'') || '0');
+        prEl.classList.add(wasUp ? 'flash-up-dash' : 'flash-down-dash');
+        setTimeout(() => prEl.classList.remove('flash-up-dash', 'flash-down-dash'), 1200);
+      }
+      const chgEl = document.getElementById('grid-chg-' + sym);
+      if (chgEl) {
+        const up = newChg >= 0;
+        chgEl.textContent = (up?'+':'') + newChg.toFixed(2) + '%';
+        chgEl.style.color = up ? '#22c55e' : '#ef4444';
+        chgEl.style.background = up ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
+      }
+      // Update ticker
+      document.querySelectorAll('.tick-price-' + sym).forEach(el => el.textContent = '$' + fmtPrice(newPrice));
+      // Update chart modal if open for this sym
+      if (activeChartAsset === sym) {
+        const cmp = document.getElementById('chart-modal-price');
+        if (cmp) cmp.textContent = '$' + fmtPrice(newPrice);
+      }
+      // Update trade modal if open
+      if (tradeModalAsset && tradeModalAsset.sym === sym) {
+        const tpr = document.getElementById('trade-live-price');
+        if (tpr) tpr.textContent = '$' + fmtPrice(newPrice);
+        tradeModalAsset.price = newPrice;
+        updateTradeModalCalc();
+      }
+      // Recalc portfolio
+      loadPortfolioStats();
+    };
 
     // ═══════════════════════════════════════════
     //  INIT
@@ -1256,7 +1278,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       await loadPortfolioStats();
       await loadTransactions();
       await loadAddressesFromDb();
-      await loadPricesFromDB();   // ← load from Supabase on boot
       checkPendingBadge();
       document.getElementById('authGate').style.display = 'none';
       showApp();
@@ -1264,6 +1285,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       renderCryptoGrid();
       buildDepositCoinGrid();
       buildWithdrawCoinGrid();
+      injectTradeModal();
+      injectTradeReceipt();
+
       document.getElementById('signOutBtn').addEventListener('click', doSignOut);
       document.getElementById('drawerSignOut').addEventListener('click', doSignOut);
       document.getElementById('mobileMenuBtn').addEventListener('click', openDrawer);
@@ -1272,61 +1296,29 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       setupSecretGesture();
 
       const rlsEl = document.getElementById('admRlsNote');
-      if (rlsEl) {
-        rlsEl.textContent = '🟢 EDGE FUNCTION · Service key secured server-side';
-        rlsEl.style.color = '#22c55e';
-      }
+      if (rlsEl) { rlsEl.textContent = '🟢 EDGE FUNCTION · Service key secured'; rlsEl.style.color = '#22c55e'; }
 
-      // Real-time profile balance updates
       sb.channel('dash-profile').on('postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${authUser.id}` },
         ({ new: row }) => { profile = { ...profile, ...row }; refreshUI(); }
       ).subscribe();
 
-      // Real-time price updates — when admin pushes a price from invest.html
-      // it arrives here instantly without any page reload
-      sb.channel('dash-asset-prices')
-        .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'asset_prices' },
-          ({ new: row }) => {
-            if (!row || !row.sym) return;
-            PRICES[row.sym] = Number(row.price);
-            _priceUpdatedAt[row.sym] = Date.now();
-            const asset = ASSETS_LIST.find(a => a.sym === row.sym);
-            if (asset) {
-              asset.price = Number(row.price);
-              if (row.chg !== undefined) asset.chg = Number(row.chg);
-            }
-            // Refresh UI elements that show prices
-            renderCryptoGrid();
-            buildTicker();
-            if (activeChartAsset === row.sym) {
-              const cmp = document.getElementById('chart-modal-price');
-              if (cmp) cmp.textContent = '$' + fmtPrice(Number(row.price));
-            }
+      sb.channel('dash-tx-notifications').on('postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'transactions', filter: `user_id=eq.${authUser.id}` },
+        ({ new: row, old: oldRow }) => {
+          if (!oldRow || row.status === oldRow.status) return;
+          const amt = Math.abs(Number(row.usd_amount || 0));
+          if (row.status === 'approved') {
+            if (row.type === 'deposit') showStatusNotification('✅ Deposit Approved!', `$${fmtUSD(amt)} credited to your balance.`, 'success');
+            else if (row.type === 'withdraw') showStatusNotification('✅ Withdrawal Approved!', `$${fmtUSD(amt)} withdrawal processed.`, 'success');
+            loadProfile(); loadTransactions(); checkPendingBadge();
+          } else if (row.status === 'rejected') {
+            if (row.type === 'deposit') showStatusNotification('❌ Deposit Rejected', `$${fmtUSD(amt)} ${row.symbol||''} deposit was not approved.`, 'error');
+            else if (row.type === 'withdraw') showStatusNotification('❌ Withdrawal Rejected', `$${fmtUSD(amt)} withdrawal was rejected.`, 'error');
+            loadTransactions(); checkPendingBadge();
           }
-        ).subscribe();
-
-      // Real-time tx notifications
-      sb.channel('dash-tx-notifications')
-        .on('postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'transactions', filter: `user_id=eq.${authUser.id}` },
-          ({ new: row, old: oldRow }) => {
-            if (!oldRow || row.status === oldRow.status) return;
-            const amt = Math.abs(Number(row.usd_amount || 0));
-            const isDeposit = row.type === 'deposit';
-            const isWithdraw = row.type === 'withdraw';
-            if (row.status === 'approved') {
-              if (isDeposit) showStatusNotification('✅ Deposit Approved!', `$${fmtUSD(amt)} has been credited to your balance.`, 'success');
-              else if (isWithdraw) showStatusNotification('✅ Withdrawal Approved!', `$${fmtUSD(amt)} withdrawal is being processed.`, 'success');
-              loadProfile(); loadTransactions(); checkPendingBadge();
-            } else if (row.status === 'rejected') {
-              if (isDeposit) showStatusNotification('❌ Deposit Rejected', `Your $${fmtUSD(amt)} ${row.symbol || ''} deposit was not approved.`, 'error');
-              else if (isWithdraw) showStatusNotification('❌ Withdrawal Rejected', `Your $${fmtUSD(amt)} withdrawal was rejected.`, 'error');
-              loadTransactions(); checkPendingBadge();
-            }
-          }
-        ).subscribe();
+        }
+      ).subscribe();
 
       setInterval(tickPrices, 3000);
     });
@@ -1341,10 +1333,20 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     async function doSignOut() { await sb.auth.signOut(); window.location.href = 'signup.html'; }
     function setGreeting() { const h = new Date().getHours(); setTxt('greetTime', h<12?'morning':h<17?'afternoon':'evening'); }
 
+    // ─── DB helpers ──────────────────────────────────────────────────────────
+    async function loadAddressesFromDb() {
+      try {
+        const { data } = await sb.from('crypto_addresses').select('symbol, address');
+        CRYPTO_ADDRESSES = {};
+        (data || []).forEach(r => { CRYPTO_ADDRESSES[r.symbol] = r.address || ''; });
+      } catch(e) { CRYPTO_ADDRESSES = {}; }
+    }
+
     async function loadProfile() {
       const { data, error } = await sb.from('profiles').select('*').eq('id', authUser.id).single();
       if (!error) { profile = data; refreshUI(); }
     }
+
     async function loadPortfolioStats() {
       const { data: h } = await sb.from('holdings').select('*').eq('user_id', authUser.id);
       myHoldings = h || [];
@@ -1360,8 +1362,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       setTxt('posCount', myHoldings.length);
       setTxt('netWorth', '$' + fmtUSD(cash + portVal));
       const pEl = document.getElementById('portPnl');
-      pEl.textContent = (pnl >= 0 ? '+' : '') + ' $' + fmtUSD(Math.abs(pnl)) + ' P&L';
-      pEl.style.color = pnl >= 0 ? '#22c55e' : '#ef4444';
+      if (pEl) { pEl.textContent = (pnl >= 0 ? '+' : '') + ' $' + fmtUSD(Math.abs(pnl)) + ' P&L'; pEl.style.color = pnl >= 0 ? '#22c55e' : '#ef4444'; }
     }
 
     function getTxDisplayConfig(tx) {
@@ -1386,8 +1387,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       }
       document.getElementById('dashTxList').innerHTML = list.map(tx => {
         const c = getTxDisplayConfig(tx);
-        const isPending = tx.status === 'pending';
-        const isRejected = tx.status === 'rejected';
+        const isPending = tx.status === 'pending', isRejected = tx.status === 'rejected';
         const amt = Number(tx.usd_amount || 0), isPos = amt > 0;
         const d = new Date(tx.created_at);
         let amtDisplay = '';
@@ -1420,6 +1420,371 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       ['sbAvatar','mobAvatarWrap'].forEach(id => setTxt(id, ini));
       loadPortfolioStats();
     }
+
+    // ═══════════════════════════════════════════
+    //  BUY / SELL MODAL
+    // ═══════════════════════════════════════════
+    function injectTradeModal() {
+      if (document.getElementById('tradeModal')) return;
+      document.body.insertAdjacentHTML('beforeend', `
+      <div class="modal-overlay" id="tradeModal">
+        <div style="background:linear-gradient(155deg,#0e1622,#0a1018);border:1px solid rgba(255,255,255,.09);border-radius:24px;width:100%;max-width:480px;max-height:94vh;overflow-y:auto;box-shadow:0 60px 120px rgba(0,0,0,.9)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid rgba(255,255,255,.07)">
+            <div style="display:flex;align-items:center;gap:14px">
+              <div id="trade-icon" style="width:46px;height:46px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:20px"></div>
+              <div>
+                <p id="trade-sym" style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#edf2f8;font-weight:300">—</p>
+                <p id="trade-name-sub" style="color:#5a6880;font-size:12px">—</p>
+              </div>
+            </div>
+            <button onclick="closeTradeModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">✕</button>
+          </div>
+          <div style="display:flex;gap:6px;padding:16px 24px 0">
+            <button id="tab-buy" onclick="setTradeType('buy')" style="flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:rgba(34,197,94,.15);color:#22c55e;transition:all .2s">BUY</button>
+            <button id="tab-sell" onclick="setTradeType('sell')" style="flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:rgba(255,255,255,.04);color:#5a6880;transition:all .2s">SELL</button>
+          </div>
+          <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em">Live Price</span>
+              <div style="text-align:right">
+                <p id="trade-live-price" style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#edf2f8;font-weight:600">—</p>
+                <p id="trade-chg" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;margin-top:2px">24h change</p>
+              </div>
+            </div>
+            <div id="trade-holding-info" style="display:none;padding:12px 16px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);border-radius:12px">
+              <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#c9a84c;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Your Position</p>
+              <p id="trade-holding-detail" style="font-size:13px;color:#edf2f8">—</p>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase">Amount (USD)</label>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#edf2f8">Balance: <span id="trade-bal" style="color:#c9a84c">$0</span></span>
+              </div>
+              <div style="display:flex;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;transition:border-color .2s" onfocusin="this.style.borderColor='rgba(201,168,76,.45)'" onfocusout="this.style.borderColor='rgba(255,255,255,.08)'">
+                <span style="padding:0 14px;color:#5a6880;font-family:'JetBrains Mono',monospace;font-size:14px;border-right:1px solid rgba(255,255,255,.06);align-self:stretch;display:flex;align-items:center">$</span>
+                <input type="number" id="trade-amount" value="100" min="10" step="10" style="flex:1;background:transparent;border:none;padding:14px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:20px;outline:none" oninput="updateTradeModalCalc()">
+              </div>
+              <div style="display:flex;gap:6px;margin-top:8px">
+                <button onclick="setTradeAmt(100)" style="flex:1;padding:7px 0;border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;cursor:pointer">$100</button>
+                <button onclick="setTradeAmt(500)" style="flex:1;padding:7px 0;border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;cursor:pointer">$500</button>
+                <button onclick="setTradeAmt(1000)" style="flex:1;padding:7px 0;border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;cursor:pointer">$1K</button>
+                <button onclick="setTradeAmt(5000)" style="flex:1;padding:7px 0;border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;cursor:pointer">$5K</button>
+              </div>
+            </div>
+            <div style="background:rgba(4,6,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px">
+              <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase;margin-bottom:12px">Order Preview</p>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">Amount</span><span id="to-invest" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">$0.00</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">You receive</span><span id="to-receive" style="font-family:'JetBrains Mono',monospace;color:#c9a84c">—</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:#5a6880">Platform fee (0.1%)</span><span id="to-fee" style="font-family:'JetBrains Mono',monospace;color:#5a6880">$0.00</span></div>
+              <div style="height:1px;background:rgba(255,255,255,.06);margin-bottom:8px"></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:#5a6880;font-size:13px">Total</span><span id="to-total" style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:#edf2f8">$0.00</span></div>
+            </div>
+            <div id="trade-insuf" style="display:none;padding:10px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px">
+              <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444"><i class="fas fa-triangle-exclamation" style="margin-right:6px"></i>Insufficient balance</p>
+            </div>
+            <button id="trade-confirm-btn" onclick="confirmTrade()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .25s">
+              <span id="trade-confirm-label"><i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Confirm Buy</span>
+              <div id="trade-spin" style="display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite"></div>
+            </button>
+          </div>
+        </div>
+      </div>`);
+    }
+
+    function injectTradeReceipt() {
+      if (document.getElementById('tradeReceiptModal')) return;
+      document.body.insertAdjacentHTML('beforeend', `
+      <div style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.94);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:16px" id="tradeReceiptModal">
+        <div style="background:linear-gradient(155deg,#080e18,#060c12);border:1px solid rgba(201,168,76,.2);border-radius:26px;width:100%;max-width:420px;max-height:94vh;overflow-y:auto;box-shadow:0 0 100px rgba(201,168,76,.07)">
+          <div style="padding:32px 26px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div id="receipt-icon-wrap" style="width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:ldPulse 2s ease-in-out infinite">
+              <i id="receipt-icon-i" style="font-size:26px"></i>
+            </div>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300;margin-bottom:4px" id="receipt-title">Order Executed</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;letter-spacing:.1em" id="receipt-subtitle">TRANSACTION CONFIRMED</p>
+          </div>
+          <div style="padding:20px 24px">
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:16px;margin-bottom:14px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Transaction ID</span><span id="rc2-txid" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis">—</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Order Type</span><span id="rc2-type" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">—</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Asset</span><span id="rc2-asset" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">—</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Quantity</span><span id="rc2-qty" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c9a84c">—</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Execution Price</span><span id="rc2-price" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">—</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Gross Amount</span><span id="rc2-gross" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">—</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Platform Fee (0.1%)</span><span id="rc2-fee" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5a6880">—</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px"><span style="color:#edf2f8;font-size:13px;font-weight:500">Total Debited</span><span id="rc2-total" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#ef4444">—</span></div>
+            </div>
+            <div id="rc2-pnl-wrap" style="padding:14px 16px;border-radius:12px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+              <div><p id="rc2-pnl-label" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Unrealised P&L</p><p id="rc2-pnl" style="font-family:'JetBrains Mono',monospace;font-size:18px">—</p></div>
+              <div style="text-align:right"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">New Balance</p><p id="rc2-newbal" style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#22c55e">$0.00</p></div>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button onclick="closeTradeReceipt()" style="flex:1;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:#5a6880;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer">Close</button>
+              <button onclick="closeTradeReceipt();openTransactionsModal()" style="flex:1;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">View History</button>
+            </div>
+          </div>
+        </div>
+      </div>`);
+    }
+      // ─── Trade modal controls ─────────────────────────────────────────────────
+    function openTradeModal(sym, type) {
+      type = type || 'buy';
+      const asset = ASSETS_LIST.find(a => a.sym === sym);
+      if (!asset || !profile) return;
+      tradeModalAsset = { ...asset };
+      tradeModalType = type;
+
+      const iconEl = document.getElementById('trade-icon');
+      iconEl.innerHTML = `<i class="${asset.icon}"></i>`;
+      iconEl.style.cssText = `width:46px;height:46px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:20px;background:${asset.color}18;color:${asset.color}`;
+      setTxt('trade-sym', asset.sym);
+      setTxt('trade-name-sub', asset.name);
+      setTxt('trade-live-price', '$' + fmtPrice(asset.price));
+      const chgEl = document.getElementById('trade-chg');
+      chgEl.textContent = (asset.chg>=0?'+':'') + asset.chg.toFixed(2) + '%';
+      chgEl.style.color = asset.chg>=0?'#22c55e':'#ef4444';
+
+      setTradeType(type);
+      document.getElementById('trade-amount').value = 100;
+      updateTradeModalCalc();
+      document.getElementById('tradeModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function setTradeType(type) {
+      tradeModalType = type;
+      const buyTab = document.getElementById('tab-buy');
+      const sellTab = document.getElementById('tab-sell');
+      const btn = document.getElementById('trade-confirm-btn');
+      const label = document.getElementById('trade-confirm-label');
+
+      if (type === 'buy') {
+        buyTab.style.background = 'rgba(34,197,94,.15)'; buyTab.style.color = '#22c55e';
+        sellTab.style.background = 'rgba(255,255,255,.04)'; sellTab.style.color = '#5a6880';
+        btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
+        label.innerHTML = '<i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Confirm Buy';
+        document.getElementById('trade-holding-info').style.display = 'none';
+      } else {
+        sellTab.style.background = 'rgba(239,68,68,.15)'; sellTab.style.color = '#ef4444';
+        buyTab.style.background = 'rgba(255,255,255,.04)'; buyTab.style.color = '#5a6880';
+        btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+        label.innerHTML = '<i class="fas fa-arrow-trend-down" style="font-size:12px;margin-right:4px"></i>Confirm Sell';
+        const holding = myHoldings.find(h => h.symbol === tradeModalAsset?.sym);
+        const infoEl = document.getElementById('trade-holding-info');
+        const detailEl = document.getElementById('trade-holding-detail');
+        if (holding && tradeModalAsset) {
+          const val = Number(holding.quantity) * tradeModalAsset.price;
+          const pnl = (tradeModalAsset.price - Number(holding.avg_buy_price)) * Number(holding.quantity);
+          infoEl.style.display = 'block';
+          detailEl.innerHTML = `${Number(holding.quantity).toFixed(6)} ${tradeModalAsset.sym} · Value: <span style="color:#c9a84c">$${fmtUSD(val)}</span> · P&L: <span style="color:${pnl>=0?'#22c55e':'#ef4444'}">${pnl>=0?'+':''}$${fmtUSD(pnl)}</span>`;
+        } else {
+          infoEl.style.display = 'block';
+          detailEl.innerHTML = `<span style="color:#5a6880">No ${tradeModalAsset?.sym||''} holdings to sell</span>`;
+        }
+      }
+      updateTradeModalCalc();
+    }
+
+    function setTradeAmt(v) { document.getElementById('trade-amount').value = v; updateTradeModalCalc(); }
+
+    function updateTradeModalCalc() {
+      if (!tradeModalAsset || !profile) return;
+      const amt = parseFloat(document.getElementById('trade-amount').value) || 0;
+      const fee = +(amt * 0.001).toFixed(2);
+      const total = +(amt + fee).toFixed(2);
+      const cash = Number(profile.cash || 0);
+      const qty = amt / tradeModalAsset.price;
+
+      setTxt('to-invest', '$' + fmtUSD(amt));
+      setTxt('to-fee', '$' + fmtUSD(fee));
+      setTxt('to-total', '$' + fmtUSD(total));
+      setTxt('trade-bal', '$' + fmtUSD(cash));
+
+      if (tradeModalType === 'buy') {
+        setTxt('to-receive', (qty < 1 ? qty.toFixed(6) : qty.toFixed(4)) + ' ' + tradeModalAsset.sym);
+      } else {
+        const netUSD = amt - fee;
+        setTxt('to-receive', '$' + fmtUSD(netUSD) + ' USD');
+      }
+
+      let insuf = false;
+      if (tradeModalType === 'buy') {
+        insuf = total > cash || amt < 10;
+      } else {
+        const holding = myHoldings.find(h => h.symbol === tradeModalAsset.sym);
+        const availQty = holding ? Number(holding.quantity) : 0;
+        const sellQty = amt / tradeModalAsset.price;
+        insuf = sellQty > availQty || amt < 10;
+      }
+
+      document.getElementById('trade-insuf').style.display = insuf ? 'flex' : 'none';
+      document.getElementById('trade-confirm-btn').disabled = insuf;
+      document.getElementById('trade-confirm-btn').style.opacity = insuf ? '.45' : '1';
+    }
+
+    function closeTradeModal() {
+      document.getElementById('tradeModal').classList.remove('open');
+      document.body.style.overflow = '';
+      tradeModalAsset = null;
+    }
+
+    async function confirmTrade() {
+      if (!tradeModalAsset || !profile) return;
+      const a = tradeModalAsset;
+      const amt = parseFloat(document.getElementById('trade-amount').value) || 0;
+      const fee = +(amt * 0.001).toFixed(2);
+      const total = +(amt + fee).toFixed(2);
+      const cash = Number(profile.cash || 0);
+      const isBuy = tradeModalType === 'buy';
+
+      if (isBuy && total > cash) { showToast('Insufficient balance', 'Deposit funds to continue', 'error'); return; }
+      if (amt < 10) { showToast('Minimum $10', '', 'error'); return; }
+
+      const qty = amt / a.price;
+
+      if (!isBuy) {
+        const holding = myHoldings.find(h => h.symbol === a.sym);
+        if (!holding || Number(holding.quantity) < qty) { showToast('Insufficient holdings', 'Not enough ' + a.sym + ' to sell', 'error'); return; }
+      }
+
+      document.getElementById('trade-confirm-label').style.display = 'none';
+      document.getElementById('trade-spin').style.display = 'flex';
+      document.getElementById('trade-confirm-btn').disabled = true;
+
+      const execTime = new Date();
+      try {
+        let txData;
+
+        if (isBuy) {
+          const { data: tx, error: txErr } = await sb.from('transactions').insert({
+            user_id: authUser.id, type: 'buy', symbol: a.sym, name: a.name,
+            icon: a.icon, color: a.color, quantity: qty, price_at_tx: a.price,
+            usd_amount: -total, status: 'approved',
+            note: `Buy ${a.sym} @ $${fmtPrice(a.price)} | Fee: $${fmtUSD(fee)}`
+          }).select().single();
+          if (txErr) throw txErr;
+          txData = tx;
+
+          const existing = myHoldings.find(h => h.symbol === a.sym);
+          if (existing) {
+            const newQty = Number(existing.quantity) + qty;
+            const newAvg = (Number(existing.avg_buy_price) * Number(existing.quantity) + a.price * qty) / newQty;
+            await sb.from('holdings').update({ quantity: newQty, avg_buy_price: +newAvg.toFixed(6) }).eq('id', existing.id);
+          } else {
+            await sb.from('holdings').insert({ user_id: authUser.id, symbol: a.sym, name: a.name, icon: a.icon, color: a.color, quantity: qty, avg_buy_price: a.price });
+          }
+
+        } else {
+          const netUSD = amt - fee;
+          const { data: tx, error: txErr } = await sb.from('transactions').insert({
+            user_id: authUser.id, type: 'sell', symbol: a.sym, name: a.name,
+            icon: a.icon, color: a.color, quantity: qty, price_at_tx: a.price,
+            usd_amount: netUSD, status: 'approved',
+            note: `Sell ${a.sym} @ $${fmtPrice(a.price)} | Fee: $${fmtUSD(fee)}`
+          }).select().single();
+          if (txErr) throw txErr;
+          txData = tx;
+
+          const holding = myHoldings.find(h => h.symbol === a.sym);
+          const newQty = Number(holding.quantity) - qty;
+          if (newQty <= 0.0000001) {
+            await sb.from('holdings').delete().eq('id', holding.id);
+          } else {
+            await sb.from('holdings').update({ quantity: newQty }).eq('id', holding.id);
+          }
+        }
+
+        await loadProfile();
+        await loadPortfolioStats();
+        await loadTransactions();
+        closeTradeModal();
+
+        const holding = myHoldings.find(h => h.symbol === a.sym);
+        let pnl = 0, pnlLabel = 'Unrealised P&L';
+        if (isBuy) {
+          pnl = 0;
+          pnlLabel = 'Entry P&L';
+        } else {
+          const avgBuy = holding ? Number(holding.avg_buy_price) : a.price;
+          pnl = (a.price - avgBuy) * qty;
+          pnlLabel = 'Realised P&L';
+        }
+
+        showTradeReceipt({
+          txId: txData?.id || 'N/A',
+          type: isBuy ? 'MARKET BUY' : 'MARKET SELL',
+          asset: `${a.name} (${a.sym})`,
+          qty: qty < 1 ? qty.toFixed(6) : qty.toFixed(4),
+          sym: a.sym,
+          price: fmtPrice(a.price),
+          gross: fmtUSD(amt),
+          fee: fmtUSD(fee),
+          total: fmtUSD(total),
+          newCash: Number(profile.cash || 0),
+          pnl,
+          pnlLabel,
+          isBuy,
+        });
+
+      } catch (err) {
+        showToast('Trade failed', err.message || 'Please try again', 'error');
+      } finally {
+        document.getElementById('trade-confirm-label').style.display = 'flex';
+        document.getElementById('trade-spin').style.display = 'none';
+        document.getElementById('trade-confirm-btn').disabled = false;
+      }
+    }
+
+    function showTradeReceipt(d) {
+      const modal = document.getElementById('tradeReceiptModal');
+      const iconWrap = document.getElementById('receipt-icon-wrap');
+      const iconI = document.getElementById('receipt-icon-i');
+      if (d.isBuy) {
+        iconWrap.style.cssText = `width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:ldPulse 2s ease-in-out infinite;background:rgba(34,197,94,.1);border:2px solid rgba(34,197,94,.3)`;
+        iconI.className = 'fas fa-check'; iconI.style.color = '#22c55e';
+        setTxt('receipt-title', 'Buy Order Executed');
+        setTxt('receipt-subtitle', 'POSITION OPENED');
+      } else {
+        iconWrap.style.cssText = `width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:ldPulse 2s ease-in-out infinite;background:rgba(239,68,68,.1);border:2px solid rgba(239,68,68,.3)`;
+        iconI.className = 'fas fa-arrow-trend-down'; iconI.style.color = '#ef4444';
+        setTxt('receipt-title', 'Sell Order Executed');
+        setTxt('receipt-subtitle', 'POSITION CLOSED');
+      }
+      setTxt('rc2-txid', d.txId);
+      setTxt('rc2-type', d.type);
+      setTxt('rc2-asset', d.asset);
+      setTxt('rc2-qty', d.qty + ' ' + d.sym);
+      setTxt('rc2-price', '$' + d.price);
+      setTxt('rc2-gross', '$' + d.gross);
+      setTxt('rc2-fee', '$' + d.fee);
+      setTxt('rc2-total', (d.isBuy ? '-' : '+') + '$' + d.total);
+      setTxt('rc2-newbal', '$' + fmtUSD(d.newCash));
+
+      const pnlWrap = document.getElementById('rc2-pnl-wrap');
+      const pnlEl = document.getElementById('rc2-pnl');
+      const pnlLabelEl = document.getElementById('rc2-pnl-label');
+      pnlLabelEl.textContent = d.pnlLabel;
+      pnlEl.textContent = (d.pnl >= 0 ? '+' : '') + '$' + fmtUSD(Math.abs(d.pnl));
+      pnlEl.style.color = d.pnl >= 0 ? '#22c55e' : '#ef4444';
+      pnlWrap.style.background = d.pnl >= 0 ? 'rgba(34,197,94,.06)' : 'rgba(239,68,68,.06)';
+      pnlWrap.style.border = `1px solid ${d.pnl >= 0 ? 'rgba(34,197,94,.15)' : 'rgba(239,68,68,.15)'}`;
+
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeTradeReceipt() {
+      document.getElementById('tradeReceiptModal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    window.openTradeModal = openTradeModal;
+    window.closeTradeModal = closeTradeModal;
+    window.setTradeType = setTradeType;
+    window.setTradeAmt = setTradeAmt;
+    window.updateTradeModalCalc = updateTradeModalCalc;
+    window.confirmTrade = confirmTrade;
+    window.closeTradeReceipt = closeTradeReceipt;
 
     // ═══════════════════════════════════════════
     //  PORTFOLIO MODAL
@@ -1458,17 +1823,23 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
             <div style="width:44px;height:44px;border-radius:14px;background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><i class="${meta.icon||'fas fa-coins'}"></i></div>
             <div style="flex:1"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><p style="font-size:15px;font-weight:600;color:#edf2f8">${h.symbol}</p><p style="font-size:12px;color:#5a6880">${meta.name||h.symbol}</p></div><div style="text-align:right"><p style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#edf2f8;font-weight:300">$${fmtUSD(val)}</p><p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${itemPnl>=0?'#22c55e':'#ef4444'}">${itemPnl>=0?'+':''}$${fmtUSD(itemPnl)} (${pct>=0?'+':''}${pct.toFixed(2)}%)</p></div></div></div>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">
             <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center"><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Qty</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">${Number(h.quantity).toFixed(4)}</p></div>
             <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center"><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Avg Buy</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">$${fmtPrice(Number(h.avg_buy_price))}</p></div>
             <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center"><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Live Price</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c9a84c">$${fmtPrice(live)}</p></div>
             <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;text-align:center"><p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;margin-bottom:4px">Portfolio %</p><p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#627eea">${share.toFixed(1)}%</p></div>
           </div>
-          <div style="height:4px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden"><div style="height:100%;width:${Math.min(share,100)}%;background:linear-gradient(90deg,${meta.color||'#c9a84c'},${meta.color||'#c9a84c'}88);border-radius:4px"></div></div>
+          <div style="display:flex;gap:8px">
+            <button onclick="openTradeModal('${h.symbol}','buy')" style="flex:1;padding:10px;border-radius:11px;border:none;background:rgba(34,197,94,.12);color:#22c55e;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;font-weight:600;transition:all .2s" onmouseover="this.style.background='rgba(34,197,94,.22)'" onmouseout="this.style.background='rgba(34,197,94,.12)'"><i class="fas fa-plus" style="margin-right:4px"></i>Buy More</button>
+            <button onclick="openTradeModal('${h.symbol}','sell')" style="flex:1;padding:10px;border-radius:11px;border:none;background:rgba(239,68,68,.1);color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;font-weight:600;transition:all .2s" onmouseover="this.style.background='rgba(239,68,68,.2)'" onmouseout="this.style.background='rgba(239,68,68,.1)'"><i class="fas fa-minus" style="margin-right:4px"></i>Sell</button>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;margin-top:12px"><div style="height:100%;width:${Math.min(share,100)}%;background:linear-gradient(90deg,${meta.color||'#c9a84c'},${meta.color||'#c9a84c'}88);border-radius:4px"></div></div>
         </div>`;
       }).join('');
     }
     function closePortfolioModal() { document.getElementById('portfolioModal').classList.remove('open'); document.body.style.overflow = ''; }
+    window.openPortfolioModal = openPortfolioModal;
+    window.closePortfolioModal = closePortfolioModal;
 
     // ═══════════════════════════════════════════
     //  TRANSACTIONS MODAL
@@ -1482,6 +1853,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       updateTxModalStats(allMyTransactions);
     }
     function closeTransactionsModal() { document.getElementById('transactionsModal').classList.remove('open'); document.body.style.overflow = ''; }
+    window.openTransactionsModal = openTransactionsModal;
+    window.closeTransactionsModal = closeTransactionsModal;
 
     function filterTxModal(type) {
       txModalFilter = type;
@@ -1496,6 +1869,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       renderTxModal(filtered);
       updateTxModalStats(filtered);
     }
+    window.filterTxModal = filterTxModal;
 
     function updateTxModalStats(txs) {
       let totalInvested = 0, totalReceived = 0;
@@ -1509,26 +1883,20 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       setTxt('txm-invested', '$' + fmtUSD(totalInvested));
       setTxt('txm-received', '$' + fmtUSD(totalReceived));
       const netEl = document.getElementById('txm-net');
-      netEl.textContent = (net>=0?'+':'') + '$' + fmtUSD(Math.abs(net));
-      netEl.style.color = net >= 0 ? '#22c55e' : '#ef4444';
+      if (netEl) { netEl.textContent = (net>=0?'+':'') + '$' + fmtUSD(Math.abs(net)); netEl.style.color = net >= 0 ? '#22c55e' : '#ef4444'; }
     }
 
     function renderTxModal(txs) {
       if (!txs.length) { document.getElementById('txModalList').innerHTML='<div style="padding:40px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#5a6880">No transactions found</div>'; return; }
       const typeLabelMap = {buy:'BUY',sell:'SELL',deposit:'DEPOSIT',withdraw:'WITHDRAW',swap:'SWAP'};
-      const typeBadgeCfg = {
-        buy:{bg:'rgba(239,68,68,.1)',color:'#ef4444'},sell:{bg:'rgba(34,197,94,.1)',color:'#22c55e'},
-        deposit:{bg:'rgba(201,168,76,.1)',color:'#c9a84c'},withdraw:{bg:'rgba(239,68,68,.1)',color:'#ef4444'},
-        swap:{bg:'rgba(98,126,234,.1)',color:'#627eea'}
-      };
+      const typeBadgeCfg = {buy:{bg:'rgba(239,68,68,.1)',color:'#ef4444'},sell:{bg:'rgba(34,197,94,.1)',color:'#22c55e'},deposit:{bg:'rgba(201,168,76,.1)',color:'#c9a84c'},withdraw:{bg:'rgba(239,68,68,.1)',color:'#ef4444'},swap:{bg:'rgba(98,126,234,.1)',color:'#627eea'}};
       document.getElementById('txModalList').innerHTML = txs.map(tx => {
         const c = getTxDisplayConfig(tx);
         const badgeCfg = typeBadgeCfg[tx.type] || {bg:'rgba(90,104,128,.1)',color:'#5a6880'};
         const amt = Number(tx.usd_amount||0), isPos = amt > 0;
         const d = new Date(tx.created_at);
         const meta = ASSET_META[tx.symbol] || {};
-        const isPending = tx.status === 'pending';
-        const isRejected = tx.status === 'rejected';
+        const isPending = tx.status === 'pending', isRejected = tx.status === 'rejected';
         let amtDisplay = '';
         if (isPending) amtDisplay = '<p style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#c9a84c">⏳ Pending</p>';
         else if (isRejected) amtDisplay = '<p style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#5a6880">✕ Rejected</p>';
@@ -1558,9 +1926,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     }
 
     document.addEventListener('click', function(e) {
-      ['portfolioModal','transactionsModal','depositModal','withdrawModal','chartModal'].forEach(id => {
+      ['portfolioModal','transactionsModal','depositModal','withdrawModal','chartModal','tradeModal'].forEach(id => {
         const el = document.getElementById(id);
-        if (el && el.classList.contains('open') && e.target === el) { el.classList.remove('open'); document.body.style.overflow=''; }
+        if (el && el.classList.contains('open') && e.target === el) {
+          el.classList.remove('open'); document.body.style.overflow = '';
+          if (id === 'tradeModal') tradeModalAsset = null;
+        }
       });
     });
 
@@ -1577,17 +1948,16 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     function renderCryptoGrid() {
       const cryptos = ASSETS_LIST.filter(a => a.cat === 'crypto').slice(0, 6);
       document.getElementById('dashCryptoGrid').innerHTML = cryptos.map(a =>
-        `<div class="crypto-card" onclick="openChartModal('${a.sym}')" title="View ${a.name} chart">
+        `<div class="crypto-card" onclick="openChartModal('${a.sym}')" title="View chart & trade">
           <div style="width:36px;height:36px;border-radius:12px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${a.icon}"></i></div>
           <div style="flex:1;min-width:0"><p style="font-weight:600;color:#edf2f8;font-size:13px">${a.sym}</p><p id="grid-pr-${a.sym}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">$${fmtPrice(a.price)}</p></div>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:7px;background:${a.chg>=0?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};color:${a.chg>=0?'#22c55e':'#ef4444'};white-space:nowrap;flex-shrink:0" id="grid-chg-${a.sym}">${a.chg>=0?'+':''}${Math.abs(a.chg)}%</span>
+          <span id="grid-chg-${a.sym}" style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:7px;background:${a.chg>=0?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};color:${a.chg>=0?'#22c55e':'#ef4444'};white-space:nowrap;flex-shrink:0">${a.chg>=0?'+':''}${Math.abs(a.chg)}%</span>
         </div>`
       ).join('');
     }
 
-    // ── tickPrices: gentle simulation, won't override recent Supabase pushes ──
     function tickPrices() {
-      const FREEZE_MS = 8000; // 8s freeze window after any Supabase price push
+      const FREEZE_MS = 8000;
       const now = Date.now();
       ASSETS_LIST.forEach(a => {
         if (now - (_priceUpdatedAt[a.sym] || 0) < FREEZE_MS) return;
@@ -1628,6 +1998,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       setTxt('chart-stat-mcap', fmtLarge(mcapBase));
       setTxt('chart-stat-vol', fmtLarge(mcapBase * 0.03));
       document.querySelectorAll('.period-btn').forEach(b => { b.classList.remove('active'); if(b.textContent==='1D') b.classList.add('active'); });
+
+      const buyBtn = document.querySelector('#chartModal .promo-btn');
+      const sellBtn = document.querySelector('#chartModal .promo-btn-outline');
+      if (buyBtn) { buyBtn.onclick = (e) => { e.preventDefault(); closeChartModal(); openTradeModal(sym, 'buy'); }; buyBtn.innerHTML = '<i class="fas fa-arrow-trend-up" style="font-size:12px"></i> Buy'; }
+      if (sellBtn) { sellBtn.onclick = (e) => { e.preventDefault(); closeChartModal(); openTradeModal(sym, 'sell'); }; sellBtn.innerHTML = '<i class="fas fa-arrow-trend-down" style="font-size:12px"></i> Sell'; }
+
       renderAssetChart(sym, '1D');
     }
     function closeChartModal() {
@@ -1646,18 +2022,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       const cfgs = {'1D':{pts:48,vol:.002},'1W':{pts:56,vol:.006},'1M':{pts:30,vol:.012},'3M':{pts:90,vol:.018},'1Y':{pts:52,vol:.03}};
       const {pts,vol} = cfgs[period]||cfgs['1D'];
       const prices = []; let price = basePrice * 0.88;
-      for (let i=0;i<pts;i++) {
-        const bias = (basePrice-price)/(pts-i)*0.4;
-        price *= 1+(Math.random()-.5)*vol+bias/price;
-        prices.push(price);
-      }
+      for (let i=0;i<pts;i++) { const bias=(basePrice-price)/(pts-i)*0.4; price*=1+(Math.random()-.5)*vol+bias/price; prices.push(price); }
       prices[prices.length-1] = basePrice;
       const labels = Array.from({length:pts},(_,i)=>i%Math.ceil(pts/8)===0?String(i):'');
       return {labels, prices};
     }
     function renderAssetChart(sym, period) {
-      const asset = ASSETS_LIST.find(a=>a.sym===sym);
-      if (!asset) return;
+      const asset = ASSETS_LIST.find(a=>a.sym===sym); if (!asset) return;
       if (activeChartInstance) { activeChartInstance.destroy(); activeChartInstance = null; }
       const ctx = document.getElementById('assetChartCanvas').getContext('2d');
       const {labels, prices} = generateChartData(asset.price, period);
@@ -1674,6 +2045,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     }
     function fmtLarge(n){if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+fmtUSD(n);}
 
+    window.openChartModal = openChartModal;
+    window.closeChartModal = closeChartModal;
+    window.setChartPeriod = setChartPeriod;
+
     // ═══════════════════════════════════════════
     //  DEPOSIT MODAL
     // ═══════════════════════════════════════════
@@ -1686,67 +2061,58 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       buildDepositCoinGrid();
     }
     function closeDepositModal() { document.getElementById('depositModal').classList.remove('open'); document.body.style.overflow = ''; }
+    window.openDepositModal = openDepositModal;
+    window.closeDepositModal = closeDepositModal;
 
     function goDepStep(n) {
       [1,2,3].forEach(i => {
-        const s = document.getElementById('dep-step-'+i);
-        if (s) s.style.display = i===n ? 'block' : 'none';
-        const num = document.getElementById('dep-step-'+i+'-num');
-        const lbl = document.getElementById('dep-step-'+i+'-lbl');
+        const s = document.getElementById('dep-step-'+i); if (s) s.style.display = i===n ? 'block' : 'none';
+        const num = document.getElementById('dep-step-'+i+'-num'); const lbl = document.getElementById('dep-step-'+i+'-lbl');
         if (num) num.className = 'dep-step-num ' + (i<n?'done':i===n?'active':'idle');
         if (lbl) lbl.style.color = i<n?'#22c55e':i===n?'#c9a84c':'#5a6880';
       });
       if (n === 3) renderDepStep3();
     }
+    window.goDepStep = goDepStep;
 
     function buildDepositCoinGrid() {
-      const grid = document.getElementById('dep-coin-grid');
-      if (!grid) return;
+      const grid = document.getElementById('dep-coin-grid'); if (!grid) return;
       grid.innerHTML = DEPOSIT_COINS.map(c => {
         const hasAddr = !!(CRYPTO_ADDRESSES[c.sym] && CRYPTO_ADDRESSES[c.sym].trim());
         return `<button class="coin-select-btn ${selectedDepCoin===c.sym?'selected':''}" onclick="selectDepCoin('${c.sym}')">
           <div style="width:32px;height:32px;border-radius:10px;background:${c.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${c.icon}" style="color:${c.color};font-size:15px"></i></div>
           <div style="flex:1;text-align:left"><p style="font-size:12px;font-weight:600;color:#edf2f8">${c.sym}</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${c.name}</p></div>
-          ${hasAddr?'<i class="fas fa-circle-check" style="color:#22c55e;font-size:10px;flex-shrink:0"></i>':'<i class="fas fa-circle-xmark" style="color:#5a6880;font-size:10px;flex-shrink:0;opacity:.4" title="No address set"></i>'}
+          ${hasAddr?'<i class="fas fa-circle-check" style="color:#22c55e;font-size:10px;flex-shrink:0"></i>':'<i class="fas fa-circle-xmark" style="color:#5a6880;font-size:10px;flex-shrink:0;opacity:.4"></i>'}
         </button>`;
       }).join('');
     }
-
     function selectDepCoin(sym) {
-      selectedDepCoin = sym;
-      buildDepositCoinGrid();
-      const coin = DEPOSIT_COINS.find(c=>c.sym===sym);
-      if (!coin) return;
+      selectedDepCoin = sym; buildDepositCoinGrid();
+      const coin = DEPOSIT_COINS.find(c=>c.sym===sym); if (!coin) return;
       document.getElementById('dep-s2-coinbg').style.background = coin.color + '18';
       document.getElementById('dep-s2-coinicon').className = coin.icon;
       document.getElementById('dep-s2-coinicon').style.color = coin.color;
-      setTxt('dep-s2-coinname', coin.name);
-      setTxt('dep-s2-network', coin.network);
+      setTxt('dep-s2-coinname', coin.name); setTxt('dep-s2-network', coin.network);
       document.querySelectorAll('.amt-preset').forEach(b => b.classList.remove('sel'));
       const inp = document.getElementById('dep-custom-amt'); if (inp) inp.value = '';
-      selectedDepAmt = 0;
-      goDepStep(2);
+      selectedDepAmt = 0; goDepStep(2);
     }
-
     function setDepAmt(amt) {
-      selectedDepAmt = amt;
-      document.getElementById('dep-custom-amt').value = amt;
-      document.querySelectorAll('#dep-step-2 .amt-preset').forEach(b =>
-        b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g,'')) === amt)
-      );
+      selectedDepAmt = amt; document.getElementById('dep-custom-amt').value = amt;
+      document.querySelectorAll('#dep-step-2 .amt-preset').forEach(b => b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g,'')) === amt));
     }
+    window.selectDepCoin = selectDepCoin;
+    window.setDepAmt = setDepAmt;
 
     function renderDepStep3() {
-      const coin = DEPOSIT_COINS.find(c=>c.sym===selectedDepCoin);
-      if (!coin) return;
+      const coin = DEPOSIT_COINS.find(c=>c.sym===selectedDepCoin); if (!coin) return;
       const customAmt = parseFloat(document.getElementById('dep-custom-amt').value || '0');
       selectedDepAmt = customAmt > 0 ? customAmt : selectedDepAmt;
       if (selectedDepAmt <= 0) { showToast('Enter Amount','Please enter a deposit amount first','error'); goDepStep(2); return; }
       document.getElementById('dep-s3-coinbg').style.background = coin.color + '18';
       document.getElementById('dep-s3-coinicon').className = coin.icon;
       document.getElementById('dep-s3-coinicon').style.color = coin.color;
-      setTxt('dep-s3-coinname', coin.name);
-      setTxt('dep-s3-network', coin.network);
+      setTxt('dep-s3-coinname', coin.name); setTxt('dep-s3-network', coin.network);
       setTxt('dep-s3-amount', '$' + fmtUSD(selectedDepAmt));
       const addr = (CRYPTO_ADDRESSES[coin.sym] || '').trim();
       const addrSection = document.getElementById('dep-addr-shown');
@@ -1755,8 +2121,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       setTxt('dep-warn-coin', coin.sym);
       if (!addr) {
         addrSection.style.display = 'none'; noAddrSection.style.display = 'block';
-        document.getElementById('dep-address-text').textContent = '—';
-        qrContainer.innerHTML = ''; return;
+        document.getElementById('dep-address-text').textContent = '—'; qrContainer.innerHTML = ''; return;
       }
       addrSection.style.display = 'block'; noAddrSection.style.display = 'none';
       document.getElementById('dep-address-text').textContent = addr;
@@ -1769,11 +2134,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       const addr = document.getElementById('dep-address-text').textContent;
       if (!addr || addr==='—') return;
       navigator.clipboard.writeText(addr).then(()=>showToast('Address Copied!',addr.slice(0,20)+'…','success')).catch(()=>{
-        const ta = document.createElement('textarea'); ta.value = addr;
-        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        const ta = document.createElement('textarea'); ta.value = addr; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
         showToast('Address Copied!',addr.slice(0,20)+'…','success');
       });
     }
+    window.copyDepAddress = copyDepAddress;
 
     async function confirmCryptoDeposit() {
       if (!selectedDepCoin || !authUser) { showToast('Error','Please select a coin first','error'); return; }
@@ -1781,14 +2146,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       const coin = DEPOSIT_COINS.find(c=>c.sym===selectedDepCoin);
       try {
         const { error } = await sb.from('transactions').insert({
-          user_id: authUser.id,
-          type: 'deposit',
-          symbol: selectedDepCoin,
+          user_id: authUser.id, type: 'deposit', symbol: selectedDepCoin,
           name: (coin ? coin.name : selectedDepCoin) + ' Crypto Deposit',
-          icon: coin ? coin.icon : 'fas fa-coins',
-          color: coin ? coin.color : '#c9a84c',
-          usd_amount: Math.abs(selectedDepAmt),
-          status: 'pending',
+          icon: coin ? coin.icon : 'fas fa-coins', color: coin ? coin.color : '#c9a84c',
+          usd_amount: Math.abs(selectedDepAmt), status: 'pending',
           note: `Deposit: ${selectedDepCoin} · $${fmtUSD(selectedDepAmt)} · Awaiting approval`
         });
         if (error) throw error;
@@ -1798,13 +2159,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         loadTransactions(); checkPendingBadge();
       } catch(err) { showToast('Error', err.message, 'error'); }
     }
+    window.confirmCryptoDeposit = confirmCryptoDeposit;
 
     // ═══════════════════════════════════════════
     //  WITHDRAW MODAL
     // ═══════════════════════════════════════════
     function buildWithdrawCoinGrid() {
-      const grid = document.getElementById('wd-coin-grid');
-      if (!grid) return;
+      const grid = document.getElementById('wd-coin-grid'); if (!grid) return;
       grid.innerHTML = DEPOSIT_COINS.map(c =>
         `<button class="coin-select-btn ${selectedWdCoin===c.sym?'selected':''}" onclick="selectWdCoin('${c.sym}')">
           <div style="width:28px;height:28px;border-radius:9px;background:${c.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${c.icon}" style="color:${c.color};font-size:13px"></i></div>
@@ -1815,9 +2176,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     function selectWdCoin(sym) { selectedWdCoin = sym; buildWithdrawCoinGrid(); }
     function setWdAmt(amt) {
       document.getElementById('wd-amount').value = amt;
-      document.querySelectorAll('#withdrawModal .amt-preset').forEach(b =>
-        b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g,'')) === amt)
-      );
+      document.querySelectorAll('#withdrawModal .amt-preset').forEach(b => b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g,'')) === amt));
     }
     function openWithdrawModal() {
       if (!profile) return;
@@ -1827,6 +2186,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       buildWithdrawCoinGrid();
     }
     function closeWithdrawModal() { document.getElementById('withdrawModal').classList.remove('open'); document.body.style.overflow = ''; }
+    window.openWithdrawModal = openWithdrawModal;
+    window.closeWithdrawModal = closeWithdrawModal;
+    window.selectWdCoin = selectWdCoin;
+    window.setWdAmt = setWdAmt;
 
     async function submitWithdrawal() {
       const amt = parseFloat(document.getElementById('wd-amount').value);
@@ -1838,26 +2201,23 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       try {
         const coin = DEPOSIT_COINS.find(c=>c.sym===selectedWdCoin);
         const { error } = await sb.from('transactions').insert({
-          user_id: authUser.id,
-          type: 'withdraw',
-          symbol: selectedWdCoin,
-          name: `${selectedWdCoin} Withdrawal`,
-          icon: coin?.icon || 'fas fa-arrow-up-from-line',
-          color: coin?.color || '#ef4444',
-          usd_amount: -Math.abs(amt),
-          status: 'pending',
+          user_id: authUser.id, type: 'withdraw', symbol: selectedWdCoin,
+          name: `${selectedWdCoin} Withdrawal`, icon: coin?.icon || 'fas fa-arrow-up-from-line', color: coin?.color || '#ef4444',
+          usd_amount: -Math.abs(amt), status: 'pending',
           note: `Withdrawal to ${wallet.slice(0,16)}… · $${fmtUSD(amt)} · Awaiting approval`
         });
         if (error) throw error;
         closeWithdrawModal();
         showToast('Withdrawal Requested! ⏳','$'+fmtUSD(amt)+' pending — balance deducted only after admin approval.','info');
-        selectedWdCoin = null;
-        loadTransactions(); checkPendingBadge();
+        selectedWdCoin = null; loadTransactions(); checkPendingBadge();
       } catch(err) { showToast('Error', err.message, 'error'); }
     }
+    window.submitWithdrawal = submitWithdrawal;
 
     function openDrawer() { document.getElementById('mobileDrawer').style.display='flex'; document.getElementById('mobileBackdrop').style.display='block'; }
     function closeDrawer() { document.getElementById('mobileDrawer').style.display='none'; document.getElementById('mobileBackdrop').style.display='none'; }
+    window.openDrawer = openDrawer;
+    window.closeDrawer = closeDrawer;
 
     // ═══════════════════════════════════════════
     //  SECRET GESTURE
@@ -1871,8 +2231,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       zone.addEventListener('mousedown',startPress);document.addEventListener('mouseup',cancelPress);zone.addEventListener('mouseleave',cancelPress);
       zone.addEventListener('touchstart',startPress,{passive:false});document.addEventListener('touchend',cancelPress);zone.addEventListener('touchcancel',cancelPress);
     }
-
-// ═══════════════════════════════════════════
+        // ═══════════════════════════════════════════
     //  ADMIN PANEL
     // ═══════════════════════════════════════════
     async function openAdminPanel() {
@@ -1882,23 +2241,22 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       admLoadPending();
     }
     function closeAdminPanel() { document.getElementById('ADMIN_PANEL').classList.remove('open'); closeUserDrawer(); }
+    window.openAdminPanel = openAdminPanel;
+    window.closeAdminPanel = closeAdminPanel;
 
     function toggleAdmSidebar() {
-      const sidebar = document.getElementById('admSidebar');
-      const overlay = document.getElementById('admSidebarOverlay');
+      const sidebar = document.getElementById('admSidebar'), overlay = document.getElementById('admSidebarOverlay');
       const isOpen = sidebar.classList.contains('mob-open');
       if (isOpen) { sidebar.classList.remove('mob-open'); overlay.classList.remove('open'); }
       else { sidebar.classList.add('mob-open'); overlay.classList.add('open'); }
     }
-    function closeAdmSidebar() {
-      document.getElementById('admSidebar').classList.remove('mob-open');
-      document.getElementById('admSidebarOverlay').classList.remove('open');
-    }
+    function closeAdmSidebar() { document.getElementById('admSidebar').classList.remove('mob-open'); document.getElementById('admSidebarOverlay').classList.remove('open'); }
+    window.toggleAdmSidebar = toggleAdmSidebar;
+    window.closeAdmSidebar = closeAdmSidebar;
 
     async function admLoadAll() {
       await Promise.all([admLoadUsers(), admLoadHoldings(), admLoadTransactions()]);
-      admPopulateSelects();
-      admUpdateStats();
+      admPopulateSelects(); admUpdateStats();
     }
     function admShowPage(name, btn) {
       document.querySelectorAll('.adm-page').forEach(p => p.classList.remove('active'));
@@ -1906,8 +2264,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       document.getElementById('admp-'+name).classList.add('active');
       if (btn) btn.classList.add('active');
     }
+    window.admShowPage = admShowPage;
+    window.admLoadAll = admLoadAll;
 
-    // ─ PENDING APPROVALS ─
+    // ─ PENDING ─
     async function admLoadPending() {
       document.getElementById('pend-dep-container').innerHTML = '<div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div>';
       document.getElementById('pend-wd-container').innerHTML = '<div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div>';
@@ -1917,15 +2277,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         const depRows = allRows.filter(t => t.type === 'deposit');
         const wdRows = allRows.filter(t => t.type === 'withdraw');
         const pendingCount = allRows.filter(t => t.status === 'pending').length;
-        setTxt('pend-dep-count', depRows.length);
-        setTxt('pend-wd-count', wdRows.length);
-        setTxt('adm-pending-count', pendingCount);
-        document.getElementById('pend-dep-container').innerHTML = depRows.length
-          ? '<div style="padding:12px 16px">' + depRows.map(t => buildPendingCard(t, 'deposit')).join('') + '</div>'
-          : '<div style="padding:24px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#22c55e">✓ No pending deposit requests</div>';
-        document.getElementById('pend-wd-container').innerHTML = wdRows.length
-          ? '<div style="padding:12px 16px">' + wdRows.map(t => buildPendingCard(t, 'withdraw')).join('') + '</div>'
-          : '<div style="padding:24px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#22c55e">✓ No pending withdrawal requests</div>';
+        setTxt('pend-dep-count', depRows.length); setTxt('pend-wd-count', wdRows.length); setTxt('adm-pending-count', pendingCount);
+        document.getElementById('pend-dep-container').innerHTML = depRows.length ? '<div style="padding:12px 16px">' + depRows.map(t => buildPendingCard(t, 'deposit')).join('') + '</div>' : '<div style="padding:24px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#22c55e">✓ No pending deposits</div>';
+        document.getElementById('pend-wd-container').innerHTML = wdRows.length ? '<div style="padding:12px 16px">' + wdRows.map(t => buildPendingCard(t, 'withdraw')).join('') + '</div>' : '<div style="padding:24px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#22c55e">✓ No pending withdrawals</div>';
       } catch(err) {
         const errMsg = `<div style="padding:20px;color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px">Error: ${esc(err.message)}</div>`;
         document.getElementById('pend-dep-container').innerHTML = errMsg;
@@ -1933,12 +2287,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         showToast('Error loading pending', err.message, 'error');
       }
     }
+    window.admLoadPending = admLoadPending;
 
     function buildPendingCard(t, type) {
-      const isPending = t.status === 'pending';
-      const isRejected = t.status === 'rejected';
-      const amt = Math.abs(Number(t.usd_amount || 0));
-      const isDeposit = type === 'deposit';
+      const isPending = t.status === 'pending', isRejected = t.status === 'rejected';
+      const amt = Math.abs(Number(t.usd_amount || 0)), isDeposit = type === 'deposit';
       const userInfo = admAllUsers.find(u => u.id === t.user_id);
       const userName = userInfo ? `${userInfo.first_name||''} ${userInfo.last_name||''}`.trim() : t.user_id.slice(0,8)+'…';
       const userEmail = userInfo ? userInfo.email : '—';
@@ -1948,53 +2301,31 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         : `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:6px;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)">REJECTED</span>`;
       let actions = '';
       if (isPending) {
-        const approveAction = isDeposit
-          ? `admApproveDeposit('${t.id}','${t.user_id}',${amt})`
-          : `admApproveWithdrawal('${t.id}','${t.user_id}',${amt})`;
-        actions = `
-          <button class="adm-btn adm-btn-gain" style="flex:1" onclick="${approveAction}">
-            <i class="fas fa-check"></i> ${isDeposit ? 'Approve (+$'+fmtUSD(amt)+' to user)' : 'Approve (-$'+fmtUSD(amt)+' from user)'}
-          </button>
-          <button class="adm-btn adm-btn-loss" style="flex:1" onclick="admRejectPending('${t.id}')">
-            <i class="fas fa-times"></i> Reject
-          </button>`;
+        const approveAction = isDeposit ? `admApproveDeposit('${t.id}','${t.user_id}',${amt})` : `admApproveWithdrawal('${t.id}','${t.user_id}',${amt})`;
+        actions = `<button class="adm-btn adm-btn-gain" style="flex:1" onclick="${approveAction}"><i class="fas fa-check"></i> ${isDeposit ? 'Approve (+$'+fmtUSD(amt)+')' : 'Approve (-$'+fmtUSD(amt)+')'}</button><button class="adm-btn adm-btn-loss" style="flex:1" onclick="admRejectPending('${t.id}')"><i class="fas fa-times"></i> Reject</button>`;
       } else {
-        const reApprove = isDeposit
-          ? `admApproveDeposit('${t.id}','${t.user_id}',${amt})`
-          : `admApproveWithdrawal('${t.id}','${t.user_id}',${amt})`;
-        actions = `
-          <button class="adm-btn adm-btn-sm" style="background:rgba(255,255,255,.04);color:#5a6880;border:1px solid rgba(255,255,255,.07);flex:1" onclick="${reApprove}">↩ Re-approve</button>
-          <button class="adm-btn adm-btn-loss adm-btn-sm" style="flex:1" onclick="admDeleteTxDirect('${t.id}')">🗑 Delete</button>`;
+        const reApprove = isDeposit ? `admApproveDeposit('${t.id}','${t.user_id}',${amt})` : `admApproveWithdrawal('${t.id}','${t.user_id}',${amt})`;
+        actions = `<button class="adm-btn adm-btn-sm" style="background:rgba(255,255,255,.04);color:#5a6880;border:1px solid rgba(255,255,255,.07);flex:1" onclick="${reApprove}">↩ Re-approve</button><button class="adm-btn adm-btn-loss adm-btn-sm" style="flex:1" onclick="admDeleteTxDirect('${t.id}')">🗑 Delete</button>`;
       }
       return `<div class="pend-card" style="opacity:${isRejected?.6:1}">
         <div class="pend-card-hdr">
           <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-            <div style="width:36px;height:36px;border-radius:11px;background:${isDeposit?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <i class="fas ${isDeposit?'fa-arrow-down-to-line':'fa-arrow-up-from-line'}" style="color:${isDeposit?'#22c55e':'#ef4444'};font-size:14px"></i>
-            </div>
-            <div style="min-width:0;flex:1">
-              <p style="font-size:13px;font-weight:600;color:#edf2f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(userName)}</p>
-              <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${esc(userEmail)}</p>
-            </div>
+            <div style="width:36px;height:36px;border-radius:11px;background:${isDeposit?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${isDeposit?'fa-arrow-down-to-line':'fa-arrow-up-from-line'}" style="color:${isDeposit?'#22c55e':'#ef4444'};font-size:14px"></i></div>
+            <div style="min-width:0;flex:1"><p style="font-size:13px;font-weight:600;color:#edf2f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(userName)}</p><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${esc(userEmail)}</p></div>
           </div>
           <div style="text-align:right;flex-shrink:0;margin-left:8px">
             <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${isDeposit?'#22c55e':'#ef4444'};font-weight:300">${isDeposit?'+':'-'}$${fmtUSD(amt)}</p>
-            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${isDeposit?'to credit':'to deduct'}</p>
+            ${userInfo?`<p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Bal: $${fmtUSD(userCash)}</p>`:''}
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-          ${statusBadge}
-          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:6px;background:rgba(201,168,76,.08);color:#c9a84c;border:1px solid rgba(201,168,76,.15)">${esc(t.symbol||'—')}</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${timeAgo(t.created_at)}</span>
-          ${userInfo?`<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">Balance: <span style="color:#c9a84c">$${fmtUSD(userCash)}</span></span>`:''}
-        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">${statusBadge}<span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:6px;background:rgba(201,168,76,.08);color:#c9a84c;border:1px solid rgba(201,168,76,.15)">${esc(t.symbol||'—')}</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880">${timeAgo(t.created_at)}</span></div>
         ${t.note?`<p style="font-size:11px;color:#5a6880;margin-bottom:10px;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;word-break:break-all">${esc(t.note)}</p>`:''}
         <div class="pend-card-actions">${actions}</div>
       </div>`;
     }
 
     async function admApproveDeposit(txId, userId, amount) {
-      if (!confirm(`Approve deposit of $${fmtUSD(amount)}?\n\nThis will credit $${fmtUSD(amount)} to the user's balance.`)) return;
+      if (!confirm(`Approve deposit of $${fmtUSD(amount)}? This will credit $${fmtUSD(amount)} to the user's balance.`)) return;
       try {
         const result = await callAdmin('approve_deposit', { txId, userId, amount });
         showToast('✓ Deposit Approved!', `$${fmtUSD(amount)} credited. New balance: $${fmtUSD(result.newCash)}`, 'success');
@@ -2002,9 +2333,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         if (authUser && userId === authUser.id) { await loadProfile(); loadTransactions(); checkPendingBadge(); }
       } catch(err) { showToast('Error', err.message, 'error'); }
     }
-
     async function admApproveWithdrawal(txId, userId, amount) {
-      if (!confirm(`Approve withdrawal of $${fmtUSD(amount)}?\n\nThis will deduct $${fmtUSD(amount)} from the user's balance.`)) return;
+      if (!confirm(`Approve withdrawal of $${fmtUSD(amount)}? This will deduct $${fmtUSD(amount)} from the user's balance.`)) return;
       try {
         const result = await callAdmin('approve_withdrawal', { txId, userId, amount });
         showToast('✓ Withdrawal Approved!', `$${fmtUSD(amount)} deducted. New balance: $${fmtUSD(result.newCash)}`, 'success');
@@ -2012,28 +2342,25 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         if (authUser && userId === authUser.id) { await loadProfile(); loadTransactions(); checkPendingBadge(); }
       } catch(err) { showToast('Error', err.message, 'error'); }
     }
-
     async function admRejectPending(txId) {
-      const reason = prompt('Rejection reason (optional):','');
-      if (reason === null) return;
+      const reason = prompt('Rejection reason (optional):',''); if (reason === null) return;
       try {
         await callAdmin('reject_pending', { txId, reason });
         showToast('Request Rejected', 'Transaction marked as rejected', 'info');
-        admLoadPending();
-        if (authUser) { loadTransactions(); checkPendingBadge(); }
+        admLoadPending(); if (authUser) { loadTransactions(); checkPendingBadge(); }
       } catch(err) { showToast('Error', err.message, 'error'); }
     }
-
     async function admDeleteTxDirect(txId) {
       if (!confirm('Permanently delete this transaction?')) return;
-      try {
-        await callAdmin('delete_transaction', { txId });
-        showToast('Deleted', 'Transaction removed', 'success');
-        admLoadPending();
-      } catch(err) { showToast('Error', err.message, 'error'); }
+      try { await callAdmin('delete_transaction', { txId }); showToast('Deleted', 'Transaction removed', 'success'); admLoadPending(); }
+      catch(err) { showToast('Error', err.message, 'error'); }
     }
+    window.admApproveDeposit = admApproveDeposit;
+    window.admApproveWithdrawal = admApproveWithdrawal;
+    window.admRejectPending = admRejectPending;
+    window.admDeleteTxDirect = admDeleteTxDirect;
 
-    // ─ LOAD USERS ─
+    // ─ USERS ─
     async function admLoadUsers() {
       try {
         const data = await callAdmin('get_all_users');
@@ -2042,12 +2369,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         admRenderOverviewUsers(admAllUsers.slice(0,6));
         admRenderCashTable(admAllUsers);
         setTxt('users-count', admAllUsers.length);
-      } catch(err) {
-        showToast('Error loading users', err.message, 'error');
-        document.getElementById('users-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:#ef4444;font-size:11px">Error: ${esc(err.message)}</td></tr>`;
-      }
+      } catch(err) { showToast('Error loading users', err.message, 'error'); }
     }
-
     function admRenderUsers(users) {
       setTxt('users-count', users.length);
       if (!users.length) { document.getElementById('users-tbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#5a6880">No users found</td></tr>'; return; }
@@ -2077,15 +2400,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='aurum-users-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
       showToast('Exported',''+admAllUsers.length+' users','success');
     }
+    window.admLoadUsers = admLoadUsers;
+    window.admFilterUsers = admFilterUsers;
+    window.admExportUsers = admExportUsers;
 
     // ─ HOLDINGS ─
     async function admLoadHoldings() {
-      try {
-        const data = await callAdmin('get_all_holdings');
-        admAllHoldings = data || [];
-        setTxt('hold-count', admAllHoldings.length);
-        admRenderHoldings(admAllHoldings);
-      } catch(err) { showToast('Error loading holdings', err.message, 'error'); }
+      try { const data = await callAdmin('get_all_holdings'); admAllHoldings = data||[]; setTxt('hold-count',admAllHoldings.length); admRenderHoldings(admAllHoldings); }
+      catch(err) { showToast('Error loading holdings', err.message, 'error'); }
     }
     function admRenderHoldings(rows){
       const tbody=document.getElementById('hold-tbody');
@@ -2103,349 +2425,293 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       const qty=parseFloat(document.getElementById('h-qty').value);const avgPrice=parseFloat(document.getElementById('h-avgprice').value);
       if(!userId||!symbol||isNaN(qty)||isNaN(avgPrice)){showToast('Error','Fill all fields','error');return;}
       const meta=ASSET_META[symbol]||{};
-      try {
-        await callAdmin('upsert_holding', { userId, symbol, name: meta.name||symbol, icon: meta.icon||'', color: meta.color||'#5a6880', quantity: qty, avgPrice });
-        showToast('Holding saved!',`${symbol} updated`,'success');
-        ['h-qty','h-avgprice'].forEach(id=>document.getElementById(id).value='');
-        await admLoadHoldings(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
+      try { await callAdmin('upsert_holding',{userId,symbol,name:meta.name||symbol,icon:meta.icon||'',color:meta.color||'#5a6880',quantity:qty,avgPrice}); showToast('Holding saved!',`${symbol} updated`,'success'); ['h-qty','h-avgprice'].forEach(id=>document.getElementById(id).value=''); await admLoadHoldings();admUpdateStats(); }
+      catch(err){showToast('Error',err.message,'error');}
     }
-    function admEditHoldingInline(id,userId,symbol,qty,avg){
-      document.getElementById('h-user').value=userId;document.getElementById('h-symbol').value=symbol;
-      document.getElementById('h-qty').value=qty;document.getElementById('h-avgprice').value=avg;
-      document.getElementById('admp-holdings').scrollTo({top:0,behavior:'smooth'});
-      showToast('Edit mode','Fields pre-filled — modify and save','info');
-    }
-    async function admDeleteHolding(id){
-      if(!confirm('Remove this holding?'))return;
-      try {
-        await callAdmin('delete_holding', { holdingId: id });
-        showToast('Holding removed','','success');
-        await admLoadHoldings(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
-    }
+    function admEditHoldingInline(id,userId,symbol,qty,avg){document.getElementById('h-user').value=userId;document.getElementById('h-symbol').value=symbol;document.getElementById('h-qty').value=qty;document.getElementById('h-avgprice').value=avg;document.getElementById('admp-holdings').scrollTo({top:0,behavior:'smooth'});showToast('Edit mode','Fields pre-filled — modify and save','info');}
+    async function admDeleteHolding(id){if(!confirm('Remove this holding?'))return;try{await callAdmin('delete_holding',{holdingId:id});showToast('Holding removed','','success');await admLoadHoldings();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}}
+    window.admLoadHoldings=admLoadHoldings;window.admFilterHoldings=admFilterHoldings;window.admAddHolding=admAddHolding;window.admEditHoldingInline=admEditHoldingInline;window.admDeleteHolding=admDeleteHolding;
 
     // ─ P&L EDITOR ─
     async function admLoadUserPnl(){
       const uid=document.getElementById('pnl-user').value;if(!uid)return;
       document.getElementById('pnl-positions-card').style.display='block';
-      try {
-        const holdings = await callAdmin('get_user_holdings', { userId: uid });
-        const hs = holdings || [];
+      try{
+        const holdings=await callAdmin('get_user_holdings',{userId:uid});const hs=holdings||[];
         if(!hs.length){document.getElementById('pnl-positions-body').innerHTML='<p style="color:#5a6880;font-size:12px">No holdings for this user</p>';return;}
         let totalPnl=0;hs.forEach(h=>{const live=PRICES[h.symbol]||Number(h.avg_buy_price);totalPnl+=(live-Number(h.avg_buy_price))*Number(h.quantity);});
         document.getElementById('pnl-target').value=totalPnl.toFixed(2);
-        document.getElementById('pnl-positions-body').innerHTML=`
-          <div style="margin-bottom:14px;padding:12px;background:rgba(255,255,255,.03);border-radius:10px;display:flex;gap:20px;flex-wrap:wrap">
-            <div><div class="adm-label" style="margin-bottom:4px">Current Total P&L</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${totalPnl>=0?'#22c55e':'#ef4444'}">${totalPnl>=0?'+':''}$${fmtUSD(totalPnl)}</div></div>
-            <div><div class="adm-label" style="margin-bottom:4px">Positions</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">${hs.length}</div></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px">${hs.map(h=>{
-            const meta=ASSET_META[h.symbol]||{};const live=PRICES[h.symbol]||Number(h.avg_buy_price);const pnl=(live-Number(h.avg_buy_price))*Number(h.quantity);
-            return`<div style="background:#080c12;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <div style="width:32px;height:32px;border-radius:9px;background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="${meta.icon||'fas fa-coins'}"></i></div>
-              <div style="flex:1;min-width:80px"><div style="font-size:12px;color:#edf2f8;font-weight:500">${h.symbol}</div><div class="mono" style="color:#5a6880;margin-top:2px">Qty: ${Number(h.quantity).toFixed(4)}</div></div>
-              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-                <div class="adm-field" style="min-width:100px"><div class="adm-label">Avg Buy ($)</div><input class="adm-input" id="pnl-avg-${h.id}" type="number" step="any" value="${Number(h.avg_buy_price).toFixed(4)}" style="width:110px"></div>
-                <div class="adm-field" style="min-width:80px"><div class="adm-label">Quantity</div><input class="adm-input" id="pnl-qty-${h.id}" type="number" step="any" value="${Number(h.quantity).toFixed(6)}" style="width:100px"></div>
-                <div style="text-align:right;min-width:70px"><div class="adm-label">P&L</div><div id="pnl-show-${h.id}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${pnl>=0?'#22c55e':'#ef4444'}">${pnl>=0?'+':''}$${fmtUSD(pnl)}</div></div>
-                <button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admSaveSinglePnl('${h.id}','${uid}')">Save</button>
-              </div>
-            </div>`;
-          }).join('')}</div>`;
-      } catch(err) { showToast('Error', err.message, 'error'); }
+        document.getElementById('pnl-positions-body').innerHTML=`<div style="margin-bottom:14px;padding:12px;background:rgba(255,255,255,.03);border-radius:10px;display:flex;gap:20px;flex-wrap:wrap"><div><div class="adm-label" style="margin-bottom:4px">Current Total P&L</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${totalPnl>=0?'#22c55e':'#ef4444'}">${totalPnl>=0?'+':''}$${fmtUSD(totalPnl)}</div></div><div><div class="adm-label" style="margin-bottom:4px">Positions</div><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8">${hs.length}</div></div></div><div style="display:flex;flex-direction:column;gap:10px">${hs.map(h=>{const meta=ASSET_META[h.symbol]||{};const live=PRICES[h.symbol]||Number(h.avg_buy_price);const pnl=(live-Number(h.avg_buy_price))*Number(h.quantity);return`<div style="background:#080c12;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="width:32px;height:32px;border-radius:9px;background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="${meta.icon||'fas fa-coins'}"></i></div><div style="flex:1;min-width:80px"><div style="font-size:12px;color:#edf2f8;font-weight:500">${h.symbol}</div><div class="mono" style="color:#5a6880;margin-top:2px">Qty: ${Number(h.quantity).toFixed(4)}</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="adm-field" style="min-width:100px"><div class="adm-label">Avg Buy ($)</div><input class="adm-input" id="pnl-avg-${h.id}" type="number" step="any" value="${Number(h.avg_buy_price).toFixed(4)}" style="width:110px"></div><div class="adm-field" style="min-width:80px"><div class="adm-label">Quantity</div><input class="adm-input" id="pnl-qty-${h.id}" type="number" step="any" value="${Number(h.quantity).toFixed(6)}" style="width:100px"></div><div style="text-align:right;min-width:70px"><div class="adm-label">P&L</div><div id="pnl-show-${h.id}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${pnl>=0?'#22c55e':'#ef4444'}">${pnl>=0?'+':''}$${fmtUSD(pnl)}</div></div><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admSaveSinglePnl('${h.id}','${uid}')">Save</button></div></div>`;}).join('')}</div>`;
+      }catch(err){showToast('Error',err.message,'error');}
     }
     async function admSaveSinglePnl(holdId,userId){
-      const avgEl=document.getElementById('pnl-avg-'+holdId);const qtyEl=document.getElementById('pnl-qty-'+holdId);
-      if(!avgEl||!qtyEl)return;
-      const avg=parseFloat(avgEl.value);const qty=parseFloat(qtyEl.value);
-      if(isNaN(avg)||isNaN(qty)){showToast('Error','Invalid values','error');return;}
-      try {
-        await callAdmin('update_holding', { holdingId: holdId, avgPrice: avg, quantity: qty });
-        showToast('Saved!','P&L position updated','success');
-        await admLoadHoldings(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
+      const avgEl=document.getElementById('pnl-avg-'+holdId);const qtyEl=document.getElementById('pnl-qty-'+holdId);if(!avgEl||!qtyEl)return;
+      const avg=parseFloat(avgEl.value);const qty=parseFloat(qtyEl.value);if(isNaN(avg)||isNaN(qty)){showToast('Error','Invalid values','error');return;}
+      try{await callAdmin('update_holding',{holdingId:holdId,avgPrice:avg,quantity:qty});showToast('Saved!','P&L position updated','success');await admLoadHoldings();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}
     }
     async function admApplyTargetPnl(){
       const uid=document.getElementById('pnl-user').value;const target=parseFloat(document.getElementById('pnl-target').value);
       if(!uid||isNaN(target)){showToast('Error','Select user and enter target','error');return;}
-      try {
-        await callAdmin('apply_target_pnl', { userId: uid, targetPnl: target, prices: PRICES });
-        showToast('Target P&L Applied!','Buy prices adjusted proportionally','success');
-        await admLoadHoldings(); admLoadUserPnl(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
+      try{await callAdmin('apply_target_pnl',{userId:uid,targetPnl:target,prices:PRICES});showToast('Target P&L Applied!','Buy prices adjusted proportionally','success');await admLoadHoldings();admLoadUserPnl();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}
     }
+    window.admLoadUserPnl=admLoadUserPnl;window.admSaveSinglePnl=admSaveSinglePnl;window.admApplyTargetPnl=admApplyTargetPnl;
 
     // ─ TRANSACTIONS ─
-    async function admLoadTransactions(){
-      try {
-        const data = await callAdmin('get_all_transactions');
-        admAllTx = data || [];
-        setTxt('tx-count', admAllTx.length);
-        admRenderTransactions(admAllTx);
-      } catch(err) { showToast('Error loading transactions', err.message, 'error'); }
-    }
+    async function admLoadTransactions(){try{const data=await callAdmin('get_all_transactions');admAllTx=data||[];setTxt('tx-count',admAllTx.length);admRenderTransactions(admAllTx);}catch(err){showToast('Error loading transactions',err.message,'error');}}
     function admRenderTransactions(rows){
       const tbody=document.getElementById('tx-tbody');
       if(!rows.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:20px;color:#5a6880">No transactions</td></tr>';return;}
-      const typeBadge={buy:'b-loss',sell:'b-gain',deposit:'b-gain',withdraw:'b-loss'};
-      const statusBadge={pending:'b-pending',approved:'b-gain',rejected:'b-loss'};
-      tbody.innerHTML=rows.map(t=>{
-        const name=t.profiles?`${t.profiles.first_name||''} ${t.profiles.last_name||''}`:'—';
-        const usd=t.usd_amount!=null?(Number(t.usd_amount)>0?'+':'')+'$'+fmtUSD(Math.abs(Number(t.usd_amount))):'—';
-        const status=t.status||'approved';
-        return`<tr><td style="color:#edf2f8">${esc(name)}</td><td><span class="badge ${typeBadge[t.type]||'b-accent'}">${t.type}</span></td><td class="mono">${t.symbol}</td><td class="mono" style="color:#8c9db5">${t.quantity?Number(t.quantity).toFixed(4):'—'}</td><td class="mono" style="color:#5a6880">${t.price_at_tx?'$'+fmtPrice(Number(t.price_at_tx)):'—'}</td><td class="mono" style="color:${Number(t.usd_amount)>=0?'#22c55e':'#ef4444'}">${usd}</td><td><span class="badge ${statusBadge[status]||'b-accent'}">${status}</span></td><td style="color:#5a6880;font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td><td class="mono" style="color:#5a6880">${timeAgo(t.created_at)}</td><td>${txDeleteMode?`<button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admDeleteTx('${t.id}')">Del</button>`:'—'}</td></tr>`;
-      }).join('');
+      const typeBadge={buy:'b-loss',sell:'b-gain',deposit:'b-gain',withdraw:'b-loss'};const statusBadge={pending:'b-pending',approved:'b-gain',rejected:'b-loss'};
+      tbody.innerHTML=rows.map(t=>{const name=t.profiles?`${t.profiles.first_name||''} ${t.profiles.last_name||''}`:'—';const usd=t.usd_amount!=null?(Number(t.usd_amount)>0?'+':'')+'$'+fmtUSD(Math.abs(Number(t.usd_amount))):'—';const status=t.status||'approved';return`<tr><td style="color:#edf2f8">${esc(name)}</td><td><span class="badge ${typeBadge[t.type]||'b-accent'}">${t.type}</span></td><td class="mono">${t.symbol||'—'}</td><td class="mono" style="color:#8c9db5">${t.quantity?Number(t.quantity).toFixed(4):'—'}</td><td class="mono" style="color:#5a6880">${t.price_at_tx?'$'+fmtPrice(Number(t.price_at_tx)):'—'}</td><td class="mono" style="color:${Number(t.usd_amount)>=0?'#22c55e':'#ef4444'}">${usd}</td><td><span class="badge ${statusBadge[status]||'b-accent'}">${status}</span></td><td style="color:#5a6880;font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td><td class="mono" style="color:#5a6880">${timeAgo(t.created_at)}</td><td>${txDeleteMode?`<button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admDeleteTx('${t.id}')">Del</button>`:'—'}</td></tr>`;}).join('');
     }
     function admFilterTx(q){const f=q.toLowerCase();admRenderTransactions(admAllTx.filter(t=>(t.symbol||'').toLowerCase().includes(f)||(t.type||'').toLowerCase().includes(f)||(t.note||'').toLowerCase().includes(f)));}
     function admToggleTxDeleteMode(){txDeleteMode=!txDeleteMode;document.getElementById('tx-delete-mode-btn').style.background=txDeleteMode?'rgba(239,68,68,.2)':'';document.getElementById('tx-delete-mode-btn').style.color=txDeleteMode?'#ef4444':'';admRenderTransactions(admAllTx);}
-    async function admDeleteTx(id){
-      if(!confirm('Delete this transaction?'))return;
-      try {
-        await callAdmin('delete_transaction', { txId: id });
-        showToast('Transaction deleted','','success');
-        await admLoadTransactions(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
-    }
+    async function admDeleteTx(id){if(!confirm('Delete this transaction?'))return;try{await callAdmin('delete_transaction',{txId:id});showToast('Transaction deleted','','success');await admLoadTransactions();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}}
     async function admAddTransaction(){
-      const userId=document.getElementById('tx-user').value;const type=document.getElementById('tx-type').value;
-      const symbol=document.getElementById('tx-symbol').value;const qty=parseFloat(document.getElementById('tx-qty').value)||null;
-      const price=parseFloat(document.getElementById('tx-price').value)||null;const usd=parseFloat(document.getElementById('tx-usd').value);
-      const note=document.getElementById('tx-note').value;
+      const userId=document.getElementById('tx-user').value;const type=document.getElementById('tx-type').value;const symbol=document.getElementById('tx-symbol').value;const qty=parseFloat(document.getElementById('tx-qty').value)||null;const price=parseFloat(document.getElementById('tx-price').value)||null;const usd=parseFloat(document.getElementById('tx-usd').value);const note=document.getElementById('tx-note').value;
       if(!userId||isNaN(usd)){showToast('Error','Select user and USD amount','error');return;}
       const meta=ASSET_META[symbol]||{};
-      try {
-        await callAdmin('add_transaction', { userId, type, symbol, name: meta.name||symbol, icon: meta.icon||'', color: meta.color||'#5a6880', quantity: qty, priceAtTx: price, usdAmount: usd, note, status: 'approved' });
-        showToast('Transaction logged!','','success');
-        ['tx-qty','tx-price','tx-usd','tx-note'].forEach(id=>document.getElementById(id).value='');
-        await admLoadTransactions(); await admLoadUsers(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
+      try{await callAdmin('add_transaction',{userId,type,symbol,name:meta.name||symbol,icon:meta.icon||'',color:meta.color||'#5a6880',quantity:qty,priceAtTx:price,usdAmount:usd,note,status:'approved'});showToast('Transaction logged!','','success');['tx-qty','tx-price','tx-usd','tx-note'].forEach(id=>document.getElementById(id).value='');await admLoadTransactions();await admLoadUsers();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}
     }
     function admToggleTxFields(){const isCash=['deposit','withdraw'].includes(document.getElementById('tx-type').value);document.getElementById('tx-qty-field').style.opacity=isCash?'.35':'1';document.getElementById('tx-price-field').style.opacity=isCash?'.35':'1';}
+    window.admLoadTransactions=admLoadTransactions;window.admFilterTx=admFilterTx;window.admToggleTxDeleteMode=admToggleTxDeleteMode;window.admDeleteTx=admDeleteTx;window.admAddTransaction=admAddTransaction;window.admToggleTxFields=admToggleTxFields;
 
     // ─ CASH ─
-    function admRenderCashTable(users){
-      document.getElementById('cash-tbody').innerHTML=users.map(u=>`
-        <tr><td><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></td><td class="mono" style="color:#8c9db5;font-size:10px">${u.email||'—'}</td><td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td><td><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="openQuickCash('${u.id}','${escJs((u.first_name||'')+' '+(u.last_name||''))}',${u.cash||0})">Set Cash</button></td></tr>`).join('');
-    }
+    function admRenderCashTable(users){document.getElementById('cash-tbody').innerHTML=users.map(u=>`<tr><td><strong style="color:#edf2f8">${esc((u.first_name||'')+' '+(u.last_name||''))}</strong></td><td class="mono" style="color:#8c9db5;font-size:10px">${u.email||'—'}</td><td><span class="badge b-gold mono">$${fmtUSD(Number(u.cash||0))}</span></td><td><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="openQuickCash('${u.id}','${escJs((u.first_name||'')+' '+(u.last_name||''))}',${u.cash||0})">Set Cash</button></td></tr>`).join('');}
     function admLoadCurrentCash(){const uid=document.getElementById('cash-user').value;const user=admAllUsers.find(u=>u.id===uid);if(user)document.getElementById('cash-current').value='$'+Number(user.cash||0).toFixed(2);}
-    async function admSetCash(){
-      const uid=document.getElementById('cash-user').value;const val=parseFloat(document.getElementById('cash-new').value);
-      if(!uid||isNaN(val)){showToast('Error','Select user and enter amount','error');return;}
-      await admUpdateCash(uid,val);
-    }
-    async function admAdjustCash(){
-      const uid=document.getElementById('cash-user').value;const delta=parseFloat(document.getElementById('cash-delta').value);
-      if(!uid||isNaN(delta)){showToast('Error','Select user and enter delta','error');return;}
-      const user=admAllUsers.find(u=>u.id===uid);if(!user)return;
-      await admUpdateCash(uid,Number(user.cash||0)+delta);
-    }
-    async function admUpdateCash(userId,newAmount){
-      try {
-        await callAdmin('update_cash', { userId, newAmount });
-        showToast('Cash updated!','$'+fmtUSD(newAmount)+' set','success');
-        await admLoadUsers(); admLoadCurrentCash(); admUpdateStats();
-        if(authUser&&userId===authUser.id) await loadProfile();
-      } catch(err) { showToast('Error', err.message, 'error'); }
-    }
-    function openQuickCash(id,name,cash){
-      document.getElementById('qc-uid').value=id;document.getElementById('qc-name').value=name.trim();
-      document.getElementById('qc-amt').value=Number(cash).toFixed(2);document.getElementById('quickCashModal').classList.add('open');
-    }
-    async function admQuickSetCash(){
-      const uid=document.getElementById('qc-uid').value;const val=parseFloat(document.getElementById('qc-amt').value);
-      if(isNaN(val)){showToast('Error','Enter valid amount','error');return;}
-      await admUpdateCash(uid,val);document.getElementById('quickCashModal').classList.remove('open');
-    }
+    async function admSetCash(){const uid=document.getElementById('cash-user').value;const val=parseFloat(document.getElementById('cash-new').value);if(!uid||isNaN(val)){showToast('Error','Select user and enter amount','error');return;}await admUpdateCash(uid,val);}
+    async function admAdjustCash(){const uid=document.getElementById('cash-user').value;const delta=parseFloat(document.getElementById('cash-delta').value);if(!uid||isNaN(delta)){showToast('Error','Select user and enter delta','error');return;}const user=admAllUsers.find(u=>u.id===uid);if(!user)return;await admUpdateCash(uid,Number(user.cash||0)+delta);}
+    async function admUpdateCash(userId,newAmount){try{await callAdmin('update_cash',{userId,newAmount});showToast('Cash updated!','$'+fmtUSD(newAmount)+' set','success');await admLoadUsers();admLoadCurrentCash();admUpdateStats();if(authUser&&userId===authUser.id)await loadProfile();}catch(err){showToast('Error',err.message,'error');}}
+    function openQuickCash(id,name,cash){document.getElementById('qc-uid').value=id;document.getElementById('qc-name').value=name.trim();document.getElementById('qc-amt').value=Number(cash).toFixed(2);document.getElementById('quickCashModal').classList.add('open');}
+    async function admQuickSetCash(){const uid=document.getElementById('qc-uid').value;const val=parseFloat(document.getElementById('qc-amt').value);if(isNaN(val)){showToast('Error','Enter valid amount','error');return;}await admUpdateCash(uid,val);document.getElementById('quickCashModal').classList.remove('open');}
+    window.admLoadCurrentCash=admLoadCurrentCash;window.admSetCash=admSetCash;window.admAdjustCash=admAdjustCash;window.openQuickCash=openQuickCash;window.admQuickSetCash=admQuickSetCash;
 
-    // ─ BULK ACTIONS ─
-    async function admBulkCash(){
-      const amt=parseFloat(document.getElementById('bulk-cash-amt').value);const mode=document.getElementById('bulk-cash-mode').value;
-      if(isNaN(amt)){showToast('Error','Enter amount','error');return;}
-      if(!confirm(`Apply to ALL ${admAllUsers.length} users? Cannot be undone.`))return;
-      try {
-        await callAdmin('bulk_cash', { amount: amt, mode });
-        showToast('Bulk cash done!','Updated all users','success');
-        await admLoadUsers(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
-    }
-    async function admBulkHolding(){
-      const symbol=document.getElementById('bulk-h-sym').value;const qty=parseFloat(document.getElementById('bulk-h-qty').value);const price=parseFloat(document.getElementById('bulk-h-price').value);
-      if(isNaN(qty)||isNaN(price)){showToast('Error','Enter qty and price','error');return;}
-      if(!confirm(`Add ${symbol} x${qty} to ALL ${admAllUsers.length} users?`))return;
-      try {
-        await callAdmin('bulk_holding', { symbol, quantity: qty, avgPrice: price });
-        showToast('Bulk holding done!',`Added ${symbol} to all users`,'success');
-        await admLoadHoldings(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
-    }
-    async function admNukeTransactions(){
-      if(!confirm('PERMANENTLY DELETE ALL TRANSACTIONS for all users?'))return;
-      if(!confirm('Are you absolutely sure? Last chance.'))return;
-      try {
-        await callAdmin('nuke_transactions');
-        showToast('Done','All transactions deleted','success');
-        await admLoadTransactions(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
-    }
-    async function admNukeHoldings(){
-      if(!confirm('PERMANENTLY DELETE ALL HOLDINGS for all users?'))return;
-      if(!confirm('Are you absolutely sure? Last chance.'))return;
-      try {
-        await callAdmin('nuke_holdings');
-        showToast('Done','All holdings deleted','success');
-        await admLoadHoldings(); admUpdateStats();
-      } catch(err) { showToast('Error', err.message, 'error'); }
-    }
+    // ─ BULK ─
+    async function admBulkCash(){const amt=parseFloat(document.getElementById('bulk-cash-amt').value);const mode=document.getElementById('bulk-cash-mode').value;if(isNaN(amt)){showToast('Error','Enter amount','error');return;}if(!confirm(`Apply to ALL ${admAllUsers.length} users?`))return;try{await callAdmin('bulk_cash',{amount:amt,mode});showToast('Bulk cash done!','Updated all users','success');await admLoadUsers();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}}
+    async function admBulkHolding(){const symbol=document.getElementById('bulk-h-sym').value;const qty=parseFloat(document.getElementById('bulk-h-qty').value);const price=parseFloat(document.getElementById('bulk-h-price').value);if(isNaN(qty)||isNaN(price)){showToast('Error','Enter qty and price','error');return;}if(!confirm(`Add ${symbol} x${qty} to ALL users?`))return;try{await callAdmin('bulk_holding',{symbol,quantity:qty,avgPrice:price});showToast('Bulk holding done!',`Added ${symbol} to all users`,'success');await admLoadHoldings();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}}
+    async function admNukeTransactions(){if(!confirm('DELETE ALL TRANSACTIONS?'))return;if(!confirm('Last chance. Cannot be undone.'))return;try{await callAdmin('nuke_transactions');showToast('Done','All transactions deleted','success');await admLoadTransactions();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}}
+    async function admNukeHoldings(){if(!confirm('DELETE ALL HOLDINGS?'))return;if(!confirm('Last chance. Cannot be undone.'))return;try{await callAdmin('nuke_holdings');showToast('Done','All holdings deleted','success');await admLoadHoldings();admUpdateStats();}catch(err){showToast('Error',err.message,'error');}}
+    window.admBulkCash=admBulkCash;window.admBulkHolding=admBulkHolding;window.admNukeTransactions=admNukeTransactions;window.admNukeHoldings=admNukeHoldings;
 
     // ─ STATS ─
-    function admUpdateStats(){
-      const totalCash=admAllUsers.reduce((s,u)=>s+Number(u.cash||0),0);
-      const totalPortVal=admAllHoldings.reduce((s,h)=>s+(PRICES[h.symbol]||Number(h.avg_buy_price))*Number(h.quantity),0);
-      setTxt('st-users',admAllUsers.length);setTxt('st-cash','$'+fmtUSD(totalCash));setTxt('st-hold',admAllHoldings.length);setTxt('st-tx',admAllTx.length);setTxt('st-portval','$'+fmtUSD(totalPortVal));
-    }
+    function admUpdateStats(){const totalCash=admAllUsers.reduce((s,u)=>s+Number(u.cash||0),0);const totalPortVal=admAllHoldings.reduce((s,h)=>s+(PRICES[h.symbol]||Number(h.avg_buy_price))*Number(h.quantity),0);setTxt('st-users',admAllUsers.length);setTxt('st-cash','$'+fmtUSD(totalCash));setTxt('st-hold',admAllHoldings.length);setTxt('st-tx',admAllTx.length);setTxt('st-portval','$'+fmtUSD(totalPortVal));}
 
     // ─ SELECTS ─
-    function admPopulateSelects(){
-      const opts=admAllUsers.map(u=>`<option value="${u.id}">${esc((u.first_name||'')+' '+(u.last_name||''))} (${u.email||''})</option>`).join('');
-      ['h-user','tx-user','cash-user','pnl-user'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
-    }
+    function admPopulateSelects(){const opts=admAllUsers.map(u=>`<option value="${u.id}">${esc((u.first_name||'')+' '+(u.last_name||''))} (${u.email||''})</option>`).join('');['h-user','tx-user','cash-user','pnl-user'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});}
 
-    // ════════════════════════════════════════════
+    // ════════════════════════════════════════════════════════════════════════
     //  ADMIN — LIVE PRICES EDITOR
-    //  All changes push to Supabase asset_prices table
-    //  and broadcast to all open pages via realtime
-    // ════════════════════════════════════════════
-    const ALL_EDITABLE_ASSETS=[
-      {sym:'BTC',name:'Bitcoin',icon:'fab fa-bitcoin',color:'#f7931a'},
-      {sym:'ETH',name:'Ethereum',icon:'fab fa-ethereum',color:'#627eea'},
-      {sym:'SOL',name:'Solana',icon:'fas fa-sun',color:'#9945ff'},
-      {sym:'BNB',name:'BNB Chain',icon:'fas fa-coins',color:'#f3ba2f'},
-      {sym:'XRP',name:'Ripple',icon:'fas fa-water',color:'#00aae4'},
-      {sym:'ADA',name:'Cardano',icon:'fas fa-circle-nodes',color:'#3cc8c8'},
-      {sym:'TSLA',name:'Tesla',icon:'fas fa-car',color:'#e31937'},
-      {sym:'AAPL',name:'Apple',icon:'fab fa-apple',color:'#a2aaad'},
-      {sym:'NVDA',name:'NVIDIA',icon:'fas fa-microchip',color:'#76b900'},
-      {sym:'MSFT',name:'Microsoft',icon:'fab fa-windows',color:'#00a4ef'},
-      {sym:'AMZN',name:'Amazon',icon:'fab fa-amazon',color:'#ff9900'},
-      {sym:'GOOGL',name:'Alphabet',icon:'fab fa-google',color:'#4285f4'},
-      {sym:'GOLD',name:'Gold Spot',icon:'fas fa-gem',color:'#c9a84c'},
+    //  FIX: session is refreshed before every callAdmin so stale tokens
+    //       never silently fail. Real error message always shown in toast.
+    // ════════════════════════════════════════════════════════════════════════
+    const ALL_EDITABLE_ASSETS = [
+      {sym:'BTC',  name:'Bitcoin',   icon:'fab fa-bitcoin',       color:'#f7931a'},
+      {sym:'ETH',  name:'Ethereum',  icon:'fab fa-ethereum',      color:'#627eea'},
+      {sym:'SOL',  name:'Solana',    icon:'fas fa-sun',           color:'#9945ff'},
+      {sym:'BNB',  name:'BNB Chain', icon:'fas fa-coins',         color:'#f3ba2f'},
+      {sym:'XRP',  name:'Ripple',    icon:'fas fa-water',         color:'#00aae4'},
+      {sym:'ADA',  name:'Cardano',   icon:'fas fa-circle-nodes',  color:'#3cc8c8'},
+      {sym:'TSLA', name:'Tesla',     icon:'fas fa-car',           color:'#e31937'},
+      {sym:'AAPL', name:'Apple',     icon:'fab fa-apple',         color:'#a2aaad'},
+      {sym:'NVDA', name:'NVIDIA',    icon:'fas fa-microchip',     color:'#76b900'},
+      {sym:'MSFT', name:'Microsoft', icon:'fab fa-windows',       color:'#00a4ef'},
+      {sym:'AMZN', name:'Amazon',    icon:'fab fa-amazon',        color:'#ff9900'},
+      {sym:'GOOGL',name:'Alphabet',  icon:'fab fa-google',        color:'#4285f4'},
+      {sym:'GOLD', name:'Gold Spot', icon:'fas fa-gem',           color:'#c9a84c'},
     ];
 
-    function admRenderPricesPage(){
-      const body=document.getElementById('adm-prices-body');
-      body.innerHTML=ALL_EDITABLE_ASSETS.map(a=>{
-        const cur=PRICES[a.sym]||DEFAULT_PRICES[a.sym]||0;const def=DEFAULT_PRICES[a.sym]||0;
-        const diff=cur-def;const diffPct=def>0?(diff/def*100):0;
-        return`<div class="price-row">
-          <div style="width:36px;height:36px;border-radius:11px;background:${a.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${a.icon}" style="color:${a.color};font-size:16px"></i></div>
-          <div style="flex:1;min-width:100px"><p style="font-size:13px;font-weight:600;color:#edf2f8">${a.sym}</p><p style="font-size:11px;color:#5a6880">${a.name}</p></div>
-          <div style="text-align:right;margin-right:12px;min-width:80px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;margin-bottom:2px">Default</p><p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">$${fmtPrice(def)}</p></div>
-          <div style="text-align:right;margin-right:12px;min-width:80px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;margin-bottom:2px">Supabase</p><p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${Math.abs(diffPct)>0.1?(diffPct>0?'#22c55e':'#ef4444'):'#5a6880'}">${Math.abs(diffPct)>0.1?(diffPct>0?'+':'')+diffPct.toFixed(2)+'%':'Default'}</p></div>
-          <input class="adm-input" id="price-input-${a.sym}" type="number" step="any" value="${cur.toFixed(a.sym==='XRP'||a.sym==='ADA'?4:2)}" style="width:130px;margin-right:8px" oninput="admLivePreviewPrice('${a.sym}',this.value)">
-          <button class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSetSinglePrice('${a.sym}')">Apply</button>
-          <button class="adm-btn adm-btn-sm" style="background:rgba(255,255,255,.04);color:#5a6880;border:1px solid rgba(255,255,255,.07);margin-left:4px" onclick="admResetSinglePrice('${a.sym}')">↺</button>
+    function admRenderPricesPage() {
+      const body = document.getElementById('adm-prices-body');
+      if (!body) return;
+      body.innerHTML = ALL_EDITABLE_ASSETS.map(a => {
+        const cur     = PRICES[a.sym]         || DEFAULT_PRICES[a.sym] || 0;
+        const def     = DEFAULT_PRICES[a.sym] || 0;
+        const diff    = cur - def;
+        const diffPct = def > 0 ? (diff / def * 100) : 0;
+        const decimals = (a.sym === 'XRP' || a.sym === 'ADA') ? 4 : 2;
+        return `
+        <div class="price-row" id="price-row-${a.sym}">
+          <div style="width:36px;height:36px;border-radius:11px;background:${a.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="${a.icon}" style="color:${a.color};font-size:16px"></i>
+          </div>
+          <div style="flex:1;min-width:100px">
+            <p style="font-size:13px;font-weight:600;color:#edf2f8">${a.sym}</p>
+            <p style="font-size:11px;color:#5a6880">${a.name}</p>
+          </div>
+          <div style="text-align:right;margin-right:12px;min-width:80px">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;margin-bottom:2px">Default</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880">$${fmtPrice(def)}</p>
+          </div>
+          <div style="text-align:right;margin-right:12px;min-width:80px">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;margin-bottom:2px">Live</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${Math.abs(diffPct)>0.1?(diffPct>0?'#22c55e':'#ef4444'):'#5a6880'}">
+              ${Math.abs(diffPct)>0.1?(diffPct>0?'+':'')+diffPct.toFixed(2)+'%':'Default'}
+            </p>
+          </div>
+          <input
+            class="adm-input"
+            id="price-input-${a.sym}"
+            type="number"
+            step="any"
+            value="${cur.toFixed(decimals)}"
+            style="width:130px;margin-right:8px"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();admSetSinglePrice('${a.sym}');}"
+          >
+          <button
+            id="price-save-btn-${a.sym}"
+            class="adm-btn adm-btn-gain adm-btn-sm"
+            onclick="admSetSinglePrice('${a.sym}')"
+          >Apply</button>
+          <button
+            class="adm-btn adm-btn-sm"
+            style="background:rgba(255,255,255,.04);color:#5a6880;border:1px solid rgba(255,255,255,.07);margin-left:4px"
+            onclick="admResetSinglePrice('${a.sym}')"
+          >↺</button>
         </div>`;
       }).join('');
     }
 
-    function admLivePreviewPrice(sym,val){
-      const n=parseFloat(val);if(isNaN(n)||n<=0)return;
-      document.querySelectorAll('.grid-pr-'+sym).forEach(el=>el.textContent='$'+fmtPrice(n));
-      document.querySelectorAll('.tick-price-'+sym).forEach(el=>el.textContent='$'+fmtPrice(n));
-    }
-
-    // Push single price to Supabase — realtime will broadcast to all pages
+    // FIX: reads correct input ID, shows real server error, refreshes session
     async function admSetSinglePrice(sym) {
       const inp = document.getElementById('price-input-' + sym);
+      const btn = document.getElementById('price-save-btn-' + sym);
+      if (!inp) { showToast('UI error', 'Input not found for ' + sym, 'error'); return; }
+
       const n = parseFloat(inp.value);
-      if (isNaN(n) || n <= 0) { showToast('Error', 'Enter a valid price', 'error'); return; }
+      if (isNaN(n) || n <= 0) { showToast('Invalid price', 'Enter a positive number for ' + sym, 'error'); return; }
+
       const asset = ASSETS_LIST.find(a => a.sym === sym);
-      const chg = asset ? asset.chg : 0;
-      const { error } = await sb.from('asset_prices').upsert(
-        { sym, price: n, chg, updated_at: new Date().toISOString() },
-        { onConflict: 'sym' }
-      );
-      if (error) { showToast('Error saving price', error.message, 'error'); return; }
-      // Update local state
-      PRICES[sym] = n;
-      _priceUpdatedAt[sym] = Date.now();
-      if (asset) asset.price = n;
-      document.querySelectorAll('.grid-pr-' + sym).forEach(el => el.textContent = '$' + fmtPrice(n));
-      document.querySelectorAll('.tick-price-' + sym).forEach(el => el.textContent = '$' + fmtPrice(n));
-      showToast('Price Updated', sym + ' → $' + fmtPrice(n) + ' (synced to all pages)', 'success');
-      admRenderPricesPage();
+      const chg   = asset ? asset.chg : 0;
+
+      if (btn) { btn.textContent = '…'; btn.disabled = true; }
+
+      try {
+        await callAdmin('save_price', { sym, price: n, chg });
+
+        PRICES[sym] = n;
+        _priceUpdatedAt[sym] = Date.now();
+        if (asset) asset.price = n;
+
+        // Update grid price element (id="grid-pr-BTC")
+        const gridPrEl = document.getElementById('grid-pr-' + sym);
+        if (gridPrEl) gridPrEl.textContent = '$' + fmtPrice(n);
+
+        // Update all ticker spans
+        document.querySelectorAll('.tick-price-' + sym).forEach(el => {
+          el.textContent = '$' + fmtPrice(n);
+        });
+
+        if (activeChartAsset === sym) {
+          const cmp = document.getElementById('chart-modal-price');
+          if (cmp) cmp.textContent = '$' + fmtPrice(n);
+        }
+        if (tradeModalAsset && tradeModalAsset.sym === sym) {
+          const tpr = document.getElementById('trade-live-price');
+          if (tpr) tpr.textContent = '$' + fmtPrice(n);
+          tradeModalAsset.price = n;
+          updateTradeModalCalc();
+        }
+
+        loadPortfolioStats();
+        showToast('Price Updated ✓', `${sym} → $${fmtPrice(n)} · Synced to all pages`, 'success');
+        admRenderPricesPage();
+
+      } catch (err) {
+        console.error('[admSetSinglePrice] failed for', sym, err);
+        showToast('Price update failed', err.message, 'error');
+      } finally {
+        if (btn) { btn.textContent = 'Apply'; btn.disabled = false; }
+      }
     }
 
-    // Push all prices to Supabase in one batch
+    // FIX: batch save via edge function
     async function admSaveAllPrices() {
       const rows = [];
       ALL_EDITABLE_ASSETS.forEach(a => {
         const inp = document.getElementById('price-input-' + a.sym);
-        if (inp) {
-          const n = parseFloat(inp.value);
-          if (!isNaN(n) && n > 0) {
-            const asset = ASSETS_LIST.find(x => x.sym === a.sym);
-            rows.push({ sym: a.sym, price: n, chg: asset ? asset.chg : 0, updated_at: new Date().toISOString() });
-          }
+        if (!inp) return;
+        const n = parseFloat(inp.value);
+        if (!isNaN(n) && n > 0) {
+          const asset = ASSETS_LIST.find(x => x.sym === a.sym);
+          rows.push({ sym: a.sym, price: n, chg: asset ? asset.chg : 0 });
         }
       });
       if (!rows.length) { showToast('Nothing to save', '', 'error'); return; }
-      const { error } = await sb.from('asset_prices').upsert(rows, { onConflict: 'sym' });
-      if (error) { showToast('Error saving prices', error.message, 'error'); return; }
-      // Update local state
-      const now = Date.now();
-      rows.forEach(r => {
-        PRICES[r.sym] = r.price;
-        _priceUpdatedAt[r.sym] = now;
-        const asset = ASSETS_LIST.find(x => x.sym === r.sym);
-        if (asset) asset.price = r.price;
-      });
-      showToast('All Prices Saved', rows.length + ' prices synced to Supabase — live on all pages', 'success');
-      admRenderPricesPage();
-      loadPortfolioStats();
+
+      const saveAllBtn = document.getElementById('adm-save-all-btn');
+      if (saveAllBtn) { saveAllBtn.textContent = 'Saving…'; saveAllBtn.disabled = true; }
+
+      try {
+        await callAdmin('save_prices_batch', { rows });
+        const now = Date.now();
+        rows.forEach(r => {
+          PRICES[r.sym] = r.price;
+          _priceUpdatedAt[r.sym] = now;
+          const asset = ASSETS_LIST.find(x => x.sym === r.sym);
+          if (asset) asset.price = r.price;
+          const gridPrEl = document.getElementById('grid-pr-' + r.sym);
+          if (gridPrEl) gridPrEl.textContent = '$' + fmtPrice(r.price);
+          document.querySelectorAll('.tick-price-' + r.sym).forEach(el => {
+            el.textContent = '$' + fmtPrice(r.price);
+          });
+        });
+        loadPortfolioStats();
+        showToast('All Prices Saved ✓', rows.length + ' prices synced to all pages & devices', 'success');
+        admRenderPricesPage();
+      } catch (err) {
+        console.error('[admSaveAllPrices] failed', err);
+        showToast('Batch save failed', err.message, 'error');
+      } finally {
+        if (saveAllBtn) { saveAllBtn.textContent = 'Save All'; saveAllBtn.disabled = false; }
+      }
     }
 
-    // Reset single price to default — pushes default back to Supabase
+    // FIX: reset via edge function
     async function admResetSinglePrice(sym) {
       const def = DEFAULT_PRICES[sym];
-      if (!def) return;
-      const { error } = await sb.from('asset_prices').upsert(
-        { sym, price: def, chg: 0, updated_at: new Date().toISOString() },
-        { onConflict: 'sym' }
-      );
-      if (error) { showToast('Error resetting price', error.message, 'error'); return; }
-      PRICES[sym] = def;
-      _priceUpdatedAt[sym] = Date.now();
-      const asset = ASSETS_LIST.find(a => a.sym === sym);
-      if (asset) { asset.price = def; asset.chg = 0; }
-      const inp = document.getElementById('price-input-' + sym);
-      if (inp) inp.value = def.toFixed(sym === 'XRP' || sym === 'ADA' ? 4 : 2);
-      showToast('Price Reset', sym + ' back to default $' + fmtPrice(def), 'info');
-      admRenderPricesPage();
+      if (!def) { showToast('No default', `No default price for ${sym}`, 'error'); return; }
+      try {
+        await callAdmin('save_price', { sym, price: def, chg: 0 });
+        PRICES[sym] = def;
+        _priceUpdatedAt[sym] = Date.now();
+        const asset = ASSETS_LIST.find(a => a.sym === sym);
+        if (asset) { asset.price = def; asset.chg = 0; }
+        const inp = document.getElementById('price-input-' + sym);
+        if (inp) inp.value = def.toFixed((sym === 'XRP' || sym === 'ADA') ? 4 : 2);
+        showToast('Price Reset', sym + ' → $' + fmtPrice(def), 'info');
+        admRenderPricesPage();
+      } catch (err) {
+        console.error('[admResetSinglePrice] failed for', sym, err);
+        showToast('Reset failed', err.message, 'error');
+      }
     }
 
-    // Reset ALL prices to defaults — batch push to Supabase
     async function admResetPrices() {
-      if (!confirm('Reset all prices to defaults? This will push default values to Supabase.')) return;
-      const rows = Object.entries(DEFAULT_PRICES).map(([sym, price]) => ({
-        sym, price, chg: 0, updated_at: new Date().toISOString()
-      }));
-      const { error } = await sb.from('asset_prices').upsert(rows, { onConflict: 'sym' });
-      if (error) { showToast('Error resetting prices', error.message, 'error'); return; }
-      const now = Date.now();
-      Object.assign(PRICES, DEFAULT_PRICES);
-      ASSETS_LIST.forEach(a => {
-        if (DEFAULT_PRICES[a.sym]) { a.price = DEFAULT_PRICES[a.sym]; a.chg = 0; _priceUpdatedAt[a.sym] = now; }
-      });
-      showToast('All Prices Reset', 'Defaults pushed to Supabase', 'info');
-      admRenderPricesPage();
-      loadPortfolioStats();
+      if (!confirm('Reset ALL prices to defaults?')) return;
+      const rows = Object.entries(DEFAULT_PRICES).map(([sym, price]) => ({ sym, price, chg: 0 }));
+      try {
+        await callAdmin('save_prices_batch', { rows });
+        const now = Date.now();
+        Object.assign(PRICES, DEFAULT_PRICES);
+        ASSETS_LIST.forEach(a => {
+          if (DEFAULT_PRICES[a.sym] != null) { a.price = DEFAULT_PRICES[a.sym]; a.chg = 0; _priceUpdatedAt[a.sym] = now; }
+        });
+        showToast('All Prices Reset', 'Default prices pushed to all pages', 'info');
+        admRenderPricesPage();
+        loadPortfolioStats();
+      } catch (err) {
+        console.error('[admResetPrices] failed', err);
+        showToast('Reset failed', err.message, 'error');
+      }
     }
 
-    // ════════════════════════════════════════════
-    //  ADMIN — CRYPTO ADDRESSES
-    // ════════════════════════════════════════════
+    window.admRenderPricesPage  = admRenderPricesPage;
+    window.admSetSinglePrice    = admSetSinglePrice;
+    window.admSaveAllPrices     = admSaveAllPrices;
+    window.admResetSinglePrice  = admResetSinglePrice;
+    window.admResetPrices       = admResetPrices;
+
+    // ─ ADDRESSES ─
     async function admLoadAddresses(){
       await loadAddressesFromDb();
       const body=document.getElementById('adm-addresses-body');
@@ -2463,35 +2729,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>`;
       }).join('');
     }
-
-    async function admSaveSingleAddress(sym){
-      const inp=document.getElementById('addr-input-'+sym);if(!inp)return;
-      const addr=inp.value.trim();
-      try {
-        await callAdmin('save_address', { symbol: sym, address: addr });
-        CRYPTO_ADDRESSES[sym]=addr;
-        const dot=document.getElementById('addr-dot-'+sym);if(dot)dot.style.background=addr?'#22c55e':'#5a6880';
-        showToast(addr?'Address Saved':'Address Cleared',sym+(addr?' synced to all devices':' address removed'),'success');
-        buildDepositCoinGrid();
-      } catch(err) { showToast('Error saving address', err.message, 'error'); }
-    }
-    async function admClearAddress(sym){
-      const inp=document.getElementById('addr-input-'+sym);if(inp)inp.value='';
-      await admSaveSingleAddress(sym);
-    }
-    async function admSaveAddresses(){
-      let saved=0;
-      for(const c of DEPOSIT_COINS){
-        const inp=document.getElementById('addr-input-'+c.sym);if(!inp)continue;
-        try {
-          await callAdmin('save_address', { symbol: c.sym, address: inp.value.trim() });
-          CRYPTO_ADDRESSES[c.sym]=inp.value.trim();
-          saved++;
-        } catch(err) { showToast('Error','Failed to save '+c.sym,'error'); }
-      }
-      showToast('All Addresses Saved',saved+' coins synced to all devices','success');
-      admLoadAddresses(); buildDepositCoinGrid();
-    }
+    async function admSaveSingleAddress(sym){const inp=document.getElementById('addr-input-'+sym);if(!inp)return;const addr=inp.value.trim();try{await callAdmin('save_address',{symbol:sym,address:addr});CRYPTO_ADDRESSES[sym]=addr;const dot=document.getElementById('addr-dot-'+sym);if(dot)dot.style.background=addr?'#22c55e':'#5a6880';showToast(addr?'Address Saved':'Address Cleared',sym+(addr?' synced to all devices':' removed'),'success');buildDepositCoinGrid();}catch(err){showToast('Error saving address',err.message,'error');}}
+    async function admClearAddress(sym){const inp=document.getElementById('addr-input-'+sym);if(inp)inp.value='';await admSaveSingleAddress(sym);}
+    async function admSaveAddresses(){let saved=0;for(const c of DEPOSIT_COINS){const inp=document.getElementById('addr-input-'+c.sym);if(!inp)continue;try{await callAdmin('save_address',{symbol:c.sym,address:inp.value.trim()});CRYPTO_ADDRESSES[c.sym]=inp.value.trim();saved++;}catch(err){showToast('Error','Failed to save '+c.sym,'error');}}showToast('All Addresses Saved',saved+' coins synced','success');admLoadAddresses();buildDepositCoinGrid();}
+    window.admLoadAddresses=admLoadAddresses;window.admSaveSingleAddress=admSaveSingleAddress;window.admClearAddress=admClearAddress;window.admSaveAddresses=admSaveAddresses;
 
     // ─ USER DRAWER ─
     async function openUserDrawer(userId){
@@ -2501,55 +2742,40 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       document.getElementById('dwr-body').innerHTML='<div style="text-align:center;padding:40px;color:#5a6880"><div class="spin"></div></div>';
       document.getElementById('userDrawer').classList.add('open');
       document.getElementById('userDrawerOverlay').classList.add('open');
-      try {
-        const [holdings, txs] = await Promise.all([
-          callAdmin('get_user_holdings', { userId }),
-          callAdmin('get_user_transactions', { userId, limit: 15 })
-        ]);
-        const hs = holdings || [];
-        const ts = txs || [];
+      try{
+        const[holdings,txs]=await Promise.all([callAdmin('get_user_holdings',{userId}),callAdmin('get_user_transactions',{userId,limit:15})]);
+        const hs=holdings||[];const ts=txs||[];
         const portVal=hs.reduce((s,h)=>s+Number(h.quantity)*(PRICES[h.symbol]||Number(h.avg_buy_price)),0);
-        const costBase=hs.reduce((s,h)=>s+Number(h.quantity)*Number(h.avg_buy_price),0);
-        const pnl=portVal-costBase;
+        const costBase=hs.reduce((s,h)=>s+Number(h.quantity)*Number(h.avg_buy_price),0);const pnl=portVal-costBase;
         const typeBadge={buy:'b-loss',sell:'b-gain',deposit:'b-gain',withdraw:'b-loss'};
         document.getElementById('dwr-body').innerHTML=`
-          <div class="detail-section">
-            <div class="detail-section-title">Account Info</div>
+          <div class="detail-section"><div class="detail-section-title">Account Info</div>
             <div class="detail-row"><span class="lbl">Full Name</span><span class="val">${esc((user.first_name||'')+' '+(user.last_name||''))}</span></div>
             <div class="detail-row"><span class="lbl">Email</span><span class="val">${user.email||'—'}</span></div>
             <div class="detail-row"><span class="lbl">User ID</span><span class="val" style="font-size:9px;color:#5a6880">${user.id||'—'}</span></div>
             <div class="detail-row"><span class="lbl">Joined</span><span class="val">${user.created_at?new Date(user.created_at).toLocaleString():'—'}</span></div>
           </div>
-          <div class="detail-section">
-            <div class="detail-section-title">Portfolio Summary</div>
+          <div class="detail-section"><div class="detail-section-title">Portfolio Summary</div>
             <div class="detail-row"><span class="lbl">Cash Balance</span><span class="val" style="color:#c9a84c">$${fmtUSD(Number(user.cash||0))}</span></div>
             <div class="detail-row"><span class="lbl">Holdings Value</span><span class="val">$${fmtUSD(portVal)}</span></div>
-            <div class="detail-row"><span class="lbl">Cost Basis</span><span class="val">$${fmtUSD(costBase)}</span></div>
             <div class="detail-row"><span class="lbl">Total P&amp;L</span><span class="val" style="color:${pnl>=0?'#22c55e':'#ef4444'}">${pnl>=0?'+':''}$${fmtUSD(pnl)}</span></div>
             <div class="detail-row"><span class="lbl">Net Worth</span><span class="val" style="font-size:13px">$${fmtUSD(Number(user.cash||0)+portVal)}</span></div>
           </div>
-          <div class="detail-section">
-            <div class="detail-section-title">Holdings (${hs.length})</div>
-            ${hs.length?hs.map(h=>{
-              const meta=ASSET_META[h.symbol]||{};const live=PRICES[h.symbol]||Number(h.avg_buy_price);
-              const val=Number(h.quantity)*live;const pnlH=(live-Number(h.avg_buy_price))*Number(h.quantity);
-              return`<div class="detail-row"><span class="lbl" style="display:flex;align-items:center;gap:6px"><i class="${meta.icon||'fas fa-coins'}" style="color:${meta.color||'#5a6880'};font-size:11px"></i>${h.symbol}</span><span class="val"><span style="display:block">${Number(h.quantity).toFixed(5)} @ $${fmtPrice(Number(h.avg_buy_price))}</span><span style="display:block;color:#c9a84c;margin-top:1px">≈ $${fmtUSD(val)} <span style="color:${pnlH>=0?'#22c55e':'#ef4444'};margin-left:4px">(${pnlH>=0?'+':''}$${fmtUSD(pnlH)})</span></span></span></div>`;
-            }).join(''):'<div style="padding:10px 0;color:#5a6880;font-size:12px">No holdings</div>'}
+          <div class="detail-section"><div class="detail-section-title">Holdings (${hs.length})</div>
+            ${hs.length?hs.map(h=>{const meta=ASSET_META[h.symbol]||{};const live=PRICES[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*live;const pnlH=(live-Number(h.avg_buy_price))*Number(h.quantity);return`<div class="detail-row"><span class="lbl" style="display:flex;align-items:center;gap:6px"><i class="${meta.icon||'fas fa-coins'}" style="color:${meta.color||'#5a6880'};font-size:11px"></i>${h.symbol}</span><span class="val"><span style="display:block">${Number(h.quantity).toFixed(5)} @ $${fmtPrice(Number(h.avg_buy_price))}</span><span style="display:block;color:#c9a84c;margin-top:1px">≈ $${fmtUSD(val)} <span style="color:${pnlH>=0?'#22c55e':'#ef4444'};margin-left:4px">(${pnlH>=0?'+':''}$${fmtUSD(pnlH)})</span></span></span></div>`;}).join(''):'<div style="padding:10px 0;color:#5a6880;font-size:12px">No holdings</div>'}
           </div>
-          <div class="detail-section">
-            <div class="detail-section-title">Recent Activity (${ts.length})</div>
-            ${ts.length?ts.map(t=>{const usd=Number(t.usd_amount||0);return`<div class="detail-row"><span class="lbl" style="display:flex;align-items:center;gap:6px"><span class="badge ${typeBadge[t.type]||'b-accent'}" style="font-size:9px;padding:2px 6px">${t.type}</span>${t.symbol}</span><span class="val"><span style="display:block;color:${usd>=0?'#22c55e':'#ef4444'}">${usd>=0?'+':''}$${fmtUSD(Math.abs(usd))}</span><span style="display:block;font-size:9px;color:#5a6880">${timeAgo(t.created_at)}</span></span></div>`}).join(''):'<div style="padding:10px 0;color:#5a6880;font-size:12px">No transactions</div>'}
+          <div class="detail-section"><div class="detail-section-title">Recent Activity (${ts.length})</div>
+            ${ts.length?ts.map(t=>{const usd=Number(t.usd_amount||0);return`<div class="detail-row"><span class="lbl" style="display:flex;align-items:center;gap:6px"><span class="badge ${typeBadge[t.type]||'b-accent'}" style="font-size:9px;padding:2px 6px">${t.type}</span>${t.symbol||'—'}</span><span class="val"><span style="display:block;color:${usd>=0?'#22c55e':'#ef4444'}">${usd>=0?'+':''}$${fmtUSD(Math.abs(usd))}</span><span style="display:block;font-size:9px;color:#5a6880">${timeAgo(t.created_at)}</span></span></div>`;}).join(''):'<div style="padding:10px 0;color:#5a6880;font-size:12px">No transactions</div>'}
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
             <button class="adm-btn adm-btn-gold" style="flex:1" onclick="openQuickCash('${user.id}','${escJs((user.first_name||'')+' '+(user.last_name||''))}',${user.cash||0})">💰 Update Cash</button>
             <button class="adm-btn adm-btn-accent" style="flex:1" onclick="closeUserDrawer();admShowPage('pnl',null);setTimeout(()=>{document.getElementById('pnl-user').value='${user.id}';admLoadUserPnl();},100)">📊 Edit P&amp;L</button>
             <button class="adm-btn adm-btn-gain" style="flex:1" onclick="closeUserDrawer();admShowPage('transactions',null);setTimeout(()=>{document.getElementById('tx-user').value='${user.id}';},100)">+ Transaction</button>
           </div>`;
-      } catch(err) {
-        document.getElementById('dwr-body').innerHTML=`<div style="padding:20px;color:#ef4444;font-size:12px">Error loading user details: ${esc(err.message)}</div>`;
-      }
+      }catch(err){document.getElementById('dwr-body').innerHTML=`<div style="padding:20px;color:#ef4444;font-size:12px">Error: ${esc(err.message)}</div>`;}
     }
     function closeUserDrawer(){document.getElementById('userDrawer').classList.remove('open');document.getElementById('userDrawerOverlay').classList.remove('open');}
+    window.openUserDrawer=openUserDrawer;window.closeUserDrawer=closeUserDrawer;
 
     // ═══════════════════════════════════════════
     //  UTILS
@@ -2570,15 +2796,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       t.style.borderColor=cfg.br;t.classList.add('show');
       clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),4000);
     }
+    window.showToast = showToast;
 
     function showStatusNotification(title, message, type) {
-      const existing = document.getElementById('status-notification');
-      if (existing) existing.remove();
+      const existing = document.getElementById('status-notification'); if (existing) existing.remove();
       const isSuccess = type === 'success';
-      const color = isSuccess ? '#22c55e' : '#ef4444';
-      const bg = isSuccess ? 'rgba(34,197,94,.12)' : 'rgba(239,68,68,.12)';
-      const border = isSuccess ? 'rgba(34,197,94,.3)' : 'rgba(239,68,68,.3)';
-      const icon = isSuccess ? 'fa-circle-check' : 'fa-circle-xmark';
+      const color = isSuccess ? '#22c55e' : '#ef4444', bg = isSuccess ? 'rgba(34,197,94,.12)' : 'rgba(239,68,68,.12)', border = isSuccess ? 'rgba(34,197,94,.3)' : 'rgba(239,68,68,.3)', icon = isSuccess ? 'fa-circle-check' : 'fa-circle-xmark';
       const el = document.createElement('div');
       el.id = 'status-notification';
       el.style.cssText = `position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);z-index:500;background:#111820;border:1px solid ${border};border-radius:18px;padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.7);min-width:320px;max-width:480px;width:calc(100vw - 32px);opacity:0;transition:all .4s cubic-bezier(.16,1,.3,1);`;
@@ -2587,6 +2810,16 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='translateX(-50%) translateY(0)';}));
       setTimeout(()=>{if(document.getElementById('status-notification')){el.style.opacity='0';el.style.transform='translateX(-50%) translateY(-10px)';setTimeout(()=>el.remove(),400);}},10000);
     }
-</script>
+
+    // Flash animation CSS
+    const style = document.createElement('style');
+    style.textContent = `
+    @keyframes flashUpDash{0%{color:#22c55e;text-shadow:0 0 12px rgba(34,197,94,.7)}100%{color:#5a6880;text-shadow:none}}
+    @keyframes flashDownDash{0%{color:#ef4444;text-shadow:0 0 12px rgba(239,68,68,.7)}100%{color:#5a6880;text-shadow:none}}
+    .flash-up-dash{animation:flashUpDash 1.2s ease forwards}
+    .flash-down-dash{animation:flashDownDash 1.2s ease forwards}
+    `;
+    document.head.appendChild(style);
+  </script>
 </body>
 </html>
