@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
@@ -324,13 +324,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <button onclick="openSwapModal()" class="hide-sm" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'"><i class="fas fa-arrow-right-arrow-left" style="font-size:11px"></i><span>Swap</span></button>
-        <button onclick="openPanel('portfolio')" class="hide-sm" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'"><i class="fas fa-briefcase" style="font-size:11px"></i><span>Portfolio</span></button>
-        <div style="text-align:right;flex-shrink:0">
+        <!-- <button  onclick="openSwapModal()" class="hidden md:block" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'"><i class="fas fa-arrow-right-arrow-left hidden md:block" style="font-size:11px"></i><span class="hidden md:block">Swap</span></button> -->
+        <!-- <button onclick="openPanel('portfolio')" class="hidden md:block" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.color='#edf2f8'" onmouseout="this.style.color='#8c9db5'"><i class="fas fa-briefcase hidden md:block" style="font-size:11px"></i><span class="hidden md:block">Portfolio</span></button> -->
+        <div class="hidden md:block" style="text-align:right;flex-shrink:0">
           <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;letter-spacing:.1em;text-transform:uppercase">Cash</p>
           <p id="headerCash" style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#edf2f8;font-weight:300">$0.00</p>
         </div>
-        <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;cursor:pointer;flex-shrink:0" onclick="openPanel('portfolio')">?</div>
+        <!-- <div class="hidden md:block" id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;cursor:pointer;flex-shrink:0" onclick="openPanel('portfolio')">?</div> -->
       </div>
     </header>
 
@@ -1347,10 +1347,14 @@ async function confirmInvestment(){
   const cash=Number(profile.cash);
   if(total>cash){showToast('Insufficient balance','Deposit funds to continue','error');return;}
   if(amt<MIN_TRADE){showToast(`Minimum trade is $${MIN_TRADE}`,'','error');return;}
-  document.getElementById('mi-label').style.display='none';document.getElementById('mi-spin').style.display='flex';document.getElementById('mi-confirm').disabled=true;
+  document.getElementById('mi-label').style.display='none';
+  document.getElementById('mi-spin').style.display='flex';
+  document.getElementById('mi-confirm').disabled=true;
+
   const qty=amt/a.price;
   const execTime=new Date();
-  try{
+
+  try {
     const{data:txData,error:txErr}=await sb.from('transactions').insert({
       user_id:authUser.id,
       type:'buy',
@@ -1411,9 +1415,9 @@ async function confirmInvestment(){
       total:total.toFixed(2),
       newCash:newCash
     });
-  }catch(err){
+  } catch(err) {
     showToast('Transaction failed',err.message||'Please try again','error');
-  }finally{
+  } finally {
     document.getElementById('mi-label').style.display='flex';
     document.getElementById('mi-label').innerHTML='<i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Confirm Investment';
     document.getElementById('mi-spin').style.display='none';
@@ -1502,12 +1506,12 @@ function closeDrawer(){document.getElementById('mobileDrawer').style.display='no
 
 // ── PRICE TICK (local simulation between admin pushes) ─────────────────────
 function tickPrices(){
-  const FREEZE_MS=8000;
-  const now=Date.now();
+  const FREEZE_MS = 8000;
+  const now = Date.now();
   [...CRYPTO,...STOCKS].forEach(a=>{
-    const lastPush=_invPriceUpdatedAt[a.sym]||0;
-    if(now-lastPush<FREEZE_MS) return;
-    a.price*=1+(Math.random()-.5)*0.0003;
+    const lastPush = _invPriceUpdatedAt[a.sym] || 0;
+    if (now - lastPush < FREEZE_MS) return;
+    a.price *= 1 + (Math.random() - 0.5) * 0.0003;
     const el=document.getElementById('card-pr-'+a.sym);
     if(el)el.textContent='$'+fmtPrice(a.price);
     if(modalAsset?.sym===a.sym){setTxt('mi-price','$'+fmtPrice(a.price));updateModalCalc();}
