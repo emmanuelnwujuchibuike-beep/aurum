@@ -147,7 +147,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .search-wrap{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:9px 16px;transition:border-color .2s}
 .search-wrap:focus-within{border-color:rgba(201,168,76,.3)}
 .gold-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.25),transparent);margin:32px 0}
-/* Deposit coin grid */
 .dep-coin-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;transition:all .2s;text-align:left;width:100%}
 .dep-coin-btn:hover{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.05)}
 .dep-coin-btn.selected{border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.1);box-shadow:0 0 20px rgba(201,168,76,.1)}
@@ -158,7 +157,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .amt-preset{flex:1;padding:10px 0;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:.72rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#8c9db5;cursor:pointer;transition:all .2s}
 .amt-preset:hover{background:rgba(201,168,76,.1);color:#c9a84c;border-color:rgba(201,168,76,.25)}
 .amt-preset.sel{background:rgba(201,168,76,.15);color:#c9a84c;border-color:rgba(201,168,76,.4)}
-/* Admin price row */
 .adm-price-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.04)}
 .adm-price-row:last-child{border-bottom:none}
 .adm-input-price{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:9px 12px;color:#edf2f8;font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;transition:border-color .2s;width:140px}
@@ -168,6 +166,36 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .adm-push-btn{padding:9px 18px;border-radius:10px;background:linear-gradient(135deg,#c9a84c,#a87c28);border:none;color:#040608;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
 .adm-push-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.35)}
 .adm-push-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+/* ── PROPERTY YIELD DISPLAY ─────────────────────────────── */
+.prop-yield-box{
+  background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(201,168,76,.06));
+  border:1px solid rgba(34,197,94,.2);
+  border-radius:14px;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.prop-yield-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.prop-yield-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  color:#5a6880;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.prop-yield-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  font-weight:600;
+  color:#22c55e;
+}
+.prop-yield-val.gold{color:#c9a84c}
+.prop-yield-val.white{color:#edf2f8}
 @media(max-width:768px){
   .side-panel{width:100vw}
   #mainContent{margin-left:0!important}
@@ -574,7 +602,34 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <div style="background:rgba(4,6,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:18px">
         <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase;margin-bottom:14px">Order Summary</p>
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">You invest</span><span id="os-invest" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">$0.00</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">You receive</span><span id="os-get" style="font-family:'JetBrains Mono',monospace;color:#c9a84c">—</span></div>
+        <!-- Property yield display injected here for property assets, standard "You receive" for others -->
+        <div id="os-receive-row" style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">You receive </span><span id="os-get" style="font-family:'JetBrains Mono',monospace;color:#c9a84c">—</span></div>
+        <!-- Property-only expanded yield breakdown -->
+        <div id="os-prop-yield-block" style="display:none;margin-bottom:9px">
+          <div class="prop-yield-box">
+            <div class="prop-yield-row">
+              <span class="prop-yield-label">Weekly Income (20%)</span>
+              <span class="prop-yield-val" id="os-annual-yield">—</span>
+            </div>
+            <div class="prop-yield-row">
+              <span class="prop-yield-label"> Daily Income</span>
+              <span class="prop-yield-val gold" id="os-monthly-yield">—</span>
+            </div>
+            <div class="prop-yield-row">
+              <span class="prop-yield-label">Hourly Income</span>
+              <span class="prop-yield-val white" id="os-weekly-yield">—</span>
+            </div>
+            <div style="height:1px;background:rgba(255,255,255,.06);margin:2px 0"></div>
+            <div class="prop-yield-row">
+              <span class="prop-yield-label">5-Year Project Capital</span>
+              <span class="prop-yield-val" id="os-5yr-yield">—</span>
+            </div>
+            <div class="prop-yield-row">
+              <span class="prop-yield-label">Share of Property</span>
+              <span class="prop-yield-val gold" id="os-ownership">—</span>
+            </div>
+          </div>
+        </div>
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">Market price</span><span id="os-mktprice" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">—</span></div>
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">Platform fee (0.1%)</span><span id="os-fee" style="font-family:'JetBrains Mono',monospace;color:#5a6880">$0.00</span></div>
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:9px"><span style="color:#5a6880">Slippage est. (0.05%)</span><span id="os-slip" style="font-family:'JetBrains Mono',monospace;color:#5a6880">$0.00</span></div>
@@ -630,10 +685,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     DEPOSIT MODAL — Full flow: coin → amount → address
-     (matches dashboard.html pattern)
-═══════════════════════════════════════════════════════ -->
+<!-- DEPOSIT MODAL -->
 <div class="modal-overlay" id="depositModal">
   <div class="modal-box" style="max-width:500px">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:26px 26px 20px;border-bottom:1px solid rgba(255,255,255,.07)">
@@ -643,8 +695,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       </div>
       <button onclick="closeDepositModal()" style="width:36px;height:36px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px">✕</button>
     </div>
-
-    <!-- Step indicators -->
     <div style="display:flex;align-items:center;padding:18px 26px 0;gap:6px">
       <div style="display:flex;align-items:center;gap:6px">
         <div class="dep-step-num active" id="dep-step-1-num">1</div>
@@ -661,14 +711,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
         <span id="dep-step-3-lbl" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;letter-spacing:.06em">SEND</span>
       </div>
     </div>
-
-    <!-- STEP 1: Select coin -->
     <div id="dep-step-1" style="padding:20px 26px 26px">
       <p style="font-size:13px;color:#8c9db5;margin-bottom:16px">Choose which cryptocurrency you'll send:</p>
       <div style="display:flex;flex-direction:column;gap:8px" id="dep-coin-grid-inv"></div>
     </div>
-
-    <!-- STEP 2: Enter amount -->
     <div id="dep-step-2" style="display:none;padding:20px 26px 26px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px">
         <div id="dep-s2-coinbg" style="width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -694,14 +740,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       </div>
       <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);border-radius:12px;margin-bottom:16px">
         <i class="fas fa-clock" style="color:#c9a84c;font-size:12px;margin-top:2px;flex-shrink:0"></i>
-        <p style="font-size:12px;color:#8c9db5;line-height:1.5">Your deposit will be reviewed by our team. Balance is credited only after approval — usually within 30minutes.</p>
+        <p style="font-size:12px;color:#8c9db5;line-height:1.5">Your deposit will be reviewed by our team. Balance is credited only after approval — usually within 30 minutes.</p>
       </div>
-      <button onclick="goDepStepInv(3)" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer">
-        Continue →
-      </button>
+      <button onclick="goDepStepInv(3)" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer">Continue →</button>
     </div>
-
-    <!-- STEP 3: Address + QR + confirm -->
     <div id="dep-step-3" style="display:none;padding:20px 26px 26px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px">
         <div id="dep-s3-coinbg" style="width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -716,8 +758,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
           <p id="dep-s3-amount" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#22c55e;font-weight:300">—</p>
         </div>
       </div>
-
-      <!-- Address shown section -->
       <div id="dep-addr-shown-inv">
         <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px">
           <div id="dep-qr-canvas-inv" style="background:#fff;padding:8px;border-radius:10px;flex-shrink:0;width:116px;height:116px;display:flex;align-items:center;justify-content:center"></div>
@@ -735,12 +775,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
           <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#ef4444"><i class="fas fa-triangle-exclamation" style="margin-right:6px"></i>Only send <span id="dep-warn-coin2-inv">—</span> on the correct network. Wrong network = lost funds.</p>
         </div>
       </div>
-
-      <!-- No address set -->
       <div id="dep-no-address-inv" style="display:none;padding:16px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:12px;margin-bottom:16px">
         <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444"><i class="fas fa-circle-xmark" style="margin-right:8px"></i>No deposit address configured for this coin. Please contact support or choose a different coin.</p>
       </div>
-
       <div style="display:flex;gap:10px">
         <button onclick="goDepStepInv(2)" style="flex:1;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:#5a6880;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer">← Back</button>
         <button id="dep-confirm-inv-btn" onclick="confirmCryptoDepositInv()" style="flex:2;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
@@ -762,16 +799,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       </div>
       <button onclick="closeAdminPanel()" style="padding:8px 18px;border-radius:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer">✕ Close</button>
     </div>
-
-    <!-- Stats -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:28px">
       <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Users</p><p id="adm-userCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8">0</p></div>
       <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Total Cash</p><p id="adm-totalCash" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#c9a84c">$0</p></div>
       <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Holdings</p><p id="adm-holdingCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8">0</p></div>
       <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px"><p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Transactions</p><p id="adm-txCount" style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8">0</p></div>
     </div>
-
-    <!-- LIVE ASSET PRICES — uses Edge Function, guaranteed to sync to all pages -->
     <div style="background:#111820;border:1px solid rgba(201,168,76,.2);border-radius:16px;overflow:hidden;margin-bottom:24px">
       <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
         <div>
@@ -786,8 +819,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       </div>
       <div id="admin-price-grid"></div>
     </div>
-
-    <!-- USER ACCOUNTS -->
     <div style="background:#111820;border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden">
       <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:12px;align-items:center;flex-wrap:wrap">
         <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase;flex:1">User Accounts</p>
@@ -816,23 +847,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 </div>
 <div class="k-hint" id="kHint">↑ ↑ ↓ ↓ ← → ← → B A · ADMIN</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
 // ═══════════════════════════════════════════════════════════════════════
 //  CONFIG
@@ -841,12 +855,9 @@ const SUPABASE_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
 const EDGE_FN_URL   = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment';
 const MIN_TRADE = 10;
+const PROPERTY_YIELD_RATE = 0.20; // 20% APY — applied to ALL property investments
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// ═══════════════════════════════════════════════════════════════════════
-//  callAdmin — ALL privileged DB ops go through the Edge Function
-//  Service key NEVER in browser
-// ═══════════════════════════════════════════════════════════════════════
 async function callAdmin(action, params = {}) {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) throw new Error('Not logged in');
@@ -867,35 +878,34 @@ let adminPriceTab='crypto';
 let investChartInstance=null;
 let investChartPeriod='1D';
 let _invPriceUpdatedAt={};
-
-// Deposit state (invest.html)
 let invDepCoin=null, invDepAmt=0;
 let CRYPTO_ADDRESSES_INV = {};
 
 // ── ASSET DEFINITIONS ──────────────────────────────────────────────────
 const CRYPTO=[
-  {sym:'BTC',name:'Bitcoin',cat:'crypto',icon:'fab fa-bitcoin',color:'#f7931a',price:67430,chg:+2.8,desc:'The original decentralised digital currency — digital gold.'},
-  {sym:'ETH',name:'Ethereum',cat:'crypto',icon:'fab fa-ethereum',color:'#627eea',price:3280,chg:+1.4,desc:'Smart contract platform powering the decentralised web.'},
-  {sym:'SOL',name:'Solana',cat:'crypto',icon:'fas fa-sun',color:'#9945ff',price:188,chg:+3.1,desc:'High-speed Layer-1 blockchain built for scale.'},
-  {sym:'BNB',name:'BNB Chain',cat:'crypto',icon:'fas fa-coins',color:'#f3ba2f',price:612,chg:-0.9,desc:'Binance ecosystem utility token and DeFi hub.'},
-  {sym:'XRP',name:'Ripple',cat:'crypto',icon:'fas fa-water',color:'#00aae4',price:0.72,chg:-1.2,desc:'Institutional cross-border payment settlement.'},
-  {sym:'ADA',name:'Cardano',cat:'crypto',icon:'fas fa-circle-nodes',color:'#3cc8c8',price:0.48,chg:+0.8,desc:'Research-driven proof-of-stake smart contract chain.'},
+  {sym:'BTC',name:'Bitcoin',cat:'crypto',icon:'fab fa-bitcoin',color:'#f7931a',price:67430,chg:+20,desc:'The original decentralised digital currency — digital gold.'},
+  {sym:'ETH',name:'Ethereum',cat:'crypto',icon:'fab fa-ethereum',color:'#627eea',price:3280,chg:+20,desc:'Smart contract platform powering the decentralised web.'},
+  {sym:'SOL',name:'Solana',cat:'crypto',icon:'fas fa-sun',color:'#9945ff',price:188,chg:+20,desc:'High-speed Layer-1 blockchain built for scale.'},
+  {sym:'BNB',name:'BNB Chain',cat:'crypto',icon:'fas fa-coins',color:'#f3ba2f',price:612,chg:-20,desc:'Binance ecosystem utility token and DeFi hub.'},
+  {sym:'XRP',name:'Ripple',cat:'crypto',icon:'fas fa-water',color:'#00aae4',price:0.72,chg:-20,desc:'Institutional cross-border payment settlement.'},
+  {sym:'ADA',name:'Cardano',cat:'crypto',icon:'fas fa-circle-nodes',color:'#3cc8c8',price:0.48,chg:+20,desc:'Research-driven proof-of-stake smart contract chain.'},
 ];
 const STOCKS=[
-  {sym:'TSLA',name:'Tesla Inc.',cat:'stocks',icon:'fas fa-car',color:'#e31937',price:248.50,chg:-0.6,desc:'EV manufacturer, energy storage and autonomous vehicles.'},
-  {sym:'AAPL',name:'Apple Inc.',cat:'stocks',icon:'fab fa-apple',color:'#a2aaad',price:189.30,chg:+0.4,desc:"World's most valuable technology brand by market cap."},
-  {sym:'NVDA',name:'NVIDIA Corp.',cat:'stocks',icon:'fas fa-microchip',color:'#76b900',price:875.20,chg:+2.1,desc:'AI chip leader powering the global GPU revolution.'},
-  {sym:'MSFT',name:'Microsoft',cat:'stocks',icon:'fab fa-windows',color:'#00a4ef',price:412.70,chg:+0.8,desc:'Cloud computing, AI and enterprise software.'},
-  {sym:'AMZN',name:'Amazon',cat:'stocks',icon:'fab fa-amazon',color:'#ff9900',price:195.50,chg:-0.3,desc:'Global e-commerce giant and AWS cloud leader.'},
-  {sym:'GOOGL',name:'Alphabet Inc.',cat:'stocks',icon:'fab fa-google',color:'#4285f4',price:178.30,chg:+0.6,desc:'Google Search, YouTube, Cloud and Waymo.'},
+  {sym:'TSLA',name:'Tesla Inc.',cat:'stocks',icon:'fas fa-car',color:'#e31937',price:248.50,chg:-20,desc:'EV manufacturer, energy storage and autonomous vehicles.'},
+  {sym:'AAPL',name:'Apple Inc.',cat:'stocks',icon:'fab fa-apple',color:'#a2aaad',price:189.30,chg:+20,desc:"World's most valuable technology brand by market cap."},
+  {sym:'NVDA',name:'NVIDIA Corp.',cat:'stocks',icon:'fas fa-microchip',color:'#76b900',price:875.20,chg:+20,desc:'AI chip leader powering the global GPU revolution.'},
+  {sym:'MSFT',name:'Microsoft',cat:'stocks',icon:'fab fa-windows',color:'#00a4ef',price:412.70,chg:+20,desc:'Cloud computing, AI and enterprise software.'},
+  {sym:'AMZN',name:'Amazon',cat:'stocks',icon:'fab fa-amazon',color:'#ff9900',price:195.50,chg:-20,desc:'Global e-commerce giant and AWS cloud leader.'},
+  {sym:'GOOGL',name:'Alphabet Inc.',cat:'stocks',icon:'fab fa-google',color:'#4285f4',price:178.30,chg:+20,desc:'Google Search, YouTube, Cloud and Waymo.'},
 ];
+// yield_ = 20% APY for all properties. valuation used to compute ownership %.
 const PROPERTY=[
-  {sym:'LOND',name:'The Shard Tower Suite',cat:'property',icon:'fas fa-building',color:'#c9a84c',price:500,yield_:9.2,location:'Southwark, London SE1',type:'Commercial',minEntry:500,valuation:'$2.4M',funded:62,img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&q=80',imgAlt:'London skyline The Shard'},
-  {sym:'DXB',name:'Burj Khalifa Residences',cat:'property',icon:'fas fa-city',color:'#e8c96a',price:1000,yield_:11.4,location:'Downtown Dubai, UAE',type:'Hospitality',minEntry:1000,valuation:'$5.1M',funded:48,img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80',imgAlt:'Dubai skyline Burj Khalifa'},
-  {sym:'NYC',name:'One Manhattan West',cat:'property',icon:'fas fa-building-columns',color:'#a0c0e8',price:500,yield_:7.8,location:'Hudson Yards, NY 10001',type:'Residential',minEntry:500,valuation:'$8.7M',funded:91,img:'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=600&q=80',imgAlt:'New York City skyline Manhattan'},
-  {sym:'DXB2',name:'Palm Jumeirah Villa',cat:'property',icon:'fas fa-umbrella-beach',color:'#f3ba2f',price:2000,yield_:13.5,location:'Palm Jumeirah, Dubai',type:'Luxury Villa',minEntry:2000,valuation:'$12.1M',funded:35,img:'./image/palm.jpg',imgAlt:'Palm Jumeirah Dubai luxury villa'},
-  {sym:'SGP',name:'Marina Bay Tower',cat:'property',icon:'fas fa-water',color:'#3cc8c8',price:500,yield_:8.9,location:'Marina Bay, Singapore',type:'Commercial',minEntry:500,valuation:'$3.8M',funded:60,img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&q=80',imgAlt:'Marina Bay Sands Singapore'},
-  {sym:'PAR',name:'Champs-Élysées Office',cat:'property',icon:'fas fa-tower-broadcast',color:'#627eea',price:1000,yield_:10.2,location:'8th Arrondissement, Paris',type:'Office',minEntry:1000,valuation:'$6.2M',funded:55,img:'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80',imgAlt:'Paris Eiffel Tower'},
+  {sym:'LOND',name:'The Shard Tower Suite',cat:'property',icon:'fas fa-building',color:'#c9a84c',price:500,yield_:20,location:'Southwark, London SE1',type:'Commercial',minEntry:500,valuation:'$2.4M',valuationNum:2400000,funded:62,img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&q=80',imgAlt:'London skyline The Shard'},
+  {sym:'DXB',name:'Burj Khalifa Residences',cat:'property',icon:'fas fa-city',color:'#e8c96a',price:1000,yield_:20,location:'Downtown Dubai, UAE',type:'Hospitality',minEntry:1000,valuation:'$5.1M',valuationNum:5100000,funded:48,img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80',imgAlt:'Dubai skyline Burj Khalifa'},
+  {sym:'NYC',name:'One Manhattan West',cat:'property',icon:'fas fa-building-columns',color:'#a0c0e8',price:500,yield_:20,location:'Hudson Yards, NY 10001',type:'Residential',minEntry:500,valuation:'$8.7M',valuationNum:8700000,funded:91,img:'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=600&q=80',imgAlt:'New York City skyline Manhattan'},
+  {sym:'DXB2',name:'Palm Jumeirah Villa',cat:'property',icon:'fas fa-umbrella-beach',color:'#f3ba2f',price:2000,yield_:20,location:'Palm Jumeirah, Dubai',type:'Luxury Villa',minEntry:2000,valuation:'$12.1M',valuationNum:12100000,funded:35,img:'./image/palm.jpg',imgAlt:'Palm Jumeirah Dubai luxury villa'},
+  {sym:'SGP',name:'Marina Bay Tower',cat:'property',icon:'fas fa-water',color:'#3cc8c8',price:500,yield_:20,location:'Marina Bay, Singapore',type:'Commercial',minEntry:500,valuation:'$3.8M',valuationNum:3800000,funded:60,img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&q=80',imgAlt:'Marina Bay Sands Singapore'},
+  {sym:'PAR',name:'Champs-Élysées Office',cat:'property',icon:'fas fa-tower-broadcast',color:'#627eea',price:1000,yield_:20,location:'8th Arrondissement, Paris',type:'Office',minEntry:1000,valuation:'$6.2M',valuationNum:6200000,funded:55,img:'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80',imgAlt:'Paris Eiffel Tower'},
 ];
 const ALL_ASSETS=[...CRYPTO,...STOCKS,...PROPERTY];
 const MCAP={BTC:1920e9,ETH:395e9,SOL:82e9,BNB:90e9,XRP:38e9,ADA:17e9,TSLA:790e9,AAPL:2900e9,NVDA:2160e9,MSFT:3070e9,AMZN:2050e9,GOOGL:2230e9};
@@ -910,6 +920,31 @@ const DEPOSIT_COINS_INV = [
   {sym:'ADA',name:'Cardano',icon:'fas fa-circle-nodes',color:'#3cc8c8',network:'ADA Network',min:'1 ADA'},
   {sym:'LTC',name:'Litecoin',icon:'fas fa-coins',color:'#bfbbbb',network:'LTC Network',min:'0.01 LTC'},
 ];
+
+// ═══════════════════════════════════════════════════════════════════════
+//  PROPERTY YIELD CALCULATOR  — 20% APY on invested amount, scaling linearly
+// ═══════════════════════════════════════════════════════════════════════
+/**
+ * computePropYield(investedAmt, asset)
+ * Returns an object with:
+ *   annualYield   – dollar amount earned per year  (investedAmt × 20%)
+ *   monthlyYield  – per month
+ *   weeklyYield   – per week
+ *   fiveYearYield – 5 × annualYield (simple)
+ *   ownershipPct  – fractional ownership of the property
+ *   yieldPct      – always 20 (APY display)
+ */
+function computePropYield(investedAmt, asset) {
+  const rate         = PROPERTY_YIELD_RATE;               // 0.20 = 20%
+  const annualYield  = investedAmt * rate;                // e.g. $1k → $200
+  const monthlyYield = annualYield / 12;
+  const weeklyYield  = annualYield / 52;
+  const fiveYearYield= annualYield * 5;
+  const ownershipPct = asset.valuationNum > 0
+    ? (investedAmt / asset.valuationNum) * 100
+    : 0;
+  return { annualYield, monthlyYield, weeklyYield, fiveYearYield, ownershipPct, yieldPct: 20 };
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 //  BOOT
@@ -940,21 +975,18 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('mobileBackdrop').addEventListener('click', closeDrawer);
   setupAdminTrigger();
 
-  // Realtime: own profile cash updates (approved by admin)
   sb.channel('invest-profile')
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${authUser.id}` }, ({ new: row }) => {
       profile = { ...profile, ...row };
       refreshUI();
     }).subscribe();
 
-  // Realtime: admin price changes broadcast to everyone instantly
   sb.channel('invest-asset-prices')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'asset_prices' }, ({ new: row }) => {
       if (!row || !row.sym) return;
       applyPriceUpdate(row.sym, Number(row.price), Number(row.chg || 0));
     }).subscribe();
 
-  // Realtime: own transaction status changes (deposit/withdraw approval)
   sb.channel('invest-tx-status')
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'transactions', filter: `user_id=eq.${authUser.id}` }, ({ new: row, old: oldRow }) => {
       if (!oldRow || row.status === oldRow.status) return;
@@ -985,7 +1017,6 @@ async function loadPricesFromDB() {
   } catch(e) {}
 }
 
-// ── LOAD CRYPTO ADDRESSES FROM DB ─────────────────────────────────────
 async function loadAddressesFromDB() {
   try {
     const { data } = await sb.from('crypto_addresses').select('symbol, address');
@@ -994,7 +1025,6 @@ async function loadAddressesFromDB() {
   } catch(e) { CRYPTO_ADDRESSES_INV = {}; }
 }
 
-// ── APPLY PRICE UPDATE (from realtime or admin push) ──────────────────
 function applyPriceUpdate(sym, newPrice, newChg) {
   const asset = ALL_ASSETS.find(a => a.sym === sym);
   if (!asset) return;
@@ -1038,11 +1068,8 @@ function applyPriceUpdate(sym, newPrice, newChg) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-//  ADMIN — PRICE PUSH via Edge Function (guaranteed RLS bypass)
-//  This is the fix: no more direct sb.from() upsert from browser admin
+//  ADMIN — PRICE PUSH
 // ═══════════════════════════════════════════════════════════════════════
-
-// Called when admin clicks "Push" on a single asset
 async function adminPushPrice(sym) {
   const priceEl = document.getElementById('adm-price-' + sym);
   const chgEl   = document.getElementById('adm-chg-'   + sym);
@@ -1054,10 +1081,8 @@ async function adminPushPrice(sym) {
   if (btnEl) { btnEl.textContent = '…'; btnEl.disabled = true; }
   try {
     await callAdmin('save_price', { sym, price, chg });
-    // applyPriceUpdate will also fire via realtime, but do it immediately too
     applyPriceUpdate(sym, price, chg);
     showToast('Price Updated ✓', `${sym} → $${fmtPrice(price)} (${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%) synced to all pages`, 'success');
-    // Refresh the grid so the displayed values reflect current state
     setTimeout(adminRenderPriceGrid, 200);
   } catch(err) {
     showToast('Push failed', err.message, 'error');
@@ -1066,7 +1091,6 @@ async function adminPushPrice(sym) {
   }
 }
 
-// Called when admin clicks "Push All"
 async function adminSaveAllPrices() {
   const assets = adminPriceTab === 'crypto' ? CRYPTO : STOCKS;
   const rows = [];
@@ -1411,7 +1435,7 @@ function openInvestModal(sym) {
   const chgEl = document.getElementById('mi-chg');
   if (isProp) {
     setTxt('mi-price', a.yield_ + '% APY');
-    chgEl.textContent = 'Annual rental yield'; chgEl.style.color = '#c9a84c'; chgEl.style.background = 'rgba(201,168,76,.1)';
+    chgEl.textContent = 'Weekly yield'; chgEl.style.color = '#c9a84c'; chgEl.style.background = 'rgba(201,168,76,.1)';
   } else {
     setTxt('mi-price', '$' + fmtPrice(a.price));
     chgEl.textContent = (a.chg >= 0 ? '+' : '') + a.chg.toFixed(2) + '%';
@@ -1439,6 +1463,9 @@ function openInvestModal(sym) {
     chartWrap.style.display = 'none';
     if (investChartInstance) { investChartInstance.destroy(); investChartInstance = null; }
   }
+  // Show/hide property yield block and standard receive row
+  document.getElementById('os-prop-yield-block').style.display = isProp ? 'block' : 'none';
+  document.getElementById('os-receive-row').style.display = isProp ? 'none' : 'flex';
   updateModalCalc();
   document.getElementById('investModal').classList.add('open');
 }
@@ -1519,25 +1546,39 @@ function updateModalCalc() {
   const fee  = +(amt * 0.001).toFixed(2);
   const slip = +(amt * 0.0005).toFixed(2);
   const isProp = modalAsset.cat === 'property';
-  const qty  = amt / modalAsset.price;
-  const qstr = isProp
-    ? (amt / 100000 * modalAsset.yield_).toFixed(2) + '% of property'
-    : (qty < 1 ? qty.toFixed(6) : qty.toFixed(4)) + ' ' + modalAsset.sym;
   const total  = +(amt + fee + slip).toFixed(2);
   const cash   = Number(profile.cash);
   const remain = +(cash - total).toFixed(2);
+
   setTxt('os-invest',   '$' + amt.toFixed(2));
-  setTxt('os-get',      qstr);
-  setTxt('os-mktprice', '$' + fmtPrice(modalAsset.price));
+  setTxt('os-mktprice', isProp ? '$' + fmtUSD(modalAsset.price) + ' / token' : '$' + fmtPrice(modalAsset.price));
   setTxt('os-fee',      '$' + fee.toFixed(2));
   setTxt('os-slip',     '$' + slip.toFixed(2));
   setTxt('os-total',    '$' + total.toFixed(2));
   setTxt('os-remain',   '$' + fmtUSD(Math.max(0, remain)));
+
+  if (isProp) {
+    // ── PROPERTY: show full 20% yield breakdown ──────────────────────
+    const yld = computePropYield(amt, modalAsset);
+    setTxt('os-annual-yield',  '$' + fmtUSD(yld.annualYield)  + ' / wk');
+    setTxt('os-monthly-yield', '$' + fmtUSD(yld.monthlyYield) + ' / dy');
+    setTxt('os-weekly-yield',  '$' + fmtUSD(yld.weeklyYield)  + ' / hr');
+    setTxt('os-5yr-yield',     '$' + fmtUSD(yld.fiveYearYield));
+    setTxt('os-ownership',     yld.ownershipPct.toFixed(4) + '% of property');
+  } else {
+    // ── CRYPTO / STOCK: show units received ──────────────────────────
+    const qty  = amt / modalAsset.price;
+    const qstr = (qty < 1 ? qty.toFixed(6) : qty.toFixed(4)) + ' ' + modalAsset.sym;
+    setTxt('os-get', qstr);
+  }
+
   const pct = cash > 0 ? Math.min((amt / cash) * 100, 100) : 0;
   setTxt('mi-pct', pct.toFixed(1) + '%');
   document.getElementById('mi-slider').value = pct.toFixed(1);
   setTxt('mi-bal', '$' + fmtUSD(cash));
-  const insuf = amt + fee + slip > cash || amt < MIN_TRADE;
+
+  const minAmt = isProp ? modalAsset.minEntry : MIN_TRADE;
+  const insuf = amt + fee + slip > cash || amt < minAmt;
   document.getElementById('mi-insuf').style.display = insuf ? 'flex' : 'none';
   document.getElementById('mi-confirm').disabled = insuf;
   document.getElementById('mi-confirm').style.opacity = insuf ? '.45' : '1';
@@ -1553,8 +1594,9 @@ async function confirmInvestment() {
   const slip = +(amt * 0.0005).toFixed(2);
   const total = +(amt + fee + slip).toFixed(2);
   const cash  = Number(profile.cash);
-  if (total > cash)     { showToast('Insufficient balance','Deposit funds to continue','error'); return; }
-  if (amt < MIN_TRADE)  { showToast(`Minimum trade is $${MIN_TRADE}`,'','error'); return; }
+  const minAmt = a.cat === 'property' ? a.minEntry : MIN_TRADE;
+  if (total > cash)      { showToast('Insufficient balance','Deposit funds to continue','error'); return; }
+  if (amt < minAmt)      { showToast(`Minimum investment is $${minAmt}`,'','error'); return; }
   document.getElementById('mi-label').style.display = 'none';
   document.getElementById('mi-spin').style.display  = 'flex';
   document.getElementById('mi-confirm').disabled    = true;
@@ -1607,9 +1649,7 @@ function showReceipt(d) {
 }
 function closeReceiptModal() { document.getElementById('receiptModal').classList.remove('open'); }
 
-// ═══════════════════════════════════════════════════════════════════════
-//  DEPOSIT MODAL — Full coin picker flow (matches dashboard.html)
-// ═══════════════════════════════════════════════════════════════════════
+// ── DEPOSIT MODAL ──────────────────────────────────────────────────────
 function openDepositModal() {
   invDepCoin = null; invDepAmt = 0;
   goDepStepInv(1);
@@ -1818,7 +1858,7 @@ async function confirmSwap() {
 function openDrawer()  { document.getElementById('mobileDrawer').style.display='flex'; document.getElementById('mobileBackdrop').style.display='block'; }
 function closeDrawer() { document.getElementById('mobileDrawer').style.display='none'; document.getElementById('mobileBackdrop').style.display='none'; }
 
-// ── PRICE TICK (local simulation between admin pushes) ─────────────────
+// ── PRICE TICK ─────────────────────────────────────────────────────────
 function tickPrices() {
   const FREEZE_MS = 8000;
   const now = Date.now();
