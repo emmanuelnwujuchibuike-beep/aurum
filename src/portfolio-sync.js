@@ -1,22 +1,12 @@
 /**
- * portfolio-sync.js  v2  — FIXED
+ * portfolio-sync.js  v4
  * ─────────────────────────────────────────────────────────────────────────────
- * ROOT CAUSE OF v1 BUG:
- *   Both dashboard.js and invest.js declare  `let profile`, `let myHoldings`,
- *   `let authUser`, `const sb`  as LOCAL variables — NOT on window.
- *   v1 polled window.profile / window.myHoldings which are always undefined.
- *
- * FIX:
- *   This module creates its OWN Supabase client with the same anon key,
- *   reads its own session, fetches holdings + profile directly, and keeps
- *   them in sync via its own realtime channel.  Zero dependency on the
- *   page JS's private variables.
- *
- * USAGE — add ONE script tag to BOTH pages, AFTER the supabase CDN:
- *   <script src="portfolio-sync.js"></script>
- *
- * The script waits for `window.supabase` (the CDN global) to be ready,
- * then boots itself independently.
+ * Changes from v3:
+ *   • Removed dual floating FABs (CFD trade + portfolio).
+ *   • Replaced with a single premium floating "Trade Now" launcher that
+ *     navigates to trade.html — animated gold glow, shine sweep, serif label.
+ *   • showFabs() updated to target only #ps-trade-launch-btn.
+ *   • All other behaviour identical to v3.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -24,13 +14,13 @@
   'use strict';
 
   /* ═══════════════════════════════════════════════════════════
-     CONFIG  — same values already in your page JS
+     CONFIG
      ═══════════════════════════════════════════════════════════ */
   const SUPABASE_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
 
   /* ═══════════════════════════════════════════════════════════
-     COLOURS / CONSTANTS
+     CONSTANTS
      ═══════════════════════════════════════════════════════════ */
   const GREEN = '#22c55e', RED = '#ef4444', GOLD = '#c9a84c';
 
@@ -60,12 +50,18 @@
   };
 
   /* ═══════════════════════════════════════════════════════════
+     PAGE DETECTION
+     ═══════════════════════════════════════════════════════════ */
+  const IS_TRADE_PAGE = /trade\.html/i.test(window.location.pathname) ||
+                        window.location.pathname.endsWith('/trade');
+
+  /* ═══════════════════════════════════════════════════════════
      STATE
      ═══════════════════════════════════════════════════════════ */
-  let _sb           = null;   // own supabase client
+  let _sb           = null;
   let _uid          = null;
-  let _profile      = null;   // {cash, first_name, ...}
-  let _holdings     = [];     // [{symbol, quantity, avg_buy_price, ...}]
+  let _profile      = null;
+  let _holdings     = [];
   let _openTrades   = [];
   let _panelOpen    = false;
   let _cfdOpen      = false;
@@ -83,60 +79,61 @@
   const $   = id => document.getElementById(id);
   const txt = (id, v) => { const e = $(id); if (e) e.textContent = v; };
   const fmt  = n => Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const fmtP = p => { if(p >= 1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); if(p >= 1) return p.toFixed(2); return p.toFixed(4); };
+  const fmtP = p => {
+    if(p >= 1000) return p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    if(p >= 1)    return p.toFixed(2);
+    return p.toFixed(4);
+  };
 
-  /* live price: read from page JS globals if available, else use avg_buy */
   function livePrice(sym) {
-    if (window.PRICES       && window.PRICES[sym]       != null) return +window.PRICES[sym];
-    if (window.ALL_ASSETS)  { const a = window.ALL_ASSETS.find(x=>x.sym===sym);  if(a) return +a.price; }
-    if (window.ASSETS_LIST) { const a = window.ASSETS_LIST.find(x=>x.sym===sym); if(a) return +a.price; }
+    if (window.ALL_ASSETS) {
+      const a = window.ALL_ASSETS.find(x => x.sym === sym);
+      if (a && +a.price > 0) return +a.price;
+    }
+    if (window.PRICES && window.PRICES[sym] != null) return +window.PRICES[sym];
+    if (window.ASSETS_LIST) {
+      const a = window.ASSETS_LIST.find(x => x.sym === sym);
+      if (a && +a.price > 0) return +a.price;
+    }
     const h = _holdings.find(x => x.symbol === sym);
     return h ? +h.avg_buy_price : 0;
   }
 
   /* ═══════════════════════════════════════════════════════════
-     SUPABASE BOOT  — wait for CDN global then create own client
+     SUPABASE BOOT
      ═══════════════════════════════════════════════════════════ */
   function waitForSupabase(cb) {
-    if (window.supabase && window.supabase.createClient) {
-      cb();
-    } else {
-      setTimeout(() => waitForSupabase(cb), 80);
-    }
+    if (window.supabase && window.supabase.createClient) cb();
+    else setTimeout(() => waitForSupabase(cb), 80);
   }
 
   async function boot() {
     _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    /* get session */
     const { data: { session } } = await _sb.auth.getSession();
     if (!session) {
-      /* not logged in — hide FABs gracefully */
-      const tf = $('ps-trade-fab'), pf = $('ps-port-fab');
-      if (tf) tf.style.display = 'none';
-      if (pf) pf.style.display = 'none';
+      const nb = $('ps-topbar-btn');
+      if (nb) nb.style.display = 'none';
+      const fab = $('ps-trade-launch-btn');
+      if (fab) fab.style.display = 'none';
       return;
     }
     _uid = session.user.id;
 
-    /* initial data load */
     await refreshAll();
 
-    /* realtime: profile cash changes */
     _sb.channel('ps-profile')
       .on('postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${_uid}` },
         ({ new: row }) => { _profile = { ..._profile, ...row }; _refreshPanelStats(); }
       ).subscribe();
 
-    /* realtime: holdings changes */
     _sb.channel('ps-holdings')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'holdings', filter: `user_id=eq.${_uid}` },
         async () => { await _loadHoldings(); if (_panelOpen) renderPanel(); }
       ).subscribe();
 
-    /* realtime: open_trades (if table exists) */
     try {
       _sb.channel('ps-trades')
         .on('postgres_changes',
@@ -170,7 +167,7 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     CSS
+     CSS INJECTION
      ═══════════════════════════════════════════════════════════ */
   function injectCSS() {
     if ($('ps-styles')) return;
@@ -295,26 +292,123 @@
   justify-content:center;gap:8px;transition:all .25s}
 .bs-ok-btn:disabled{opacity:.45;cursor:not-allowed}
 
-/* FABs */
-#ps-trade-fab{position:fixed;bottom:100px;right:20px;z-index:900;width:54px;height:54px;
-  border-radius:17px;background:linear-gradient(135deg,#c9a84c,#a87c28);
-  box-shadow:0 8px 30px rgba(201,168,76,.4);display:flex;align-items:center;
-  justify-content:center;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s}
-#ps-trade-fab:hover{transform:scale(1.08);box-shadow:0 12px 40px rgba(201,168,76,.55)}
-#ps-trade-fab i{font-size:19px;color:#040608}
-#ps-port-fab{position:fixed;bottom:32px;right:20px;z-index:900;width:54px;height:54px;
-  border-radius:17px;background:linear-gradient(135deg,#0d1a2e,#1a2e50);
-  box-shadow:0 8px 28px rgba(0,0,0,.6);border:1px solid rgba(201,168,76,.35);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s}
-#ps-port-fab:hover{transform:scale(1.08)}
-#ps-port-fab i{font-size:19px;color:#c9a84c}
+/* ── TRADE PAGE: topbar portfolio button ── */
+#ps-topbar-btn{
+  padding:5px 14px;border-radius:9px;border:1px solid rgba(201,168,76,.3);
+  background:rgba(201,168,76,.1);color:#c9a84c;
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;
+  white-space:nowrap}
+#ps-topbar-btn:hover{background:rgba(201,168,76,.2);border-color:rgba(201,168,76,.5)}
 #ps-trades-badge{background:#ef4444;color:#fff;border-radius:20px;
   padding:1px 6px;font-size:9px;margin-left:4px;display:none}
+
+/* ── NON-TRADE pages: premium floating trade launcher ── */
+#ps-trade-launch-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 22px;
+  z-index: 900;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px 13px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(201,168,76,.42);
+  background: linear-gradient(135deg, #0d1520 0%, #111c2e 55%, #0a1018 100%);
+  box-shadow:
+    0 0 0 1px rgba(201,168,76,.07),
+    0 8px 32px rgba(0,0,0,.72),
+    0 0 44px rgba(201,168,76,.16),
+    inset 0 1px 0 rgba(255,255,255,.055);
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform .22s cubic-bezier(.16,1,.3,1),
+              box-shadow .22s cubic-bezier(.16,1,.3,1),
+              border-color .22s;
+  animation: ps-fab-glow 3.4s ease-in-out infinite;
+}
+#ps-trade-launch-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg,
+    transparent 28%,
+    rgba(201,168,76,.11) 50%,
+    transparent 72%);
+  transform: translateX(-120%);
+  animation: ps-fab-shine 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+#ps-trade-launch-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  border-color: rgba(201,168,76,.72);
+  box-shadow:
+    0 0 0 1px rgba(201,168,76,.14),
+    0 16px 48px rgba(0,0,0,.8),
+    0 0 64px rgba(201,168,76,.28),
+    inset 0 1px 0 rgba(255,255,255,.09);
+}
+#ps-trade-launch-btn:active { transform: translateY(-1px) scale(1.01); }
+
+#ps-trade-launch-btn .fab-icon {
+  width: 38px; height: 38px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(201,168,76,.2), rgba(201,168,76,.07));
+  border: 1px solid rgba(201,168,76,.26);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  color: #c9a84c;
+  box-shadow: 0 2px 12px rgba(201,168,76,.18);
+}
+#ps-trade-launch-btn .fab-text {
+  display: flex; flex-direction: column; gap: 2px;
+}
+#ps-trade-launch-btn .fab-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 500;
+  color: #e8dfc8;
+  line-height: 1;
+  letter-spacing: .015em;
+}
+#ps-trade-launch-btn .fab-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: rgba(201,168,76,.6);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+#ps-trade-launch-btn .fab-arrow {
+  font-size: 11px;
+  color: rgba(201,168,76,.45);
+  margin-left: 2px;
+  transition: transform .22s cubic-bezier(.16,1,.3,1), color .22s;
+}
+#ps-trade-launch-btn:hover .fab-arrow {
+  transform: translateX(4px);
+  color: #c9a84c;
+}
+
+@keyframes ps-fab-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(201,168,76,.07), 0 8px 32px rgba(0,0,0,.72),
+                0 0 44px rgba(201,168,76,.16), inset 0 1px 0 rgba(255,255,255,.055);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(201,168,76,.13), 0 8px 32px rgba(0,0,0,.72),
+                0 0 62px rgba(201,168,76,.27), inset 0 1px 0 rgba(255,255,255,.055);
+  }
+}
+@keyframes ps-fab-shine {
+  0%        { transform: translateX(-120%); }
+  40%, 100% { transform: translateX(220%); }
+}
 
 /* Misc */
 .ps-empty{text-align:center;padding:40px 20px;font-family:'JetBrains Mono',monospace;
   font-size:11px;color:#5a6880;line-height:2}
-.ps-divider{height:1px;background:rgba(255,255,255,.05);margin:10px 0}
 .ps-insuf{padding:10px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);
   border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ef4444;
   display:none}
@@ -326,7 +420,7 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     HTML SHELLS
+     HTML INJECTION
      ═══════════════════════════════════════════════════════════ */
   function injectHTML() {
     if ($('ps-panel')) return;
@@ -339,7 +433,7 @@
 <div id="ps-panel">
   <div class="ps-hdr">
     <div>
-      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">My Trading/Portfolio</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">My Portfolio</p>
       <p id="ps-sub" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;margin-top:2px">—</p>
     </div>
     <button class="ps-close-x" onclick="PortfolioSync.closePanel()">✕</button>
@@ -454,7 +548,7 @@
       <div style="display:flex;align-items:center;gap:14px">
         <div id="bs-icon" style="width:46px;height:46px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:20px"></div>
         <div>
-          <p id="bs-sym" style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">—</p>
+          <p id="bs-sym"      style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#edf2f8;font-weight:300">—</p>
           <p id="bs-name-sub" style="color:#5a6880;font-size:12px">—</p>
         </div>
       </div>
@@ -467,21 +561,18 @@
     </div>
 
     <div style="padding:16px 22px;display:flex;flex-direction:column;gap:13px">
-      <!-- live price / balance row -->
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">
         <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;text-transform:uppercase">Live Price</span>
         <div style="text-align:right">
           <p id="bs-live-price" style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#edf2f8;font-weight:600">—</p>
-          <p id="bs-bal-line" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;margin-top:2px">Balance: —</p>
+          <p id="bs-bal-line"   style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;margin-top:2px">Balance: —</p>
         </div>
       </div>
 
-      <!-- sell: holding info -->
       <div id="bs-hold-info" style="display:none;padding:10px 14px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.18);border-radius:12px">
         <p id="bs-hold-detail" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#c9a84c">—</p>
       </div>
 
-      <!-- amount -->
       <div>
         <label style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;display:block;margin-bottom:7px">Amount (USD)</label>
         <div class="bs-inp-wrap">
@@ -496,7 +587,6 @@
         </div>
       </div>
 
-      <!-- order summary -->
       <div style="background:rgba(4,6,8,.7);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px">
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="color:#5a6880">You invest</span><span id="bs-o-invest" style="font-family:'JetBrains Mono',monospace;color:#edf2f8">—</span></div>
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="color:#5a6880">You receive</span><span id="bs-o-receive" style="font-family:'JetBrains Mono',monospace;color:#c9a84c">—</span></div>
@@ -515,23 +605,55 @@
   </div>
 </div>
 
-<!-- ══════════  FLOATING BUTTONS  ══════════ -->
-<button id="ps-trade-fab" onclick="PortfolioSync.openCfd(null)" title="CFD Trade">
-  <i class="fas fa-chart-line"></i>
-</button>
-<button id="ps-port-fab" onclick="PortfolioSync.openPanel()" title="My Portfolio">
-  <i class="fas fa-briefcase"></i>
-</button>
+<!-- ══════════  PREMIUM FLOATING TRADE LAUNCHER (non-trade pages only) ══════════ -->
+<a id="ps-trade-launch-btn" href="trade.html">
+  <div class="fab-icon"><i class="fas fa-chart-line"></i></div>
+  <div class="fab-text">
+    <span class="fab-label">Trade Now</span>
+    <span class="fab-sub">Live Markets</span>
+  </div>
+  <i class="fas fa-arrow-right fab-arrow"></i>
+</a>
 
     `);
 
-    /* backdrop / modal close on outside click */
     $('ps-backdrop').addEventListener('click', () => {
       if (_cfdOpen) closeCfd(); else closePanel();
     });
     $('ps-bs').addEventListener('click', e => {
       if (e.target === $('ps-bs')) closeBs();
     });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     TRADE PAGE: inject "Portfolio" button into topbar
+     ═══════════════════════════════════════════════════════════ */
+  function injectTopbarButton() {
+    if (!IS_TRADE_PAGE) return;
+    const tryInject = () => {
+      const topbar = $('topbar');
+      if (!topbar) { setTimeout(tryInject, 100); return; }
+      if ($('ps-topbar-btn')) return;
+
+      const btn = document.createElement('button');
+      btn.id = 'ps-topbar-btn';
+      btn.innerHTML = '<i class="fas fa-briefcase" style="font-size:11px"></i> Portfolio <span id="ps-trades-badge" style="background:#ef4444;color:#fff;border-radius:20px;padding:1px 6px;font-size:9px;display:none">0</span>';
+      btn.onclick = () => openPanel();
+
+      const spacer = topbar.querySelector('.tb-spacer');
+      if (spacer) topbar.insertBefore(btn, spacer);
+      else topbar.appendChild(btn);
+    };
+    tryInject();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     NON-TRADE pages: show premium launcher FAB
+     ═══════════════════════════════════════════════════════════ */
+  function showFabs() {
+    if (IS_TRADE_PAGE) return;
+    const btn = $('ps-trade-launch-btn');
+    if (btn) btn.style.display = 'flex';
   }
 
   /* ═══════════════════════════════════════════════════════════
@@ -707,6 +829,7 @@
     const dir   = trade.direction || trade.dir;
     return dir === 'long' ? raw : -raw;
   }
+
   function calcPnlPct(trade) {
     const lots    = +trade.lots;
     const cat     = ASSET_REGISTRY[trade.sym]?.cat || 'crypto';
@@ -719,9 +842,7 @@
      CFD PANEL
      ═══════════════════════════════════════════════════════════ */
   function openCfd(sym) {
-    if (!sym) {
-      sym = _holdings.length ? _holdings[0].symbol : 'BTC';
-    }
+    if (!sym) sym = _holdings.length ? _holdings[0].symbol : 'BTC';
     _cfdSym = sym;
     const meta = ASSET_REGISTRY[sym] || { icon:'fas fa-circle', color:'#c9a84c', cat:'crypto' };
     const iconEl = $('cfd-icon');
@@ -729,7 +850,6 @@
     iconEl.style.cssText = `width:44px;height:44px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:20px;background:${meta.color}18;color:${meta.color}`;
     txt('cfd-sym-lbl', sym + (meta.name ? ' — ' + meta.name : ''));
 
-    /* build lot chips */
     const grid = $('cfd-lot-grid');
     if (grid) grid.innerHTML = LOT_STEPS.map(v =>
       `<button class="lot-chip${_cfdLots===v?' on':''}" onclick="PortfolioSync.setCfdLots(${v})">${v}</button>`
@@ -808,11 +928,9 @@
     if (btn) btn.disabled = true;
 
     try {
-      /* deduct margin */
       const newCash = +(cash - margin).toFixed(2);
       await _sb.from('profiles').update({ cash: newCash }).eq('id', _uid);
 
-      /* log transaction */
       await _sb.from('transactions').insert({
         user_id: _uid, type:'buy', symbol:_cfdSym,
         name: (meta.name||_cfdSym) + ' CFD ' + _cfdDir.toUpperCase(),
@@ -822,13 +940,11 @@
         note:`CFD ${_cfdDir.toUpperCase()} · ${_cfdLots} lot${_cfdLots!==1?'s':''} · Notional $${fmt(notional)} · Margin $${fmt(margin)}`,
       });
 
-      /* insert open trade */
       let tradeId = 'local_' + Date.now();
       try {
         const { data } = await _sb.from('open_trades').insert({
           user_id: _uid, sym: _cfdSym, direction: _cfdDir, lots: _cfdLots,
-          entry_price: price, take_profit: tp, stop_loss: sl,
-          notional, status:'open',
+          entry_price: price, take_profit: tp, stop_loss: sl, notional, status:'open',
         }).select().single();
         if (data) tradeId = data.id;
       } catch(e) {}
@@ -840,7 +956,6 @@
       _profile.cash = newCash;
       _refreshPanelStats();
 
-      /* refresh page-level state if hooks exist */
       if (window.loadProfile)      window.loadProfile();
       if (window.loadTransactions) window.loadTransactions();
 
@@ -932,14 +1047,14 @@
     const btn = $('bs-ok-btn'), lbl = $('bs-ok-lbl');
 
     if (type === 'buy') {
-      bt.style.cssText = 'flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:600;background:rgba(34,197,94,.15);color:#22c55e;transition:all .2s';
-      st.style.cssText = 'flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:600;background:rgba(255,255,255,.04);color:#5a6880;transition:all .2s';
+      bt.style.cssText = "flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:rgba(34,197,94,.15);color:#22c55e;transition:all .2s";
+      st.style.cssText = "flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:rgba(255,255,255,.04);color:#5a6880;transition:all .2s";
       if (btn) btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
       if (lbl) lbl.innerHTML = '<i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Confirm Buy';
       $('bs-hold-info').style.display = 'none';
     } else {
-      st.style.cssText = 'flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:600;background:rgba(239,68,68,.15);color:#ef4444;transition:all .2s';
-      bt.style.cssText = 'flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:\'JetBrains Mono\',monospace;font-size:12px;font-weight:600;background:rgba(255,255,255,.04);color:#5a6880;transition:all .2s';
+      st.style.cssText = "flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:rgba(239,68,68,.15);color:#ef4444;transition:all .2s";
+      bt.style.cssText = "flex:1;padding:10px;border-radius:12px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:rgba(255,255,255,.04);color:#5a6880;transition:all .2s";
       if (btn) btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
       if (lbl) lbl.innerHTML = '<i class="fas fa-arrow-trend-down" style="font-size:12px;margin-right:4px"></i>Confirm Sell';
       const h = _holdings.find(x => x.symbol === _bsSym);
@@ -976,7 +1091,7 @@
       ? (qty < 1 ? qty.toFixed(6) : qty.toFixed(4)) + ' ' + _bsSym
       : '$' + fmt(amt - fee) + ' USD');
 
-    let insuf = _bsType === 'buy'
+    const insuf = _bsType === 'buy'
       ? (total > cash || amt < 10)
       : (() => { const h = _holdings.find(x=>x.symbol===_bsSym); return !h || (amt/price) > +h.quantity || amt < 10; })();
 
@@ -999,7 +1114,7 @@
     if (isBuy && total > cash) { psToast('Insufficient balance','','error'); return; }
     if (amt < 10) { psToast('Minimum $10','','error'); return; }
 
-    const lbl=$('bs-ok-lbl'),spin=$('bs-spin'),btn=$('bs-ok-btn');
+    const lbl=$('bs-ok-lbl'), spin=$('bs-spin'), btn=$('bs-ok-btn');
     if (lbl) lbl.style.display='none'; if (spin) spin.style.display='flex'; if (btn) btn.disabled=true;
 
     try {
@@ -1049,7 +1164,6 @@
         _profile.cash = newCash;
       }
 
-      /* refresh page-level state */
       if (window.loadProfile)        window.loadProfile();
       if (window.loadPortfolioStats) window.loadPortfolioStats();
       if (window.loadTransactions)   window.loadTransactions();
@@ -1062,9 +1176,9 @@
     } catch(err) {
       psToast(isBuy?'Buy failed':'Sell failed', err.message, 'error');
     } finally {
-      if (lbl)  { lbl.style.display='flex'; }
-      if (spin) { spin.style.display='none'; }
-      if (btn)  { btn.disabled=false; updateBsCalc(); }
+      if (lbl)  lbl.style.display = 'flex';
+      if (spin) spin.style.display = 'none';
+      if (btn)  { btn.disabled = false; updateBsCalc(); }
     }
   }
 
@@ -1083,7 +1197,6 @@
           el.textContent = (up?'+':'') + '$' + fmt(Math.abs(pnl));
           el.className   = 'ps-pnl ' + (up?'g':'r');
         }
-        /* auto TP/SL */
         const cur = livePrice(t.sym);
         const dir = t.direction || t.dir;
         const tp  = +(t.take_profit || 0);
@@ -1138,6 +1251,8 @@
   function init() {
     injectCSS();
     injectHTML();
+    injectTopbarButton();
+    showFabs();
     waitForSupabase(boot);
   }
 
