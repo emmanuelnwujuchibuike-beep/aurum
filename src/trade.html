@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="aurum-live-prices.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 
@@ -968,6 +969,25 @@ body.fullscreen-chart #chart-toolbar{height:36px}
     renderPositionsStrip();
     setupRealtime();
     startPriceTick();
+
+// ── ADD THIS BLOCK HERE ──
+if(typeof AurumPrices!=="undefined"){
+  AurumPrices.onUpdate((livePrices)=>{
+    const overrides=JSON.parse(localStorage.getItem("aurum_price_overrides")||"{}");
+    ASSETS.forEach(a=>{
+      if(overrides[a.sym]?.price)return;
+      const d=livePrices[a.sym];
+      if(d?.price){a.price=d.price;a.chg=d.changePct24h??a.chg;}
+    });
+    window.ALL_ASSETS=ASSETS;
+    updateTopbarPrice(activeSym);
+    updateOrderCalc();
+  });
+}
+// ── END OF NEW BLOCK ──
+
+startPnlTick();
+startCandleCountdown();
     startPnlTick();
     startCandleCountdown();
     bindAllUI();
@@ -984,7 +1004,26 @@ body.fullscreen-chart #chart-toolbar{height:36px}
     sb.channel('trade-profile').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:`id=eq.${authUser.id}`},({new:row})=>{profile={...profile,...row};refreshCash();}).subscribe();
   });
 
-  async function loadPricesFromDB(){try{const{data}=await sb.from('asset_prices').select('*');(data||[]).forEach(row=>{const a=assetByS(row.sym);if(a){a.price=+row.price;if(row.chg!=null)a.chg=+row.chg;}});window.ALL_ASSETS=ASSETS;}catch(e){}}
+  async function loadPricesFromDB() {
+  try {
+    const { data } = await sb.from('asset_prices').select('*');
+    (data || []).forEach(row => {
+      const a = assetByS(row.sym);
+      if (a) { a.price = +row.price; if (row.chg != null) a.chg = +row.chg; }
+    });
+    window.ALL_ASSETS = ASSETS;
+  } catch(e) {}
+
+  // ── NEW: merge live prices, but admin DB overrides always win ──
+  try {
+    const overrides = JSON.parse(localStorage.getItem("aurum_price_overrides") || "{}");
+    const live      = JSON.parse(localStorage.getItem("aurum_live_prices")     || "{}");
+    ASSETS.forEach(a => {
+      const finalPrice = overrides[a.sym]?.price ?? live[a.sym]?.price;
+      if (finalPrice) { a.price = finalPrice; }
+    });
+  } catch {}
+}
   async function loadProfile(){const{data,error}=await sb.from('profiles').select('*').eq('id',authUser.id).single();if(!error&&data){profile=data;refreshCash();}}
   async function loadHoldings(){const{data}=await sb.from('holdings').select('*').eq('user_id',authUser.id);holdings=data||[];}
   async function loadOpenTrades(){try{const{data}=await sb.from('open_trades').select('*').eq('user_id',authUser.id).eq('status','open');openTrades=data||[];}catch(e){openTrades=[];}}

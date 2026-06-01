@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="coingecko-sync.js"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{void:'#040608',deep:'#080c12',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',snow:'#edf2f8',gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -847,6 +848,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 </div>
 <div class="k-hint" id="kHint">↑ ↑ ↓ ↓ ← → ← → B A · ADMIN</div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
 // ═══════════════════════════════════════════════════════════════════════
 //  CONFIG
@@ -1005,7 +1025,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   setInterval(tickPrices, 3000);
 });
 
-// ── LOAD PRICES FROM DB ────────────────────────────────────────────────
 async function loadPricesFromDB() {
   try {
     const { data } = await sb.from('asset_prices').select('*');
@@ -1015,6 +1034,28 @@ async function loadPricesFromDB() {
       if (a) { a.price = Number(row.price); if (row.chg !== undefined) a.chg = Number(row.chg); }
     });
   } catch(e) {}
+
+  
+  try {
+    const overrides = JSON.parse(localStorage.getItem("aurum_price_overrides") || "{}");
+    const live      = JSON.parse(localStorage.getItem("aurum_live_prices")     || "{}");
+    ALL_ASSETS.forEach(a => {
+      const finalPrice = overrides[a.sym]?.price ?? live[a.sym]?.price;
+      if (finalPrice) a.price = finalPrice;
+    });
+  } catch {}
+}
+if (typeof AurumPrices !== "undefined") {
+  AurumPrices.onUpdate((livePrices) => {
+    const overrides = JSON.parse(localStorage.getItem("aurum_price_overrides") || "{}");
+    ALL_ASSETS.forEach(a => {
+      if (overrides[a.sym]?.price) return;
+      const d = livePrices[a.sym];
+      if (d?.price) { a.price = d.price; a.chg = d.changePct24h ?? a.chg; }
+    });
+    renderCards();
+    if (modalAsset) updateModalCalc();
+  });
 }
 
 async function loadAddressesFromDB() {
@@ -1972,7 +2013,7 @@ document.addEventListener('click', e => {
 });
 </script>
 
-<script src="admin-live-prices.js"></script>
+<!-- <script src="admin-live-prices.js"></script> -->
 <script src="portfolio-sync.js"></script>
 <script src="price-sync.js"></script>
 </body>
