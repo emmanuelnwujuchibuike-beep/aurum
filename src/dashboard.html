@@ -11,10 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-
 <script src="dashboard.js"></script>
-<!-- <script src="aurum-live-prices.js"></script> -->
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{void:'#040608',deep:'#080c12',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',snow:'#edf2f8',gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}</script>
 <style>
@@ -36,96 +33,25 @@ body::before{
 }
 
 #aurum-loader{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  background:#040608;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:28px;
+  position:fixed;inset:0;z-index:9999;background:#040608;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
   transition:opacity .6s ease,visibility .6s ease
 }
-#aurum-loader.out{
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none
-}
-.ld-logo-mark{
-  width:56px;
-  height:56px;
-  border-radius:18px;
-  background:linear-gradient(135deg,#c9a84c,#a87c28);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:'JetBrains Mono',monospace;
-  font-weight:700;
-  color:#040608;
-  font-size:22px;
-  box-shadow:0 0 40px rgba(201,168,76,.3);
-  animation:ldPulse 1.8s ease-in-out infinite
-}
-
-@keyframes ldPulse
-  {
-    0%,100%{box-shadow:0 0 30px rgba(201,168,76,.2)}50%{box-shadow:0 0 60px rgba(201,168,76,.5)}
-}
-.ld-wordmark{
-  display:flex;
-  gap:3px;
-  font-family:'Cormorant Garamond',serif;font-size:28px;
-  letter-spacing:.25em;
-  color:#edf2f8
-}
-
-.ld-wordmark span{
-  opacity:0;
-  transform:translateY(10px);
-  animation:ldChar .5s ease forwards
-}
-
-.ld-wordmark span:nth-child(1){
-  animation-delay:.1s
-}
-.ld-wordmark span:nth-child(2){
-  animation-delay:.2s
-}
-.ld-wordmark span:nth-child(3){
-  animation-delay:.3s
-}
-.ld-wordmark span:nth-child(4){
-  animation-delay:.4s
-}
-.ld-wordmark span:nth-child(5){
-  animation-delay:.5s
-}
-
+#aurum-loader.out{opacity:0;visibility:hidden;pointer-events:none}
+.ld-logo-mark{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:22px;box-shadow:0 0 40px rgba(201,168,76,.3);animation:ldPulse 1.8s ease-in-out infinite}
+@keyframes ldPulse{0%,100%{box-shadow:0 0 30px rgba(201,168,76,.2)}50%{box-shadow:0 0 60px rgba(201,168,76,.5)}}
+.ld-wordmark{display:flex;gap:3px;font-family:'Cormorant Garamond',serif;font-size:28px;letter-spacing:.25em;color:#edf2f8}
+.ld-wordmark span{opacity:0;transform:translateY(10px);animation:ldChar .5s ease forwards}
+.ld-wordmark span:nth-child(1){animation-delay:.1s}
+.ld-wordmark span:nth-child(2){animation-delay:.2s}
+.ld-wordmark span:nth-child(3){animation-delay:.3s}
+.ld-wordmark span:nth-child(4){animation-delay:.4s}
+.ld-wordmark span:nth-child(5){animation-delay:.5s}
 @keyframes ldChar{to{opacity:1;transform:none}}
-
-.ld-bar{
-  width:180px;
-  height:2px;
-  background:rgba(255,255,255,.08);
-  border-radius:2px;overflow:hidden
-}
-.ld-fill{
-  height:100%;
-  background:linear-gradient(90deg,#c9a84c,#e8c96a);
-  border-radius:2px;
-  animation:ldFill 1.8s ease-in-out infinite
-}
-
+.ld-bar{width:180px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.ld-fill{height:100%;background:linear-gradient(90deg,#c9a84c,#e8c96a);border-radius:2px;animation:ldFill 1.8s ease-in-out infinite}
 @keyframes ldFill{0%{width:0%;margin-left:0}60%{width:80%;margin-left:0}100%{width:0%;margin-left:100%}}
-
-.ld-sub{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;
-  letter-spacing:.22em;
-  color:#5a6880;
-  text-transform:uppercase
-}
+.ld-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;color:#5a6880;text-transform:uppercase}
 
 .sbl{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;font-size:.84rem;font-weight:500;color:#5a6880;transition:all .2s;text-decoration:none;margin-bottom:2px;cursor:pointer;border:none;background:none;width:100%;text-align:left}
 .sbl:hover{background:rgba(255,255,255,.05);color:#edf2f8}
@@ -235,7 +161,6 @@ body::before{
 .adm-logo-text{font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:.08em;color:#edf2f8}
 .adm-badge{font-family:'JetBrains Mono',monospace;font-size:8px;color:#ef4444;letter-spacing:.1em;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);padding:2px 6px;border-radius:5px}
 .adm-body{display:flex;flex:1;overflow:hidden;position:relative}
-
 .adm-sidebar{width:190px;flex-shrink:0;background:#080c12;border-right:1px solid rgba(255,255,255,.06);padding:16px 10px;display:flex;flex-direction:column;overflow-y:auto;transition:transform .3s ease}
 .adm-nav-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;color:#5a6880;text-transform:uppercase;padding:0 8px;margin:14px 0 5px}
 .adm-nav-btn{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:500;color:#5a6880;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .18s;margin-bottom:2px;font-family:'DM Sans',sans-serif}
@@ -288,7 +213,6 @@ body::before{
 .adm-input:focus{border-color:rgba(201,168,76,.35)}
 .adm-input::placeholder{color:#5a6880}
 .adm-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235a6880' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
-
 .adm-mobile-menu-btn{display:none;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#c9a84c;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
 .adm-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1020;backdrop-filter:blur(4px)}
 .adm-sidebar-overlay.open{display:block}
@@ -323,6 +247,283 @@ body::before{
 .period-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:transparent;color:#5a6880;cursor:pointer;transition:all .2s}
 .period-btn.active{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.12);color:#c9a84c}
 
+/* ═══════════════════════════════════════════════════
+   LUXURY MOBILE NAV — Premium Scrollable Panel
+═══════════════════════════════════════════════════ */
+
+.nav-toggle-dash{
+  position:relative;width:44px;height:44px;border-radius:13px;
+  background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:5px;z-index:300;
+  transition:background .3s,border-color .3s,box-shadow .3s;flex-shrink:0
+}
+.nav-toggle-dash:hover{background:rgba(201,168,76,.14);border-color:rgba(201,168,76,.4);box-shadow:0 0 24px rgba(201,168,76,.18)}
+.nav-toggle-dash .bar{display:block;width:18px;height:1.5px;background:#c9a84c;border-radius:2px;transition:transform .45s cubic-bezier(.77,0,.175,1),opacity .3s,width .3s;transform-origin:center}
+.nav-toggle-dash.open .bar:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-toggle-dash.open .bar:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-toggle-dash.open .bar:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.nav-toggle-dash::after{content:'';position:absolute;inset:-4px;border-radius:17px;border:1px solid rgba(201,168,76,.0);transition:border-color .4s,inset .4s;pointer-events:none}
+.nav-toggle-dash.open::after{border-color:rgba(201,168,76,.25);inset:-8px}
+.nav-toggle-dash.open{background:rgba(201,168,76,.14);border-color:rgba(201,168,76,.4);animation:toggleRingPulse .65s ease forwards}
+@keyframes toggleRingPulse{0%{box-shadow:0 0 0 0 rgba(201,168,76,.35)}60%{box-shadow:0 0 0 12px rgba(201,168,76,.0)}100%{box-shadow:0 0 24px rgba(201,168,76,.12)}}
+
+/* Full-screen overlay container */
+.dash-mobile-menu{
+  display:none;position:fixed;inset:0;z-index:150;pointer-events:none
+}
+
+/* Frosted dark backdrop */
+.dash-mobile-menu-backdrop{
+  position:absolute;inset:0;
+  background:rgba(4,6,8,0);
+  backdrop-filter:blur(0px);
+  transition:background .55s cubic-bezier(.4,0,.2,1),backdrop-filter .55s
+}
+
+/* ── Panel: full-height flex column so nav can scroll ── */
+.dash-mobile-menu-panel{
+  position:absolute;top:0;right:0;
+  width:min(380px,94vw);
+  height:100%;                        /* fill full viewport height */
+  background:linear-gradient(160deg,#0a1020 0%,#080c14 50%,#060810 100%);
+  border-left:1px solid rgba(201,168,76,.12);
+  transform:translateX(100%);
+  transition:transform .6s cubic-bezier(.77,0,.175,1);
+  display:flex;
+  flex-direction:column;              /* children stack vertically */
+  overflow:hidden;                    /* panel itself never scrolls */
+}
+
+.dash-mobile-menu-panel::before{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px;z-index:0
+}
+.dash-mobile-menu-panel::after{
+  content:'';position:absolute;top:-120px;right:-80px;width:420px;height:420px;
+  border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.08) 0%,transparent 70%);
+  pointer-events:none;z-index:0
+}
+
+.dash-mobile-menu.open{pointer-events:all}
+.dash-mobile-menu.open .dash-mobile-menu-backdrop{background:rgba(4,6,8,.76);backdrop-filter:blur(12px)}
+.dash-mobile-menu.open .dash-mobile-menu-panel{transform:translateX(0)}
+
+.panel-shimmer-el{
+  position:absolute;top:0;left:-100%;width:55%;height:100%;
+  background:linear-gradient(105deg,transparent 38%,rgba(201,168,76,.05) 50%,transparent 62%);
+  pointer-events:none;z-index:1;opacity:0
+}
+.dash-mobile-menu.open .panel-shimmer-el{animation:panelShimmerSweep .85s .28s ease-out forwards}
+@keyframes panelShimmerSweep{0%{left:-100%;opacity:1}100%{left:150%;opacity:1}}
+
+.panel-glow-bottom{
+  position:absolute;bottom:-80px;left:-60px;width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,168,76,.05) 0%,transparent 70%);
+  pointer-events:none;z-index:0
+}
+
+/* ── Panel head — fixed, never shrinks ── */
+.dash-panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 26px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  position:relative;z-index:2;
+  flex-shrink:0                       /* never shrink */
+}
+.dash-panel-logo{
+  display:flex;align-items:center;gap:10px;text-decoration:none;
+  opacity:0;transform:translateX(22px);
+  transition:opacity .42s .22s,transform .42s .22s
+}
+.dash-mobile-menu.open .dash-panel-logo{opacity:1;transform:translateX(0)}
+.dash-panel-logo-mark{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,#c9a84c,#a87c28);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:13px;
+  box-shadow:0 0 18px rgba(201,168,76,.28)
+}
+.dash-panel-wordmark{font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.12em;color:#edf2f8}
+.dash-panel-close{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#5a6880;font-size:13px;
+  opacity:0;transform:rotate(-90deg) scale(.75);
+  transition:color .2s,background .2s,border-color .2s,opacity .38s .3s,transform .38s .3s
+}
+.dash-mobile-menu.open .dash-panel-close{opacity:1;transform:rotate(0deg) scale(1)}
+.dash-panel-close:hover{color:#c9a84c;border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.06)}
+
+/* ── Portfolio quick-stats strip — fixed, never shrinks ── */
+.dash-panel-port-strip{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  position:relative;z-index:2;
+  flex-shrink:0;                      /* never shrink */
+  opacity:0;transform:translateY(10px);
+  transition:opacity .4s .32s,transform .4s .32s
+}
+.dash-mobile-menu.open .dash-panel-port-strip{opacity:1;transform:translateY(0)}
+.dash-panel-port-stat{padding:12px 14px;text-align:center;border-right:1px solid rgba(255,255,255,.05)}
+.dash-panel-port-stat:last-child{border-right:none}
+.dash-panel-port-lbl{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:#5a6880;margin-bottom:4px}
+.dash-panel-port-val{font-family:'Cormorant Garamond',serif;font-size:14px;color:#edf2f8;font-weight:300}
+
+/* ── Nav section — GROWS to fill remaining space and SCROLLS ── */
+.dash-panel-nav{
+  flex:1 1 0;                         /* grow and shrink freely   */
+  min-height:0;                       /* critical for flex scroll */
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:16px 18px 8px;
+  display:flex;flex-direction:column;gap:2px;
+  position:relative;z-index:2;
+  -webkit-overflow-scrolling:touch;   /* momentum scroll on iOS   */
+
+  /* Thin gold scrollbar */
+  scrollbar-width:thin;
+  scrollbar-color:rgba(201,168,76,.2) transparent;
+
+  /* Soft fade mask at top & bottom for a premium feel */
+  -webkit-mask-image:linear-gradient(
+    to bottom,
+    transparent 0px,
+    black 16px,
+    black calc(100% - 16px),
+    transparent 100%
+  );
+  mask-image:linear-gradient(
+    to bottom,
+    transparent 0px,
+    black 16px,
+    black calc(100% - 16px),
+    transparent 100%
+  );
+}
+.dash-panel-nav::-webkit-scrollbar{width:3px}
+.dash-panel-nav::-webkit-scrollbar-track{background:transparent}
+.dash-panel-nav::-webkit-scrollbar-thumb{background:rgba(201,168,76,.22);border-radius:3px}
+.dash-panel-nav::-webkit-scrollbar-thumb:hover{background:rgba(201,168,76,.45)}
+
+/* Prevent any direct child from collapsing the scroll container */
+.dash-panel-nav > *{flex-shrink:0}
+
+.dash-panel-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;letter-spacing:.2em;text-transform:uppercase;
+  color:#5a6880;padding-left:4px;
+  margin-bottom:6px;margin-top:10px;
+  opacity:0;transition:opacity .35s
+}
+.dash-mobile-menu.open .dash-panel-label{opacity:1}
+.dash-mobile-menu.open .dash-panel-label.l1{transition-delay:.30s}
+.dash-mobile-menu.open .dash-panel-label.l2{transition-delay:.44s}
+
+/* Each nav link */
+.dash-panel-link{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 14px;border-radius:14px;
+  text-decoration:none;color:#8c9db5;
+  background:transparent;border:1px solid transparent;
+  position:relative;overflow:hidden;
+  cursor:pointer;width:100%;text-align:left;
+  font-family:'DM Sans',sans-serif;
+  margin-bottom:2px;
+  opacity:0;transform:translateX(26px);
+  transition:
+    background .28s,border-color .28s,color .28s,
+    opacity .42s cubic-bezier(.4,0,.2,1),
+    transform .42s cubic-bezier(.4,0,.2,1)
+}
+.dash-mobile-menu.open .dash-panel-link{opacity:1;transform:translateX(0)}
+.dash-mobile-menu.open .dash-panel-link:nth-child(1){transition-delay:.10s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(2){transition-delay:.15s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(3){transition-delay:.19s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(4){transition-delay:.23s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(5){transition-delay:.27s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(6){transition-delay:.31s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(7){transition-delay:.35s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(8){transition-delay:.38s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(9){transition-delay:.41s}
+.dash-mobile-menu.open .dash-panel-link:nth-child(10){transition-delay:.44s}
+
+.dash-panel-link::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:0;
+  background:linear-gradient(90deg,rgba(201,168,76,.18),transparent);
+  border-radius:14px 0 0 14px;transition:width .3s
+}
+.dash-panel-link:hover{color:#edf2f8;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.07)}
+.dash-panel-link:hover::before{width:3px}
+.dash-panel-link.dash-active{color:#c9a84c;background:rgba(201,168,76,.09);border-color:rgba(201,168,76,.22)}
+.dash-panel-link.dash-active::before{width:3px;background:linear-gradient(90deg,#c9a84c,transparent)}
+
+.dash-panel-link .dash-ripple{
+  position:absolute;border-radius:50%;background:rgba(201,168,76,.18);
+  transform:scale(0);animation:dashRipple .55s ease-out forwards;pointer-events:none
+}
+@keyframes dashRipple{to{transform:scale(4.5);opacity:0}}
+
+.dash-panel-link-inner{display:flex;align-items:center;gap:13px}
+.dash-panel-link-icon{
+  width:38px;height:38px;border-radius:11px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:#5a6880;flex-shrink:0;transition:all .25s
+}
+.dash-panel-link:hover .dash-panel-link-icon,
+.dash-panel-link.dash-active .dash-panel-link-icon{
+  background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.22);
+  color:#c9a84c;box-shadow:0 0 12px rgba(201,168,76,.12)
+}
+.dash-panel-link-name{font-size:14px;font-weight:500;color:inherit;letter-spacing:.01em;line-height:1;margin-bottom:3px}
+.dash-panel-link-desc{font-size:9px;color:#5a6880;font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+.dash-panel-link-arrow{
+  color:#5a6880;font-size:9px;
+  opacity:0;transform:translateX(-5px);transition:all .22s
+}
+.dash-panel-link:hover .dash-panel-link-arrow,
+.dash-panel-link.dash-active .dash-panel-link-arrow{opacity:1;transform:translateX(0);color:#c9a84c}
+
+.dash-panel-divider{height:1px;background:rgba(255,255,255,.05);margin:10px 4px;position:relative;z-index:2}
+
+/* ── Bottom CTAs — fixed at bottom, never shrinks ── */
+.dash-panel-cta-wrap{
+  flex-shrink:0;                      /* never shrink */
+  padding:16px 18px 26px;
+  border-top:1px solid rgba(255,255,255,.06);
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;gap:8px;
+  background:linear-gradient(to top,#060810 60%,transparent);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .45s .46s,transform .45s .46s
+}
+.dash-mobile-menu.open .dash-panel-cta-wrap{opacity:1;transform:translateY(0)}
+
+.dash-panel-cta-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 18px;border-radius:14px;
+  font-weight:600;font-size:13px;font-family:'DM Sans',sans-serif;
+  text-decoration:none;cursor:pointer;border:none;
+  transition:opacity .2s,box-shadow .2s,transform .18s
+}
+.dash-panel-cta-btn:hover{transform:translateY(-1px)}
+.dash-panel-cta-primary{background:linear-gradient(135deg,#c9a84c,#a87c28);color:#040608;box-shadow:0 4px 20px rgba(201,168,76,.2)}
+.dash-panel-cta-primary:hover{opacity:.9;box-shadow:0 6px 30px rgba(201,168,76,.35)}
+.dash-panel-cta-secondary{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09)!important;color:#8c9db5}
+.dash-panel-cta-secondary:hover{color:#edf2f8;background:rgba(255,255,255,.07)}
+
+.dash-panel-status{display:flex;align-items:center;gap:7px;justify-content:center;padding-top:3px}
+.dash-panel-status-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:livePulse 2s infinite}
+.dash-panel-status-text{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;color:#5a6880;text-transform:uppercase}
+
+/* ── Responsive ── */
+@media(min-width:1025px){
+  .nav-toggle-dash{display:none!important}
+  .dash-mobile-menu{display:none!important}
+}
 @media(max-width:1024px){
   #sidebar{display:none!important}
   #mainContent{margin-left:0!important}
@@ -330,10 +531,11 @@ body::before{
   .grid-3col{grid-template-columns:1fr 1fr!important}
   .hide-mobile{display:none!important}
   .adm-stats{grid-template-columns:repeat(3,1fr)!important}
+  .dash-mobile-menu{display:block}
 }
 @media(max-width:768px){
   .adm-sidebar{position:fixed;top:56px;left:-200px;bottom:0;z-index:1025;width:190px;transition:left .3s ease}
-  .adm-sidebar.mob-open{left:0 !important}
+  .adm-sidebar.mob-open{left:0!important}
   .adm-mobile-menu-btn{display:flex}
   .adm-sidebar-overlay{display:none}
   .adm-sidebar-overlay.open{display:block}
@@ -361,6 +563,17 @@ body::before{
   .adm-topbar-actions span{display:none}
 }
 
+/* Very short screens — hide stats strip, tighten links */
+@media(max-height:650px){
+  .dash-panel-port-strip{display:none}
+  .dash-panel-link{padding:10px 14px}
+  .dash-panel-link-icon{width:32px;height:32px;font-size:11px}
+  .dash-panel-cta-wrap{padding:12px 18px 18px}
+}
+
+/* Prevent body scroll when panel open */
+body.dash-menu-open{overflow:hidden}
+
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:4px}
@@ -384,6 +597,8 @@ body::before{
   </div>
 
   <div id="appShell" style="display:none;position:relative;z-index:1">
+
+    <!-- DESKTOP SIDEBAR -->
     <aside id="sidebar" style="display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;background:#080c12;border-right:1px solid rgba(255,255,255,.06);z-index:50;padding:24px 16px;overflow-y:auto">
       <a href="index.html" style="display:flex;align-items:center;gap:12px;padding:0 8px;margin-bottom:32px;text-decoration:none">
         <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:14px;flex-shrink:0">A</div>
@@ -414,9 +629,15 @@ body::before{
     </aside>
 
     <div id="mainContent" style="margin-left:0;display:flex;flex-direction:column;min-height:100vh">
+
+      <!-- HEADER -->
       <header style="position:sticky;top:0;z-index:40;background:rgba(4,6,8,.94);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.06);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px">
         <div style="display:flex;align-items:center;gap:12px">
-          <button id="mobileMenuBtn" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-bars" style="font-size:13px"></i></button>
+          <button class="nav-toggle-dash" id="dashNavToggle" aria-label="Open navigation" aria-expanded="false">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </button>
           <a href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
             <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:12px">A</div>
             <span style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
@@ -430,26 +651,180 @@ body::before{
           <button onclick="openDepositModal()" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(201,168,76,.08));border:1px solid rgba(201,168,76,.3);color:#c9a84c;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s" title="Deposit">
             <i class="fas fa-plus" style="font-size:12px"></i>
           </button>
-          <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608">?</div>
+          <div id="mobAvatarWrap" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#040608;cursor:pointer;transition:box-shadow .3s" title="Account">?</div>
         </div>
       </header>
-    <div id="mobileBackdrop" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)"></div>
-      <div id="mobileDrawer" style="display:none;position:fixed;top:0;left:0;bottom:0;width:280px;z-index:90;background:#080c12;border-right:1px solid rgba(255,255,255,.07);flex-direction:column;padding:24px 16px;overflow-y:auto">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding:0 8px">
-          <span style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:.1em;color:#edf2f8">Aurum</span>
-          <button id="mobileCloseBtn" style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#5a6880;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-xmark" style="font-size:12px"></i></button>
+
+      <!-- LUXURY MOBILE MENU -->
+      <div class="dash-mobile-menu" id="dashMobileMenu" role="dialog" aria-modal="true" aria-label="Navigation">
+        <div class="dash-mobile-menu-backdrop" id="dashMenuBackdrop"></div>
+        <div class="dash-mobile-menu-panel">
+          <div class="panel-shimmer-el"></div>
+          <div class="panel-glow-bottom"></div>
+
+          <!-- Panel header -->
+          <div class="dash-panel-head">
+            <a href="index.html" class="dash-panel-logo">
+              <div class="dash-panel-logo-mark">A</div>
+              <span class="dash-panel-wordmark">Aurum</span>
+            </a>
+            <button class="dash-panel-close" id="dashMenuClose" aria-label="Close menu">
+              <i class="fas fa-xmark"></i>
+            </button>
+          </div>
+
+          <!-- Live portfolio strip -->
+          <div class="dash-panel-port-strip" id="dashPanelPortStrip">
+            <div class="dash-panel-port-stat">
+              <div class="dash-panel-port-lbl">Net Worth</div>
+              <div class="dash-panel-port-val" id="panelNetWorth">$0</div>
+            </div>
+            <div class="dash-panel-port-stat">
+              <div class="dash-panel-port-lbl">Cash</div>
+              <div class="dash-panel-port-val" id="panelCash" style="color:#c9a84c">$0</div>
+            </div>
+            <div class="dash-panel-port-stat">
+              <div class="dash-panel-port-lbl">P&amp;L</div>
+              <div class="dash-panel-port-val" id="panelPnl" style="color:#22c55e">+$0</div>
+            </div>
+          </div>
+
+          <!-- Nav links — this section scrolls -->
+          <nav class="dash-panel-nav">
+            <div class="dash-panel-label l1">// Overview</div>
+
+            <a href="dashboard.html" class="dash-panel-link dash-active">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-gauge-high"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Dashboard</div>
+                  <div class="dash-panel-link-desc">Portfolio overview</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </a>
+
+            <a href="invest.html" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-chart-line"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Invest</div>
+                  <div class="dash-panel-link-desc">Explore opportunities</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </a>
+
+            <button onclick="closeDashMenu();openPortfolioModal()" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-briefcase"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Portfolio</div>
+                  <div class="dash-panel-link-desc">Live positions</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </button>
+
+            <button onclick="closeDashMenu();openTransactionsModal()" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-repeat"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Transactions</div>
+                  <div class="dash-panel-link-desc">Full ledger history</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </button>
+
+            <div class="dash-panel-divider"></div>
+            <div class="dash-panel-label l2">// Account</div>
+
+            <button onclick="closeDashMenu();openDepositModal()" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-piggy-bank"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Deposit</div>
+                  <div class="dash-panel-link-desc">Fund your account</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </button>
+
+            <button onclick="closeDashMenu();openWithdrawModal()" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-wallet"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Withdraw</div>
+                  <div class="dash-panel-link-desc">Cash out funds</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </button>
+
+            <a href="contact.html" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-message"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Contact</div>
+                  <div class="dash-panel-link-desc">Speak to an advisor</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </a>
+
+            <a href="about.html" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-building-columns"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">About</div>
+                  <div class="dash-panel-link-desc">Our story &amp; team</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </a>
+
+            <a href="profile.html" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-user-circle"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Profile</div>
+                  <div class="dash-panel-link-desc">Settings &amp; preferences</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </a>
+
+            <a href="#" id="panelSignOut" class="dash-panel-link">
+              <div class="dash-panel-link-inner">
+                <div class="dash-panel-link-icon"><i class="fas fa-arrow-right-from-bracket"></i></div>
+                <div>
+                  <div class="dash-panel-link-name">Sign Out</div>
+                  <div class="dash-panel-link-desc">End session</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-right dash-panel-link-arrow"></i>
+            </a>
+          </nav>
+
+          <!-- Bottom CTAs — always visible, anchored to bottom -->
+          <div class="dash-panel-cta-wrap">
+            <button onclick="closeDashMenu();openDepositModal()" class="dash-panel-cta-btn dash-panel-cta-primary">
+              <i class="fas fa-plus" style="font-size:12px"></i>
+              Deposit Funds
+            </button>
+            <a href="invest.html" class="dash-panel-cta-btn dash-panel-cta-secondary">
+              <i class="fas fa-chart-line" style="font-size:12px"></i>
+              Explore Investments
+            </a>
+            <div class="dash-panel-status">
+              <div class="dash-panel-status-dot"></div>
+              <span class="dash-panel-status-text">All systems operational · 99.9% uptime</span>
+            </div>
+          </div>
         </div>
-        <a href="dashboard.html" class="sbl on"><i class="fas fa-gauge-high"></i>Dashboard</a>
-        <a href="invest.html" class="sbl"><i class="fas fa-chart-line"></i>Invest</a>
-        <button onclick="closeDrawer();openPortfolioModal()" class="sbl"><i class="fas fa-briefcase"></i>Portfolio</button>
-        <button onclick="closeDrawer();openTransactionsModal()" class="sbl"><i class="fas fa-repeat"></i>Transactions</button>
-        <button onclick="closeDrawer();openDepositModal()" class="sbl"><i class="fas fa-piggy-bank"></i>Deposit</button>
-        <button onclick="closeDrawer();openWithdrawModal()" class="sbl"><i class="fas fa-wallet"></i>Withdraw</button>
-        <a href="contact.html" class="sbl"><i class="fas fa-hand-holding-medical"></i>Contact Us</a>
-        <a href="about.html" class="sbl"><i class="fas fa-circle-nodes"></i>About Us</a>
-        <a href="profile.html" class="sbl"><i class="fas fa-user-circle"></i>Profile</a>
-        <a href="#" id="drawerSignOut" class="sbl"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
       </div>
+      <!-- END LUXURY MOBILE MENU -->
 
       <div class="ticker-wrap">
         <div class="ticker-inner" id="liveTicker"></div>
@@ -561,7 +936,7 @@ body::before{
               <span style="display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#c9a84c;padding:6px 14px;border-radius:8px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2)">Explore <i class="fas fa-arrow-right" style="font-size:9px"></i></span>
             </div>
           </div>
-          <div class="ad-banner-crypto" onclick="window.location.href='invest.html'" style="padding:24px 26px;min-height:160px">
+          <div class="ad-banner-crypto" onclick="window.location.href='trade.html'" style="padding:24px 26px;min-height:160px">
             <div class="ad-glow-blue"></div>
             <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,120,234,.3),transparent)"></div>
             <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
@@ -807,7 +1182,7 @@ body::before{
       </div>
     </div>
   </div>
-
+  
   <!-- CHART MODAL -->
   <div class="modal-overlay" id="chartModal">
     <div class="chart-modal-box">
@@ -884,7 +1259,6 @@ body::before{
         <button class="adm-nav-btn" onclick="admShowPage('broadcast',this);closeAdmSidebar()"><i class="fas fa-bolt"></i>Bulk Actions</button>
       </nav>
       <div class="adm-content">
-
         <!-- OVERVIEW -->
         <div class="adm-page active" id="admp-overview">
           <div class="adm-page-title">Overview</div>
@@ -912,234 +1286,62 @@ body::before{
             <div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>Name</th><th>Email</th><th>Cash</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="ovw-users-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:#5a6880"><div class="spin"></div></td></tr></tbody></table></div>
           </div>
         </div>
-
-        <!-- PENDING APPROVALS -->
+        <!-- PENDING -->
         <div class="adm-page" id="admp-pending">
           <div class="adm-page-title">Pending Approvals</div>
-          <div class="adm-page-sub">Review deposit and withdrawal requests — approve or reject to update user balance</div>
-          <div class="adm-card">
-            <div class="adm-card-hdr">
-              <span class="adm-card-title">💰 Deposit Requests (<span id="pend-dep-count">0</span>)</span>
-              <button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admLoadPending()">↻ Refresh</button>
-            </div>
-            <div id="pend-dep-container"><div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div></div>
-          </div>
-          <div class="adm-card">
-            <div class="adm-card-hdr">
-              <span class="adm-card-title">📤 Withdrawal Requests (<span id="pend-wd-count">0</span>)</span>
-              <button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admLoadPending()">↻ Refresh</button>
-            </div>
-            <div id="pend-wd-container"><div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div></div>
-          </div>
+          <div class="adm-page-sub">Review deposit and withdrawal requests</div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">💰 Deposit Requests (<span id="pend-dep-count">0</span>)</span><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admLoadPending()">↻ Refresh</button></div><div id="pend-dep-container"><div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div></div></div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">📤 Withdrawal Requests (<span id="pend-wd-count">0</span>)</span><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admLoadPending()">↻ Refresh</button></div><div id="pend-wd-container"><div style="padding:24px;text-align:center;color:#5a6880"><div class="spin"></div></div></div></div>
         </div>
-
         <!-- ALL USERS -->
         <div class="adm-page" id="admp-users">
-          <div class="adm-page-title">All Users</div>
-          <div class="adm-page-sub">Every registered account — click a row to manage</div>
-          <div class="adm-card">
-            <div class="adm-card-hdr">
-              <span class="adm-card-title">Users (<span id="users-count">0</span>)</span>
-              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-                <input class="adm-input" style="width:180px" placeholder="Search name, email…" oninput="admFilterUsers(this.value)" id="usersSearch">
-                <button class="adm-btn adm-btn-accent adm-btn-sm" onclick="admExportUsers()">⬇ CSV</button>
-              </div>
-            </div>
-            <div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>Name</th><th>Email</th><th>Cash</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="users-tbody"><tr><td colspan="5" style="text-align:center;padding:24px;color:#5a6880"><div class="spin"></div></td></tr></tbody></table></div>
-          </div>
+          <div class="adm-page-title">All Users</div><div class="adm-page-sub">Every registered account</div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Users (<span id="users-count">0</span>)</span><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input class="adm-input" style="width:180px" placeholder="Search…" oninput="admFilterUsers(this.value)" id="usersSearch"><button class="adm-btn adm-btn-accent adm-btn-sm" onclick="admExportUsers()">⬇ CSV</button></div></div><div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>Name</th><th>Email</th><th>Cash</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="users-tbody"><tr><td colspan="5" style="text-align:center;padding:24px;color:#5a6880"><div class="spin"></div></td></tr></tbody></table></div></div>
         </div>
-
         <!-- HOLDINGS -->
         <div class="adm-page" id="admp-holdings">
-          <div class="adm-page-title">Holdings</div>
-          <div class="adm-page-sub">Add, edit or remove asset positions for any user</div>
-          <div class="adm-card">
-            <div class="adm-card-hdr"><span class="adm-card-title">Add / Update Holding</span></div>
-            <div class="adm-card-body">
-              <div class="adm-form-grid">
-                <div class="adm-field"><div class="adm-label">User</div><select class="adm-input adm-select" id="h-user"></select></div>
-                <div class="adm-field"><div class="adm-label">Symbol</div>
-                  <select class="adm-input adm-select" id="h-symbol">
-                    <option value="BTC">BTC — Bitcoin</option><option value="ETH">ETH — Ethereum</option>
-                    <option value="SOL">SOL — Solana</option><option value="BNB">BNB — BNB Chain</option>
-                    <option value="XRP">XRP — Ripple</option><option value="ADA">ADA — Cardano</option>
-                    <option value="TSLA">TSLA — Tesla</option><option value="AAPL">AAPL — Apple</option>
-                    <option value="NVDA">NVDA — NVIDIA</option><option value="MSFT">MSFT — Microsoft</option>
-                    <option value="AMZN">AMZN — Amazon</option><option value="GOOGL">GOOGL — Alphabet</option>
-                    <option value="GOLD">GOLD — Gold Spot</option>
-                  </select>
-                </div>
-                <div class="adm-field"><div class="adm-label">Quantity</div><input class="adm-input" id="h-qty" type="number" step="any" placeholder="0.5"></div>
-                <div class="adm-field"><div class="adm-label">Avg Buy Price ($)</div><input class="adm-input" id="h-avgprice" type="number" step="any" placeholder="60000"></div>
-              </div>
-              <button class="adm-btn adm-btn-gold adm-btn-full" style="margin-top:12px" onclick="admAddHolding()"><i class="fas fa-plus"></i> Add / Update Holding</button>
-            </div>
-          </div>
-          <div class="adm-card">
-            <div class="adm-card-hdr"><span class="adm-card-title">All Holdings (<span id="hold-count">0</span>)</span><input class="adm-input" style="width:140px" placeholder="Filter symbol…" oninput="admFilterHoldings(this.value)"></div>
-            <div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>User</th><th>Symbol</th><th>Qty</th><th>Avg</th><th>Value</th><th>P&L</th><th>Actions</th></tr></thead><tbody id="hold-tbody"><tr><td colspan="7" style="text-align:center;padding:24px;color:#5a6880"><div class="spin"></div></td></tr></tbody></table></div>
-          </div>
+          <div class="adm-page-title">Holdings</div><div class="adm-page-sub">Add, edit or remove positions</div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Add / Update Holding</span></div><div class="adm-card-body"><div class="adm-form-grid"><div class="adm-field"><div class="adm-label">User</div><select class="adm-input adm-select" id="h-user"></select></div><div class="adm-field"><div class="adm-label">Symbol</div><select class="adm-input adm-select" id="h-symbol"><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="SOL">SOL</option><option value="BNB">BNB</option><option value="XRP">XRP</option><option value="ADA">ADA</option><option value="TSLA">TSLA</option><option value="AAPL">AAPL</option><option value="NVDA">NVDA</option><option value="MSFT">MSFT</option><option value="AMZN">AMZN</option><option value="GOOGL">GOOGL</option><option value="GOLD">GOLD</option></select></div><div class="adm-field"><div class="adm-label">Quantity</div><input class="adm-input" id="h-qty" type="number" step="any" placeholder="0.5"></div><div class="adm-field"><div class="adm-label">Avg Buy Price ($)</div><input class="adm-input" id="h-avgprice" type="number" step="any" placeholder="60000"></div></div><button class="adm-btn adm-btn-gold adm-btn-full" style="margin-top:12px" onclick="admAddHolding()"><i class="fas fa-plus"></i> Add / Update</button></div></div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">All Holdings (<span id="hold-count">0</span>)</span><input class="adm-input" style="width:140px" placeholder="Filter…" oninput="admFilterHoldings(this.value)"></div><div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>User</th><th>Symbol</th><th>Qty</th><th>Avg</th><th>Value</th><th>P&L</th><th>Actions</th></tr></thead><tbody id="hold-tbody"><tr><td colspan="7" style="text-align:center;padding:24px;color:#5a6880"><div class="spin"></div></td></tr></tbody></table></div></div>
         </div>
-
-  <!-- P&L EDITOR -->
+        <!-- P&L -->
         <div class="adm-page" id="admp-pnl">
-          <div class="adm-page-title">P&amp;L Editor</div>
-          <div class="adm-page-sub">Adjust profit &amp; loss by modifying buy prices</div>
-          <div class="adm-card">
-            <div class="adm-card-hdr"><span class="adm-card-title">Select User</span></div>
-            <div class="adm-card-body">
-              <div class="adm-form-grid">
-                <div class="adm-field"><div class="adm-label">User</div><select class="adm-input adm-select" id="pnl-user" onchange="admLoadUserPnl()"></select></div>
-                <div class="adm-field"><div class="adm-label">Target Total P&amp;L ($)</div><input class="adm-input" id="pnl-target" type="number" step="any" placeholder="e.g. 5000 for +$5K profit"></div>
-              </div>
-              <button class="adm-btn adm-btn-gain adm-btn-full" style="margin-top:12px" onclick="admApplyTargetPnl()"><i class="fas fa-magic-wand-sparkles"></i> Apply Target P&amp;L</button>
-            </div>
-          </div>
-          <div class="adm-card" id="pnl-positions-card" style="display:none">
-            <div class="adm-card-hdr"><span class="adm-card-title">Positions — Edit Individually</span></div>
-            <div class="adm-card-body" id="pnl-positions-body"></div>
-          </div>
+          <div class="adm-page-title">P&amp;L Editor</div><div class="adm-page-sub">Adjust profit &amp; loss</div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Select User</span></div><div class="adm-card-body"><div class="adm-form-grid"><div class="adm-field"><div class="adm-label">User</div><select class="adm-input adm-select" id="pnl-user" onchange="admLoadUserPnl()"></select></div><div class="adm-field"><div class="adm-label">Target Total P&amp;L ($)</div><input class="adm-input" id="pnl-target" type="number" step="any" placeholder="e.g. 5000"></div></div><button class="adm-btn adm-btn-gain adm-btn-full" style="margin-top:12px" onclick="admApplyTargetPnl()"><i class="fas fa-magic-wand-sparkles"></i> Apply Target P&amp;L</button></div></div>
+          <div class="adm-card" id="pnl-positions-card" style="display:none"><div class="adm-card-hdr"><span class="adm-card-title">Positions</span></div><div class="adm-card-body" id="pnl-positions-body"></div></div>
         </div>
-
         <!-- CASH -->
         <div class="adm-page" id="admp-cash">
-          <div class="adm-page-title">Cash Management</div>
-          <div class="adm-page-sub">Set or adjust any user's cash balance</div>
-          <div class="adm-card">
-            <div class="adm-card-hdr"><span class="adm-card-title">Update Cash</span></div>
-            <div class="adm-card-body">
-              <div class="adm-form-grid">
-                <div class="adm-field"><div class="adm-label">Select User</div><select class="adm-input adm-select" id="cash-user" onchange="admLoadCurrentCash()"></select></div>
-                <div class="adm-field"><div class="adm-label">Current Balance</div><input class="adm-input" id="cash-current" readonly placeholder="Select a user" style="color:#c9a84c"></div>
-                <div class="adm-field"><div class="adm-label">New Exact Balance ($)</div><input class="adm-input" id="cash-new" type="number" step="0.01" placeholder="5000.00"></div>
-                <div class="adm-field"><div class="adm-label">Or Add / Subtract ($)</div><input class="adm-input" id="cash-delta" type="number" step="0.01" placeholder="+1000 or -500"></div>
-              </div>
-              <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-                <button class="adm-btn adm-btn-gold adm-btn-full" onclick="admSetCash()">Set Exact Balance</button>
-                <button class="adm-btn adm-btn-gain adm-btn-full" onclick="admAdjustCash()">Apply +/− Adjustment</button>
-              </div>
-            </div>
-          </div>
-          <div class="adm-card">
-            <div class="adm-card-hdr"><span class="adm-card-title">All User Balances</span><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admLoadUsers()">↻ Refresh</button></div>
-            <div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>Name</th><th>Email</th><th>Cash</th><th>Quick Set</th></tr></thead><tbody id="cash-tbody"></tbody></table></div>
-          </div>
+          <div class="adm-page-title">Cash Management</div><div class="adm-page-sub">Set or adjust balances</div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Update Cash</span></div><div class="adm-card-body"><div class="adm-form-grid"><div class="adm-field"><div class="adm-label">Select User</div><select class="adm-input adm-select" id="cash-user" onchange="admLoadCurrentCash()"></select></div><div class="adm-field"><div class="adm-label">Current Balance</div><input class="adm-input" id="cash-current" readonly placeholder="Select a user" style="color:#c9a84c"></div><div class="adm-field"><div class="adm-label">New Exact Balance ($)</div><input class="adm-input" id="cash-new" type="number" step="0.01" placeholder="5000.00"></div><div class="adm-field"><div class="adm-label">Or Add / Subtract ($)</div><input class="adm-input" id="cash-delta" type="number" step="0.01" placeholder="+1000 or -500"></div></div><div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="adm-btn adm-btn-gold adm-btn-full" onclick="admSetCash()">Set Exact</button><button class="adm-btn adm-btn-gain adm-btn-full" onclick="admAdjustCash()">Apply ±</button></div></div></div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">All Balances</span><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admLoadUsers()">↻ Refresh</button></div><div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>Name</th><th>Email</th><th>Cash</th><th>Quick Set</th></tr></thead><tbody id="cash-tbody"></tbody></table></div></div>
         </div>
-
         <!-- TRANSACTIONS -->
         <div class="adm-page" id="admp-transactions">
-          <div class="adm-page-title">Transactions</div>
-          <div class="adm-page-sub">Log trades, deposits, withdrawals for any user</div>
-          <div class="adm-card">
-            <div class="adm-card-hdr"><span class="adm-card-title">Add Transaction</span></div>
-            <div class="adm-card-body">
-              <div class="adm-form-grid c3">
-                <div class="adm-field"><div class="adm-label">User</div><select class="adm-input adm-select" id="tx-user"></select></div>
-                <div class="adm-field"><div class="adm-label">Type</div>
-                  <select class="adm-input adm-select" id="tx-type" onchange="admToggleTxFields()">
-                    <option value="buy">Buy</option><option value="sell">Sell</option>
-                    <option value="deposit">Deposit</option><option value="withdraw">Withdraw</option>
-                  </select>
-                </div>
-                <div class="adm-field"><div class="adm-label">Symbol</div>
-                  <select class="adm-input adm-select" id="tx-symbol">
-                    <option value="BTC">BTC</option><option value="ETH">ETH</option><option value="SOL">SOL</option>
-                    <option value="BNB">BNB</option><option value="XRP">XRP</option><option value="TSLA">TSLA</option>
-                    <option value="AAPL">AAPL</option><option value="NVDA">NVDA</option><option value="MSFT">MSFT</option>
-                    <option value="AMZN">AMZN</option><option value="GOOGL">GOOGL</option><option value="GOLD">GOLD</option>
-                    <option value="USD">USD (cash)</option>
-                  </select>
-                </div>
-                <div class="adm-field" id="tx-qty-field"><div class="adm-label">Quantity</div><input class="adm-input" id="tx-qty" type="number" step="any" placeholder="0.5"></div>
-                <div class="adm-field" id="tx-price-field"><div class="adm-label">Price at Tx ($)</div><input class="adm-input" id="tx-price" type="number" step="any" placeholder="67000"></div>
-                <div class="adm-field"><div class="adm-label">USD Amount ($)</div><input class="adm-input" id="tx-usd" type="number" step="any" placeholder="-33500 or +1000"></div>
-                <div class="adm-field adm-form-full"><div class="adm-label">Note (optional)</div><input class="adm-input" id="tx-note" placeholder="e.g. Admin top-up"></div>
-              </div>
-              <button class="adm-btn adm-btn-gain adm-btn-full" style="margin-top:12px" onclick="admAddTransaction()">+ Log Transaction</button>
-            </div>
-          </div>
-          <div class="adm-card">
-            <div class="adm-card-hdr">
-              <span class="adm-card-title">Recent Transactions (<span id="tx-count">0</span>)</span>
-              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-                <input class="adm-input" style="width:140px" placeholder="Filter…" oninput="admFilterTx(this.value)">
-                <button class="adm-btn adm-btn-loss adm-btn-sm" id="tx-delete-mode-btn" onclick="admToggleTxDeleteMode()">🗑 Delete Mode</button>
-              </div>
-            </div>
-            <div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>User</th><th>Type</th><th>Symbol</th><th>Qty</th><th>Price</th><th>USD</th><th>Status</th><th>Note</th><th>When</th><th id="tx-action-th">—</th></tr></thead><tbody id="tx-tbody"><tr><td colspan="10" style="text-align:center;padding:24px;color:#5a6880"><div class="spin"></div></td></tr></tbody></table></div>
-          </div>
+          <div class="adm-page-title">Transactions</div><div class="adm-page-sub">Log trades, deposits, withdrawals</div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Add Transaction</span></div><div class="adm-card-body"><div class="adm-form-grid c3"><div class="adm-field"><div class="adm-label">User</div><select class="adm-input adm-select" id="tx-user"></select></div><div class="adm-field"><div class="adm-label">Type</div><select class="adm-input adm-select" id="tx-type" onchange="admToggleTxFields()"><option value="buy">Buy</option><option value="sell">Sell</option><option value="deposit">Deposit</option><option value="withdraw">Withdraw</option></select></div><div class="adm-field"><div class="adm-label">Symbol</div><select class="adm-input adm-select" id="tx-symbol"><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="SOL">SOL</option><option value="BNB">BNB</option><option value="XRP">XRP</option><option value="TSLA">TSLA</option><option value="AAPL">AAPL</option><option value="NVDA">NVDA</option><option value="MSFT">MSFT</option><option value="AMZN">AMZN</option><option value="GOOGL">GOOGL</option><option value="GOLD">GOLD</option><option value="USD">USD</option></select></div><div class="adm-field" id="tx-qty-field"><div class="adm-label">Quantity</div><input class="adm-input" id="tx-qty" type="number" step="any" placeholder="0.5"></div><div class="adm-field" id="tx-price-field"><div class="adm-label">Price ($)</div><input class="adm-input" id="tx-price" type="number" step="any" placeholder="67000"></div><div class="adm-field"><div class="adm-label">USD Amount ($)</div><input class="adm-input" id="tx-usd" type="number" step="any" placeholder="-33500"></div><div class="adm-field adm-form-full"><div class="adm-label">Note</div><input class="adm-input" id="tx-note" placeholder="e.g. Admin top-up"></div></div><button class="adm-btn adm-btn-gain adm-btn-full" style="margin-top:12px" onclick="admAddTransaction()">+ Log Transaction</button></div></div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Transactions (<span id="tx-count">0</span>)</span><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input class="adm-input" style="width:140px" placeholder="Filter…" oninput="admFilterTx(this.value)"><button class="adm-btn adm-btn-loss adm-btn-sm" id="tx-delete-mode-btn" onclick="admToggleTxDeleteMode()">🗑 Delete Mode</button></div></div><div class="tbl-wrap"><table class="adm-tbl"><thead><tr><th>User</th><th>Type</th><th>Symbol</th><th>Qty</th><th>Price</th><th>USD</th><th>Status</th><th>Note</th><th>When</th><th id="tx-action-th">—</th></tr></thead><tbody id="tx-tbody"><tr><td colspan="10" style="text-align:center;padding:24px;color:#5a6880"><div class="spin"></div></td></tr></tbody></table></div></div>
         </div>
-
-        <!-- LIVE PRICES -->
+        <!-- PRICES -->
         <div class="adm-page" id="admp-prices">
-          <div class="adm-page-title">Live Prices</div>
-          <div class="adm-page-sub">Override live prices — reflects immediately on dashboard</div>
-          <div class="adm-card">
-            <div class="adm-card-hdr">
-              <span class="adm-card-title">Asset Prices</span>
-              <div style="display:flex;gap:8px">
-                <button class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSaveAllPrices()"><i class="fas fa-save"></i> Save All</button>
-                <button class="adm-btn adm-btn-accent adm-btn-sm" onclick="admResetPrices()"><i class="fas fa-rotate-left"></i> Reset</button>
-              </div>
-            </div>
-            <div id="adm-prices-body"></div>
-          </div>
+          <div class="adm-page-title">Live Prices</div><div class="adm-page-sub">Override prices instantly</div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Asset Prices</span><div style="display:flex;gap:8px"><button id="adm-save-all-btn" class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSaveAllPrices()"><i class="fas fa-save"></i> Save All</button><button class="adm-btn adm-btn-accent adm-btn-sm" onclick="admResetPrices()"><i class="fas fa-rotate-left"></i> Reset</button></div></div><div id="adm-prices-body"></div></div>
         </div>
-
-        <!-- CRYPTO ADDRESSES -->
+        <!-- ADDRESSES -->
         <div class="adm-page" id="admp-addresses">
-          <div class="adm-page-title">Crypto Deposit Addresses</div>
-          <div class="adm-page-sub">Set wallet addresses users will deposit to</div>
-          <div class="adm-card">
-            <div class="adm-card-hdr">
-              <span class="adm-card-title">Wallet Addresses</span>
-              <button class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSaveAddresses()"><i class="fas fa-save"></i> Save All</button>
-            </div>
-            <div id="adm-addresses-body" style="padding:8px 0"></div>
-          </div>
+          <div class="adm-page-title">Crypto Addresses</div><div class="adm-page-sub">Set deposit wallet addresses</div>
+          <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Wallet Addresses</span><button class="adm-btn adm-btn-gain adm-btn-sm" onclick="admSaveAddresses()"><i class="fas fa-save"></i> Save All</button></div><div id="adm-addresses-body" style="padding:8px 0"></div></div>
         </div>
-
-        <!-- BULK ACTIONS -->
+        <!-- BULK -->
         <div class="adm-page" id="admp-broadcast">
-          <div class="adm-page-title">Bulk Actions</div>
-          <div class="adm-page-sub">Apply changes to all users at once</div>
+          <div class="adm-page-title">Bulk Actions</div><div class="adm-page-sub">Apply to all users</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="grid-2col">
-            <div class="adm-card">
-              <div class="adm-card-hdr"><span class="adm-card-title">Set Cash for ALL Users</span></div>
-              <div class="adm-card-body">
-                <div class="adm-field" style="margin-bottom:10px"><div class="adm-label">Amount ($)</div><input class="adm-input" id="bulk-cash-amt" type="number" step="0.01" placeholder="10000.00"></div>
-                <div class="adm-field" style="margin-bottom:12px"><div class="adm-label">Mode</div>
-                  <select class="adm-input adm-select" id="bulk-cash-mode">
-                    <option value="set">Set exact amount for everyone</option>
-                    <option value="add">Add to everyone's balance</option>
-                    <option value="multiply">Multiply everyone's balance</option>
-                  </select>
-                </div>
-                <button class="adm-btn adm-btn-loss adm-btn-full" onclick="admBulkCash()"><i class="fas fa-triangle-exclamation"></i> Apply to ALL</button>
-              </div>
-            </div>
-            <div class="adm-card">
-              <div class="adm-card-hdr"><span class="adm-card-title">Add Holding to ALL Users</span></div>
-              <div class="adm-card-body">
-                <div class="adm-form-grid" style="margin-bottom:10px">
-                  <div class="adm-field"><div class="adm-label">Symbol</div><select class="adm-input adm-select" id="bulk-h-sym"><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="SOL">SOL</option><option value="TSLA">TSLA</option><option value="NVDA">NVDA</option><option value="AAPL">AAPL</option></select></div>
-                  <div class="adm-field"><div class="adm-label">Quantity</div><input class="adm-input" id="bulk-h-qty" type="number" step="any" placeholder="0.1"></div>
-                  <div class="adm-field"><div class="adm-label">Avg Price ($)</div><input class="adm-input" id="bulk-h-price" type="number" step="any" placeholder="60000"></div>
-                </div>
-                <button class="adm-btn adm-btn-gold adm-btn-full" onclick="admBulkHolding()"><i class="fas fa-briefcase"></i> Add to ALL</button>
-              </div>
-            </div>
-            <div class="adm-card">
-              <div class="adm-card-hdr"><span class="adm-card-title">Delete ALL Transactions</span></div>
-              <div class="adm-card-body"><p style="font-size:11px;color:#5a6880;margin-bottom:12px">⚠ Permanently deletes all transaction records.</p><button class="adm-btn adm-btn-loss adm-btn-full" onclick="admNukeTransactions()"><i class="fas fa-trash"></i> Nuke Transactions</button></div>
-            </div>
-            <div class="adm-card">
-              <div class="adm-card-hdr"><span class="adm-card-title">Delete ALL Holdings</span></div>
-              <div class="adm-card-body"><p style="font-size:11px;color:#5a6880;margin-bottom:12px">⚠ Permanently deletes all holding positions.</p><button class="adm-btn adm-btn-loss adm-btn-full" onclick="admNukeHoldings()"><i class="fas fa-trash"></i> Nuke Holdings</button></div>
-            </div>
+            <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Set Cash for ALL</span></div><div class="adm-card-body"><div class="adm-field" style="margin-bottom:10px"><div class="adm-label">Amount ($)</div><input class="adm-input" id="bulk-cash-amt" type="number" step="0.01" placeholder="10000.00"></div><div class="adm-field" style="margin-bottom:12px"><div class="adm-label">Mode</div><select class="adm-input adm-select" id="bulk-cash-mode"><option value="set">Set exact</option><option value="add">Add to everyone</option><option value="multiply">Multiply everyone</option></select></div><button class="adm-btn adm-btn-loss adm-btn-full" onclick="admBulkCash()"><i class="fas fa-triangle-exclamation"></i> Apply to ALL</button></div></div>
+            <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Add Holding to ALL</span></div><div class="adm-card-body"><div class="adm-form-grid" style="margin-bottom:10px"><div class="adm-field"><div class="adm-label">Symbol</div><select class="adm-input adm-select" id="bulk-h-sym"><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="SOL">SOL</option><option value="TSLA">TSLA</option><option value="NVDA">NVDA</option><option value="AAPL">AAPL</option></select></div><div class="adm-field"><div class="adm-label">Qty</div><input class="adm-input" id="bulk-h-qty" type="number" step="any" placeholder="0.1"></div><div class="adm-field"><div class="adm-label">Avg Price ($)</div><input class="adm-input" id="bulk-h-price" type="number" step="any" placeholder="60000"></div></div><button class="adm-btn adm-btn-gold adm-btn-full" onclick="admBulkHolding()"><i class="fas fa-briefcase"></i> Add to ALL</button></div></div>
+            <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Delete ALL Transactions</span></div><div class="adm-card-body"><p style="font-size:11px;color:#5a6880;margin-bottom:12px">⚠ Permanently deletes all records.</p><button class="adm-btn adm-btn-loss adm-btn-full" onclick="admNukeTransactions()"><i class="fas fa-trash"></i> Nuke Transactions</button></div></div>
+            <div class="adm-card"><div class="adm-card-hdr"><span class="adm-card-title">Delete ALL Holdings</span></div><div class="adm-card-body"><p style="font-size:11px;color:#5a6880;margin-bottom:12px">⚠ Permanently deletes all positions.</p><button class="adm-btn adm-btn-loss adm-btn-full" onclick="admNukeHoldings()"><i class="fas fa-trash"></i> Nuke Holdings</button></div></div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -1182,41 +1384,6 @@ body::before{
     <div><p id="toast-title" style="font-size:13px;font-weight:600;color:#edf2f8"></p><p id="toast-sub" style="font-size:11px;color:#5a6880;margin-top:2px"></p></div>
   </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script src="price-sync.js"></script>
 <script src="coingecko-sync.js"></script>
 <script>
@@ -1226,57 +1393,38 @@ body::before{
 
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-  // ─── callAdmin ────────────────────────────────────────────────────────────────
   async function callAdmin(action, params = {}) {
     const { data: { session }, error: sessErr } = await sb.auth.getSession();
     let activeSession = session;
-
     if (sessErr || !activeSession) {
       const { data: refreshed, error: refErr } = await sb.auth.refreshSession();
       if (refErr || !refreshed?.session) throw new Error('Session expired — please sign in again.');
       activeSession = refreshed.session;
     }
-
     const res = await fetch(EDGE_FN_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${activeSession.access_token}`
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${activeSession.access_token}` },
       body: JSON.stringify({ action, ...params })
     });
-
-    if (!res.ok) {
-      const text = await res.text().catch(() => res.statusText);
-      throw new Error(`HTTP ${res.status}: ${text}`);
-    }
-
+    if (!res.ok) { const text = await res.text().catch(() => res.statusText); throw new Error(`HTTP ${res.status}: ${text}`); }
     const result = await res.json();
     if (!result.success) throw new Error(result.error || 'Edge function returned failure');
     return result.data;
   }
 
-  // ─── State ────────────────────────────────────────────────────────────────────
   let authUser = null, profile = null, myHoldings = [];
   let admAllUsers = [], admAllHoldings = [], admAllTx = [];
   let txDeleteMode = false;
   let allMyTransactions = [];
   let txModalFilter = 'all';
 
-  // DEFAULT_PRICES are the last-resort fallback seeds only.
-  // PRICES is the live truth — updated exclusively by CoinGecko via onPriceUpdate.
-  // CHANGES holds the live 24h % change per symbol, also from CoinGecko.
   const DEFAULT_PRICES = {
     BTC:67430, ETH:3280,  SOL:188,   BNB:612,   XRP:0.72,
     ADA:0.48,  TSLA:248.5, AAPL:189.3, NVDA:875.2, MSFT:412.7,
     AMZN:195.5, GOOGL:178.3, GOLD:2350, USDT:1, LTC:85
   };
-
-  // Seed PRICES immediately from localStorage cache → fallback to DEFAULT_PRICES.
-  // This means the UI shows a real previous price with ZERO delay on load.
   const PRICES  = {};
   const CHANGES = {};
-
   (function seedFromCache() {
     try {
       const overrides = JSON.parse(localStorage.getItem('aurum_price_overrides') || '{}');
@@ -1285,9 +1433,7 @@ body::before{
         PRICES[sym]  = overrides[sym]?.price  ?? live[sym]?.price  ?? DEFAULT_PRICES[sym];
         CHANGES[sym] = overrides[sym]?.chg    ?? live[sym]?.changePct24h ?? 0;
       });
-    } catch {
-      Object.assign(PRICES,  DEFAULT_PRICES);
-    }
+    } catch { Object.assign(PRICES, DEFAULT_PRICES); }
   })();
 
   const ASSET_META = {
@@ -1309,8 +1455,6 @@ body::before{
     LTC:{icon:'fas fa-coins',color:'#bfbbbb',name:'Litecoin'},
   };
 
-  // ASSETS_LIST prices/chg are kept in sync by onPriceUpdate so chart modal
-  // and trade modal always read correct values.
   let ASSETS_LIST = [
     {sym:'BTC', name:'Bitcoin',   icon:'fab fa-bitcoin',      color:'#f7931a', price:PRICES.BTC,  chg:CHANGES.BTC  ?? 0, cat:'crypto'},
     {sym:'ETH', name:'Ethereum',  icon:'fab fa-ethereum',     color:'#627eea', price:PRICES.ETH,  chg:CHANGES.ETH  ?? 0, cat:'crypto'},
@@ -1325,14 +1469,14 @@ body::before{
   ];
 
   const DEPOSIT_COINS = [
-    {sym:'BTC', name:'Bitcoin',       icon:'fab fa-bitcoin',               color:'#f7931a', network:'BTC Network',          min:'0.0001 BTC'},
-    {sym:'ETH', name:'Ethereum',      icon:'fab fa-ethereum',              color:'#627eea', network:'ERC-20 Network',        min:'0.001 ETH'},
-    {sym:'USDT',name:'Tether (USDT)', icon:'fas fa-circle-dollar-to-slot', color:'#26a17b', network:'TRC-20 / ERC-20',       min:'10 USDT'},
-    {sym:'BNB', name:'BNB Chain',     icon:'fas fa-coins',                 color:'#f3ba2f', network:'BSC Network',           min:'0.01 BNB'},
-    {sym:'SOL', name:'Solana',        icon:'fas fa-sun',                   color:'#9945ff', network:'SOL Network',           min:'0.01 SOL'},
-    {sym:'XRP', name:'Ripple',        icon:'fas fa-water',                 color:'#00aae4', network:'XRP Ledger',            min:'1 XRP'},
-    {sym:'ADA', name:'Cardano',       icon:'fas fa-circle-nodes',          color:'#3cc8c8', network:'ADA Network',           min:'1 ADA'},
-    {sym:'LTC', name:'Litecoin',      icon:'fas fa-coins',                 color:'#bfbbbb', network:'LTC Network',           min:'0.01 LTC'},
+    {sym:'BTC', name:'Bitcoin',       icon:'fab fa-bitcoin',               color:'#f7931a', network:'BTC Network',    min:'0.0001 BTC'},
+    {sym:'ETH', name:'Ethereum',      icon:'fab fa-ethereum',              color:'#627eea', network:'ERC-20 Network', min:'0.001 ETH'},
+    {sym:'USDT',name:'Tether (USDT)', icon:'fas fa-circle-dollar-to-slot', color:'#26a17b', network:'TRC-20 / ERC-20',min:'10 USDT'},
+    {sym:'BNB', name:'BNB Chain',     icon:'fas fa-coins',                 color:'#f3ba2f', network:'BSC Network',    min:'0.01 BNB'},
+    {sym:'SOL', name:'Solana',        icon:'fas fa-sun',                   color:'#9945ff', network:'SOL Network',    min:'0.01 SOL'},
+    {sym:'XRP', name:'Ripple',        icon:'fas fa-water',                 color:'#00aae4', network:'XRP Ledger',     min:'1 XRP'},
+    {sym:'ADA', name:'Cardano',       icon:'fas fa-circle-nodes',          color:'#3cc8c8', network:'ADA Network',    min:'1 ADA'},
+    {sym:'LTC', name:'Litecoin',      icon:'fas fa-coins',                 color:'#bfbbbb', network:'LTC Network',    min:'0.01 LTC'},
   ];
 
   let CRYPTO_ADDRESSES = {};
@@ -1340,118 +1484,121 @@ body::before{
   let activeChartInstance = null, activeChartAsset = null, activeChartPeriod = '1D';
   let tradeModalAsset = null, tradeModalType = 'buy';
 
-  // ═══════════════════════════════════════════════════════════════════════════════
-  //  LIVE PRICE HANDLER — registered at parse-time (synchronous, before DOM ready)
-  //
-  //  coingecko-sync.js stubs window.onPriceUpdate first, then replaces the stub
-  //  with this real handler once we assign it here. Any broadcasts that fired
-  //  before this assignment are queued in _pendingBroadcasts and drained via
-  //  window._aurumDrainPriceQueue() which we call right after.
-  //
-  //  PRICE PRIORITY (highest → lowest):
-  //    1. Admin override  (localStorage aurum_price_overrides)
-  //    2. CoinGecko live  (this handler, sym arg)
-  //    3. localStorage cache seed  (loaded synchronously above)
-  //    4. DEFAULT_PRICES  (hard-coded fallback)
-  // ═══════════════════════════════════════════════════════════════════════════════
   window.onPriceUpdate = function(sym, newPrice, newChg) {
-    // --- Admin override check: admin price always wins ---
-    let finalPrice = newPrice;
-    let finalChg   = newChg ?? 0;
+    let finalPrice = newPrice, finalChg = newChg ?? 0;
     try {
       const overrides = JSON.parse(localStorage.getItem('aurum_price_overrides') || '{}');
-      if (overrides[sym]?.price > 0) {
-        finalPrice = overrides[sym].price;
-        finalChg   = overrides[sym].chg ?? finalChg;
-      }
+      if (overrides[sym]?.price > 0) { finalPrice = overrides[sym].price; finalChg = overrides[sym].chg ?? finalChg; }
     } catch {}
-
     if (!finalPrice || finalPrice <= 0) return;
-
-    // --- Update master state ---
-    PRICES[sym]  = finalPrice;
-    CHANGES[sym] = finalChg;
-
+    PRICES[sym] = finalPrice; CHANGES[sym] = finalChg;
     const asset = ASSETS_LIST.find(a => a.sym === sym);
     if (asset) { asset.price = finalPrice; asset.chg = finalChg; }
-
-    // --- Update crypto grid price cell (flash animation) ---
     const prEl = document.getElementById('grid-pr-' + sym);
     if (prEl) {
       const oldVal = parseFloat((prEl.textContent || '').replace(/[$,]/g, '')) || 0;
       prEl.textContent = '$' + fmtPrice(finalPrice);
       prEl.classList.remove('flash-up-dash', 'flash-down-dash');
-      void prEl.offsetWidth; // force reflow to restart animation
+      void prEl.offsetWidth;
       prEl.classList.add(finalPrice >= oldVal ? 'flash-up-dash' : 'flash-down-dash');
       setTimeout(() => prEl.classList.remove('flash-up-dash', 'flash-down-dash'), 1200);
     }
-
-    // --- Update crypto grid change % cell ---
     const chgEl = document.getElementById('grid-chg-' + sym);
     if (chgEl) {
       const up = finalChg >= 0;
       chgEl.textContent = (up ? '+' : '') + finalChg.toFixed(2) + '%';
-      chgEl.style.color      = up ? '#22c55e' : '#ef4444';
+      chgEl.style.color = up ? '#22c55e' : '#ef4444';
       chgEl.style.background = up ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
     }
-
-    // --- Update ALL ticker price spans for this symbol ---
-    document.querySelectorAll('.tick-price-' + sym).forEach(el => {
-      el.textContent = '$' + fmtPrice(finalPrice);
-    });
-
-    // --- Update ALL ticker change % spans for this symbol ---
+    document.querySelectorAll('.tick-price-' + sym).forEach(el => { el.textContent = '$' + fmtPrice(finalPrice); });
     document.querySelectorAll('.tick-chg-' + sym).forEach(el => {
       const up = finalChg >= 0;
       el.textContent = (up ? '+' : '') + Math.abs(finalChg).toFixed(2) + '%';
       el.style.color = up ? '#22c55e' : '#ef4444';
     });
-
-    // --- Update chart modal if open for this symbol ---
     if (activeChartAsset === sym) {
       const cmp = document.getElementById('chart-modal-price');
       if (cmp) cmp.textContent = '$' + fmtPrice(finalPrice);
       const cChg = document.getElementById('chart-modal-chg');
-      if (cChg) {
-        const up = finalChg >= 0;
-        cChg.textContent = (up ? '+' : '') + finalChg.toFixed(2) + '%';
-        cChg.style.background = up ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
-        cChg.style.color      = up ? '#22c55e' : '#ef4444';
-      }
+      if (cChg) { const up = finalChg >= 0; cChg.textContent = (up ? '+' : '') + finalChg.toFixed(2) + '%'; cChg.style.background = up ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)'; cChg.style.color = up ? '#22c55e' : '#ef4444'; }
     }
-
-    // --- Update trade modal if open for this symbol ---
     if (tradeModalAsset && tradeModalAsset.sym === sym) {
       const tpr = document.getElementById('trade-live-price');
       if (tpr) tpr.textContent = '$' + fmtPrice(finalPrice);
       const tChg = document.getElementById('trade-chg');
-      if (tChg) {
-        const up = finalChg >= 0;
-        tChg.textContent = (up ? '+' : '') + finalChg.toFixed(2) + '%';
-        tChg.style.color = up ? '#22c55e' : '#ef4444';
-      }
-      tradeModalAsset.price = finalPrice;
-      tradeModalAsset.chg   = finalChg;
+      if (tChg) { const up = finalChg >= 0; tChg.textContent = (up ? '+' : '') + finalChg.toFixed(2) + '%'; tChg.style.color = up ? '#22c55e' : '#ef4444'; }
+      tradeModalAsset.price = finalPrice; tradeModalAsset.chg = finalChg;
       updateTradeModalCalc();
     }
-
-    // --- Refresh portfolio P&L (uses PRICES which is now updated) ---
     loadPortfolioStats();
+    updatePanelStats();
   };
-
-  // Mark the real handler so coingecko-sync's stub-check passes.
-  // Actual queue drain happens inside DOMContentLoaded once DOM elements exist.
   window.onPriceUpdate._isStub = false;
-  // Attempt an early drain — coingecko-sync will ignore it if DOM isn't ready yet,
-  // but calling it here is harmless and handles the edge case where both scripts
-  // load after DOMContentLoaded (e.g. dynamically injected).
-  if (typeof window._aurumDrainPriceQueue === 'function') {
-    window._aurumDrainPriceQueue();
+  if (typeof window._aurumDrainPriceQueue === 'function') window._aurumDrainPriceQueue();
+
+  /* ── Luxury mobile menu controls ── */
+  function openDashMenu() {
+    const menu   = document.getElementById('dashMobileMenu');
+    const toggle = document.getElementById('dashNavToggle');
+    menu.classList.add('open');
+    toggle.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('dash-menu-open');
+    updatePanelStats();
+    document.querySelectorAll('.dash-panel-link').forEach((link, i) => {
+      link.style.transition = `background .28s, border-color .28s, color .28s, opacity .42s ${.10 + i * 0.05}s cubic-bezier(.4,0,.2,1), transform .42s ${.10 + i * 0.05}s cubic-bezier(.4,0,.2,1)`;
+    });
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════════
-  //  INIT
-  // ═══════════════════════════════════════════════════════════════════════════════
+  function closeDashMenu() {
+    const menu   = document.getElementById('dashMobileMenu');
+    const toggle = document.getElementById('dashNavToggle');
+    menu.classList.remove('open');
+    toggle.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('dash-menu-open');
+  }
+
+  function updatePanelStats() {
+    if (!profile) return;
+    const cash = Number(profile.cash || 0);
+    let portVal = 0, pnl = 0;
+    myHoldings.forEach(h => {
+      const live = PRICES[h.symbol] || Number(h.avg_buy_price);
+      const val  = Number(h.quantity) * live;
+      portVal += val;
+      pnl += val - Number(h.quantity) * Number(h.avg_buy_price);
+    });
+    const nwEl = document.getElementById('panelNetWorth');
+    const cEl  = document.getElementById('panelCash');
+    const pEl  = document.getElementById('panelPnl');
+    if (nwEl) nwEl.textContent = '$' + fmtUSD(cash + portVal);
+    if (cEl)  cEl.textContent  = '$' + fmtUSD(cash);
+    if (pEl)  { pEl.textContent = (pnl >= 0 ? '+' : '') + '$' + fmtUSD(pnl); pEl.style.color = pnl >= 0 ? '#22c55e' : '#ef4444'; }
+  }
+
+  function addPanelLinkRipples() {
+    document.querySelectorAll('.dash-panel-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        const size = Math.max(rect.width, rect.height);
+        ripple.className = 'dash-ripple';
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+        ripple.style.top  = (e.clientY - rect.top  - size/2) + 'px';
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+        if (this.tagName === 'A' && this.href && !this.href.includes('#')) {
+          setTimeout(closeDashMenu, 80);
+        }
+      });
+    });
+  }
+
+  window.openDashMenu  = openDashMenu;
+  window.closeDashMenu = closeDashMenu;
+
   window.addEventListener('DOMContentLoaded', async () => {
     const loaderDone = new Promise(r => setTimeout(r, 1800));
     const { data: { session } } = await sb.auth.getSession();
@@ -1467,38 +1614,35 @@ body::before{
     checkPendingBadge();
     document.getElementById('authGate').style.display = 'none';
     showApp();
-
-    // Build UI with already-seeded PRICES (cached/fallback) — zero delay.
-    // When CoinGecko responds, onPriceUpdate fires and updates in-place.
     buildTicker();
     renderCryptoGrid();
     buildDepositCoinGrid();
     buildWithdrawCoinGrid();
     injectTradeModal();
     injectTradeReceipt();
-
-    // Drain again now that DOM elements exist — any queued broadcasts
-    // that fired before DOMContentLoaded can now update the real elements.
-    if (typeof window._aurumDrainPriceQueue === 'function') {
-      window._aurumDrainPriceQueue();
-    }
-
-    // ── CoinGecko batch callback ─────────────────────────────────────────
-    // Registered HERE (not at top level) so window.AurumPrices is guaranteed
-    // to exist — coingecko-sync.js always runs before DOMContentLoaded fires.
+    if (typeof window._aurumDrainPriceQueue === 'function') window._aurumDrainPriceQueue();
     if (typeof window.AurumPrices !== 'undefined') {
-      window.AurumPrices.onUpdate(function () {
-        // Per-symbol UI is already updated live by onPriceUpdate above.
-        // This batch hook just refreshes the portfolio summary totals.
-        loadPortfolioStats();
-      });
+      window.AurumPrices.onUpdate(function () { loadPortfolioStats(); });
     }
+
+    const toggle   = document.getElementById('dashNavToggle');
+    const backdrop = document.getElementById('dashMenuBackdrop');
+    const closeBtn = document.getElementById('dashMenuClose');
+    const panelSO  = document.getElementById('panelSignOut');
+
+    toggle.addEventListener('click', () => {
+      const menu = document.getElementById('dashMobileMenu');
+      menu.classList.contains('open') ? closeDashMenu() : openDashMenu();
+    });
+    closeBtn.addEventListener('click', closeDashMenu);
+    backdrop.addEventListener('click', closeDashMenu);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDashMenu(); });
+
+    if (panelSO) panelSO.addEventListener('click', doSignOut);
+    addPanelLinkRipples();
 
     document.getElementById('signOutBtn').addEventListener('click', doSignOut);
-    document.getElementById('drawerSignOut').addEventListener('click', doSignOut);
-    document.getElementById('mobileMenuBtn').addEventListener('click', openDrawer);
-    document.getElementById('mobileCloseBtn').addEventListener('click', closeDrawer);
-    document.getElementById('mobileBackdrop').addEventListener('click', closeDrawer);
+    document.getElementById('mobAvatarWrap').addEventListener('click', openDashMenu);
     setupSecretGesture();
 
     const rlsEl = document.getElementById('admRlsNote');
@@ -1519,23 +1663,14 @@ body::before{
           else if (row.type === 'withdraw') showStatusNotification('✅ Withdrawal Approved!', `$${fmtUSD(amt)} withdrawal processed.`, 'success');
           loadProfile(); loadTransactions(); checkPendingBadge();
         } else if (row.status === 'rejected') {
-          if (row.type === 'deposit')  showStatusNotification('❌ Deposit Rejected', `$${fmtUSD(amt)} ${row.symbol||''} deposit was not approved.`, 'error');
+          if (row.type === 'deposit')  showStatusNotification('❌ Deposit Rejected', `$${fmtUSD(amt)} deposit was not approved.`, 'error');
           else if (row.type === 'withdraw') showStatusNotification('❌ Withdrawal Rejected', `$${fmtUSD(amt)} withdrawal was rejected.`, 'error');
           loadTransactions(); checkPendingBadge();
         }
       }
     ).subscribe();
-
-    // ── REMOVED: setInterval(tickPrices, 3000)
-    // tickPrices() was randomly jittering prices every 3 seconds and would
-    // overwrite real CoinGecko prices after 8 seconds of no broadcast.
-    // CoinGecko-sync already polls every 30s and broadcasts via onPriceUpdate.
-    // Stocks (TSLA, AAPL etc.) are jittered by coingecko-sync's jitterStocks()
-    // which runs on every CoinGecko fetch cycle — no duplicate needed here.
   });
 
-  // ── Admin cross-tab price override listener ───────────────────────────────────
-  // When an admin changes a price override in another tab, sync here instantly.
   window.addEventListener('storage', (e) => {
     if (e.key !== 'aurum_price_overrides' && e.key !== 'aurum_live_prices') return;
     try {
@@ -1545,19 +1680,10 @@ body::before{
       allSyms.forEach(sym => {
         const finalPrice = overrides[sym]?.price ?? live[sym]?.price;
         const finalChg   = overrides[sym]?.chg   ?? live[sym]?.changePct24h ?? CHANGES[sym] ?? 0;
-        if (finalPrice > 0) {
-          // Re-use our handler so all UI elements update consistently
-          window.onPriceUpdate(sym, finalPrice, finalChg);
-        }
+        if (finalPrice > 0) window.onPriceUpdate(sym, finalPrice, finalChg);
       });
     } catch {}
   });
-
-  // ── CoinGecko batch callback ─────────────────────────────────────────────────
-  // REMOVED from top level — moved inside DOMContentLoaded (see below).
-  // Reason: at parse-time, window.AurumPrices may not exist yet if
-  // coingecko-sync.js hasn't executed. Inside DOMContentLoaded both scripts
-  // are guaranteed to have run.
 
   function showApp() {
     document.getElementById('appShell').style.display = 'block';
@@ -1569,13 +1695,9 @@ body::before{
   async function doSignOut() { await sb.auth.signOut(); window.location.href = 'signup.html'; }
   function setGreeting() { const h = new Date().getHours(); setTxt('greetTime', h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening'); }
 
-  // ─── DB helpers ───────────────────────────────────────────────────────────────
   async function loadAddressesFromDb() {
-    try {
-      const { data } = await sb.from('crypto_addresses').select('symbol, address');
-      CRYPTO_ADDRESSES = {};
-      (data || []).forEach(r => { CRYPTO_ADDRESSES[r.symbol] = r.address || ''; });
-    } catch { CRYPTO_ADDRESSES = {}; }
+    try { const { data } = await sb.from('crypto_addresses').select('symbol, address'); CRYPTO_ADDRESSES = {}; (data || []).forEach(r => { CRYPTO_ADDRESSES[r.symbol] = r.address || ''; }); }
+    catch { CRYPTO_ADDRESSES = {}; }
   }
 
   async function loadProfile() {
@@ -1598,10 +1720,8 @@ body::before{
     setTxt('posCount', myHoldings.length);
     setTxt('netWorth', '$' + fmtUSD(cash + portVal));
     const pEl = document.getElementById('portPnl');
-    if (pEl) {
-      pEl.textContent = (pnl >= 0 ? '+' : '') + ' $' + fmtUSD(Math.abs(pnl)) + ' P&L';
-      pEl.style.color = pnl >= 0 ? '#22c55e' : '#ef4444';
-    }
+    if (pEl) { pEl.textContent = (pnl >= 0 ? '+' : '') + ' $' + fmtUSD(Math.abs(pnl)) + ' P&L'; pEl.style.color = pnl >= 0 ? '#22c55e' : '#ef4444'; }
+    updatePanelStats();
   }
 
   function getTxDisplayConfig(tx) {
@@ -1660,9 +1780,6 @@ body::before{
     loadPortfolioStats();
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════════
-  //  BUY / SELL MODAL
-  // ═══════════════════════════════════════════════════════════════════════════════
   function injectTradeModal() {
     if (document.getElementById('tradeModal')) return;
     document.body.insertAdjacentHTML('beforeend', `
@@ -1736,9 +1853,7 @@ body::before{
     <div style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.94);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:16px" id="tradeReceiptModal">
       <div style="background:linear-gradient(155deg,#080e18,#060c12);border:1px solid rgba(201,168,76,.2);border-radius:26px;width:100%;max-width:420px;max-height:94vh;overflow-y:auto;box-shadow:0 0 100px rgba(201,168,76,.07)">
         <div style="padding:32px 26px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
-          <div id="receipt-icon-wrap" style="width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:ldPulse 2s ease-in-out infinite">
-            <i id="receipt-icon-i" style="font-size:26px"></i>
-          </div>
+          <div id="receipt-icon-wrap" style="width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:ldPulse 2s ease-in-out infinite"><i id="receipt-icon-i" style="font-size:26px"></i></div>
           <p style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#edf2f8;font-weight:300;margin-bottom:4px" id="receipt-title">Order Executed</p>
           <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6880;letter-spacing:.1em" id="receipt-subtitle">TRANSACTION CONFIRMED</p>
         </div>
@@ -1750,7 +1865,7 @@ body::before{
             <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Quantity</span><span id="rc2-qty" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c9a84c">—</span></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Execution Price</span><span id="rc2-price" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">—</span></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Gross Amount</span><span id="rc2-gross" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#edf2f8">—</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Platform Fee (0.1%)</span><span id="rc2-fee" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5a6880">—</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px"><span style="color:#5a6880;font-size:12px">Fee (0.1%)</span><span id="rc2-fee" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5a6880">—</span></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px"><span style="color:#edf2f8;font-size:13px;font-weight:500">Total Debited</span><span id="rc2-total" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#ef4444">—</span></div>
           </div>
           <div id="rc2-pnl-wrap" style="padding:14px 16px;border-radius:12px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">

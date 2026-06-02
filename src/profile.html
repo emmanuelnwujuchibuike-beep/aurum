@@ -5,44 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aurum Capital — Profile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="icon" type="image/png" href="./image/logo.jpeg">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="./image/logo.jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Outfit:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* ═══════════════════════════════════════════════
-   AURUM CAPITAL — DESIGN SYSTEM
-═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   AURUM CAPITAL — ULTRA-PREMIUM PROFILE
+   Aesthetic: Dark Opulence · Art Deco Refinement
+═══════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --void:    #040608;
-  --deep:    #080c12;
-  --base:    #0c1118;
-  --surface: #111820;
-  --lift:    #172030;
-  --steel:   #5a6880;
-  --mist:    #8c9db5;
-  --cloud:   #c4d0e0;
-  --snow:    #edf2f8;
-  --gold:    #c9a84c;
-  --gold-bright: #e8c96a;
-  --gold-dim:    rgba(201,168,76,0.12);
-  --gold-border: rgba(201,168,76,0.22);
-  --gain:    #22c55e;
-  --gain-dim: rgba(34,197,94,0.10);
-  --loss:    #ef4444;
-  --loss-dim: rgba(239,68,68,0.10);
-  --accent:  #3b82f6;
-  --accent-dim: rgba(59,130,246,0.10);
-  --border:  rgba(255,255,255,0.07);
-  --sidebar-w: 240px;
+  --void:      #02040a;
+  --deep:      #060a12;
+  --base:      #0a0f1a;
+  --surface:   #0e1520;
+  --lift:      #141c2e;
+  --raise:     #1a2438;
+  --steel:     #4a5a75;
+  --mist:      #7a8fa8;
+  --cloud:     #b0c0d4;
+  --snow:      #eaf0f8;
+  --gold:      #c8a84b;
+  --gold-lt:   #e8c96a;
+  --gold-dk:   #9a7c2e;
+  --gold-glow: rgba(200,168,75,0.15);
+  --gold-rim:  rgba(200,168,75,0.25);
+  --gold-dim:  rgba(200,168,75,0.08);
+  --gain:      #1dd673;
+  --gain-dim:  rgba(29,214,115,0.09);
+  --loss:      #f04a4a;
+  --loss-dim:  rgba(240,74,74,0.09);
+  --cyan:      #38bdf8;
+  --cyan-dim:  rgba(56,189,248,0.08);
+  --border:    rgba(255,255,255,0.055);
+  --border-hi: rgba(255,255,255,0.10);
+  --sidebar-w: 256px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
 }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   background: var(--void);
   color: var(--snow);
   min-height: 100vh;
@@ -50,825 +58,962 @@ body {
   overflow-x: hidden;
 }
 
-/* Ambient radial glow */
+/* ── GRAIN OVERLAY ────────────────────────────── */
 body::before {
   content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(201,168,76,0.07), transparent),
-    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(59,130,246,0.04), transparent);
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.022;
 }
 
-/* ── SIDEBAR ─────────────────────────────────────── */
+/* ── AMBIENT LIGHTING ─────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(200,168,75,0.08), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 100% 60%, rgba(56,189,248,0.04), transparent),
+    radial-gradient(ellipse 40% 30% at 0% 80%, rgba(200,168,75,0.05), transparent);
+}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════ */
 .sidebar {
   width: var(--sidebar-w);
   flex-shrink: 0;
-  background: var(--deep);
+  background: linear-gradient(180deg, var(--deep) 0%, var(--void) 100%);
   border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 28px 18px;
-  position: fixed;
-  top: 0; left: 0; bottom: 0;
+  display: flex; flex-direction: column;
+  padding: 32px 20px;
+  position: fixed; top: 0; left: 0; bottom: 0;
   z-index: 50;
-  transition: transform .3s cubic-bezier(.4,0,.2,1);
-}
-@media (max-width: 1024px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); box-shadow: 8px 0 48px rgba(0,0,0,.7); }
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
 }
 
+/* Sidebar gold accent line */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.6;
+}
+
+@media (max-width: 1024px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); box-shadow: 12px 0 60px rgba(0,0,0,.85); }
+}
+
+/* Logo */
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 40px;
-  padding: 0 6px;
+  display: flex; align-items: center; gap: 13px;
+  margin-bottom: 44px; padding: 0 4px;
   text-decoration: none;
 }
 .logo-mark {
-  width: 34px; height: 34px;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #c9a84c, #a87c28);
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold-dk));
   display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700; color: #040608; font-size: 15px;
-  flex-shrink: 0;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700; color: var(--void); font-size: 17px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(200,168,75,0.35);
 }
-.logo-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
-  letter-spacing: .1em;
-  color: var(--snow);
+.logo-mark::after {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 13px;
+  border: 1px solid rgba(200,168,75,0.4);
+  pointer-events: none;
+}
+.logo-name {
+  display: flex; flex-direction: column; gap: 1px;
+}
+.logo-name-top {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 500;
+  color: var(--snow); letter-spacing: .05em;
+  line-height: 1;
+}
+.logo-name-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7px; letter-spacing: .22em;
+  color: var(--gold); text-transform: uppercase;
 }
 
-.nav-section-label {
+/* Nav */
+.nav-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .18em;
-  color: var(--steel);
-  text-transform: uppercase;
-  padding: 0 10px;
-  margin: 22px 0 8px;
+  font-size: 8px; letter-spacing: .22em;
+  color: var(--steel); text-transform: uppercase;
+  padding: 0 8px; margin: 24px 0 8px;
 }
 .nav-item {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-size: .84rem;
-  font-weight: 500;
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; border-radius: var(--radius-sm);
+  font-size: 13.5px; font-weight: 400;
   color: var(--steel);
   text-decoration: none;
-  transition: all .2s;
-  margin-bottom: 2px;
+  transition: all .2s; margin-bottom: 2px;
   border: 1px solid transparent;
+  position: relative; overflow: hidden;
 }
-.nav-item:hover { background: rgba(255,255,255,.05); color: var(--snow); }
+.nav-item::before {
+  content: '';
+  position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 2px; height: 0;
+  background: var(--gold);
+  border-radius: 0 2px 2px 0;
+  transition: height .2s;
+}
+.nav-item:hover { background: rgba(255,255,255,.04); color: var(--cloud); }
+.nav-item:hover::before { height: 60%; }
 .nav-item.active {
   background: var(--gold-dim);
   color: var(--gold);
-  border-color: var(--gold-border);
+  border-color: var(--gold-rim);
 }
-.nav-item i { width: 16px; text-align: center; font-size: 13px; }
+.nav-item.active::before { height: 70%; }
+.nav-item i { width: 16px; text-align: center; font-size: 12px; }
 
+/* Sidebar footer */
 .sidebar-footer {
   margin-top: auto;
-  padding-top: 18px;
+  padding-top: 20px;
   border-top: 1px solid var(--border);
 }
 .sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 6px;
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 4px;
 }
 .sidebar-avatar {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #c9a84c, #a87c28);
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold-dk));
   display: flex; align-items: center; justify-content: center;
-  font-weight: 700; color: #040608; font-size: 13px;
-  flex-shrink: 0;
+  font-weight: 700; color: var(--void); font-size: 13px;
+  flex-shrink: 0; overflow: hidden;
+  box-shadow: 0 0 0 2px rgba(200,168,75,0.3);
 }
-.sidebar-user-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--snow);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.sidebar-user-cash {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--gold);
-  margin-top: 1px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.sidebar-user-name { font-size: 13px; font-weight: 500; color: var(--snow); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-user-cash { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gold); margin-top: 1px; }
 
 /* Mobile overlay */
 #overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.6);
-  backdrop-filter: blur(3px);
-  z-index: 40;
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); backdrop-filter: blur(4px); z-index: 40;
 }
 #overlay.show { display: block; }
 
-/* ── MAIN ────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   MAIN LAYOUT
+══════════════════════════════════════════════════ */
 .main {
-  flex: 1;
-  margin-left: var(--sidebar-w);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 1;
-  min-width: 0;
+  flex: 1; margin-left: var(--sidebar-w);
+  display: flex; flex-direction: column;
+  position: relative; z-index: 1; min-width: 0;
 }
 @media (max-width: 1024px) { .main { margin-left: 0; } }
 
-/* ── TOPBAR ──────────────────────────────────────── */
+/* ── TOPBAR ───────────────────────────────────── */
 .topbar {
-  height: 60px;
+  height: 64px;
   border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
+  display: flex; align-items: center;
   justify-content: space-between;
-  padding: 0 28px;
-  background: rgba(4,6,8,.88);
-  backdrop-filter: blur(24px);
-  position: sticky; top: 0; z-index: 30;
-  gap: 16px;
+  padding: 0 32px;
+  background: rgba(2,4,10,.92);
+  backdrop-filter: blur(28px);
+  position: sticky; top: 0; z-index: 30; gap: 16px;
 }
 .topbar-left { display: flex; align-items: center; gap: 14px; }
 .hamburger {
   display: none;
   background: rgba(255,255,255,.05);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 10px;
-  cursor: pointer;
-  color: var(--steel);
-  font-size: 15px;
+  border-radius: 9px; padding: 9px 11px;
+  cursor: pointer; color: var(--steel); font-size: 14px;
   transition: all .2s;
 }
-.hamburger:hover { color: var(--snow); background: rgba(255,255,255,.09); }
+.hamburger:hover { color: var(--snow); background: rgba(255,255,255,.08); }
 @media (max-width: 1024px) { .hamburger { display: flex; align-items: center; } }
 
 .topbar-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 22px;
-  font-weight: 300;
-  color: var(--snow);
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 400; color: var(--snow);
 }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
-.topbar-pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  padding: 5px 12px;
-  border-radius: 20px;
+.topbar-title em { font-style: italic; color: var(--gold); }
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+/* Live clock pill */
+.live-clock {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px;
   background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
-  color: var(--gold);
-  letter-spacing: .06em;
+  border: 1px solid var(--gold-rim);
+  border-radius: 20px;
+}
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .5; transform: scale(0.7); }
+}
+.live-clock-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--gold); letter-spacing: .06em;
 }
 
-/* ── PAGE ────────────────────────────────────────── */
+/* ── PAGE BODY ────────────────────────────────── */
 .page-body {
-  flex: 1;
-  padding: 36px 28px 60px;
-  max-width: 960px;
-  width: 100%;
-  margin: 0 auto;
+  flex: 1; padding: 40px 32px 80px;
+  max-width: 1100px; width: 100%; margin: 0 auto;
 }
-@media (max-width: 640px) { .page-body { padding: 24px 16px 48px; } }
+@media (max-width: 640px) { .page-body { padding: 24px 16px 64px; } }
 
-/* ── ANIMATIONS ──────────────────────────────────── */
+/* ── ANIMATIONS ───────────────────────────────── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.a1 { animation: fadeUp .55s ease forwards .05s; opacity: 0; }
-.a2 { animation: fadeUp .55s ease forwards .15s; opacity: 0; }
-.a3 { animation: fadeUp .55s ease forwards .25s; opacity: 0; }
-.a4 { animation: fadeUp .55s ease forwards .35s; opacity: 0; }
-.a5 { animation: fadeUp .55s ease forwards .45s; opacity: 0; }
-.a6 { animation: fadeUp .55s ease forwards .55s; opacity: 0; }
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.a1 { animation: fadeUp .65s cubic-bezier(.16,1,.3,1) forwards .05s; opacity: 0; }
+.a2 { animation: fadeUp .65s cubic-bezier(.16,1,.3,1) forwards .18s; opacity: 0; }
+.a3 { animation: fadeUp .65s cubic-bezier(.16,1,.3,1) forwards .30s; opacity: 0; }
+.a4 { animation: fadeUp .65s cubic-bezier(.16,1,.3,1) forwards .42s; opacity: 0; }
+.a5 { animation: fadeUp .65s cubic-bezier(.16,1,.3,1) forwards .54s; opacity: 0; }
+.a6 { animation: fadeUp .65s cubic-bezier(.16,1,.3,1) forwards .66s; opacity: 0; }
 
-/* ── HERO BANNER ─────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   HERO BANNER
+══════════════════════════════════════════════════ */
 .profile-hero {
-  position: relative;
-  border-radius: 24px;
-  overflow: hidden;
-  margin-bottom: 28px;
+  position: relative; border-radius: 28px;
+  overflow: hidden; margin-bottom: 28px;
   border: 1px solid var(--border);
+  background: var(--base);
 }
-.profile-hero-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(135deg, rgba(201,168,76,.10) 0%, rgba(59,130,246,.06) 50%, rgba(34,197,94,.05) 100%),
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 40px,
-      rgba(255,255,255,.012) 40px,
-      rgba(255,255,255,.012) 41px
-    );
-}
-/* Corner accent lines */
-.profile-hero-bg::before,
-.profile-hero-bg::after {
-  content: '';
-  position: absolute;
-  border: 1px solid rgba(201,168,76,.15);
-  border-radius: 20px;
-}
-.profile-hero-bg::before { inset: 12px; }
-.profile-hero-bg::after  { inset: 22px; opacity: .5; }
 
-.profile-hero-inner {
+/* Decorative grid */
+.hero-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(200,168,75,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,168,75,0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, black 30%, transparent 100%);
+}
+
+.hero-bg-glow {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 100% 120% at 30% -30%, rgba(200,168,75,0.12), transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 100%, rgba(56,189,248,0.06), transparent);
+}
+
+/* Decorative corner ornaments */
+.hero-ornament {
+  position: absolute;
+  width: 80px; height: 80px;
+  opacity: 0.18;
+}
+.hero-ornament.tl { top: 16px; left: 16px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); border-radius: 4px 0 0 0; }
+.hero-ornament.tr { top: 16px; right: 16px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); border-radius: 0 4px 0 0; }
+.hero-ornament.bl { bottom: 16px; left: 16px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); border-radius: 0 0 0 4px; }
+.hero-ornament.br { bottom: 16px; right: 16px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); border-radius: 0 0 4px 0; }
+
+.hero-inner {
   position: relative;
-  padding: 36px 36px 30px;
-  display: flex;
-  align-items: flex-end;
-  gap: 28px;
+  padding: 44px 44px 36px;
+  display: flex; gap: 36px; align-items: flex-start;
   flex-wrap: wrap;
 }
-@media (max-width: 600px) {
-  .profile-hero-inner { padding: 28px 20px 24px; flex-direction: column; align-items: flex-start; gap: 18px; }
-}
+@media (max-width: 700px) { .hero-inner { padding: 32px 24px 28px; flex-direction: column; gap: 24px; } }
 
-/* Avatar ring */
-.avatar-ring-wrap {
-  position: relative;
-  flex-shrink: 0;
-}
+/* Avatar */
+.avatar-wrap { position: relative; flex-shrink: 0; }
+
 .avatar-ring {
-  width: 96px; height: 96px;
+  width: 110px; height: 110px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #c9a84c, #a87c28);
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold-dk));
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 34px;
-  font-weight: 400;
-  color: #040608;
-  position: relative;
-  cursor: pointer;
-  transition: transform .2s;
-  box-shadow: 0 0 0 3px rgba(201,168,76,.25), 0 0 40px rgba(201,168,76,.2);
-  overflow: hidden;
+  font-family: 'Playfair Display', serif;
+  font-size: 38px; font-weight: 400; color: var(--void);
+  position: relative; overflow: hidden;
+  cursor: pointer; transition: transform .3s;
+  box-shadow:
+    0 0 0 3px rgba(200,168,75,0.3),
+    0 0 40px rgba(200,168,75,0.25),
+    0 16px 48px rgba(0,0,0,0.5);
 }
-.avatar-ring:hover { transform: scale(1.04); }
-.avatar-ring img {
-  width: 100%; height: 100%;
-  object-fit: cover;
+.avatar-ring:hover { transform: scale(1.03); }
+.avatar-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.avatar-ring .avatar-initials { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+.avatar-ring .avatar-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s;
   border-radius: 50%;
 }
-.avatar-edit-btn {
-  position: absolute;
-  bottom: 2px; right: 2px;
-  width: 26px; height: 26px;
+.avatar-ring:hover .avatar-overlay { opacity: 1; }
+.avatar-ring .avatar-overlay i { color: white; font-size: 18px; }
+
+/* Upload progress ring */
+.avatar-progress {
+  position: absolute; inset: -5px;
   border-radius: 50%;
-  background: var(--surface);
+  border: 3px solid var(--gold);
+  border-top-color: transparent;
+  animation: spin .8s linear infinite;
+  display: none;
+}
+.avatar-progress.active { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.avatar-badge {
+  position: absolute; bottom: 4px; right: 4px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--lift);
   border: 2px solid var(--void);
   display: flex; align-items: center; justify-content: center;
-  color: var(--gold);
-  font-size: 10px;
-  cursor: pointer;
-  transition: all .2s;
+  color: var(--gold); font-size: 11px;
+  cursor: pointer; transition: all .2s;
 }
-.avatar-edit-btn:hover { background: var(--gold-dim); }
+.avatar-badge:hover { background: var(--gold-dim); }
 
-.profile-hero-meta { flex: 1; min-width: 200px; }
-.hero-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 36px;
-  font-weight: 300;
-  color: var(--snow);
-  letter-spacing: -.01em;
-  line-height: 1.1;
-  margin-bottom: 6px;
+.avatar-tier-ring {
+  position: absolute; inset: -8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold-rim);
+  pointer-events: none;
 }
-.hero-initials-badge {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--gold);
+
+/* Hero meta */
+.hero-meta { flex: 1; min-width: 220px; }
+
+.hero-tier-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px;
   background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
-  padding: 3px 10px;
+  border: 1px solid var(--gold-rim);
   border-radius: 20px;
-  letter-spacing: .12em;
-  display: inline-block;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
-.hero-email {
+.hero-tier-pill span {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--mist);
-  display: flex;
-  align-items: center;
-  gap: 7px;
+  font-size: 9px; letter-spacing: .18em;
+  color: var(--gold); text-transform: uppercase;
+}
+.tier-gem { font-size: 10px; }
+
+.hero-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px; font-weight: 400;
+  color: var(--snow); letter-spacing: -.02em;
+  line-height: 1.05; margin-bottom: 10px;
+}
+.hero-name em { font-style: italic; color: var(--gold); }
+
+.hero-email {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px; color: var(--mist); margin-bottom: 22px;
 }
 .hero-email i { color: var(--steel); }
 
-.hero-stats {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 18px;
+/* Live date/time bar */
+.hero-datetime {
+  display: flex; align-items: center; gap: 20px;
+  padding: 12px 18px;
+  background: rgba(0,0,0,.35);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  flex-wrap: wrap; gap: 14px;
 }
+.datetime-item { display: flex; flex-direction: column; gap: 2px; }
+.datetime-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--snow); font-weight: 500;
+}
+.datetime-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; letter-spacing: .14em;
+  color: var(--steel); text-transform: uppercase;
+}
+.datetime-divider { width: 1px; height: 32px; background: var(--border); }
+
+/* Hero stats */
+.hero-stats { display: flex; gap: 0; }
 .hero-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 0 22px;
+  border-right: 1px solid var(--border);
 }
+.hero-stat:first-child { padding-left: 0; }
+.hero-stat:last-child { border-right: none; }
 .hero-stat-val {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
-  font-weight: 300;
-  color: var(--snow);
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 400; color: var(--snow);
 }
 .hero-stat-lbl {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .14em;
-  color: var(--steel);
+  font-size: 8px; letter-spacing: .14em;
+  color: var(--steel); text-transform: uppercase;
+}
+
+/* Hero right panel */
+.hero-right {
+  display: flex; flex-direction: column; gap: 10px;
+  align-self: flex-start; min-width: 160px;
+}
+
+/* Account age card */
+.age-card {
+  padding: 16px 20px;
+  background: rgba(0,0,0,.4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  position: relative; overflow: hidden;
+}
+.age-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(200,168,75,0.06), transparent);
+  pointer-events: none;
+}
+.age-card-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; color: var(--gold); font-weight: 400;
+  line-height: 1; margin-bottom: 4px;
+}
+.age-card-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; letter-spacing: .14em; color: var(--steel);
   text-transform: uppercase;
 }
-
-.hero-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-self: flex-start;
-  margin-top: 6px;
+.age-card-sub {
+  font-size: 11px; color: var(--mist); margin-top: 6px;
 }
-@media (max-width: 600px) { .hero-actions { flex-direction: row; } }
 
-/* ── SECTION GRID ────────────────────────────────── */
-.section-grid {
+/* ══════════════════════════════════════════════════
+   TRADE ANALYTICS STRIP
+══════════════════════════════════════════════════ */
+.analytics-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
 }
-.section-grid.single { grid-template-columns: 1fr; }
-@media (max-width: 720px) { .section-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .analytics-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .analytics-grid { grid-template-columns: 1fr 1fr; } }
 
-/* ── CARD ────────────────────────────────────────── */
+.analytics-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 22px;
+  position: relative; overflow: hidden;
+  transition: border-color .25s, transform .2s;
+  cursor: default;
+}
+.analytics-card:hover {
+  border-color: var(--border-hi);
+  transform: translateY(-2px);
+}
+.analytics-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.analytics-card:hover::after { opacity: 0.5; }
+
+.ac-period {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; letter-spacing: .18em; color: var(--steel);
+  text-transform: uppercase; margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ac-period-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold); opacity: .6;
+}
+.ac-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 400;
+  color: var(--snow); line-height: 1;
+  margin-bottom: 4px;
+}
+.ac-label { font-size: 12px; color: var(--mist); }
+.ac-change {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; padding: 3px 8px;
+  border-radius: 20px;
+}
+.ac-change.up   { background: var(--gain-dim); color: var(--gain); }
+.ac-change.down { background: var(--loss-dim); color: var(--loss); }
+.ac-change.flat { background: rgba(255,255,255,.05); color: var(--mist); }
+
+.ac-sparkline {
+  position: absolute; bottom: 0; right: 0;
+  width: 80px; height: 44px;
+  opacity: 0.35;
+}
+
+/* ══════════════════════════════════════════════════
+   TWO-COL GRID
+══════════════════════════════════════════════════ */
+.grid-2 {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; margin-bottom: 20px;
+}
+.grid-2.single { grid-template-columns: 1fr; }
+@media (max-width: 780px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ══════════════════════════════════════════════════
+   CARD
+══════════════════════════════════════════════════ */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   transition: border-color .25s;
+  position: relative;
 }
-.card:hover { border-color: rgba(255,255,255,.11); }
+.card:hover { border-color: var(--border-hi); }
+
+/* Subtle top shimmer line */
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,168,75,0.25), transparent);
+  pointer-events: none;
+}
+
 .card-header {
-  padding: 18px 22px 14px;
+  padding: 18px 24px 14px;
   border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
 }
-.card-title-wrap { display: flex; align-items: center; gap: 10px; }
+.card-title-group { display: flex; align-items: center; gap: 12px; }
 .card-icon {
-  width: 32px; height: 32px;
-  border-radius: 9px;
+  width: 34px; height: 34px;
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px;
-  flex-shrink: 0;
+  font-size: 13px; flex-shrink: 0;
 }
 .card-title {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .16em;
-  color: var(--steel);
-  text-transform: uppercase;
+  font-size: 9px; letter-spacing: .18em;
+  color: var(--steel); text-transform: uppercase;
 }
-.card-body { padding: 20px 22px; }
+.card-body { padding: 22px 24px; }
 
-/* ── INFO ROWS ───────────────────────────────────── */
+/* ── INFO ROWS ────────────────────────────────── */
 .info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,.04);
-  gap: 12px;
+  display: flex; justify-content: space-between;
+  align-items: center; padding: 11px 0;
+  border-bottom: 1px solid rgba(255,255,255,.038); gap: 12px;
 }
 .info-row:last-child { border-bottom: none; }
 .info-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--steel);
-  letter-spacing: .06em;
-  flex-shrink: 0;
+  font-size: 10px; color: var(--steel);
+  letter-spacing: .06em; flex-shrink: 0;
 }
-.info-value {
-  font-size: 13px;
-  color: var(--snow);
-  text-align: right;
-  word-break: break-all;
-}
-.info-value.mono {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-}
+.info-value { font-size: 13px; color: var(--snow); text-align: right; word-break: break-all; }
+.info-value.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
 .info-value.muted { color: var(--mist); }
+.info-value.gold  { color: var(--gold); font-family: 'JetBrains Mono', monospace; }
 
-/* ── FORM FIELDS ─────────────────────────────────── */
-.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+/* ── FORM FIELDS ──────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .field:last-child { margin-bottom: 0; }
 .field-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .12em;
-  color: var(--steel);
-  text-transform: uppercase;
+  font-size: 9px; letter-spacing: .14em;
+  color: var(--steel); text-transform: uppercase;
 }
 .field-input {
   background: var(--deep);
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--snow);
-  outline: none;
-  width: 100%;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-sm);
+  padding: 13px 16px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; color: var(--snow);
+  outline: none; width: 100%;
   transition: border-color .2s, box-shadow .2s;
+  appearance: none;
 }
 .field-input:focus {
-  border-color: rgba(201,168,76,.45);
-  box-shadow: 0 0 0 3px rgba(201,168,76,.08);
+  border-color: rgba(200,168,75,.5);
+  box-shadow: 0 0 0 3px rgba(200,168,75,.09);
 }
 .field-input::placeholder { color: var(--steel); }
-.field-input:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
-.field-hint {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--steel);
-  letter-spacing: .04em;
-}
+.field-input:disabled { opacity: .35; cursor: not-allowed; }
+.field-hint { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel); }
 
-.form-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-@media (max-width: 520px) { .form-grid-2 { grid-template-columns: 1fr; } }
+.form-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 520px) { .form-2 { grid-template-columns: 1fr; } }
 
-/* ── BUTTONS ─────────────────────────────────────── */
+/* ── BUTTONS ──────────────────────────────────── */
 .btn {
-  padding: 10px 20px;
-  border-radius: 11px;
-  border: none;
+  padding: 11px 22px;
+  border-radius: 11px; border: none;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px; font-weight: 500;
   transition: all .2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 8px;
+  white-space: nowrap; letter-spacing: .01em;
 }
 .btn-gold {
-  background: linear-gradient(135deg, #c9a84c, #a87c28);
-  color: #040608;
-  font-weight: 600;
+  background: linear-gradient(135deg, #e8c96a, #c9a84c, #a87c28);
+  color: var(--void); font-weight: 600;
+  box-shadow: 0 4px 20px rgba(200,168,75,0.2);
 }
-.btn-gold:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,.25); }
+.btn-gold:hover {
+  opacity: .92; transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(200,168,75,0.35);
+}
 .btn-ghost {
   background: rgba(255,255,255,.05);
-  border: 1px solid var(--border);
-  color: var(--steel);
+  border: 1px solid var(--border); color: var(--mist);
 }
 .btn-ghost:hover { background: rgba(255,255,255,.09); color: var(--snow); }
-.btn-loss-ghost {
+.btn-danger {
   background: var(--loss-dim);
-  border: 1px solid rgba(239,68,68,.2);
-  color: var(--loss);
+  border: 1px solid rgba(240,74,74,.22); color: var(--loss);
 }
-.btn-loss-ghost:hover { background: rgba(239,68,68,.18); }
-.btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 9px; }
+.btn-danger:hover { background: rgba(240,74,74,.15); }
+.btn-sm { padding: 8px 16px; font-size: 12px; border-radius: 9px; }
 .btn-full { width: 100%; justify-content: center; }
 
-/* ── AVATAR SELECTOR ─────────────────────────────── */
-.avatar-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.avatar-option {
-  aspect-ratio: 1;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 18px;
-  font-weight: 400;
-  color: #040608;
-  cursor: pointer;
-  transition: all .2s;
-  border: 2px solid transparent;
-  user-select: none;
-}
-.avatar-option:hover { transform: scale(1.1); }
-.avatar-option.selected {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(201,168,76,.3);
-}
-
-/* ── MEMBERSHIP BADGE ────────────────────────────── */
+/* ── TIER BADGE ───────────────────────────────── */
 .tier-badge {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 18px;
-  background: linear-gradient(135deg, rgba(201,168,76,.10), rgba(201,168,76,.04));
-  border: 1px solid var(--gold-border);
-  border-radius: 14px;
-  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, rgba(200,168,75,.10), rgba(200,168,75,.04));
+  border: 1px solid var(--gold-rim);
+  border-radius: var(--radius-md); margin-bottom: 18px;
+  position: relative; overflow: hidden;
+}
+.tier-badge::after {
+  content: '◈';
+  position: absolute; right: 16px; bottom: -8px;
+  font-size: 56px; color: rgba(200,168,75,.04);
+  pointer-events: none; line-height: 1;
 }
 .tier-icon {
-  width: 40px; height: 40px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #c9a84c, #a87c28);
+  width: 46px; height: 46px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold-dk));
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
+  font-size: 20px; flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(200,168,75,0.3);
 }
 .tier-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--gold);
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 400; color: var(--gold);
 }
-.tier-desc {
+.tier-name em { font-style: italic; }
+.tier-sub {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--steel);
-  letter-spacing: .08em;
-  margin-top: 2px;
+  font-size: 8px; letter-spacing: .14em;
+  color: var(--steel); text-transform: uppercase; margin-top: 3px;
 }
 
-/* ── ACTIVITY TIMELINE ───────────────────────────── */
-.timeline { display: flex; flex-direction: column; gap: 0; }
-.timeline-item {
-  display: flex;
-  gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,.04);
-  position: relative;
-}
-.timeline-item:last-child { border-bottom: none; }
-.timeline-dot-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  padding-top: 2px;
-}
-.timeline-dot {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px;
-  flex-shrink: 0;
-}
-.timeline-line {
-  width: 1px;
-  flex: 1;
-  background: rgba(255,255,255,.06);
-  margin-top: 6px;
-  margin-bottom: -14px;
-}
-.timeline-item:last-child .timeline-line { display: none; }
-.timeline-content { flex: 1; min-width: 0; }
-.timeline-event {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--snow);
-  margin-bottom: 2px;
-}
-.timeline-time {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--steel);
-}
-
-/* ── STAT STRIP ──────────────────────────────────── */
+/* Stat strip */
 .stat-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-  margin-bottom: 16px;
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: var(--border);
+  border-radius: 14px; overflow: hidden; margin-bottom: 18px;
 }
 .stat-strip-item {
-  background: var(--deep);
-  padding: 16px 18px;
-  text-align: center;
+  background: var(--deep); padding: 16px 12px; text-align: center;
 }
 .stat-strip-val {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 24px;
-  font-weight: 300;
-  color: var(--snow);
-  margin-bottom: 3px;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 400; color: var(--snow); margin-bottom: 3px;
 }
 .stat-strip-lbl {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .14em;
-  color: var(--steel);
-  text-transform: uppercase;
+  font-size: 8px; letter-spacing: .12em; color: var(--steel); text-transform: uppercase;
 }
 
-/* ── MODAL ───────────────────────────────────────── */
+/* ── TIMELINE ─────────────────────────────────── */
+.timeline { display: flex; flex-direction: column; }
+.tl-item {
+  display: flex; gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,.035);
+}
+.tl-item:last-child { border-bottom: none; }
+.tl-dot-col { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; padding-top: 2px; }
+.tl-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0;
+}
+.tl-line {
+  width: 1px; flex: 1; margin-top: 6px; margin-bottom: -14px;
+  background: rgba(255,255,255,.05);
+}
+.tl-item:last-child .tl-line { display: none; }
+.tl-content { flex: 1; min-width: 0; }
+.tl-event { font-size: 13px; font-weight: 500; color: var(--snow); margin-bottom: 2px; }
+.tl-time { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel); }
+
+/* ── PREFERENCES TOGGLES ──────────────────────── */
+.pref-toggle-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255,255,255,.035);
+  gap: 16px;
+}
+.pref-toggle-row:last-child { border-bottom: none; }
+.pref-info {}
+.pref-name { font-size: 13px; font-weight: 500; color: var(--snow); margin-bottom: 2px; }
+.pref-desc { font-size: 11px; color: var(--mist); }
+
+/* Custom toggle */
+.toggle-wrap { position: relative; width: 42px; height: 24px; cursor: pointer; flex-shrink: 0; }
+.toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-track {
+  position: absolute; inset: 0; border-radius: 12px;
+  background: rgba(255,255,255,.09);
+  border: 1px solid var(--border);
+  transition: all .28s;
+}
+.toggle-thumb {
+  position: absolute; left: 4px; top: 4px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--steel); transition: all .28s;
+}
+.toggle-wrap input:checked ~ .toggle-track {
+  background: rgba(200,168,75,.35);
+  border-color: var(--gold-rim);
+}
+.toggle-wrap input:checked ~ .toggle-thumb {
+  left: 22px; background: var(--gold);
+}
+
+/* ── PHOTO UPLOAD ─────────────────────────────── */
+.upload-zone {
+  border: 2px dashed rgba(200,168,75,.25);
+  border-radius: var(--radius-md);
+  padding: 28px;
+  text-align: center; cursor: pointer;
+  transition: all .25s; margin-bottom: 14px;
+  background: var(--gold-dim);
+}
+.upload-zone:hover {
+  border-color: rgba(200,168,75,.5);
+  background: rgba(200,168,75,.12);
+}
+.upload-zone i { font-size: 28px; color: var(--gold); margin-bottom: 10px; display: block; }
+.upload-zone-title { font-size: 14px; font-weight: 500; color: var(--snow); margin-bottom: 4px; }
+.upload-zone-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel); letter-spacing: .06em; }
+#photoFileInput { display: none; }
+
+/* ── MODAL ────────────────────────────────────── */
 .modal-bg {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,.82);
-  backdrop-filter: blur(14px);
-  z-index: 200;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(18px);
+  z-index: 200; display: none;
+  align-items: center; justify-content: center; padding: 16px;
 }
 .modal-bg.open { display: flex; }
 .modal {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 22px;
-  padding: 28px;
-  width: 100%;
-  max-width: 460px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 40px 100px rgba(0,0,0,.8);
+  border-radius: 24px; padding: 32px;
+  width: 100%; max-width: 480px;
+  max-height: 92vh; overflow-y: auto;
+  box-shadow: 0 48px 120px rgba(0,0,0,.9);
+  position: relative;
+}
+.modal::before {
+  content: '';
+  position: absolute; top: 0; left: 25%; right: 25%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-rim), transparent);
 }
 .modal-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 24px;
-  font-weight: 300;
-  color: var(--snow);
-  margin-bottom: 5px;
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 400; color: var(--snow); margin-bottom: 4px;
 }
+.modal-title em { font-style: italic; color: var(--gold); }
 .modal-sub {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: var(--steel);
-  letter-spacing: .1em;
-  margin-bottom: 22px;
+  font-size: 8px; color: var(--steel);
+  letter-spacing: .14em; margin-bottom: 26px;
+  text-transform: uppercase;
 }
 .modal-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  justify-content: flex-end;
+  display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end;
+}
+.modal-err {
+  padding: 11px 16px;
+  background: var(--loss-dim);
+  border: 1px solid rgba(240,74,74,.22);
+  border-radius: 10px; font-size: 12px;
+  color: var(--loss); margin-top: 10px; display: none;
 }
 
-/* ── SAVE INDICATOR ──────────────────────────────── */
-.save-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+/* Avatar color grid */
+.color-grid {
+  display: grid; grid-template-columns: repeat(6,1fr);
+  gap: 10px; margin-bottom: 18px;
+}
+.color-opt {
+  aspect-ratio: 1; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 17px; font-weight: 400; color: var(--void);
+  cursor: pointer; transition: all .2s;
+  border: 2px solid transparent; user-select: none;
+}
+.color-opt:hover { transform: scale(1.12); }
+.color-opt.selected {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(200,168,75,.3);
+}
+
+/* Avatar preview */
+#avatarPreview {
+  width: 90px; height: 90px;
+  border-radius: 50%; margin: 0 auto 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 32px; color: var(--void);
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold-dk));
+  box-shadow: 0 0 0 4px rgba(200,168,75,.25), 0 0 40px rgba(200,168,75,.2);
+  transition: all .3s; overflow: hidden;
+}
+#avatarPreview img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+/* ── SAVE INDICATOR ───────────────────────────── */
+.save-ind {
+  display: inline-flex; align-items: center; gap: 6px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--gain);
-  opacity: 0;
-  transition: opacity .3s;
+  font-size: 9px; color: var(--gain);
+  opacity: 0; transition: opacity .3s;
 }
-.save-indicator.show { opacity: 1; }
+.save-ind.show { opacity: 1; }
 
-/* ── DANGER ZONE ─────────────────────────────────── */
+/* ── DANGER ZONE ──────────────────────────────── */
 .danger-zone {
-  border: 1px solid rgba(239,68,68,.18);
-  border-radius: 16px;
-  overflow: hidden;
+  border: 1px solid rgba(240,74,74,.18);
+  border-radius: var(--radius-lg); overflow: hidden;
 }
-.danger-zone-header {
-  padding: 14px 20px;
-  background: rgba(239,68,68,.06);
-  border-bottom: 1px solid rgba(239,68,68,.12);
+.danger-header {
+  padding: 14px 22px;
+  background: rgba(240,74,74,.06);
+  border-bottom: 1px solid rgba(240,74,74,.12);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  letter-spacing: .16em;
-  color: var(--loss);
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 9px; letter-spacing: .18em;
+  color: var(--loss); text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
 }
-.danger-zone-body { padding: 18px 20px; }
-.danger-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
+.danger-body { padding: 20px 22px; }
+.danger-row {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 20px; flex-wrap: wrap;
 }
-.danger-desc { font-size: 13px; color: var(--mist); line-height: 1.5; }
-.danger-desc strong { color: var(--snow); }
+.danger-text { font-size: 13px; color: var(--mist); line-height: 1.5; }
+.danger-text strong { color: var(--snow); font-weight: 600; }
 
-/* ── TOAST ───────────────────────────────────────── */
+/* ── TOAST ────────────────────────────────────── */
 #toast {
-  position: fixed;
-  bottom: 24px; right: 24px;
+  position: fixed; bottom: 28px; right: 28px;
   z-index: 9999;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 20px 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 260px;
-  max-width: calc(100vw - 48px);
-  box-shadow: 0 24px 64px rgba(0,0,0,.6);
-  transform: translateY(20px);
-  opacity: 0;
+  border-radius: 16px; padding: 15px 20px 15px 16px;
+  display: flex; align-items: center; gap: 14px;
+  min-width: 280px; max-width: calc(100vw - 48px);
+  box-shadow: 0 24px 80px rgba(0,0,0,.7);
+  transform: translateY(24px); opacity: 0;
   pointer-events: none;
-  transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .35s;
+  transition: transform .4s cubic-bezier(.16,1,.3,1), opacity .4s;
 }
 #toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
-#toast.success { border-color: rgba(34,197,94,.3); }
-#toast.error   { border-color: rgba(239,68,68,.3); }
-#toast.info    { border-color: var(--gold-border); }
 .toast-icon {
-  width: 34px; height: 34px;
-  border-radius: 10px;
+  width: 36px; height: 36px; border-radius: 11px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
-  flex-shrink: 0;
+  font-size: 14px; flex-shrink: 0;
 }
-.toast-body {}
 .toast-title { font-size: 13px; font-weight: 600; color: var(--snow); }
 .toast-sub   { font-size: 11px; color: var(--steel); margin-top: 1px; }
 
-/* ── SPIN ────────────────────────────────────────── */
-@keyframes spin { to { transform: rotate(360deg); } }
-.spin {
-  display: inline-block;
-  width: 15px; height: 15px;
+/* ── SPINNER ──────────────────────────────────── */
+.spin-sm {
+  display: inline-block; width: 14px; height: 14px;
   border: 2px solid rgba(255,255,255,.12);
   border-top-color: var(--gold);
   border-radius: 50%;
   animation: spin .65s linear infinite;
 }
 
-/* ── SCROLLBAR ───────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,.09); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 4px; }
 </style>
 </head>
 <body>
 
-<!-- Mobile overlay -->
 <div id="overlay" onclick="closeSidebar()"></div>
 
 <!-- ═══ SIDEBAR ═══════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
   <a href="dashboard.html" class="logo">
     <div class="logo-mark">A</div>
-    <span class="logo-text">Aurum</span>
+    <div class="logo-name">
+      <span class="logo-name-top">Aurum</span>
+      <span class="logo-name-sub">Capital</span>
+    </div>
   </a>
 
-  <span class="nav-section-label">Overview</span>
+  <span class="nav-label">Overview</span>
   <a href="dashboard.html" class="nav-item"><i class="fas fa-gauge-high"></i>Dashboard</a>
   <a href="invest.html"    class="nav-item"><i class="fas fa-chart-line"></i>Invest</a>
+   <a href="trade.html"    class="nav-item"><i class="fas fa-arrow-right-arrow-left"></i>Trades</a>
   <a href="#"              class="nav-item"><i class="fas fa-briefcase"></i>Portfolio</a>
   <a href="#"              class="nav-item"><i class="fas fa-repeat"></i>Transactions</a>
 
-  <span class="nav-section-label">Markets</span>
+  <span class="nav-label">Markets</span>
   <a href="#" class="nav-item"><i class="fab fa-bitcoin"></i>Crypto</a>
   <a href="#" class="nav-item"><i class="fas fa-chart-bar"></i>Stocks</a>
   <a href="#" class="nav-item"><i class="fas fa-layer-group"></i>Commodities</a>
 
-  <span class="nav-section-label">Account</span>
+  <span class="nav-label">Account</span>
   <a href="profile.html" class="nav-item active"><i class="fas fa-user-circle"></i>Profile</a>
-  <!-- <a href="dashboard.html" class="nav-item"><i class="fas fa-shield-halved"></i>Security</a> -->
   <a href="#" id="signOutBtn" class="nav-item"><i class="fas fa-arrow-right-from-bracket"></i>Sign Out</a>
 
   <div class="sidebar-footer">
@@ -882,156 +1027,210 @@ body::before {
   </div>
 </aside>
 
-<!-- ═══ MAIN ═════════════════════════════════════════ -->
+<!-- ═══ MAIN ══════════════════════════════════════ -->
 <div class="main">
 
   <!-- TOPBAR -->
   <header class="topbar">
     <div class="topbar-left">
       <button class="hamburger" onclick="openSidebar()">
-        <svg width="17" height="13" viewBox="0 0 17 13" fill="none">
-          <path d="M0 1h17M0 6.5h17M0 12h17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+          <path d="M0 1h16M0 6h16M0 11h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
       </button>
-      <span class="topbar-title">My <em style="font-style:italic;color:var(--gold)">Profile</em></span>
+      <span class="topbar-title">My <em>Profile</em></span>
     </div>
     <div class="topbar-right">
-      <span class="topbar-pill" id="memberSince">MEMBER</span>
+      <div class="live-clock">
+        <div class="live-dot"></div>
+        <span class="live-clock-text" id="topClock">—</span>
+      </div>
       <button class="btn btn-ghost btn-sm" onclick="openEditModal()">
-        <i class="fas fa-pen-to-square" style="font-size:11px"></i> Edit Profile
+        <i class="fas fa-pen" style="font-size:11px"></i> Edit
       </button>
     </div>
   </header>
 
-  <!-- PAGE BODY -->
   <div class="page-body">
 
-    <!-- ── HERO ─────────────────────────────────── -->
+    <!-- ── HERO ──────────────────────────────────── -->
     <div class="profile-hero a1">
-      <div class="profile-hero-bg"></div>
-      <div class="profile-hero-inner">
+      <div class="hero-bg"></div>
+      <div class="hero-bg-glow"></div>
+      <div class="hero-ornament tl"></div>
+      <div class="hero-ornament tr"></div>
+      <div class="hero-ornament bl"></div>
+      <div class="hero-ornament br"></div>
+
+      <div class="hero-inner">
 
         <!-- Avatar -->
-        <div class="avatar-ring-wrap">
+        <div class="avatar-wrap">
           <div class="avatar-ring" id="heroAvatar" onclick="openAvatarModal()" title="Change avatar">
-            <span id="heroInitials">…</span>
+            <span class="avatar-initials" id="heroInitials">…</span>
+            <div class="avatar-overlay"><i class="fas fa-camera"></i></div>
           </div>
-          <div class="avatar-edit-btn" onclick="openAvatarModal()">
-            <i class="fas fa-camera"></i>
+          <div class="avatar-tier-ring"></div>
+          <div class="avatar-progress" id="avatarProgress"></div>
+          <div class="avatar-badge" onclick="openAvatarModal()">
+            <i class="fas fa-pen"></i>
           </div>
         </div>
 
         <!-- Meta -->
-        <div class="profile-hero-meta">
-          <div class="hero-initials-badge" id="heroBadge">—</div>
+        <div class="hero-meta">
+          <div class="hero-tier-pill">
+            <span class="tier-gem">◈</span>
+            <span id="heroBadge">AURUM PRIME</span>
+          </div>
           <h1 class="hero-name" id="heroName">Loading…</h1>
           <div class="hero-email">
-            <i class="fas fa-envelope"></i>
+            <i class="fas fa-at"></i>
             <span id="heroEmail">—</span>
           </div>
+
+          <!-- Live date/time bar -->
+          <div class="hero-datetime">
+            <div class="datetime-item">
+              <div class="datetime-val" id="liveDate">—</div>
+              <div class="datetime-lbl">Date</div>
+            </div>
+            <div class="datetime-divider"></div>
+            <div class="datetime-item">
+              <div class="datetime-val" id="liveTime">—</div>
+              <div class="datetime-lbl">Time (Local)</div>
+            </div>
+            <div class="datetime-divider"></div>
+            <div class="datetime-item">
+              <div class="datetime-val" id="liveUTC">—</div>
+              <div class="datetime-lbl">UTC</div>
+            </div>
+            <div class="datetime-divider"></div>
+            <div class="datetime-item">
+              <div class="datetime-val" id="liveDay">—</div>
+              <div class="datetime-lbl">Day</div>
+            </div>
+          </div>
+
+          <!-- Stats -->
           <div class="hero-stats">
             <div class="hero-stat">
               <span class="hero-stat-val" id="heroMemberDays">—</span>
-              <span class="hero-stat-lbl">Days as Member</span>
+              <span class="hero-stat-lbl">Days Member</span>
             </div>
-            <div class="hero-stat" style="border-left:1px solid rgba(255,255,255,.08);padding-left:20px">
-              <span class="hero-stat-val" id="heroHoldings">—</span>
+            <div class="hero-stat">
+              <span class="hero-stat-val" id="heroPositions">—</span>
               <span class="hero-stat-lbl">Positions</span>
             </div>
-            <div class="hero-stat" style="border-left:1px solid rgba(255,255,255,.08);padding-left:20px">
-              <span class="hero-stat-val" id="heroTxCount">—</span>
-              <span class="hero-stat-lbl">Transactions</span>
+            <div class="hero-stat">
+              <span class="hero-stat-val" id="heroTrades">—</span>
+              <span class="hero-stat-lbl">Total Trades</span>
             </div>
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="hero-actions">
-          <button class="btn btn-gold btn-sm" onclick="openEditModal()">
-            <i class="fas fa-pen" style="font-size:10px"></i> Edit
+        <!-- Right: Age card + actions -->
+        <div class="hero-right">
+          <div class="age-card">
+            <div class="age-card-val" id="heroAge">—</div>
+            <div class="age-card-lbl">Account Age</div>
+            <div class="age-card-sub" id="heroAgeDetail">Member since —</div>
+          </div>
+          <button class="btn btn-gold btn-sm btn-full" onclick="openEditModal()">
+            <i class="fas fa-pen" style="font-size:10px"></i> Edit Profile
           </button>
-          <button class="btn btn-ghost btn-sm" onclick="openAvatarModal()">
-            <i class="fas fa-image" style="font-size:10px"></i> Avatar
+          <button class="btn btn-ghost btn-sm btn-full" onclick="openAvatarModal()">
+            <i class="fas fa-image" style="font-size:10px"></i> Change Avatar
           </button>
         </div>
 
       </div>
     </div>
 
-    <!-- ── ROW 1: Account Info + Membership ──────── -->
-    <div class="section-grid a2">
+    <!-- ── TRADE ANALYTICS ────────────────────────── -->
+    <div class="analytics-grid a2">
 
-      <!-- Account Information -->
+      <div class="analytics-card" id="ac-day">
+        <div class="ac-period">Today <div class="ac-period-dot"></div></div>
+        <div class="ac-val" id="ac-day-val">—</div>
+        <div class="ac-label">Trades Today</div>
+        <div class="ac-change flat" id="ac-day-badge">0 buys · 0 sells</div>
+        <svg class="ac-sparkline" viewBox="0 0 80 44" fill="none" id="spark-day"></svg>
+      </div>
+
+      <div class="analytics-card" id="ac-week">
+        <div class="ac-period">This Week <div class="ac-period-dot"></div></div>
+        <div class="ac-val" id="ac-week-val">—</div>
+        <div class="ac-label">Trades This Week</div>
+        <div class="ac-change flat" id="ac-week-badge">—</div>
+        <svg class="ac-sparkline" viewBox="0 0 80 44" fill="none" id="spark-week"></svg>
+      </div>
+
+      <div class="analytics-card" id="ac-month">
+        <div class="ac-period">This Month <div class="ac-period-dot"></div></div>
+        <div class="ac-val" id="ac-month-val">—</div>
+        <div class="ac-label">Trades This Month</div>
+        <div class="ac-change flat" id="ac-month-badge">—</div>
+        <svg class="ac-sparkline" viewBox="0 0 80 44" fill="none" id="spark-month"></svg>
+      </div>
+
+      <div class="analytics-card" id="ac-year">
+        <div class="ac-period">This Year <div class="ac-period-dot"></div></div>
+        <div class="ac-val" id="ac-year-val">—</div>
+        <div class="ac-label">Trades This Year</div>
+        <div class="ac-change flat" id="ac-year-badge">—</div>
+        <svg class="ac-sparkline" viewBox="0 0 80 44" fill="none" id="spark-year"></svg>
+      </div>
+
+    </div>
+
+    <!-- ── ROW 1: Account Info + Membership ──────── -->
+    <div class="grid-2 a3">
+
       <div class="card">
         <div class="card-header">
-          <div class="card-title-wrap">
-            <div class="card-icon" style="background:rgba(59,130,246,.1);color:var(--accent)">
-              <i class="fas fa-id-card"></i>
-            </div>
+          <div class="card-title-group">
+            <div class="card-icon" style="background:rgba(56,189,248,.1);color:var(--cyan)"><i class="fas fa-id-card"></i></div>
             <span class="card-title">Account Information</span>
           </div>
         </div>
         <div class="card-body">
+          <div class="info-row"><span class="info-label">Full Name</span><span class="info-value" id="infoFullName">—</span></div>
+          <div class="info-row"><span class="info-label">Initials</span><span class="info-value gold" id="infoInitials">—</span></div>
+          <div class="info-row"><span class="info-label">Email</span><span class="info-value mono muted" id="infoEmail" style="font-size:10px">—</span></div>
+          <div class="info-row"><span class="info-label">User ID</span><span class="info-value mono muted" id="infoUserId" style="font-size:9px;color:var(--steel)">—</span></div>
           <div class="info-row">
-            <span class="info-label">Full Name</span>
-            <span class="info-value" id="infoFullName">—</span>
+            <span class="info-label">Status</span>
+            <span class="info-value"><span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 10px;border-radius:20px;background:var(--gain-dim);color:var(--gain);border:1px solid rgba(29,214,115,.2)">● Active</span></span>
           </div>
-          <div class="info-row">
-            <span class="info-label">Display Initials</span>
-            <span class="info-value mono" id="infoInitials" style="color:var(--gold)">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Email Address</span>
-            <span class="info-value mono muted" id="infoEmail" style="font-size:11px">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">User ID</span>
-            <span class="info-value mono muted" id="infoUserId" style="font-size:9px;color:var(--steel)">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Account Status</span>
-            <span class="info-value">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 9px;border-radius:20px;background:var(--gain-dim);color:var(--gain);border:1px solid rgba(34,197,94,.2)">
-                ● Active
-              </span>
-            </span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Member Since</span>
-            <span class="info-value mono muted" id="infoCreatedAt">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Last Updated</span>
-            <span class="info-value mono muted" id="infoUpdatedAt">—</span>
-          </div>
+          <div class="info-row"><span class="info-label">Member Since</span><span class="info-value mono muted" id="infoCreatedAt">—</span></div>
+          <div class="info-row"><span class="info-label">Last Updated</span><span class="info-value mono muted" id="infoUpdatedAt">—</span></div>
+          <div class="info-row"><span class="info-label">Account Age</span><span class="info-value gold" id="infoAge">—</span></div>
         </div>
       </div>
 
-      <!-- Membership & Tier -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title-wrap">
-            <div class="card-icon" style="background:var(--gold-dim);color:var(--gold)">
-              <i class="fas fa-crown"></i>
-            </div>
-            <span class="card-title">Membership</span>
+          <div class="card-title-group">
+            <div class="card-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="fas fa-crown"></i></div>
+            <span class="card-title">Membership & Tier</span>
           </div>
         </div>
         <div class="card-body">
           <div class="tier-badge">
             <div class="tier-icon">◈</div>
             <div>
-              <div class="tier-name">Aurum <em style="font-style:italic">Prime</em></div>
-              <div class="tier-desc">FULL ACCESS MEMBER · ALL MARKETS</div>
+              <div class="tier-name">Aurum <em>Prime</em></div>
+              <div class="tier-sub">Full Access · All Markets · Unlimited</div>
             </div>
           </div>
           <div class="stat-strip">
             <div class="stat-strip-item">
-              <div class="stat-strip-val" id="stripHoldings">—</div>
+              <div class="stat-strip-val" id="stripPositions">—</div>
               <div class="stat-strip-lbl">Positions</div>
             </div>
             <div class="stat-strip-item">
-              <div class="stat-strip-val" id="stripTx">—</div>
+              <div class="stat-strip-val" id="stripTrades">—</div>
               <div class="stat-strip-lbl">Trades</div>
             </div>
             <div class="stat-strip-item">
@@ -1039,49 +1238,28 @@ body::before {
               <div class="stat-strip-lbl">Days</div>
             </div>
           </div>
-          <div class="info-row">
-            <span class="info-label">Account Type</span>
-            <span class="info-value mono" style="color:var(--gold)">Individual Investor</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Region</span>
-            <span class="info-value mono muted">Global · Unrestricted</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Trade Limit</span>
-            <span class="info-value mono muted">Unlimited</span>
-          </div>
-          <div class="info-row" style="border-bottom:none">
-            <span class="info-label">2FA</span>
-            <span class="info-value">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--gold-border)">
-                Platform Managed
-              </span>
-            </span>
-          </div>
+          <div class="info-row"><span class="info-label">Account Type</span><span class="info-value gold">Individual Investor</span></div>
+          <div class="info-row"><span class="info-label">Region</span><span class="info-value mono muted">Global · Unrestricted</span></div>
+          <div class="info-row"><span class="info-label">Trade Limit</span><span class="info-value mono muted">Unlimited</span></div>
+          <div class="info-row" style="border-bottom:none"><span class="info-label">Security</span><span class="info-value"><span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 10px;border-radius:20px;background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-rim)">Platform Managed</span></span></div>
         </div>
       </div>
 
     </div>
 
     <!-- ── ROW 2: Edit Profile + Activity ─────────── -->
-    <div class="section-grid a3">
+    <div class="grid-2 a4">
 
-      <!-- Edit Profile Card -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title-wrap">
-            <div class="card-icon" style="background:var(--gold-dim);color:var(--gold)">
-              <i class="fas fa-pen-to-square"></i>
-            </div>
+          <div class="card-title-group">
+            <div class="card-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="fas fa-pen-to-square"></i></div>
             <span class="card-title">Edit Profile</span>
           </div>
-          <div class="save-indicator" id="saveIndicator">
-            <i class="fas fa-check-circle"></i> Saved
-          </div>
+          <div class="save-ind" id="saveIndicator"><i class="fas fa-check-circle"></i> Saved</div>
         </div>
         <div class="card-body">
-          <div class="form-grid-2">
+          <div class="form-2">
             <div class="field">
               <label class="field-label">First Name</label>
               <input class="field-input" id="editFirstName" type="text" placeholder="First name">
@@ -1094,56 +1272,46 @@ body::before {
           <div class="field">
             <label class="field-label">Display Initials</label>
             <input class="field-input" id="editInitials" type="text" placeholder="e.g. JD" maxlength="3">
-            <span class="field-hint">Up to 3 characters — shown in your avatar</span>
+            <span class="field-hint">Up to 3 characters · shown in your avatar</span>
           </div>
           <div class="field">
             <label class="field-label">Email Address</label>
-            <input class="field-input" id="editEmail" type="email" disabled style="opacity:.4;cursor:not-allowed">
-            <span class="field-hint">Email is managed by authentication and cannot be changed here</span>
+            <input class="field-input" id="editEmail" type="email" disabled>
+            <span class="field-hint">Managed by authentication — contact support to change</span>
           </div>
           <button class="btn btn-gold btn-full" onclick="saveProfileInline()" id="saveInlineBtn">
-            <i class="fas fa-floppy-disk" style="font-size:12px"></i>
-            Save Changes
+            <i class="fas fa-floppy-disk" style="font-size:12px"></i> Save Changes
           </button>
         </div>
       </div>
 
-      <!-- Recent Activity Timeline -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title-wrap">
-            <div class="card-icon" style="background:rgba(139,92,246,.1);color:#a78bfa">
-              <i class="fas fa-clock-rotate-left"></i>
-            </div>
+          <div class="card-title-group">
+            <div class="card-icon" style="background:rgba(139,92,246,.1);color:#a78bfa"><i class="fas fa-clock-rotate-left"></i></div>
             <span class="card-title">Recent Activity</span>
           </div>
         </div>
-        <div class="card-body" style="padding-top:12px">
+        <div class="card-body" style="padding-top:14px">
           <div class="timeline" id="activityTimeline">
-            <div style="text-align:center;padding:24px;color:var(--steel)">
-              <div class="spin"></div>
-            </div>
+            <div style="text-align:center;padding:28px"><div class="spin-sm" style="margin:0 auto"></div></div>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- ── ROW 3: Preferences + Danger Zone ───────── -->
-    <div class="section-grid a4">
+    <!-- ── ROW 3: Preferences + Account Details ────── -->
+    <div class="grid-2 a5">
 
-      <!-- Preferences -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title-wrap">
-            <div class="card-icon" style="background:rgba(34,197,94,.1);color:var(--gain)">
-              <i class="fas fa-sliders"></i>
-            </div>
+          <div class="card-title-group">
+            <div class="card-icon" style="background:rgba(29,214,115,.1);color:var(--gain)"><i class="fas fa-sliders"></i></div>
             <span class="card-title">Preferences</span>
           </div>
         </div>
         <div class="card-body">
-          <!-- Display currency -->
           <div class="field">
             <label class="field-label">Display Currency</label>
             <select class="field-input" id="prefCurrency" onchange="savePref('currency',this.value)">
@@ -1151,110 +1319,82 @@ body::before {
               <option value="EUR">EUR — Euro (€)</option>
               <option value="GBP">GBP — British Pound (£)</option>
               <option value="JPY">JPY — Japanese Yen (¥)</option>
+              <option value="NGN">NGN — Nigerian Naira (₦)</option>
             </select>
           </div>
-          <!-- Price display -->
-          <div class="field">
+          <div class="field" style="margin-bottom:6px">
             <label class="field-label">Number Format</label>
             <select class="field-input" id="prefFormat" onchange="savePref('format',this.value)">
               <option value="us">1,234.56 (US)</option>
               <option value="eu">1.234,56 (EU)</option>
             </select>
           </div>
-          <!-- Notifications toggle -->
-          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-            <div class="info-row">
-              <div>
-                <div class="info-label" style="margin-bottom:2px">Price Alerts</div>
-                <div style="font-size:11px;color:var(--steel)">Notify on large moves</div>
-              </div>
-              <label style="position:relative;width:40px;height:22px;cursor:pointer;flex-shrink:0">
-                <input type="checkbox" id="togAlerts" onchange="savePref('alerts',this.checked)" style="opacity:0;width:0;height:0">
-                <span id="togAlertsTrack" style="position:absolute;inset:0;border-radius:11px;background:rgba(255,255,255,.1);border:1px solid var(--border);transition:all .25s"></span>
-                <span id="togAlertsThumb" style="position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:var(--steel);transition:all .25s"></span>
-              </label>
+
+          <div class="pref-toggle-row">
+            <div class="pref-info">
+              <div class="pref-name">Price Alerts</div>
+              <div class="pref-desc">Notify on significant market moves</div>
             </div>
-            <div class="info-row">
-              <div>
-                <div class="info-label" style="margin-bottom:2px">Trade Confirmations</div>
-                <div style="font-size:11px;color:var(--steel)">Show receipt after orders</div>
-              </div>
-              <label style="position:relative;width:40px;height:22px;cursor:pointer;flex-shrink:0">
-                <input type="checkbox" id="togConfirm" onchange="savePref('confirm',this.checked)" style="opacity:0;width:0;height:0" checked>
-                <span id="togConfirmTrack" style="position:absolute;inset:0;border-radius:11px;background:rgba(201,168,76,.35);border:1px solid var(--gold-border);transition:all .25s"></span>
-                <span id="togConfirmThumb" style="position:absolute;left:21px;top:3px;width:14px;height:14px;border-radius:50%;background:var(--gold);transition:all .25s"></span>
-              </label>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="togAlerts" onchange="savePref('alerts',this.checked)">
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+          <div class="pref-toggle-row">
+            <div class="pref-info">
+              <div class="pref-name">Trade Confirmations</div>
+              <div class="pref-desc">Show receipt after each order</div>
             </div>
-            <div class="info-row" style="border-bottom:none">
-              <div>
-                <div class="info-label" style="margin-bottom:2px">Portfolio Digest</div>
-                <div style="font-size:11px;color:var(--steel)">Weekly summary emails</div>
-              </div>
-              <label style="position:relative;width:40px;height:22px;cursor:pointer;flex-shrink:0">
-                <input type="checkbox" id="togDigest" onchange="savePref('digest',this.checked)" style="opacity:0;width:0;height:0">
-                <span id="togDigestTrack" style="position:absolute;inset:0;border-radius:11px;background:rgba(255,255,255,.1);border:1px solid var(--border);transition:all .25s"></span>
-                <span id="togDigestThumb" style="position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:var(--steel);transition:all .25s"></span>
-              </label>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="togConfirm" onchange="savePref('confirm',this.checked)" checked>
+              <span class="toggle-track" style="background:rgba(200,168,75,.35);border-color:var(--gold-rim)"></span>
+              <span class="toggle-thumb" style="left:22px;background:var(--gold)"></span>
+            </label>
+          </div>
+          <div class="pref-toggle-row">
+            <div class="pref-info">
+              <div class="pref-name">Portfolio Digest</div>
+              <div class="pref-desc">Weekly performance summary emails</div>
             </div>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="togDigest" onchange="savePref('digest',this.checked)">
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
           </div>
         </div>
       </div>
 
-      <!-- Account Details (read-only) -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title-wrap">
-            <div class="card-icon" style="background:rgba(255,255,255,.05);color:var(--mist)">
-              <i class="fas fa-fingerprint"></i>
-            </div>
+          <div class="card-title-group">
+            <div class="card-icon" style="background:rgba(255,255,255,.05);color:var(--mist)"><i class="fas fa-fingerprint"></i></div>
             <span class="card-title">Account Details</span>
           </div>
         </div>
         <div class="card-body">
-          <div class="info-row">
-            <span class="info-label">Created</span>
-            <span class="info-value mono muted" id="detailCreated">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Created (UTC)</span>
-            <span class="info-value mono muted" id="detailCreatedUtc" style="font-size:10px">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Account Age</span>
-            <span class="info-value mono" id="detailAge" style="color:var(--gold)">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Auth Provider</span>
-            <span class="info-value mono muted">Email / Password</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Platform</span>
-            <span class="info-value mono muted">Aurum Capital Web</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Data Region</span>
-            <span class="info-value mono muted">Global CDN</span>
-          </div>
-          <div class="info-row" style="border-bottom:none">
-            <span class="info-label">Profile Checksum</span>
-            <span class="info-value mono" id="detailChecksum" style="font-size:9px;color:var(--steel)">—</span>
-          </div>
+          <div class="info-row"><span class="info-label">Created</span><span class="info-value mono muted" id="detailCreated">—</span></div>
+          <div class="info-row"><span class="info-label">Created UTC</span><span class="info-value mono muted" id="detailCreatedUtc" style="font-size:9.5px">—</span></div>
+          <div class="info-row"><span class="info-label">Account Age</span><span class="info-value gold" id="detailAge">—</span></div>
+          <div class="info-row"><span class="info-label">Exact Days</span><span class="info-value mono muted" id="detailDays">—</span></div>
+          <div class="info-row"><span class="info-label">Auth Provider</span><span class="info-value mono muted">Email / Password</span></div>
+          <div class="info-row"><span class="info-label">Platform</span><span class="info-value mono muted">Aurum Capital Web</span></div>
+          <div class="info-row"><span class="info-label">Data Region</span><span class="info-value mono muted">Global CDN</span></div>
+          <div class="info-row" style="border-bottom:none"><span class="info-label">Checksum</span><span class="info-value mono" id="detailChecksum" style="font-size:9px;color:var(--steel)">—</span></div>
         </div>
       </div>
 
     </div>
 
     <!-- ── DANGER ZONE ─────────────────────────────── -->
-    <div class="danger-zone a5">
-      <div class="danger-zone-header">
-        <i class="fas fa-triangle-exclamation"></i>
-        Danger Zone
-      </div>
-      <div class="danger-zone-body">
-        <div class="danger-item">
+    <div class="danger-zone a6">
+      <div class="danger-header"><i class="fas fa-triangle-exclamation"></i>Danger Zone</div>
+      <div class="danger-body">
+        <div class="danger-row">
           <div>
-            <strong style="color:var(--snow);font-size:14px">Sign Out</strong>
-            <p class="danger-desc" style="margin-top:3px">End your current session on this device.</p>
+            <strong style="color:var(--snow);font-size:14px">Sign Out of Account</strong>
+            <p class="danger-text" style="margin-top:4px">This will end your session on this device immediately.</p>
           </div>
           <button class="btn btn-ghost btn-sm" id="signOutBtn2">
             <i class="fas fa-arrow-right-from-bracket" style="font-size:11px"></i> Sign Out
@@ -1266,21 +1406,14 @@ body::before {
   </div><!-- /page-body -->
 </div><!-- /main -->
 
-<!-- ═══ EDIT PROFILE MODAL ═══════════════════════ -->
+<!-- ═══ EDIT PROFILE MODAL ════════════════════════ -->
 <div class="modal-bg" id="editModal">
   <div class="modal">
-    <div class="modal-title">Edit <em style="font-style:italic;color:var(--gold)">Profile</em></div>
-    <div class="modal-sub">UPDATE YOUR PERSONAL INFORMATION</div>
-
-    <div class="form-grid-2">
-      <div class="field">
-        <label class="field-label">First Name</label>
-        <input class="field-input" id="modalFirstName" type="text" placeholder="First name">
-      </div>
-      <div class="field">
-        <label class="field-label">Last Name</label>
-        <input class="field-input" id="modalLastName" type="text" placeholder="Last name">
-      </div>
+    <div class="modal-title">Edit <em>Profile</em></div>
+    <div class="modal-sub">Update your personal information</div>
+    <div class="form-2">
+      <div class="field"><label class="field-label">First Name</label><input class="field-input" id="modalFirstName" type="text" placeholder="First name"></div>
+      <div class="field"><label class="field-label">Last Name</label><input class="field-input" id="modalLastName" type="text" placeholder="Last name"></div>
     </div>
     <div class="field">
       <label class="field-label">Display Initials</label>
@@ -1291,9 +1424,7 @@ body::before {
       <label class="field-label">Email (read-only)</label>
       <input class="field-input" id="modalEmail" type="email" disabled>
     </div>
-
-    <div id="editError" style="display:none;padding:10px 14px;background:var(--loss-dim);border:1px solid rgba(239,68,68,.2);border-radius:10px;font-size:12px;color:var(--loss);margin-top:8px"></div>
-
+    <div class="modal-err" id="editError"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
       <button class="btn btn-gold" onclick="saveProfile()" id="saveProfileBtn">
@@ -1303,37 +1434,44 @@ body::before {
   </div>
 </div>
 
-<!-- ═══ AVATAR MODAL ══════════════════════════════ -->
+<!-- ═══ AVATAR / PHOTO MODAL ══════════════════════ -->
 <div class="modal-bg" id="avatarModal">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-title">Choose <em style="font-style:italic;color:var(--gold)">Avatar</em></div>
-    <div class="modal-sub">SELECT A COLOUR &amp; INITIAL COMBINATION</div>
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">Update <em>Avatar</em></div>
+    <div class="modal-sub">Upload a photo or choose a colour & initial</div>
 
-    <!-- Big preview -->
-    <div style="display:flex;justify-content:center;margin-bottom:22px">
-      <div id="avatarPreview" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#a87c28);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:30px;color:#040608;box-shadow:0 0 0 4px rgba(201,168,76,.25),0 0 40px rgba(201,168,76,.2);transition:all .3s">
-        <span id="avatarPreviewText">…</span>
-      </div>
+    <!-- Preview -->
+    <div id="avatarPreview"><span id="avatarPreviewText">A</span></div>
+
+    <!-- Photo upload zone -->
+    <div class="upload-zone" onclick="document.getElementById('photoFileInput').click()">
+      <i class="fas fa-cloud-arrow-up"></i>
+      <div class="upload-zone-title">Upload Profile Photo</div>
+      <div class="upload-zone-sub">JPG, PNG, WEBP · Max 5 MB · Square recommended</div>
+    </div>
+    <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp" onchange="handlePhotoUpload(event)">
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--steel);letter-spacing:.12em">OR</span>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
     </div>
 
     <!-- Custom initials -->
-    <div class="field" style="margin-bottom:16px">
+    <div class="field" style="margin-bottom:14px">
       <label class="field-label">Custom Initials</label>
-      <input class="field-input" id="avatarInitialsInput" type="text" placeholder="e.g. JD or AK" maxlength="3" oninput="updateAvatarPreview(this.value)">
+      <input class="field-input" id="avatarInitialsInput" type="text" placeholder="e.g. JD" maxlength="3" oninput="updateAvatarPreview(this.value)">
     </div>
 
     <!-- Colour palette -->
     <div class="field-label" style="margin-bottom:10px">Avatar Colour</div>
-    <div class="avatar-grid" id="avatarColorGrid">
-      <!-- populated by JS -->
-    </div>
+    <div class="color-grid" id="colorGrid"></div>
 
-    <div id="avatarError" style="display:none;padding:10px 14px;background:var(--loss-dim);border:1px solid rgba(239,68,68,.2);border-radius:10px;font-size:12px;color:var(--loss);margin-bottom:10px"></div>
-
+    <div class="modal-err" id="avatarError"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeAvatarModal()">Cancel</button>
       <button class="btn btn-gold" onclick="saveAvatar()" id="saveAvatarBtn">
-        <i class="fas fa-check" style="font-size:11px"></i> Apply Avatar
+        <i class="fas fa-check" style="font-size:11px"></i> Apply
       </button>
     </div>
   </div>
@@ -1342,15 +1480,12 @@ body::before {
 <!-- Toast -->
 <div id="toast">
   <div class="toast-icon" id="toastIcon"></div>
-  <div class="toast-body">
+  <div>
     <div class="toast-title" id="toastTitle"></div>
-    <div class="toast-sub"   id="toastSub"></div>
+    <div class="toast-sub" id="toastSub"></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     SCRIPT
-════════════════════════════════════════════════ -->
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
@@ -1360,241 +1495,480 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ── AVATAR PALETTE ──────────────────────────────── */
-const AVATAR_COLORS = [
-  { id:'gold',    grad:'linear-gradient(135deg,#c9a84c,#a87c28)', txt:'#040608' },
-  { id:'emerald', grad:'linear-gradient(135deg,#22c55e,#15803d)', txt:'#040608' },
-  { id:'sapphire',grad:'linear-gradient(135deg,#3b82f6,#1d4ed8)', txt:'#ffffff' },
-  { id:'ruby',    grad:'linear-gradient(135deg,#ef4444,#b91c1c)', txt:'#ffffff' },
-  { id:'amethyst',grad:'linear-gradient(135deg,#a78bfa,#7c3aed)', txt:'#ffffff' },
-  { id:'rose',    grad:'linear-gradient(135deg,#f472b6,#be185d)', txt:'#040608' },
-  { id:'slate',   grad:'linear-gradient(135deg,#64748b,#334155)', txt:'#ffffff' },
-  { id:'copper',  grad:'linear-gradient(135deg,#fb923c,#c2410c)', txt:'#040608' },
-  { id:'teal',    grad:'linear-gradient(135deg,#14b8a6,#0f766e)', txt:'#040608' },
-  { id:'silver',  grad:'linear-gradient(135deg,#94a3b8,#64748b)', txt:'#040608' },
-  { id:'indigo',  grad:'linear-gradient(135deg,#6366f1,#4338ca)', txt:'#ffffff' },
-  { id:'lime',    grad:'linear-gradient(135deg,#84cc16,#4d7c0f)', txt:'#040608' },
+const COLORS = [
+  { id:'gold',     grad:'linear-gradient(135deg,#e8c96a,#a87c28)', txt:'#040608' },
+  { id:'emerald',  grad:'linear-gradient(135deg,#22c55e,#14532d)', txt:'#040608' },
+  { id:'sapphire', grad:'linear-gradient(135deg,#38bdf8,#1d4ed8)', txt:'#ffffff' },
+  { id:'ruby',     grad:'linear-gradient(135deg,#f87171,#b91c1c)', txt:'#ffffff' },
+  { id:'amethyst', grad:'linear-gradient(135deg,#c084fc,#7c3aed)', txt:'#ffffff' },
+  { id:'rose',     grad:'linear-gradient(135deg,#fb7185,#be185d)', txt:'#ffffff' },
+  { id:'slate',    grad:'linear-gradient(135deg,#94a3b8,#334155)', txt:'#ffffff' },
+  { id:'copper',   grad:'linear-gradient(135deg,#fb923c,#c2410c)', txt:'#040608' },
+  { id:'teal',     grad:'linear-gradient(135deg,#2dd4bf,#0f766e)', txt:'#040608' },
+  { id:'pearl',    grad:'linear-gradient(135deg,#e2e8f0,#94a3b8)', txt:'#040608' },
+  { id:'indigo',   grad:'linear-gradient(135deg,#818cf8,#4338ca)', txt:'#ffffff' },
+  { id:'lime',     grad:'linear-gradient(135deg,#a3e635,#4d7c0f)', txt:'#040608' },
 ];
 
 /* ── STATE ───────────────────────────────────────── */
-let authUser    = null;
-let profile     = null;
-let holdings    = [];
-let txs         = [];
-let selectedColorId = 'gold';
-let toastTimer  = null;
+let authUser  = null;
+let profile   = null;
+let holdings  = [];
+let txs       = [];
+let selectedColorId   = 'gold';
+let pendingPhotoBase64 = null;
+let toastTimer = null;
 
-/* ── BOOT ────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', async () => {
+  startClock();
+  buildColorGrid();
+
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = 'signup.html'; return; }
   authUser = session.user;
 
-  buildAvatarGrid();
   await loadAll();
-  bindToggleListeners();
+  restorePrefs();
 
-  document.getElementById('signOutBtn').addEventListener('click', e => {
-    e.preventDefault(); sb.auth.signOut().then(() => window.location.href = 'signup.html');
-  });
-  document.getElementById('signOutBtn2').addEventListener('click', () => {
-    sb.auth.signOut().then(() => window.location.href = 'signup.html');
-  });
-});
-
-/* ── LOAD DATA ───────────────────────────────────── */
-async function loadAll() {
-  const [profileRes, holdingsRes, txRes] = await Promise.all([
-    sb.from('profiles').select('*').eq('id', authUser.id).single(),
-    sb.from('holdings').select('*').eq('user_id', authUser.id),
-    sb.from('transactions').select('*').eq('user_id', authUser.id).order('created_at', { ascending: false }).limit(50),
-  ]);
-
-  profile  = profileRes.data || {};
-  holdings = holdingsRes.data || [];
-  txs      = txRes.data || [];
-
-  renderAll();
-}
-
-function renderAll() {
-  if (!profile) return;
-  const firstName = profile.first_name || '';
-  const lastName  = profile.last_name  || '';
-  const fullName  = (firstName + ' ' + lastName).trim() || 'Unnamed';
-  const initials  = profile.avatar_initials || (firstName[0]||'?')+(lastName[0]||'');
-  const email     = profile.email || authUser?.email || '—';
-  const cash      = Number(profile.cash || 0);
-  const createdAt = new Date(profile.created_at || authUser?.created_at || Date.now());
-  const now       = new Date();
-  const memberDays= Math.floor((now - createdAt) / 86400000);
-
-  /* ── HERO ── */
-  setText('heroInitials', initials.toUpperCase());
-  setText('heroName',     fullName);
-  setText('heroEmail',    email);
-  setText('heroBadge',    initials.toUpperCase() + ' · AURUM PRIME');
-  setText('heroMemberDays', memberDays.toLocaleString());
-  setText('heroHoldings', holdings.length);
-  setText('heroTxCount',  txs.length);
-
-  /* Avatar colour */
-  const savedColor = localStorage.getItem('aurum_avatar_color') || 'gold';
-  selectedColorId  = savedColor;
-  applyAvatarColor(savedColor, initials.toUpperCase());
-
-  /* ── SIDEBAR ── */
-  setText('sidebarAvatar', initials.toUpperCase().slice(0,2));
-  setText('sidebarName',   fullName);
-  setText('sidebarCash',   '$' + fmtUSD(cash) + ' available');
-
-  /* ── TOPBAR ── */
-  setText('memberSince', 'SINCE ' + createdAt.toLocaleDateString('en-US',{month:'short',year:'numeric'}));
-
-  /* ── ACCOUNT INFO ── */
-  setText('infoFullName',  fullName);
-  setText('infoInitials',  initials.toUpperCase());
-  setText('infoEmail',     email);
-  setText('infoUserId',    authUser?.id || '—');
-  setText('infoCreatedAt', createdAt.toLocaleDateString('en-US',{dateStyle:'long'}));
-  setText('infoUpdatedAt', profile.updated_at
-    ? new Date(profile.updated_at).toLocaleDateString('en-US',{dateStyle:'long'})
-    : 'Not recorded');
-
-  /* ── MEMBERSHIP ── */
-  setText('stripHoldings', holdings.length);
-  setText('stripTx',       txs.length);
-  setText('stripDays',     memberDays);
-
-  /* ── ACCOUNT DETAILS ── */
-  setText('detailCreated',    createdAt.toLocaleDateString('en-US',{dateStyle:'long'}));
-  setText('detailCreatedUtc', createdAt.toUTCString().replace('GMT','UTC'));
-  setText('detailAge',        formatAge(memberDays));
-  // Lightweight checksum — just for display aesthetics
-  const cs = btoa(authUser?.id?.slice(0,8) || 'aurum').replace(/[^a-zA-Z0-9]/g,'').slice(0,12).toUpperCase();
-  setText('detailChecksum',   cs || '—');
-
-  /* ── EDIT FIELDS ── */
-  setVal('editFirstName', firstName);
-  setVal('editLastName',  lastName);
-  setVal('editInitials',  initials);
-  setVal('editEmail',     email);
-
-  /* ── ACTIVITY TIMELINE ── */
-  renderTimeline();
-}
-
-function applyAvatarColor(colorId, initials) {
-  const c = AVATAR_COLORS.find(x => x.id === colorId) || AVATAR_COLORS[0];
-  const ring = document.getElementById('heroAvatar');
-  if (ring) {
-    ring.style.background = c.grad;
-    ring.style.color = c.txt;
-    const span = document.getElementById('heroInitials');
-    if (span) span.style.color = c.txt;
-  }
-  const sb = document.getElementById('sidebarAvatar');
-  if (sb) { sb.style.background = c.grad; sb.style.color = c.txt; }
-}
-
-function renderTimeline() {
-  const el = document.getElementById('activityTimeline');
-  const events = [];
-
-  // Account created
-  const createdAt = new Date(profile.created_at || authUser?.created_at || Date.now());
-  events.push({
-    icon: 'fa-user-plus',
-    color: '#22c55e',
-    bg: 'rgba(34,197,94,.1)',
-    label: 'Account Created',
-    time: fmtDateTime(createdAt),
-  });
-
-  // Last 5 transactions
-  txs.slice(0, 5).forEach(t => {
-    const typeCfg = {
-      buy:      { icon:'fa-arrow-trend-up',   color:'#ef4444', bg:'rgba(239,68,68,.09)',  label:`Bought ${t.symbol}` },
-      sell:     { icon:'fa-arrow-trend-down',  color:'#22c55e', bg:'rgba(34,197,94,.09)', label:`Sold ${t.symbol}` },
-      deposit:  { icon:'fa-plus',              color:'#22c55e', bg:'rgba(34,197,94,.09)', label:`Deposit · ${t.symbol}` },
-      withdraw: { icon:'fa-minus',             color:'#ef4444', bg:'rgba(239,68,68,.09)', label:`Withdrawal` },
-    };
-    const cfg = typeCfg[t.type] || { icon:'fa-circle', color:'#c9a84c', bg:'rgba(201,168,76,.09)', label: t.type };
-    events.push({
-      icon:  cfg.icon,
-      color: cfg.color,
-      bg:    cfg.bg,
-      label: cfg.label,
-      sub:   t.usd_amount != null ? `${Number(t.usd_amount) >= 0 ? '+' : ''}$${fmtUSD(Math.abs(Number(t.usd_amount)))}` : '',
-      time:  timeAgo(t.created_at),
+  /* Sign out */
+  ['signOutBtn','signOutBtn2'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      e.preventDefault();
+      sb.auth.signOut().then(() => window.location.href = 'signup.html');
     });
   });
 
-  if (!events.length) {
-    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--steel);font-family:JetBrains Mono,monospace;font-size:11px">No activity yet</div>';
-    return;
-  }
+  /* Real-time subscription for profile changes */
+  sb.channel('profile-changes')
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${authUser.id}` }, payload => {
+      profile = { ...profile, ...payload.new };
+      renderAll();
+    })
+    .subscribe();
+});
 
-  el.innerHTML = events.map((e, i) => `
-    <div class="timeline-item">
-      <div class="timeline-dot-wrap">
-        <div class="timeline-dot" style="background:${e.bg};color:${e.color};border:1px solid ${e.color}20">
+/* ══════════════════════════════════════════════════
+   REAL-TIME CLOCK
+══════════════════════════════════════════════════ */
+function startClock() {
+  const tick = () => {
+    const now = new Date();
+    const opts = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+    const timeStr = now.toLocaleTimeString('en-US', opts);
+    const utcStr  = now.toUTCString().replace('GMT','UTC').split(' ').slice(4,5)[0] + ' UTC';
+    const dayStr  = now.toLocaleDateString('en-US', { weekday: 'long' });
+
+    setText('liveDate', now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }));
+    setText('liveTime', now.toLocaleTimeString('en-US', opts));
+    setText('liveUTC',  now.toUTCString().split(' ')[4] + ' UTC');
+    setText('liveDay',  now.toLocaleDateString('en-US', { weekday:'long' }));
+    setText('topClock', now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }));
+  };
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ══════════════════════════════════════════════════
+   DATA LOAD
+══════════════════════════════════════════════════ */
+async function loadAll() {
+  const [pRes, hRes, tRes] = await Promise.all([
+    sb.from('profiles').select('*').eq('id', authUser.id).single(),
+    sb.from('holdings').select('*').eq('user_id', authUser.id),
+    sb.from('transactions').select('*').eq('user_id', authUser.id).order('created_at', { ascending: false }).limit(200),
+  ]);
+  profile  = pRes.data || {};
+  holdings = hRes.data || [];
+  txs      = tRes.data || [];
+  renderAll();
+}
+
+/* ══════════════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════════════ */
+function renderAll() {
+  if (!profile) return;
+
+  const fn       = profile.first_name || '';
+  const ln       = profile.last_name  || '';
+  const fullName = (fn + ' ' + ln).trim() || 'Unnamed';
+  const initials = (profile.avatar_initials || (fn[0]||'?')+(ln[0]||'')).toUpperCase();
+  const email    = profile.email || authUser?.email || '—';
+  const cash     = Number(profile.cash || 0);
+
+  const createdAt  = new Date(profile.created_at || authUser?.created_at || Date.now());
+  const now        = new Date();
+  const memberMs   = now - createdAt;
+  const memberDays = Math.floor(memberMs / 86400000);
+  const ageStr     = formatAge(memberDays);
+  const ageDetail  = 'Member since ' + createdAt.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+
+  /* HERO */
+  setText('heroInitials', initials.slice(0,2));
+  setText('heroName',     fullName);
+  setText('heroEmail',    email);
+  setText('heroBadge',    initials + ' · AURUM PRIME');
+  setText('heroMemberDays', memberDays.toLocaleString());
+  setText('heroPositions',  holdings.length);
+  setText('heroTrades',     txs.length);
+  setText('heroAge',        ageStr);
+  setText('heroAgeDetail',  ageDetail);
+
+  /* Avatar */
+  const colorId = profile.avatar_color || localStorage.getItem('aurum_avatar_color') || 'gold';
+  selectedColorId = colorId;
+  applyAvatarStyle(colorId, initials.slice(0,2), profile.avatar_url);
+
+  /* SIDEBAR */
+  const sbAv = document.getElementById('sidebarAvatar');
+  if (profile.avatar_url) {
+    sbAv.innerHTML = `<img src="${profile.avatar_url}" alt="">`;
+  } else {
+    sbAv.textContent = initials.slice(0,2);
+    const c = COLORS.find(x=>x.id===colorId)||COLORS[0];
+    sbAv.style.background = c.grad; sbAv.style.color = c.txt;
+  }
+  setText('sidebarName', fullName);
+  setText('sidebarCash', '$' + fmtUSD(cash) + ' available');
+
+  /* ACCOUNT INFO */
+  setText('infoFullName',  fullName);
+  setText('infoInitials',  initials);
+  setText('infoEmail',     email);
+  setText('infoUserId',    authUser?.id || '—');
+  setText('infoCreatedAt', createdAt.toLocaleDateString('en-US',{dateStyle:'long'}));
+  setText('infoUpdatedAt', profile.updated_at ? new Date(profile.updated_at).toLocaleDateString('en-US',{dateStyle:'long'}) : 'Not recorded');
+  setText('infoAge', ageStr);
+
+  /* MEMBERSHIP */
+  setText('stripPositions', holdings.length);
+  setText('stripTrades', txs.length);
+  setText('stripDays',   memberDays);
+
+  /* ACCOUNT DETAILS */
+  setText('detailCreated',    createdAt.toLocaleDateString('en-US',{dateStyle:'long'}));
+  setText('detailCreatedUtc', createdAt.toUTCString());
+  setText('detailAge',        ageStr);
+  setText('detailDays',       memberDays.toLocaleString() + ' days');
+  const cs = btoa((authUser?.id||'aurum').slice(0,8)).replace(/[^a-zA-Z0-9]/g,'').slice(0,12).toUpperCase();
+  setText('detailChecksum', cs);
+
+  /* EDIT FIELDS */
+  setVal('editFirstName', fn);
+  setVal('editLastName',  ln);
+  setVal('editInitials',  profile.avatar_initials || initials);
+  setVal('editEmail',     email);
+
+  /* ANALYTICS */
+  renderAnalytics();
+
+  /* TIMELINE */
+  renderTimeline(createdAt);
+}
+
+/* ── TRADE ANALYTICS ─────────────────────────────── */
+function renderAnalytics() {
+  const now    = new Date();
+  const todayS = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const weekS  = new Date(todayS); weekS.setDate(todayS.getDate() - todayS.getDay());
+  const monthS = new Date(now.getFullYear(), now.getMonth(), 1);
+  const yearS  = new Date(now.getFullYear(), 0, 1);
+
+  const isTrade = t => t.type === 'buy' || t.type === 'sell';
+
+  const dayTx   = txs.filter(t => isTrade(t) && new Date(t.created_at) >= todayS);
+  const weekTx  = txs.filter(t => isTrade(t) && new Date(t.created_at) >= weekS);
+  const monthTx = txs.filter(t => isTrade(t) && new Date(t.created_at) >= monthS);
+  const yearTx  = txs.filter(t => isTrade(t) && new Date(t.created_at) >= yearS);
+
+  const buys  = arr => arr.filter(t=>t.type==='buy').length;
+  const sells = arr => arr.filter(t=>t.type==='sell').length;
+
+  setText('ac-day-val',   dayTx.length);
+  setText('ac-week-val',  weekTx.length);
+  setText('ac-month-val', monthTx.length);
+  setText('ac-year-val',  yearTx.length);
+
+  setText('ac-day-badge',   `${buys(dayTx)} buys · ${sells(dayTx)} sells`);
+  setText('ac-week-badge',  `${buys(weekTx)} buys · ${sells(weekTx)} sells`);
+  setText('ac-month-badge', `${buys(monthTx)} buys · ${sells(monthTx)} sells`);
+  setText('ac-year-badge',  `${buys(yearTx)} buys · ${sells(yearTx)} sells`);
+
+  // Color badges
+  [['ac-day-badge',dayTx],['ac-week-badge',weekTx],['ac-month-badge',monthTx],['ac-year-badge',yearTx]].forEach(([id,arr])=>{
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'ac-change ' + (arr.length > 0 ? 'up' : 'flat');
+  });
+
+  /* Sparklines */
+  drawSparkline('spark-day',   dayTx);
+  drawSparkline('spark-week',  weekTx);
+  drawSparkline('spark-month', monthTx);
+  drawSparkline('spark-year',  yearTx);
+}
+
+function drawSparkline(id, txArr) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!txArr.length) { el.innerHTML = ''; return; }
+
+  /* Count trades per day-bucket (up to 8 buckets) */
+  const buckets = 8;
+  const sorted  = [...txArr].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  const counts  = new Array(buckets).fill(0);
+  sorted.forEach((t,i)=>{
+    const idx = Math.min(Math.floor(i/(sorted.length/buckets)), buckets-1);
+    counts[idx]++;
+  });
+
+  const max = Math.max(...counts, 1);
+  const W = 80, H = 40, pad = 4;
+  const pts = counts.map((v,i) => {
+    const x = pad + (i/(buckets-1)) * (W-pad*2);
+    const y = H - pad - (v/max) * (H-pad*2);
+    return `${x},${y}`;
+  });
+
+  el.innerHTML = `
+    <polyline points="${pts.join(' ')}" stroke="var(--gold)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline points="${pts.join(' ')} ${W-pad},${H} ${pad},${H}" stroke="none" fill="rgba(200,168,75,0.12)"/>
+  `;
+}
+
+/* ── AVATAR ──────────────────────────────────────── */
+function applyAvatarStyle(colorId, initials, avatarUrl) {
+  const ring = document.getElementById('heroAvatar');
+  const initEl = document.getElementById('heroInitials');
+  if (!ring) return;
+
+  if (avatarUrl) {
+    if (!ring.querySelector('img.av-photo')) {
+      const img = document.createElement('img');
+      img.className = 'av-photo';
+      img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%';
+      ring.insertBefore(img, ring.firstChild);
+    }
+    ring.querySelector('img.av-photo').src = avatarUrl;
+    if (initEl) initEl.style.opacity = '0';
+  } else {
+    const existing = ring.querySelector('img.av-photo');
+    if (existing) existing.remove();
+    if (initEl) initEl.style.opacity = '1';
+    const c = COLORS.find(x=>x.id===colorId) || COLORS[0];
+    ring.style.background = c.grad;
+    ring.style.color = c.txt;
+    if (initEl) { initEl.textContent = initials; initEl.style.color = c.txt; }
+  }
+}
+
+/* ── TIMELINE ────────────────────────────────────── */
+function renderTimeline(createdAt) {
+  const el = document.getElementById('activityTimeline');
+  const events = [];
+
+  events.push({
+    icon:'fa-user-plus', color:'#1dd673', bg:'rgba(29,214,115,.1)',
+    label:'Account Created', time: fmtDateTime(createdAt),
+  });
+
+  txs.slice(0,6).forEach(t => {
+    const map = {
+      buy:      { icon:'fa-arrow-trend-up',  color:'#f04a4a', bg:'rgba(240,74,74,.09)',  label:`Bought ${t.symbol||'—'}` },
+      sell:     { icon:'fa-arrow-trend-down', color:'#1dd673', bg:'rgba(29,214,115,.09)', label:`Sold ${t.symbol||'—'}` },
+      deposit:  { icon:'fa-plus',            color:'#1dd673', bg:'rgba(29,214,115,.09)', label:`Deposit` },
+      withdraw: { icon:'fa-minus',           color:'#f04a4a', bg:'rgba(240,74,74,.09)',  label:`Withdrawal` },
+    };
+    const cfg = map[t.type] || { icon:'fa-circle', color:'#c8a84b', bg:'rgba(200,168,75,.09)', label: t.type };
+    events.push({
+      icon: cfg.icon, color: cfg.color, bg: cfg.bg,
+      label: cfg.label,
+      sub: t.usd_amount != null ? (Number(t.usd_amount)>=0?'+':'')+' $'+fmtUSD(Math.abs(Number(t.usd_amount))) : '',
+      time: timeAgo(t.created_at),
+    });
+  });
+
+  el.innerHTML = events.map((e,i) => `
+    <div class="tl-item">
+      <div class="tl-dot-col">
+        <div class="tl-dot" style="background:${e.bg};color:${e.color};border:1px solid ${e.color}22">
           <i class="fas ${e.icon}" style="font-size:10px"></i>
         </div>
-        ${i < events.length - 1 ? '<div class="timeline-line"></div>' : ''}
+        ${i<events.length-1?'<div class="tl-line"></div>':''}
       </div>
-      <div class="timeline-content">
-        <div class="timeline-event">
+      <div class="tl-content">
+        <div class="tl-event">
           ${e.label}
-          ${e.sub ? `<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${Number((e.sub||'').replace(/[^0-9.-]/g,''))>=0?'var(--gain)':'var(--loss)'};margin-left:8px">${e.sub}</span>` : ''}
+          ${e.sub ? `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;margin-left:8px;color:${e.sub.startsWith('+')?'var(--gain)':'var(--loss)'}">${e.sub}</span>` : ''}
         </div>
-        <div class="timeline-time">${e.time}</div>
+        <div class="tl-time">${e.time}</div>
       </div>
     </div>
   `).join('');
 }
 
-/* ── SAVE PROFILE (inline card) ──────────────────── */
+/* ── PHOTO UPLOAD ────────────────────────────────── */
+window.handlePhotoUpload = async function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('File Too Large', 'Maximum 5 MB', 'error'); return; }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const base64 = e.target.result;
+    pendingPhotoBase64 = base64;
+
+    /* Show in preview */
+    const prev = document.getElementById('avatarPreview');
+    prev.innerHTML = `<img src="${base64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    setText('avatarPreviewText', '');
+  };
+  reader.readAsDataURL(file);
+};
+
+/* ── BUILD COLOR GRID ────────────────────────────── */
+function buildColorGrid() {
+  const grid = document.getElementById('colorGrid');
+  const saved = localStorage.getItem('aurum_avatar_color') || 'gold';
+  grid.innerHTML = COLORS.map(c => `
+    <div class="color-opt ${c.id===saved?'selected':''}"
+         id="copt-${c.id}"
+         style="background:${c.grad};color:${c.txt}"
+         onclick="selectColor('${c.id}')">
+      <span id="copt-txt-${c.id}">A</span>
+    </div>
+  `).join('');
+}
+
+window.selectColor = function(colorId) {
+  selectedColorId = colorId;
+  document.querySelectorAll('.color-opt').forEach(e=>e.classList.remove('selected'));
+  document.getElementById('copt-'+colorId)?.classList.add('selected');
+  const initials = document.getElementById('avatarInitialsInput')?.value || profile?.avatar_initials || 'A';
+  updateAvatarPreview(initials, colorId);
+  /* If user is using initials (not a photo), clear pending photo */
+  if (!pendingPhotoBase64) {
+    const prev = document.getElementById('avatarPreview');
+    const c = COLORS.find(x=>x.id===colorId)||COLORS[0];
+    prev.style.background = c.grad; prev.style.color = c.txt;
+    prev.innerHTML = `<span>${initials.toUpperCase().slice(0,2)}</span>`;
+  }
+};
+
+window.updateAvatarPreview = function(initials, colorId) {
+  colorId = colorId || selectedColorId;
+  const c = COLORS.find(x=>x.id===colorId)||COLORS[0];
+  document.querySelectorAll('[id^="copt-txt-"]').forEach(el => { el.textContent = (initials||'A').toUpperCase().slice(0,2)||'A'; });
+  if (!pendingPhotoBase64) {
+    const prev = document.getElementById('avatarPreview');
+    prev.style.background = c.grad; prev.style.color = c.txt;
+    prev.innerHTML = `<span>${(initials||'A').toUpperCase().slice(0,2)}</span>`;
+  }
+};
+
+/* ── SAVE AVATAR ─────────────────────────────────── */
+window.saveAvatar = async function() {
+  const btn = document.getElementById('saveAvatarBtn');
+  const errEl = document.getElementById('avatarError');
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.innerHTML = '<div class="spin-sm"></div> Applying…';
+
+  const rawInitials = document.getElementById('avatarInitialsInput').value.trim();
+  const newInitials = (rawInitials || profile?.avatar_initials || 'A').toUpperCase().slice(0,3);
+
+  let avatarUrl = profile.avatar_url || null;
+
+  /* Upload photo to Supabase Storage if pending */
+  if (pendingPhotoBase64) {
+    document.getElementById('avatarProgress').classList.add('active');
+    try {
+      const res  = await fetch(pendingPhotoBase64);
+      const blob = await res.blob();
+      const ext  = blob.type.split('/')[1] || 'jpg';
+      const path = `avatars/${authUser.id}/profile.${ext}`;
+
+      const { error: upErr } = await sb.storage
+        .from('avatars')
+        .upload(path, blob, { upsert: true, contentType: blob.type });
+
+      if (upErr) {
+        /* If storage bucket doesn't exist, just store base64 in profile (fallback) */
+        avatarUrl = pendingPhotoBase64;
+      } else {
+        const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+        avatarUrl = urlData.publicUrl + '?t=' + Date.now();
+      }
+    } catch (e) {
+      avatarUrl = pendingPhotoBase64; // fallback: store base64
+    }
+    document.getElementById('avatarProgress').classList.remove('active');
+  } else {
+    /* If user chose a color, clear the photo */
+    avatarUrl = null;
+  }
+
+  const updates = {
+    avatar_initials: newInitials,
+    avatar_color:    selectedColorId,
+    avatar_url:      avatarUrl,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await sb.from('profiles').update(updates).eq('id', authUser.id);
+  btn.disabled = false; btn.innerHTML = '<i class="fas fa-check" style="font-size:11px"></i> Apply';
+
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+
+  localStorage.setItem('aurum_avatar_color', selectedColorId);
+  profile = { ...profile, ...updates };
+  pendingPhotoBase64 = null;
+  renderAll();
+  closeAvatarModal();
+  toast('Avatar Updated', 'Your new look has been applied', 'success');
+};
+
+/* ── SAVE PROFILE (inline) ───────────────────────── */
 window.saveProfileInline = async function() {
   const btn = document.getElementById('saveInlineBtn');
   const ind = document.getElementById('saveIndicator');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spin"></div> Saving…';
+  btn.disabled = true; btn.innerHTML = '<div class="spin-sm"></div> Saving…';
 
   const updates = {
-    first_name:       document.getElementById('editFirstName').value.trim(),
-    last_name:        document.getElementById('editLastName').value.trim(),
-    avatar_initials:  document.getElementById('editInitials').value.trim().toUpperCase().slice(0,3),
-    updated_at:       new Date().toISOString(),
+    first_name:      document.getElementById('editFirstName').value.trim(),
+    last_name:       document.getElementById('editLastName').value.trim(),
+    avatar_initials: document.getElementById('editInitials').value.trim().toUpperCase().slice(0,3),
+    updated_at:      new Date().toISOString(),
   };
   const { error } = await sb.from('profiles').update(updates).eq('id', authUser.id);
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fas fa-floppy-disk" style="font-size:12px"></i> Save Changes';
+  btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk" style="font-size:12px"></i> Save Changes';
 
   if (error) { toast('Error', error.message, 'error'); return; }
   profile = { ...profile, ...updates };
   renderAll();
   ind.classList.add('show');
-  setTimeout(() => ind.classList.remove('show'), 2800);
+  setTimeout(()=>ind.classList.remove('show'), 3000);
   toast('Profile Updated', 'Your changes have been saved', 'success');
 };
 
 /* ── SAVE PROFILE (modal) ────────────────────────── */
 window.saveProfile = async function() {
-  const btn = document.getElementById('saveProfileBtn');
+  const btn   = document.getElementById('saveProfileBtn');
   const errEl = document.getElementById('editError');
   errEl.style.display = 'none';
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spin"></div> Saving…';
+  btn.disabled = true; btn.innerHTML = '<div class="spin-sm"></div> Saving…';
 
   const updates = {
-    first_name:       document.getElementById('modalFirstName').value.trim(),
-    last_name:        document.getElementById('modalLastName').value.trim(),
-    avatar_initials:  document.getElementById('modalInitials').value.trim().toUpperCase().slice(0,3),
-    updated_at:       new Date().toISOString(),
+    first_name:      document.getElementById('modalFirstName').value.trim(),
+    last_name:       document.getElementById('modalLastName').value.trim(),
+    avatar_initials: document.getElementById('modalInitials').value.trim().toUpperCase().slice(0,3),
+    updated_at:      new Date().toISOString(),
   };
   const { error } = await sb.from('profiles').update(updates).eq('id', authUser.id);
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fas fa-floppy-disk" style="font-size:11px"></i> Save Changes';
+  btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk" style="font-size:11px"></i> Save Changes';
 
   if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
   profile = { ...profile, ...updates };
@@ -1603,207 +1977,109 @@ window.saveProfile = async function() {
   toast('Profile Updated', 'Name & initials saved successfully', 'success');
 };
 
-/* ── AVATAR ──────────────────────────────────────── */
-function buildAvatarGrid() {
-  const grid = document.getElementById('avatarColorGrid');
-  const saved = localStorage.getItem('aurum_avatar_color') || 'gold';
-  grid.innerHTML = AVATAR_COLORS.map(c => `
-    <div class="avatar-option ${c.id === saved ? 'selected' : ''}"
-         id="avopt-${c.id}"
-         style="background:${c.grad};color:${c.txt}"
-         onclick="selectAvatarColor('${c.id}')">
-      <span id="avopt-text-${c.id}">A</span>
-    </div>
-  `).join('');
-}
-
-window.selectAvatarColor = function(colorId) {
-  selectedColorId = colorId;
-  document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
-  document.getElementById('avopt-' + colorId)?.classList.add('selected');
-  const initials = (document.getElementById('avatarInitialsInput')?.value
-    || profile?.avatar_initials
-    || 'A').toUpperCase().slice(0,2);
-  updateAvatarPreview(initials, colorId);
-};
-
-window.updateAvatarPreview = function(initials, colorId) {
-  colorId = colorId || selectedColorId;
-  const c = AVATAR_COLORS.find(x => x.id === colorId) || AVATAR_COLORS[0];
-  const prev = document.getElementById('avatarPreview');
-  if (prev) { prev.style.background = c.grad; prev.style.color = c.txt; }
-  setText('avatarPreviewText', (initials || 'A').toUpperCase().slice(0,2));
-  // Update initials in all color options
-  document.querySelectorAll('[id^="avopt-text-"]').forEach(el => {
-    el.textContent = (initials || 'A').toUpperCase().slice(0,2) || 'A';
-  });
-};
-
-window.saveAvatar = async function() {
-  const btn = document.getElementById('saveAvatarBtn');
-  const errEl = document.getElementById('avatarError');
-  errEl.style.display = 'none';
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spin"></div> Applying…';
-
-  const rawInitials = document.getElementById('avatarInitialsInput').value.trim();
-  const newInitials = (rawInitials || profile?.avatar_initials || 'A').toUpperCase().slice(0,3);
-
-  const { error } = await sb.from('profiles').update({
-    avatar_initials: newInitials,
-    updated_at: new Date().toISOString(),
-  }).eq('id', authUser.id);
-
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fas fa-check" style="font-size:11px"></i> Apply Avatar';
-
-  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
-
-  localStorage.setItem('aurum_avatar_color', selectedColorId);
-  profile = { ...profile, avatar_initials: newInitials };
-  applyAvatarColor(selectedColorId, newInitials);
-  renderAll();
-  closeAvatarModal();
-  toast('Avatar Updated', 'Your new look is applied', 'success');
-};
-
-/* ── PREFERENCES (localStorage) ─────────────────── */
-window.savePref = function(key, value) {
-  localStorage.setItem('aurum_pref_' + key, value);
-  updateToggleUI(key, value);
-  toast('Preference Saved', key.charAt(0).toUpperCase()+key.slice(1)+' updated', 'info');
-};
-
-function bindToggleListeners() {
-  // Restore states
-  ['alerts','confirm','digest'].forEach(key => {
-    const stored = localStorage.getItem('aurum_pref_' + key);
-    const cb = document.getElementById('tog' + key.charAt(0).toUpperCase() + key.slice(1));
-    if (cb && stored !== null) { cb.checked = stored === 'true'; }
-    updateToggleUI(key, cb ? cb.checked : (key === 'confirm'));
-  });
-  ['currency','format'].forEach(key => {
-    const stored = localStorage.getItem('aurum_pref_' + key);
-    const sel = document.getElementById('pref' + key.charAt(0).toUpperCase() + key.slice(1));
-    if (sel && stored) sel.value = stored;
-  });
-
-  // Wire checkbox visual changes
-  ['alerts','confirm','digest'].forEach(key => {
-    const cb = document.getElementById('tog' + key.charAt(0).toUpperCase() + key.slice(1));
-    if (cb) cb.addEventListener('change', () => updateToggleUI(key, cb.checked));
-  });
-}
-
-function updateToggleUI(key, value) {
-  const on = value === true || value === 'true';
-  const k  = key.charAt(0).toUpperCase() + key.slice(1);
-  const track = document.getElementById('tog' + k + 'Track');
-  const thumb = document.getElementById('tog' + k + 'Thumb');
-  if (!track || !thumb) return;
-  if (on) {
-    track.style.background    = 'rgba(201,168,76,.35)';
-    track.style.borderColor   = 'var(--gold-border)';
-    thumb.style.left          = '21px';
-    thumb.style.background    = 'var(--gold)';
-  } else {
-    track.style.background    = 'rgba(255,255,255,.1)';
-    track.style.borderColor   = 'var(--border)';
-    thumb.style.left          = '3px';
-    thumb.style.background    = 'var(--steel)';
-  }
-}
-
-/* ── MODAL HELPERS ───────────────────────────────── */
-window.openEditModal = function() {
+/* ── MODAL CONTROLS ──────────────────────────────── */
+window.openEditModal = () => {
   if (!profile) return;
-  setVal('modalFirstName', profile.first_name || '');
-  setVal('modalLastName',  profile.last_name  || '');
-  setVal('modalInitials',  profile.avatar_initials || '');
-  setVal('modalEmail',     profile.email || authUser?.email || '');
+  setVal('modalFirstName', profile.first_name||'');
+  setVal('modalLastName',  profile.last_name||'');
+  setVal('modalInitials',  profile.avatar_initials||'');
+  setVal('modalEmail',     profile.email||authUser?.email||'');
   document.getElementById('editError').style.display = 'none';
   document.getElementById('editModal').classList.add('open');
 };
 window.closeEditModal = () => document.getElementById('editModal').classList.remove('open');
 
-window.openAvatarModal = function() {
+window.openAvatarModal = () => {
   if (!profile) return;
-  const initials = profile.avatar_initials || 'A';
+  const initials = profile.avatar_initials||'A';
+  pendingPhotoBase64 = null;
   setVal('avatarInitialsInput', initials);
-  updateAvatarPreview(initials, selectedColorId);
-  // Re-select saved colour
-  const saved = localStorage.getItem('aurum_avatar_color') || 'gold';
-  document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
-  document.getElementById('avopt-' + saved)?.classList.add('selected');
+
+  /* Reset preview */
+  if (profile.avatar_url) {
+    const prev = document.getElementById('avatarPreview');
+    prev.innerHTML = `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    updateAvatarPreview(initials, selectedColorId);
+  }
+
+  const saved = profile.avatar_color || localStorage.getItem('aurum_avatar_color') || 'gold';
+  document.querySelectorAll('.color-opt').forEach(e=>e.classList.remove('selected'));
+  document.getElementById('copt-'+saved)?.classList.add('selected');
+  selectedColorId = saved;
+
   document.getElementById('avatarError').style.display = 'none';
+  document.getElementById('photoFileInput').value = '';
   document.getElementById('avatarModal').classList.add('open');
 };
-window.closeAvatarModal = () => document.getElementById('avatarModal').classList.remove('open');
+window.closeAvatarModal = () => {
+  document.getElementById('avatarModal').classList.remove('open');
+  pendingPhotoBase64 = null;
+};
+
+/* ── PREFERENCES ─────────────────────────────────── */
+window.savePref = function(key, value) {
+  localStorage.setItem('aurum_pref_'+key, value);
+  toast('Preference Saved', key[0].toUpperCase()+key.slice(1)+' updated', 'info');
+};
+
+function restorePrefs() {
+  ['alerts','confirm','digest'].forEach(k => {
+    const stored = localStorage.getItem('aurum_pref_'+k);
+    const cb = document.getElementById('tog'+k[0].toUpperCase()+k.slice(1));
+    if (cb && stored !== null) cb.checked = stored === 'true';
+  });
+  ['currency','format'].forEach(k => {
+    const stored = localStorage.getItem('aurum_pref_'+k);
+    const el = document.getElementById('pref'+k[0].toUpperCase()+k.slice(1));
+    if (el && stored) el.value = stored;
+  });
+}
 
 /* ── SIDEBAR MOBILE ──────────────────────────────── */
-window.openSidebar = function() {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('overlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
-};
-window.closeSidebar = function() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('show');
-  document.body.style.overflow = '';
-};
+window.openSidebar  = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); document.body.style.overflow='hidden'; };
+window.closeSidebar = () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); document.body.style.overflow=''; };
 
 /* ── TOAST ───────────────────────────────────────── */
-window.toast = function(title, sub, type = 'info') {
-  const t  = document.getElementById('toast');
-  const ic = document.getElementById('toastIcon');
-  setText('toastTitle', title);
-  setText('toastSub',   sub || '');
-  const cfg = {
-    success: { i:'fa-check-circle',         c:'#22c55e', bg:'rgba(34,197,94,.15)',  br:'rgba(34,197,94,.3)'  },
-    error:   { i:'fa-triangle-exclamation', c:'#ef4444', bg:'rgba(239,68,68,.15)',  br:'rgba(239,68,68,.3)'  },
-    info:    { i:'fa-circle-info',          c:'#c9a84c', bg:'rgba(201,168,76,.15)', br:'rgba(201,168,76,.3)' },
-  }[type] || {};
-  ic.innerHTML = `<i class="fas ${cfg.i}" style="color:${cfg.c};font-size:15px"></i>`;
-  ic.style.background = cfg.bg;
-  ic.style.border     = `1px solid ${cfg.br}`;
-  t.style.borderColor = cfg.br;
-  t.className = `show ${type}`;
+window.toast = function(title, sub, type='info') {
+  const t=document.getElementById('toast');
+  setText('toastTitle', title); setText('toastSub', sub||'');
+  const cfg={
+    success:{ i:'fa-check-circle',         c:'#1dd673', bg:'rgba(29,214,115,.15)',  br:'rgba(29,214,115,.3)' },
+    error:  { i:'fa-triangle-exclamation', c:'#f04a4a', bg:'rgba(240,74,74,.15)',   br:'rgba(240,74,74,.3)' },
+    info:   { i:'fa-circle-info',          c:'#c8a84b', bg:'rgba(200,168,75,.15)',  br:'rgba(200,168,75,.3)' },
+  }[type]||{};
+  const ic=document.getElementById('toastIcon');
+  ic.innerHTML=`<i class="fas ${cfg.i}" style="color:${cfg.c};font-size:15px"></i>`;
+  ic.style.background=cfg.bg; ic.style.border=`1px solid ${cfg.br}`;
+  t.style.borderColor=cfg.br;
+  t.className='show '+type;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = type; }, 4000);
+  toastTimer=setTimeout(()=>{ t.className=type; }, 4200);
 };
 
 /* ── HELPERS ─────────────────────────────────────── */
-function setText(id, v) { const e = document.getElementById(id); if (e) e.textContent = v; }
-function setVal(id, v)  { const e = document.getElementById(id); if (e) e.value = v; }
-
-function fmtUSD(n) {
-  return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function fmtDateTime(d) {
-  return d.toLocaleDateString('en-US', { dateStyle: 'long' }) + ' · ' +
-         d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-}
-
+function setText(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; }
+function setVal(id,v) { const e=document.getElementById(id); if(e) e.value=v; }
+function fmtUSD(n)    { return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtDateTime(d){ return d.toLocaleDateString('en-US',{dateStyle:'long'})+' · '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}); }
 function timeAgo(iso) {
   if (!iso) return '—';
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1)  return 'just now';
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  if (d < 30) return `${d}d ago`;
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const diff = Date.now()-new Date(iso).getTime();
+  const m = Math.floor(diff/60000);
+  if (m<1)  return 'just now';
+  if (m<60) return `${m}m ago`;
+  const h=Math.floor(m/60); if (h<24) return `${h}h ago`;
+  const d=Math.floor(h/24); if (d<30) return `${d}d ago`;
+  return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric'});
 }
-
 function formatAge(days) {
-  if (days < 1)   return 'Today';
-  if (days < 30)  return `${days} day${days !== 1 ? 's' : ''}`;
-  if (days < 365) { const m = Math.floor(days/30); return `${m} month${m!==1?'s':''}`; }
-  const y = Math.floor(days/365), rm = Math.floor((days%365)/30);
-  return `${y}y ${rm}m`;
+  if (days<1)   return 'New';
+  if (days<7)   return days+' day'+(days!==1?'s':'');
+  if (days<30)  { const w=Math.floor(days/7); return w+' week'+(w!==1?'s':''); }
+  if (days<365) { const mo=Math.floor(days/30); return mo+' month'+(mo!==1?'s':''); }
+  const y=Math.floor(days/365), rm=Math.floor((days%365)/30);
+  return y+'y ' + (rm?rm+'m':'');
 }
 </script>
 </body>

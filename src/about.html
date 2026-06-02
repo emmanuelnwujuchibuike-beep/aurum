@@ -24,7 +24,6 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -35,7 +34,6 @@
     overflow-x: hidden;
   }
 
-  /* ── NOISE OVERLAY ── */
   body::before {
     content: '';
     position: fixed;
@@ -58,11 +56,13 @@
       radial-gradient(ellipse 40% 30% at 80% 80%, rgba(201,168,76,.03) 0%, transparent 50%);
   }
 
-  /* ── NAV ── */
+  /* ─────────────────────────────────────────
+     NAV — DESKTOP
+  ───────────────────────────────────────── */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 100;
+    z-index: 200;
     height: 68px;
     display: flex;
     align-items: center;
@@ -71,6 +71,7 @@
     background: rgba(4,6,8,.88);
     backdrop-filter: blur(28px);
     border-bottom: 1px solid rgba(255,255,255,.055);
+    transition: background .4s;
   }
 
   .nav-logo {
@@ -78,6 +79,7 @@
     align-items: center;
     gap: 12px;
     text-decoration: none;
+    flex-shrink: 0;
   }
 
   .nav-logo-mark {
@@ -116,6 +118,12 @@
   .nav-links a:hover { color: var(--snow); background: rgba(255,255,255,.05); }
   .nav-links a.active { color: var(--gold); background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2); }
 
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
   .nav-cta {
     display: flex;
     align-items: center;
@@ -127,11 +135,426 @@
     font-weight: 600;
     font-size: 13px;
     text-decoration: none;
-    transition: opacity .2s;
+    transition: opacity .2s, box-shadow .2s;
   }
-  .nav-cta:hover { opacity: .88; }
+  .nav-cta:hover { opacity: .88; box-shadow: 0 4px 24px rgba(201,168,76,.25); }
 
-  /* ── HERO ── */
+  /* ─────────────────────────────────────────
+     HAMBURGER TOGGLE BUTTON
+  ───────────────────────────────────────── */
+  .nav-toggle {
+    display: none;
+    position: relative;
+    width: 44px; height: 44px;
+    border-radius: 13px;
+    background: rgba(201,168,76,.07);
+    border: 1px solid rgba(201,168,76,.18);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 300;
+    transition: background .3s, border-color .3s;
+    flex-shrink: 0;
+  }
+
+  .nav-toggle:hover {
+    background: rgba(201,168,76,.14);
+    border-color: rgba(201,168,76,.35);
+  }
+
+  .nav-toggle .bar {
+    display: block;
+    width: 18px; height: 1.5px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: transform .45s cubic-bezier(.77,0,.175,1), opacity .3s, width .3s;
+    transform-origin: center;
+  }
+
+  /* open state */
+  .nav-toggle.open .bar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-toggle.open .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-toggle.open .bar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* Gold ring pulse on open */
+  .nav-toggle::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 17px;
+    border: 1px solid rgba(201,168,76,.0);
+    transition: border-color .4s, inset .4s;
+    pointer-events: none;
+  }
+  .nav-toggle.open::after {
+    border-color: rgba(201,168,76,.22);
+    inset: -7px;
+  }
+
+  /* ─────────────────────────────────────────
+     MOBILE MENU OVERLAY
+  ───────────────────────────────────────── */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    pointer-events: none;
+  }
+
+  /* Frosted dark backdrop */
+  .mobile-menu-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4,6,8,0);
+    backdrop-filter: blur(0px);
+    transition: background .55s cubic-bezier(.4,0,.2,1), backdrop-filter .55s;
+  }
+
+  /* Panel slides in from right */
+  .mobile-menu-panel {
+    position: absolute;
+    top: 0; right: 0;
+    width: min(360px, 92vw);
+    height: 100%;
+    background: linear-gradient(160deg, #0a1020 0%, #080c14 50%, #060810 100%);
+    border-left: 1px solid rgba(201,168,76,.12);
+    transform: translateX(100%);
+    transition: transform .6s cubic-bezier(.77,0,.175,1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Noise on panel */
+  .mobile-menu-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px;
+    z-index: 0;
+  }
+
+  /* Radial gold glow inside panel */
+  .mobile-menu-panel::after {
+    content: '';
+    position: absolute;
+    top: -120px; right: -80px;
+    width: 380px; height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* OPEN STATE */
+  .mobile-menu.open {
+    pointer-events: all;
+  }
+
+  .mobile-menu.open .mobile-menu-backdrop {
+    background: rgba(4,6,8,.72);
+    backdrop-filter: blur(10px);
+  }
+
+  .mobile-menu.open .mobile-menu-panel {
+    transform: translateX(0);
+  }
+
+  /* Panel inner layout */
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 28px;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    position: relative;
+    z-index: 1;
+  }
+
+  .panel-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .panel-logo-mark {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; color: var(--void); font-size: 12px;
+    box-shadow: 0 0 16px rgba(201,168,76,.2);
+  }
+
+  .panel-wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; letter-spacing: .12em; color: var(--snow);
+  }
+
+  .panel-close {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.07);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--steel);
+    font-size: 13px;
+    transition: all .2s;
+  }
+  .panel-close:hover { color: var(--gold); border-color: rgba(201,168,76,.3); background: rgba(201,168,76,.06); }
+
+  /* Nav items inside panel */
+  .panel-nav {
+    flex: 1;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+    overflow-y: auto;
+  }
+
+  .panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin-bottom: 12px;
+    padding-left: 4px;
+  }
+
+  .panel-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--mist);
+    background: transparent;
+    border: 1px solid transparent;
+    transition: all .28s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    overflow: hidden;
+
+    /* staggered reveal */
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  .mobile-menu.open .panel-link {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* stagger delays */
+  .mobile-menu.open .panel-link:nth-child(2) { transition-delay: .08s; }
+  .mobile-menu.open .panel-link:nth-child(3) { transition-delay: .13s; }
+  .mobile-menu.open .panel-link:nth-child(4) { transition-delay: .18s; }
+  .mobile-menu.open .panel-link:nth-child(5) { transition-delay: .23s; }
+  .mobile-menu.open .panel-link:nth-child(6) { transition-delay: .28s; }
+  .mobile-menu.open .panel-link:nth-child(7) { transition-delay: .33s; }
+
+  /* transition for all states */
+  .panel-link { transition: background .28s, border-color .28s, color .28s, opacity .4s cubic-bezier(.4,0,.2,1), transform .4s cubic-bezier(.4,0,.2,1); }
+
+  .panel-link::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0;
+    background: linear-gradient(90deg, rgba(201,168,76,.12), transparent);
+    transition: width .3s;
+    border-radius: 14px 0 0 14px;
+  }
+
+  .panel-link:hover {
+    color: var(--snow);
+    background: rgba(255,255,255,.04);
+    border-color: rgba(255,255,255,.07);
+  }
+
+  .panel-link:hover::before { width: 4px; }
+
+  .panel-link.active {
+    color: var(--gold);
+    background: rgba(201,168,76,.08);
+    border-color: rgba(201,168,76,.2);
+  }
+
+  .panel-link.active::before { width: 4px; background: linear-gradient(90deg, var(--gold), transparent); }
+
+  .panel-link-inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .panel-link-icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.07);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    color: var(--steel);
+    flex-shrink: 0;
+    transition: all .25s;
+  }
+
+  .panel-link:hover .panel-link-icon {
+    background: rgba(201,168,76,.08);
+    border-color: rgba(201,168,76,.18);
+    color: var(--gold);
+  }
+  .panel-link.active .panel-link-icon {
+    background: rgba(201,168,76,.12);
+    border-color: rgba(201,168,76,.25);
+    color: var(--gold);
+  }
+
+  .panel-link-text {}
+  .panel-link-name {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: .01em;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .panel-link-desc {
+    font-size: 10px;
+    color: var(--steel);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .04em;
+  }
+
+  .panel-link-arrow {
+    color: var(--steel);
+    font-size: 10px;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: all .25s;
+  }
+
+  .panel-link:hover .panel-link-arrow,
+  .panel-link.active .panel-link-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: var(--gold);
+  }
+
+  .panel-divider {
+    height: 1px;
+    background: rgba(255,255,255,.05);
+    margin: 16px 0;
+  }
+
+  /* CTA inside panel */
+  .panel-cta-wrap {
+    padding: 20px 28px 32px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .45s .38s, transform .45s .38s;
+  }
+
+  .mobile-menu.open .panel-cta-wrap {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .panel-cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 15px 20px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: opacity .2s, box-shadow .2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .panel-cta-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    color: var(--void);
+  }
+  .panel-cta-primary:hover { opacity: .9; box-shadow: 0 6px 28px rgba(201,168,76,.3); }
+
+  .panel-cta-secondary {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.09) !important;
+    color: var(--mist);
+  }
+  .panel-cta-secondary:hover { color: var(--snow); border-color: rgba(255,255,255,.16) !important; }
+
+  /* status chip inside panel */
+  .panel-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    padding-top: 4px;
+  }
+
+  .panel-status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gain);
+    animation: pulse 2s infinite;
+  }
+
+  .panel-status-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .14em;
+    color: var(--steel);
+    text-transform: uppercase;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* ─────────────────────────────────────────
+     RESPONSIVE BREAKPOINT
+  ───────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .nav-toggle { display: flex; }
+    .mobile-menu { display: block; }
+    nav { padding: 0 20px; }
+  }
+
+  /* hide cta text on mid screens */
+  @media (max-width: 500px) {
+    .nav-cta { display: none; }
+  }
+
+  /* Prevent body scroll when menu open */
+  body.menu-open { overflow: hidden; }
+
+  /* ─────────────────────────────────────────
+     REST OF PAGE STYLES (unchanged)
+  ───────────────────────────────────────── */
   .hero {
     position: relative;
     min-height: 100vh;
@@ -144,17 +567,11 @@
     overflow: hidden;
   }
 
-  .hero-bg-lines {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
+  .hero-bg-lines { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
   .hero-bg-lines::before {
     content: '';
-    position: absolute;
-    top: 50%; left: 50%;
+    position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     width: 900px; height: 900px;
     border-radius: 50%;
@@ -164,8 +581,7 @@
 
   .hero-bg-lines::after {
     content: '';
-    position: absolute;
-    top: 50%; left: 50%;
+    position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     width: 600px; height: 600px;
     border-radius: 50%;
@@ -179,13 +595,9 @@
   }
 
   .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .24em;
-    text-transform: uppercase;
+    font-size: 9px; letter-spacing: .24em; text-transform: uppercase;
     color: var(--gold);
     background: rgba(201,168,76,.08);
     border: 1px solid rgba(201,168,76,.2);
@@ -195,690 +607,132 @@
     animation: fadeUp .8s ease both;
   }
 
-  .hero-eyebrow span {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--gold);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .hero-eyebrow span { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); animation: pulse 2s infinite; }
 
   .hero-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(52px, 7vw, 96px);
-    font-weight: 300;
-    line-height: 1.05;
-    color: var(--snow);
-    margin-bottom: 28px;
+    font-weight: 300; line-height: 1.05;
+    color: var(--snow); margin-bottom: 28px;
     animation: fadeUp .8s ease .1s both;
     letter-spacing: -.01em;
   }
-
-  .hero-title em {
-    font-style: italic;
-    color: var(--gold);
-  }
+  .hero-title em { font-style: italic; color: var(--gold); }
 
   .hero-subtitle {
-    max-width: 560px;
-    font-size: 17px;
-    color: var(--mist);
-    line-height: 1.75;
-    margin-bottom: 44px;
+    max-width: 560px; font-size: 17px; color: var(--mist);
+    line-height: 1.75; margin-bottom: 44px;
     animation: fadeUp .8s ease .2s both;
   }
 
   .hero-stats {
-    display: flex;
-    align-items: center;
-    gap: 0;
+    display: flex; align-items: center;
     background: rgba(17,24,32,.8);
     border: 1px solid rgba(255,255,255,.08);
-    border-radius: 20px;
-    overflow: hidden;
+    border-radius: 20px; overflow: hidden;
     animation: fadeUp .8s ease .3s both;
     backdrop-filter: blur(20px);
   }
 
-  .hero-stat {
-    padding: 22px 36px;
-    text-align: center;
-    border-right: 1px solid rgba(255,255,255,.06);
-  }
-
+  .hero-stat { padding: 22px 36px; text-align: center; border-right: 1px solid rgba(255,255,255,.06); }
   .hero-stat:last-child { border-right: none; }
-
-  .hero-stat-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 34px;
-    font-weight: 300;
-    color: var(--snow);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
+  .hero-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 300; color: var(--snow); line-height: 1; margin-bottom: 6px; }
   .hero-stat-val span { color: var(--gold); }
+  .hero-stat-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .14em; color: var(--steel); text-transform: uppercase; }
 
-  .hero-stat-lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .14em;
-    color: var(--steel);
-    text-transform: uppercase;
-  }
-
-  /* ── SECTION COMMON ── */
   section { position: relative; z-index: 1; }
 
-  .section-eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 12px;
-  }
-
-  .section-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(32px, 4vw, 52px);
-    font-weight: 300;
-    line-height: 1.1;
-    color: var(--snow);
-    margin-bottom: 18px;
-  }
-
+  .section-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 52px); font-weight: 300; line-height: 1.1; color: var(--snow); margin-bottom: 18px; }
   .section-title em { font-style: italic; color: var(--gold); }
+  .section-body { font-size: 15px; color: var(--mist); line-height: 1.8; max-width: 560px; }
 
-  .section-body {
-    font-size: 15px;
-    color: var(--mist);
-    line-height: 1.8;
-    max-width: 560px;
-  }
-
-  /* ── STORY SECTION ── */
-  .story {
-    padding: 120px 40px;
-    max-width: 1300px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-  }
-
-  .story-visual {
-    position: relative;
-    height: 480px;
-  }
-
-  .story-card-main {
-    position: absolute;
-    inset: 0;
-    /* background: linear-gradient(135deg, #0c1830, #0a1428); */
-    background-image: url('./image/coin.jpg');
-    background-size: cover;
-    border: 1px solid rgba(201,168,76,.15);
-    border-radius: 28px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 36px;
-  }
-
-  .story-card-main::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 300px; height: 300px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,168,76,.1), transparent);
-  }
-
-  .story-metric {
-    margin-bottom: 24px;
-  }
-
-  .story-metric-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 64px;
-    font-weight: 300;
-    color: var(--snow);
-    line-height: 1;
-  }
-
+  .story { padding: 120px 40px; max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .story-visual { position: relative; height: 480px; }
+  .story-card-main { position: absolute; inset: 0; background-image: url('./image/coin.jpg'); background-size: cover; border: 1px solid rgba(201,168,76,.15); border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 36px; }
+  .story-card-main::before { content: ''; position: absolute; top: -80px; right: -80px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(201,168,76,.1), transparent); }
+  .story-metric { margin-bottom: 24px; }
+  .story-metric-val { font-family: 'Cormorant Garamond', serif; font-size: 64px; font-weight: 300; color: var(--snow); line-height: 1; }
   .story-metric-val span { color: var(--gold); }
+  .story-metric-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .18em; color: gray; text-transform: uppercase; margin-top: 6px; }
+  .story-pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .story-pill { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .08em; padding: 6px 14px; border-radius: 20px; background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2); color: var(--gold); }
+  .story-card-float { position: absolute; top: 28px; right: -28px; width: 180px; background: var(--surface); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 18px 20px; backdrop-filter: blur(20px); animation: floatCard 5s ease-in-out infinite; }
+  @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .float-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .14em; color: var(--steel); text-transform: uppercase; margin-bottom: 8px; }
+  .float-val { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--gain); font-weight: 300; }
+  .float-sub { font-size: 10px; color: var(--steel); margin-top: 2px; }
 
-  .story-metric-lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .18em;
-    color: gray;
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
+  .story-timeline { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
+  .timeline-item { display: flex; gap: 20px; padding-bottom: 32px; position: relative; }
+  .timeline-item:not(:last-child)::before { content: ''; position: absolute; left: 15px; top: 30px; bottom: 0; width: 1px; background: linear-gradient(to bottom, rgba(201,168,76,.3), transparent); }
+  .timeline-dot { width: 30px; height: 30px; border-radius: 50%; background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gold); }
+  .timeline-content h4 { font-size: 14px; font-weight: 600; color: var(--snow); margin-bottom: 4px; }
+  .timeline-content p { font-size: 13px; color: var(--steel); line-height: 1.6; }
 
-  .story-pill-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
+  .values { padding: 100px 40px; max-width: 1300px; margin: 0 auto; }
+  .values-header { text-align: center; margin-bottom: 64px; }
+  .values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .value-card { background: var(--surface); border: 1px solid rgba(255,255,255,.07); border-radius: 22px; padding: 36px 32px; position: relative; overflow: hidden; transition: border-color .3s, transform .3s; }
+  .value-card:hover { border-color: rgba(201,168,76,.25); transform: translateY(-4px); }
+  .value-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(201,168,76,.06), transparent); }
+  .value-icon { width: 52px; height: 52px; border-radius: 16px; background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 22px; }
+  .value-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; color: var(--snow); margin-bottom: 12px; }
+  .value-body { font-size: 14px; color: var(--mist); line-height: 1.75; }
 
-  .story-pill {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .08em;
-    padding: 6px 14px;
-    border-radius: 20px;
-    background: rgba(201,168,76,.1);
-    border: 1px solid rgba(201,168,76,.2);
-    color: var(--gold);
-  }
-
-  .story-card-float {
-    position: absolute;
-    top: 28px; right: -28px;
-    width: 180px;
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 18px;
-    padding: 18px 20px;
-    backdrop-filter: blur(20px);
-    animation: floatCard 5s ease-in-out infinite;
-  }
-
-  @keyframes floatCard {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  .float-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: .14em;
-    color: var(--steel);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .float-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    color: var(--gain);
-    font-weight: 300;
-  }
-
-  .float-sub {
-    font-size: 10px;
-    color: var(--steel);
-    margin-top: 2px;
-  }
-
-  .story-timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin-top: 40px;
-  }
-
-  .timeline-item {
-    display: flex;
-    gap: 20px;
-    padding-bottom: 32px;
-    position: relative;
-  }
-
-  .timeline-item:not(:last-child)::before {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 30px;
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, rgba(201,168,76,.3), transparent);
-  }
-
-  .timeline-dot {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    background: rgba(201,168,76,.1);
-    border: 1px solid rgba(201,168,76,.3);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--gold);
-  }
-
-  .timeline-content h4 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--snow);
-    margin-bottom: 4px;
-  }
-
-  .timeline-content p {
-    font-size: 13px;
-    color: var(--steel);
-    line-height: 1.6;
-  }
-
-  /* ── VALUES ── */
-  .values {
-    padding: 100px 40px;
-    max-width: 1300px;
-    margin: 0 auto;
-  }
-
-  .values-header {
-    text-align: center;
-    margin-bottom: 64px;
-  }
-
-  .values-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-  }
-
-  .value-card {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 22px;
-    padding: 36px 32px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color .3s, transform .3s;
-  }
-
-  .value-card:hover {
-    border-color: rgba(201,168,76,.25);
-    transform: translateY(-4px);
-  }
-
-  .value-card::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,168,76,.06), transparent);
-    transition: opacity .3s;
-  }
-
-  .value-card:hover::before { opacity: 1.5; }
-
-  .value-icon {
-    width: 52px; height: 52px;
-    border-radius: 16px;
-    background: rgba(201,168,76,.1);
-    border: 1px solid rgba(201,168,76,.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    margin-bottom: 22px;
-  }
-
-  .value-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    font-weight: 400;
-    color: var(--snow);
-    margin-bottom: 12px;
-  }
-
-  .value-body {
-    font-size: 14px;
-    color: var(--mist);
-    line-height: 1.75;
-  }
-
-  /* ── TEAM ── */
-  .team {
-    padding: 100px 40px;
-    max-width: 1300px;
-    margin: 0 auto;
-  }
-
-  .team-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 56px;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-  }
-
-  .team-card {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 22px;
-    overflow: hidden;
-    transition: border-color .3s, transform .3s;
-  }
-
-  .team-card:hover {
-    border-color: rgba(201,168,76,.3);
-    transform: translateY(-4px);
-  }
-
-  .team-card-photo {
-    height: 220px;
-    position: relative;
-    overflow: hidden;
-    /* background-image: url('./image/btc.jpg'); */
-    background-size: cover;
-  }
-
-   
-  .team-avatar {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 56px;
-    font-weight: 300;
-    color: var(--gold);
-    letter-spacing: .05em;
-  
-  }
-
-  /* .team-card:nth-child(1) .team-avatar { background: linear-gradient(135deg, #0c1830, #122240); } */
-  /* .team-card:nth-child(2) .team-avatar { background: linear-gradient(135deg, #130c1a, #1a0f24); } */
-  /* .team-card:nth-child(3) .team-avatar { background: linear-gradient(135deg, #0c1820, #0a1e2a); } */
-  /* .team-card:nth-child(4) .team-avatar { background: linear-gradient(135deg, #1a120a, #241808); } */
-
-  .team-badge {
-    position: absolute;
-    bottom: 14px; left: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: .1em;
-    color: var(--gold);
-    background: rgba(8,12,18,.9);
-    border: 1px solid rgba(201,168,76,.25);
-    border-radius: 8px;
-    padding: 4px 10px;
-    text-transform: uppercase;
-  }
-
-  .team-card-info {
-    padding: 22px 22px 20px;
-  }
-
-  .team-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--snow);
-    margin-bottom: 2px;
-  }
-
-  .team-role {
-    font-size: 12px;
-    color: var(--gold);
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-
-  .team-bio {
-    font-size: 12px;
-    color: var(--steel);
-    line-height: 1.65;
-    margin-bottom: 16px;
-  }
-
-  .team-social {
-    display: flex;
-    gap: 8px;
-  }
-
-  .team-social a {
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.07);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--steel);
-    text-decoration: none;
-    font-size: 11px;
-    transition: all .2s;
-  }
-
+  .team { padding: 100px 40px; max-width: 1300px; margin: 0 auto; }
+  .team-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 56px; gap: 20px; flex-wrap: wrap; }
+  .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .team-card { background: var(--surface); border: 1px solid rgba(255,255,255,.07); border-radius: 22px; overflow: hidden; transition: border-color .3s, transform .3s; }
+  .team-card:hover { border-color: rgba(201,168,76,.3); transform: translateY(-4px); }
+  .team-card-photo { height: 220px; position: relative; overflow: hidden; background-size: cover; }
+  .team-avatar { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 56px; font-weight: 300; color: var(--gold); letter-spacing: .05em; }
+  .team-badge { position: absolute; bottom: 14px; left: 14px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .1em; color: var(--gold); background: rgba(8,12,18,.9); border: 1px solid rgba(201,168,76,.25); border-radius: 8px; padding: 4px 10px; text-transform: uppercase; }
+  .team-card-info { padding: 22px 22px 20px; }
+  .team-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--snow); margin-bottom: 2px; }
+  .team-role { font-size: 12px; color: var(--gold); font-weight: 500; margin-bottom: 10px; }
+  .team-bio { font-size: 12px; color: var(--steel); line-height: 1.65; margin-bottom: 16px; }
+  .team-social { display: flex; gap: 8px; }
+  .team-social a { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center; color: var(--steel); text-decoration: none; font-size: 11px; transition: all .2s; }
   .team-social a:hover { color: var(--gold); border-color: rgba(201,168,76,.3); background: rgba(201,168,76,.08); }
 
-  /* ── METRICS STRIP ── */
-  .metrics-strip {
-    margin: 0 40px;
-    background: linear-gradient(135deg, #0c1830, #0a1428);
-    border: 1px solid rgba(201,168,76,.15);
-    border-radius: 28px;
-    padding: 60px 60px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .metrics-strip::before {
-    content: '';
-    position: absolute;
-    top: -100px; left: 50%;
-    transform: translateX(-50%);
-    width: 600px; height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,168,76,.06), transparent);
-    pointer-events: none;
-  }
-
-  .metric-item {
-    text-align: center;
-    border-right: 1px solid rgba(255,255,255,.06);
-    padding: 0 20px;
-    position: relative;
-  }
-
+  .metrics-strip { margin: 0 40px; background: linear-gradient(135deg, #0c1830, #0a1428); border: 1px solid rgba(201,168,76,.15); border-radius: 28px; padding: 60px 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; overflow: hidden; }
+  .metrics-strip::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(201,168,76,.06), transparent); pointer-events: none; }
+  .metric-item { text-align: center; border-right: 1px solid rgba(255,255,255,.06); padding: 0 20px; }
   .metric-item:last-child { border-right: none; }
-
-  .metric-val {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 52px;
-    font-weight: 300;
-    color: var(--snow);
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-
+  .metric-val { font-family: 'Cormorant Garamond', serif; font-size: 52px; font-weight: 300; color: var(--snow); line-height: 1; margin-bottom: 8px; }
   .metric-val span { color: var(--gold); }
+  .metric-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .16em; color: var(--steel); text-transform: uppercase; }
 
-  .metric-lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .16em;
-    color: var(--steel);
-    text-transform: uppercase;
-  }
-
-  /* ── AWARDS ── */
-  .awards {
-    padding: 100px 40px;
-    max-width: 1300px;
-    margin: 0 auto;
-  }
-
-  .awards-header {
-    text-align: center;
-    margin-bottom: 56px;
-  }
-
-  .awards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-  }
-
-  .award-card {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 20px;
-    padding: 32px;
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    transition: border-color .3s;
-  }
-
+  .awards { padding: 100px 40px; max-width: 1300px; margin: 0 auto; }
+  .awards-header { text-align: center; margin-bottom: 56px; }
+  .awards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .award-card { background: var(--surface); border: 1px solid rgba(255,255,255,.07); border-radius: 20px; padding: 32px; display: flex; gap: 20px; align-items: flex-start; transition: border-color .3s; }
   .award-card:hover { border-color: rgba(201,168,76,.2); }
+  .award-icon { width: 48px; height: 48px; border-radius: 14px; background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .award-year { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .12em; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
+  .award-title { font-size: 15px; font-weight: 600; color: var(--snow); margin-bottom: 5px; }
+  .award-org { font-size: 12px; color: var(--steel); }
 
-  .award-icon {
-    width: 48px; height: 48px;
-    border-radius: 14px;
-    background: rgba(201,168,76,.1);
-    border: 1px solid rgba(201,168,76,.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .award-year {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .12em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 5px;
-  }
-
-  .award-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--snow);
-    margin-bottom: 5px;
-  }
-
-  .award-org {
-    font-size: 12px;
-    color: var(--steel);
-  }
-
-  /* ── CTA ── */
-  .cta-section {
-    padding: 100px 40px 120px;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .cta-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 5vw, 64px);
-    font-weight: 300;
-    color: var(--snow);
-    line-height: 1.1;
-    margin-bottom: 18px;
-  }
-
+  .cta-section { padding: 100px 40px 120px; text-align: center; max-width: 800px; margin: 0 auto; }
+  .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 64px); font-weight: 300; color: var(--snow); line-height: 1.1; margin-bottom: 18px; }
   .cta-title em { font-style: italic; color: var(--gold); }
-
-  .cta-sub {
-    font-size: 16px;
-    color: var(--mist);
-    margin-bottom: 40px;
-    line-height: 1.7;
-  }
-
-  .cta-btns {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn-gold {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 14px 30px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
-    color: var(--void);
-    font-weight: 600; font-size: 14px;
-    text-decoration: none;
-    border: none; cursor: pointer;
-    transition: opacity .2s;
-  }
-
+  .cta-sub { font-size: 16px; color: var(--mist); margin-bottom: 40px; line-height: 1.7; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-gold { display: inline-flex; align-items: center; gap: 8px; padding: 14px 30px; border-radius: 14px; background: linear-gradient(135deg, var(--gold), var(--gold-dim)); color: var(--void); font-weight: 600; font-size: 14px; text-decoration: none; border: none; cursor: pointer; transition: opacity .2s; }
   .btn-gold:hover { opacity: .88; }
-
-  .btn-outline {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 14px 28px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.1);
-    color: var(--mist);
-    font-size: 14px;
-    text-decoration: none;
-    transition: all .2s;
-  }
-
+  .btn-outline { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); color: var(--mist); font-size: 14px; text-decoration: none; transition: all .2s; }
   .btn-outline:hover { color: var(--snow); border-color: rgba(255,255,255,.2); }
 
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid rgba(255,255,255,.06);
-    padding: 28px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    position: relative;
-    z-index: 1;
-  }
+  footer { border-top: 1px solid rgba(255,255,255,.06); padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; position: relative; z-index: 1; }
+  footer p { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel); letter-spacing: .1em; text-transform: uppercase; }
 
-  footer p {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--steel);
-    letter-spacing: .1em;
-    text-transform: uppercase;
-  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .gold-line { width: 60px; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); margin: 16px 0 24px; }
 
-  .reveal {
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity .7s ease, transform .7s ease;
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ── DIVIDER LINE ── */
-  .gold-line {
-    width: 60px; height: 1px;
-    background: linear-gradient(90deg, var(--gold), transparent);
-    margin: 16px 0 24px;
-  }
-
-  /* ── RESPONSIVE ── */
   @media (max-width: 1024px) {
     .story { grid-template-columns: 1fr; gap: 50px; }
     .story-visual { height: 380px; }
@@ -886,13 +740,11 @@
     .team-grid { grid-template-columns: repeat(2, 1fr); }
     .values-grid { grid-template-columns: 1fr 1fr; }
     .awards-grid { grid-template-columns: 1fr 1fr; }
-    .metrics-strip { grid-template-columns: 1fr 1fr; gap: 0; }
+    .metrics-strip { grid-template-columns: 1fr 1fr; }
     .metric-item { padding: 20px; border-bottom: 1px solid rgba(255,255,255,.06); }
   }
 
   @media (max-width: 640px) {
-    nav { padding: 0 20px; }
-    .nav-links { display: none; }
     .hero { padding: 120px 20px 60px; }
     .hero-stats { flex-direction: column; }
     .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,.06); }
@@ -911,24 +763,139 @@
 </head>
 <body>
 
-<!-- NAV -->
+<!-- ═══════════════════════════════════════════
+     NAV
+════════════════════════════════════════════ -->
 <nav>
-  <a href="dashboard.html" class="nav-logo">
+  <a href="index.html" class="nav-logo">
     <div class="nav-logo-mark">A</div>
     <span class="nav-wordmark">Aurum</span>
   </a>
+
+  <!-- Desktop links -->
   <ul class="nav-links">
     <li><a href="dashboard.html">Dashboard</a></li>
     <li><a href="invest.html">Invest</a></li>
+    <li><a href="trade.html">Trade</a></li>
     <li><a href="about.html" class="active">About</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
-  <a href="dashboard.html" class="nav-cta">
-    <i class="fas fa-gauge-high" style="font-size:11px"></i> Dashboard
-  </a>
+
+  <div class="nav-right">
+    <a href="dashboard.html" class="nav-cta">
+      <i class="fas fa-gauge-high" style="font-size:11px"></i> Dashboard
+    </a>
+
+    <!-- Hamburger toggle (mobile) -->
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+  </div>
 </nav>
 
-<!-- HERO -->
+<!-- ═══════════════════════════════════════════
+     MOBILE MENU
+════════════════════════════════════════════ -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="mobile-menu-backdrop" id="menuBackdrop"></div>
+
+  <div class="mobile-menu-panel">
+    <!-- Panel header -->
+    <div class="panel-head">
+      <a href="dashboard.html" class="panel-logo">
+        <div class="panel-logo-mark">A</div>
+        <span class="panel-wordmark">Aurum</span>
+      </a>
+      <button class="panel-close" id="menuClose" aria-label="Close menu">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Nav items -->
+    <nav class="panel-nav">
+      <div class="panel-label">// Navigation</div>
+
+      <a href="dashboard.html" class="panel-link">
+        <div class="panel-link-inner">
+          <div class="panel-link-icon"><i class="fas fa-gauge-high"></i></div>
+          <div class="panel-link-text">
+            <div class="panel-link-name">Dashboard</div>
+            <div class="panel-link-desc">Portfolio overview</div>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right panel-link-arrow"></i>
+      </a>
+
+      <a href="invest.html" class="panel-link">
+        <div class="panel-link-inner">
+          <div class="panel-link-icon"><i class="fas fa-chart-line"></i></div>
+          <div class="panel-link-text">
+            <div class="panel-link-name">Invest</div>
+            <div class="panel-link-desc">Explore opportunities</div>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right panel-link-arrow"></i>
+      </a>
+
+      <a href="trade.html" class="panel-link">
+        <div class="panel-link-inner">
+          <div class="panel-link-icon"><i class="fas fa-arrow-right-arrow-left"></i></div>
+          <div class="panel-link-text">
+            <div class="panel-link-name">Trade</div>
+            <div class="panel-link-desc">Live markets & execution</div>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right panel-link-arrow"></i>
+      </a>
+
+      <div class="panel-divider"></div>
+
+      <a href="about.html" class="panel-link active">
+        <div class="panel-link-inner">
+          <div class="panel-link-icon"><i class="fas fa-building-columns"></i></div>
+          <div class="panel-link-text">
+            <div class="panel-link-name">About</div>
+            <div class="panel-link-desc">Our story & team</div>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right panel-link-arrow"></i>
+      </a>
+
+      <a href="contact.html" class="panel-link">
+        <div class="panel-link-inner">
+          <div class="panel-link-icon"><i class="fas fa-message"></i></div>
+          <div class="panel-link-text">
+            <div class="panel-link-name">Contact</div>
+            <div class="panel-link-desc">Speak to an advisor</div>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right panel-link-arrow"></i>
+      </a>
+    </nav>
+
+    <!-- Bottom CTAs -->
+    <div class="panel-cta-wrap">
+      <a href="dashboard.html" class="panel-cta-btn panel-cta-primary">
+        <i class="fas fa-gauge-high" style="font-size:12px"></i>
+        Open Dashboard
+      </a>
+      <a href="contact.html" class="panel-cta-btn panel-cta-secondary">
+        <i class="fas fa-message" style="font-size:12px"></i>
+        Speak to an Advisor
+      </a>
+      <div class="panel-status">
+        <div class="panel-status-dot"></div>
+        <span class="panel-status-text">All systems operational · 99.9% uptime</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE CONTENT (unchanged)
+════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-bg-lines"></div>
 
@@ -964,13 +931,12 @@
   </div>
 </section>
 
-<!-- STORY -->
 <section class="story">
   <div class="story-visual reveal">
     <div class="story-card-main">
       <div class="story-metric">
         <div class="story-metric-val"><span>+</span>$940M</div>
-        <div class="story-metric-lbl">Total Returns Distributed · 2054</div>
+        <div class="story-metric-lbl">Total Returns Distributed · 2024</div>
       </div>
       <div class="story-pill-row">
         <div class="story-pill">Real Estate</div>
@@ -979,7 +945,6 @@
         <div class="story-pill">Commodities</div>
       </div>
     </div>
-
     <div class="story-card-float">
       <div class="float-label">Avg. Annual Yield</div>
       <div class="float-val">+11.8%</div>
@@ -994,7 +959,6 @@
     <p class="section-body" style="margin-bottom:40px">
       Founded in 2019 by a team of seasoned bankers and technologists, Aurum Capital was born from a simple belief: that premium investment opportunities should not be locked behind private banking minimums. We set out to build the platform we wished existed — one that combines institutional rigour with the elegance of modern design.
     </p>
-
     <div class="story-timeline">
       <div class="timeline-item">
         <div class="timeline-dot">19</div>
@@ -1028,7 +992,6 @@
   </div>
 </section>
 
-<!-- METRICS STRIP -->
 <div class="metrics-strip reveal">
   <div class="metric-item">
     <div class="metric-val">$<span>2.4</span>B</div>
@@ -1048,49 +1011,22 @@
   </div>
 </div>
 
-<!-- VALUES -->
 <section class="values">
   <div class="values-header reveal">
     <div class="section-eyebrow">// Our Principles</div>
     <div class="gold-line" style="margin:16px auto 0"></div>
     <h2 class="section-title" style="margin-top:12px">The values that<br>guide every <em>decision</em></h2>
   </div>
-
   <div class="values-grid">
-    <div class="value-card reveal">
-      <div class="value-icon">🏛️</div>
-      <h3 class="value-title">Institutional Integrity</h3>
-      <p class="value-body">Every investment on our platform undergoes the same rigorous due diligence applied at tier-1 investment banks. We never compromise on fundamentals.</p>
-    </div>
-    <div class="value-card reveal" style="transition-delay:.1s">
-      <div class="value-icon">🔐</div>
-      <h3 class="value-title">Radical Transparency</h3>
-      <p class="value-body">Real-time reporting, live P&L, and auditable transaction histories. We believe investors deserve complete visibility — always.</p>
-    </div>
-    <div class="value-card reveal" style="transition-delay:.2s">
-      <div class="value-icon">⚡</div>
-      <h3 class="value-title">Technology First</h3>
-      <p class="value-body">Our platform is engineered for speed, reliability and precision. 99.9% uptime, millisecond executions, and bank-grade encryption at every layer.</p>
-    </div>
-    <div class="value-card reveal" style="transition-delay:.05s">
-      <div class="value-icon">🌍</div>
-      <h3 class="value-title">Global Access</h3>
-      <p class="value-body">From Dubai to London, New York to Singapore — we open doors to the world's most compelling investment opportunities regardless of geography.</p>
-    </div>
-    <div class="value-card reveal" style="transition-delay:.15s">
-      <div class="value-icon">🤝</div>
-      <h3 class="value-title">Client Partnership</h3>
-      <p class="value-body">We succeed only when our investors succeed. Our fee model aligns incentives, and our advisors are always in your corner — not their own.</p>
-    </div>
-    <div class="value-card reveal" style="transition-delay:.25s">
-      <div class="value-icon">📐</div>
-      <h3 class="value-title">Precision Execution</h3>
-      <p class="value-body">Meticulously crafted products, elegantly designed interfaces, and flawlessly executed trades. The details matter, and we sweat every one of them.</p>
-    </div>
+    <div class="value-card reveal"><div class="value-icon">🏛️</div><h3 class="value-title">Institutional Integrity</h3><p class="value-body">Every investment on our platform undergoes the same rigorous due diligence applied at tier-1 investment banks. We never compromise on fundamentals.</p></div>
+    <div class="value-card reveal" style="transition-delay:.1s"><div class="value-icon">🔐</div><h3 class="value-title">Radical Transparency</h3><p class="value-body">Real-time reporting, live P&amp;L, and auditable transaction histories. We believe investors deserve complete visibility — always.</p></div>
+    <div class="value-card reveal" style="transition-delay:.2s"><div class="value-icon">⚡</div><h3 class="value-title">Technology First</h3><p class="value-body">Our platform is engineered for speed, reliability and precision. 99.9% uptime, millisecond executions, and bank-grade encryption at every layer.</p></div>
+    <div class="value-card reveal" style="transition-delay:.05s"><div class="value-icon">🌍</div><h3 class="value-title">Global Access</h3><p class="value-body">From Dubai to London, New York to Singapore — we open doors to the world's most compelling investment opportunities regardless of geography.</p></div>
+    <div class="value-card reveal" style="transition-delay:.15s"><div class="value-icon">🤝</div><h3 class="value-title">Client Partnership</h3><p class="value-body">We succeed only when our investors succeed. Our fee model aligns incentives, and our advisors are always in your corner — not their own.</p></div>
+    <div class="value-card reveal" style="transition-delay:.25s"><div class="value-icon">📐</div><h3 class="value-title">Precision Execution</h3><p class="value-body">Meticulously crafted products, elegantly designed interfaces, and flawlessly executed trades. The details matter, and we sweat every one of them.</p></div>
   </div>
 </section>
 
-<!-- TEAM -->
 <section class="team">
   <div class="team-header reveal">
     <div>
@@ -1100,25 +1036,19 @@
     </div>
     <p style="font-size:14px;color:var(--mist);max-width:320px;line-height:1.7">Seasoned professionals from Goldman Sachs, Binance, Blackstone and Andreessen Horowitz.</p>
   </div>
-
   <div class="team-grid">
     <div class="team-card reveal">
       <div class="team-card-photo" style="background: #222 url('./image/chief.jpg') no-repeat center / cover;">
         <div class="team-avatar"></div>
         <div class="team-badge">Founder & CEO</div>
       </div>
-
       <div class="team-card-info">
         <h3 class="team-name">Khalid Al-Rashidi</h3>
         <p class="team-role">Chief Executive Officer</p>
         <p class="team-bio">Former Goldman Sachs MD. 18 years in structured finance and real estate private equity across MENA and Europe.</p>
-        <div class="team-social">
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
+        <div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-x-twitter"></i></a></div>
       </div>
     </div>
-
     <div class="team-card reveal" style="transition-delay:.1s">
       <div class="team-card-photo" style="background: #222 url('./image/sofia.jpg') no-repeat center / cover;">
         <div class="team-avatar"></div>
@@ -1128,13 +1058,9 @@
         <h3 class="team-name">Sofia Varentsova</h3>
         <p class="team-role">Chief Technology Officer</p>
         <p class="team-bio">Ex-Binance VP of Engineering. Built trading infrastructure processing $3B+ daily volume. MIT Computer Science.</p>
-        <div class="team-social">
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-github"></i></a>
-        </div>
+        <div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-github"></i></a></div>
       </div>
     </div>
-
     <div class="team-card reveal" style="transition-delay:.2s">
       <div class="team-card-photo" style="background: #222 url('./image/officer.jpg') no-repeat center / cover;">
         <div class="team-avatar"></div>
@@ -1144,15 +1070,11 @@
         <h3 class="team-name">James Mercer</h3>
         <p class="team-role">Chief Investment Officer</p>
         <p class="team-bio">Former Blackstone Senior Principal. Managed $900M in alternative assets. CFA Charterholder, Oxford University.</p>
-        <div class="team-social">
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
+        <div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-x-twitter"></i></a></div>
       </div>
     </div>
-
     <div class="team-card reveal" style="transition-delay:.3s">
-      <div class="team-card-photo" style="background: #222 url('./image/james.jpg') no-repeat center / cover; ">
+      <div class="team-card-photo" style="background: #222 url('./image/james.jpg') no-repeat center / cover;">
         <div class="team-avatar"></div>
         <div class="team-badge">Leadership</div>
       </div>
@@ -1160,76 +1082,28 @@
         <h3 class="team-name">Jack Patel</h3>
         <p class="team-role">Chief Operating Officer</p>
         <p class="team-bio">Previously at a16z Crypto and McKinsey. Expert in scaling fintech operations across emerging markets globally.</p>
-        <div class="team-social">
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-x-twitter"></i></a>
-        </div>
+        <div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-x-twitter"></i></a></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- AWARDS -->
 <section class="awards">
   <div class="awards-header reveal">
     <div class="section-eyebrow">// Recognition</div>
     <div class="gold-line" style="margin:16px auto 0"></div>
     <h2 class="section-title" style="margin-top:12px">Industry <em>recognition</em></h2>
   </div>
-
   <div class="awards-grid">
-    <div class="award-card reveal">
-      <div class="award-icon">🏆</div>
-      <div>
-        <div class="award-year">2025</div>
-        <div class="award-title">#1 Alternative Investment Platform — MENA</div>
-        <div class="award-org">FinTech Global Awards</div>
-      </div>
-    </div>
-    <div class="award-card reveal" style="transition-delay:.1s">
-      <div class="award-icon">⭐</div>
-      <div>
-        <div class="award-year">2024</div>
-        <div class="award-title">Best Digital Wealth Manager</div>
-        <div class="award-org">Forbes Middle East</div>
-      </div>
-    </div>
-    <div class="award-card reveal" style="transition-delay:.2s">
-      <div class="award-icon">🥇</div>
-      <div>
-        <div class="award-year">2023</div>
-        <div class="award-title">Most Innovative Fintech Startup</div>
-        <div class="award-org">World Economic Forum</div>
-      </div>
-    </div>
-    <div class="award-card reveal" style="transition-delay:.05s">
-      <div class="award-icon">🔒</div>
-      <div>
-        <div class="award-year">2023</div>
-        <div class="award-title">ISO 27001 Security Certified</div>
-        <div class="award-org">International Standards Organization</div>
-      </div>
-    </div>
-    <div class="award-card reveal" style="transition-delay:.15s">
-      <div class="award-icon">🌐</div>
-      <div>
-        <div class="award-year">2022</div>
-        <div class="award-title">Top 50 Fastest Growing Fintechs</div>
-        <div class="award-org">CB Insights Global Report</div>
-      </div>
-    </div>
-    <div class="award-card reveal" style="transition-delay:.25s">
-      <div class="award-icon">💎</div>
-      <div>
-        <div class="award-year">2022</div>
-        <div class="award-title">Excellence in Client Experience</div>
-        <div class="award-org">Private Banking & Wealth Management Awards</div>
-      </div>
-    </div>
+    <div class="award-card reveal"><div class="award-icon">🏆</div><div><div class="award-year">2025</div><div class="award-title">#1 Alternative Investment Platform — MENA</div><div class="award-org">FinTech Global Awards</div></div></div>
+    <div class="award-card reveal" style="transition-delay:.1s"><div class="award-icon">⭐</div><div><div class="award-year">2024</div><div class="award-title">Best Digital Wealth Manager</div><div class="award-org">Forbes Middle East</div></div></div>
+    <div class="award-card reveal" style="transition-delay:.2s"><div class="award-icon">🥇</div><div><div class="award-year">2023</div><div class="award-title">Most Innovative Fintech Startup</div><div class="award-org">World Economic Forum</div></div></div>
+    <div class="award-card reveal" style="transition-delay:.05s"><div class="award-icon">🔒</div><div><div class="award-year">2023</div><div class="award-title">ISO 27001 Security Certified</div><div class="award-org">International Standards Organization</div></div></div>
+    <div class="award-card reveal" style="transition-delay:.15s"><div class="award-icon">🌐</div><div><div class="award-year">2022</div><div class="award-title">Top 50 Fastest Growing Fintechs</div><div class="award-org">CB Insights Global Report</div></div></div>
+    <div class="award-card reveal" style="transition-delay:.25s"><div class="award-icon">💎</div><div><div class="award-year">2022</div><div class="award-title">Excellence in Client Experience</div><div class="award-org">Private Banking & Wealth Management Awards</div></div></div>
   </div>
 </section>
 
-<!-- CTA -->
 <section class="cta-section reveal">
   <div class="section-eyebrow" style="margin-bottom:20px">// Ready to Begin?</div>
   <h2 class="cta-title">Start building your<br><em>legacy</em> today</h2>
@@ -1240,7 +1114,6 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <p>©2025 Aurum Capital · All Rights Reserved</p>
   <p>Dubai · London · New York · Singapore</p>
@@ -1248,48 +1121,82 @@
 </footer>
 
 <script>
-// Scroll reveal
-const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
+  // ── MOBILE MENU ──────────────────────────────
+  const toggle   = document.getElementById('navToggle');
+  const menu     = document.getElementById('mobileMenu');
+  const backdrop = document.getElementById('menuBackdrop');
+  const closeBtn = document.getElementById('menuClose');
+
+  function openMenu() {
+    menu.classList.add('open');
+    toggle.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('menu-open');
+  }
+
+  function closeMenu() {
+    menu.classList.remove('open');
+    toggle.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('menu-open');
+  }
+
+  toggle.addEventListener('click', () => {
+    menu.classList.contains('open') ? closeMenu() : openMenu();
   });
-}, { threshold: 0.1 });
-reveals.forEach(el => observer.observe(el));
 
-// Animated counters
-function animateCounter(el, target, suffix = '', decimals = 0) {
-  const duration = 2000;
-  const start = performance.now();
-  const startVal = 0;
-  const update = (now) => {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const current = startVal + (target - startVal) * ease;
-    el.textContent = decimals > 0 ? current.toFixed(decimals) : Math.floor(current);
-    if (progress < 1) requestAnimationFrame(update);
-  };
-  requestAnimationFrame(update);
-}
+  closeBtn.addEventListener('click', closeMenu);
+  backdrop.addEventListener('click', closeMenu);
 
-const metricObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !entry.target.dataset.animated) {
-      entry.target.dataset.animated = 'true';
-      const spans = entry.target.querySelectorAll('.metric-val span, .hero-stat-val span');
-      spans.forEach(span => {
-        const val = parseFloat(span.textContent);
-        const decimals = span.textContent.includes('.') ? 1 : 0;
-        animateCounter(span, val, '', decimals);
-      });
-    }
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu();
   });
-}, { threshold: 0.3 });
 
-document.querySelectorAll('.metrics-strip, .hero-stats').forEach(el => metricObserver.observe(el));
+  // Close menu when a panel link is tapped (navigating away)
+  document.querySelectorAll('.panel-link').forEach(link => {
+    link.addEventListener('click', () => {
+      // Small delay so the click registers before menu closes
+      setTimeout(closeMenu, 80);
+    });
+  });
+
+  // ── SCROLL REVEAL ────────────────────────────
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => revealObserver.observe(el));
+
+  // ── COUNTER ANIMATION ────────────────────────
+  function animateCounter(el, target, decimals = 0) {
+    const duration = 2000;
+    const start = performance.now();
+    const update = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = target * ease;
+      el.textContent = decimals > 0 ? current.toFixed(decimals) : Math.floor(current);
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  const metricObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.animated) {
+        entry.target.dataset.animated = 'true';
+        entry.target.querySelectorAll('.metric-val span, .hero-stat-val span').forEach(span => {
+          const val = parseFloat(span.textContent);
+          animateCounter(span, val, span.textContent.includes('.') ? 1 : 0);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.metrics-strip, .hero-stats').forEach(el => metricObserver.observe(el));
 </script>
 </body>
 </html>
