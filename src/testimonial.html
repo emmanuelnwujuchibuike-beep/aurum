@@ -605,15 +605,10 @@
     .ls-live-text { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.1em; color: #5a6880; }
     @media(max-width: 640px) { .live-strip-inner { grid-template-columns: repeat(2,1fr); } .ls-cell:nth-child(2) { border-right: none; } .ls-cell:nth-child(3) { border-top: 1px solid var(--border-gold); } }
 
-    /* ═══════════════════════════════
-       VIDEO TESTIMONIALS — REDESIGNED
-       Cards are compact thumbnails;
-       clicking opens a centred modal.
-    ═══════════════════════════════ */
+    /* VIDEO TESTIMONIALS */
     .video-section { max-width: 1200px; margin: 0 auto 80px; padding: 0 40px; }
     .video-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
 
-    /* ── Thumbnail card ── */
     .video-card {
       border-radius: 20px; overflow: hidden; position: relative;
       border: 1px solid var(--border);
@@ -627,14 +622,12 @@
       box-shadow: 0 20px 56px rgba(0,0,0,0.55), 0 0 32px rgba(201,168,76,0.07);
     }
 
-    /* Fixed-height poster area — no zoom */
     .video-thumb-wrap {
       position: relative; overflow: hidden;
       height: 210px;
       background: var(--bg3);
     }
 
-    /* Poster image — covers the area cleanly, centred, NO hover zoom */
     .video-poster {
       width: 100%; height: 100%;
       object-fit: cover;
@@ -647,7 +640,6 @@
       filter: brightness(0.72) saturate(0.85);
     }
 
-    /* Gradient overlay — bottom fade for text legibility */
     .video-thumb-gradient {
       position: absolute; inset: 0;
       background: linear-gradient(
@@ -659,7 +651,6 @@
       pointer-events: none;
     }
 
-    /* Cinematic gold accent line at top */
     .video-thumb-wrap::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 3;
@@ -668,7 +659,6 @@
     }
     .video-card:hover .video-thumb-wrap::before { opacity: 0.7; }
 
-    /* Profit badge — top right */
     .video-profit-badge {
       position: absolute; top: 12px; right: 12px; z-index: 4;
       padding: 5px 11px; border-radius: 8px;
@@ -677,7 +667,6 @@
       backdrop-filter: blur(8px);
     }
 
-    /* Play button — centered on poster */
     .video-play-btn {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
@@ -695,7 +684,6 @@
       box-shadow: 0 0 0 12px rgba(201,168,76,0.18), 0 0 48px rgba(201,168,76,0.55);
     }
 
-    /* Duration badge bottom-left */
     .video-duration {
       position: absolute; bottom: 10px; left: 12px; z-index: 4;
       font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.06em;
@@ -704,7 +692,6 @@
       padding: 3px 7px; border-radius: 5px; backdrop-filter: blur(6px);
     }
 
-    /* Info panel below thumb */
     .video-info {
       padding: 18px 20px 20px;
       background: var(--bg2);
@@ -724,7 +711,7 @@
     .video-role { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
     .video-quote-preview { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-mute); font-style: italic; line-height: 1.55; }
 
-    /* ── Video Modal ── */
+    /* VIDEO MODAL */
     #videoModal {
       position: fixed; inset: 0; z-index: 9500;
       display: none; align-items: center; justify-content: center;
@@ -738,7 +725,6 @@
       background: rgba(2,4,8,0.92);
       backdrop-filter: blur(22px);
     }
-    /* Animate-in the box */
     #videoModal.open .vm-box {
       animation: vmSlideIn 0.4s cubic-bezier(.4,0,.2,1) forwards;
     }
@@ -756,14 +742,12 @@
       box-shadow: 0 60px 120px rgba(0,0,0,0.9), 0 0 60px rgba(201,168,76,0.08);
     }
 
-    /* Gold top accent */
     .vm-box::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 10;
       background: linear-gradient(90deg, transparent 5%, var(--gold) 50%, transparent 95%);
     }
 
-    /* Close button */
     .vm-close {
       position: absolute; top: 14px; right: 14px; z-index: 20;
       width: 36px; height: 36px; border-radius: 10px;
@@ -775,7 +759,6 @@
     }
     .vm-close:hover { color: var(--gold); border-color: var(--border-gold); background: rgba(201,168,76,0.1); }
 
-    /* Video container — 16:9 */
     .vm-video-wrap {
       position: relative;
       width: 100%;
@@ -784,12 +767,12 @@
     }
     .vm-video-wrap video {
       width: 100%; height: 100%;
-      object-fit: contain;   /* contain = no zoom, letterboxed cleanly */
+      object-fit: contain;
       display: block;
       background: #000;
     }
 
-    /* Info strip below video */
+    /* ── Modal avatar: square crop matching poster ── */
     .vm-info {
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px 22px 18px;
@@ -797,9 +780,11 @@
     }
     .vm-person { display: flex; align-items: center; gap: 12px; }
     .vm-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      object-fit: cover;
+      width: 44px; height: 44px; border-radius: 10px;
+      object-fit: cover; object-position: center top;
       border: 2px solid rgba(201,168,76,0.35);
+      background: var(--bg3);
+      flex-shrink: 0;
     }
     .vm-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 500; color: var(--text); line-height: 1.1; }
     .vm-role { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; color: var(--text-mute); text-transform: uppercase; margin-top: 2px; }
@@ -871,7 +856,7 @@
     }
     .testi-card.visible { opacity: 1; transform: translateY(0); }
 
-    /* ── LIVE TICKER (synced, dynamic) ── */
+    /* LIVE TICKER */
     .ticker-bar {
       position: fixed; top: 72px; left: 0; right: 0; z-index: 800;
       height: 32px;
@@ -882,7 +867,6 @@
     }
     .ticker-track {
       display: flex; align-items: center; height: 100%;
-      /* JS controls the animation via CSS var */
       white-space: nowrap;
       animation: tickerScroll 40s linear infinite;
       width: max-content;
@@ -934,15 +918,8 @@
   </button>
 </header>
 
-<!-- ═══════════════════════════════════
-     LIVE TICKER — dynamic, CoinGecko-synced
-     Items are rendered by JS; the track is
-     duplicated so the marquee loops seamlessly.
-═══════════════════════════════════ -->
 <div class="ticker-bar">
-  <div class="ticker-track" id="tickerTrack">
-    <!-- JS populates two copies for seamless loop -->
-  </div>
+  <div class="ticker-track" id="tickerTrack"></div>
 </div>
 
 <!-- MOBILE MENU -->
@@ -970,6 +947,10 @@
       </a>
       <a href="testimonials.html" class="lp-nav-link lp-active">
         <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-star"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Testimonials</div><div class="lp-nav-link-sub">Real investor stories</div></div></div>
+        <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+      </a>
+      <a href="privacy-policy.html" class="lp-nav-link">
+        <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-shield-halved"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Privacy Policy</div><div class="lp-nav-link-sub">Your privacy rights</div></div></div>
         <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
       </a>
       <a href="index.html#assets" class="lp-nav-link" onclick="closeLpMenu()">
@@ -1395,7 +1376,7 @@
   </div>
 </section>
 
-<!-- ═══════════ VIDEO TESTIMONIALS ═══════════ -->
+<!-- VIDEO TESTIMONIALS -->
 <section class="video-section">
   <div class="testi-section-head" style="margin-bottom:40px;">
     <div class="section-label">Video Proof</div>
@@ -1408,7 +1389,6 @@
     <!-- Video Card 1 — Marcus T. -->
     <div class="video-card reveal reveal-d1" onclick="openVideoModal(0)">
       <div class="video-thumb-wrap">
-        <!-- Convincing financial/professional poster using Unsplash -->
         <img class="video-poster"
           src="videos/testimony1.jpeg"
           alt="Marcus T. — Investor"
@@ -1428,12 +1408,12 @@
       </div>
     </div>
 
-    <!-- Video Card 2 — Omar H. -->
+    <!-- Video Card 2 — Nigel Lievers -->
     <div class="video-card reveal reveal-d2" onclick="openVideoModal(1)">
       <div class="video-thumb-wrap">
         <img class="video-poster"
           src="videos/testimony2.jpeg"
-          alt="Nigel Lievers. — Investor"
+          alt="Nigel Lievers — Investor"
           onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=640&q=80'" style="object-position: center;">
         <div class="video-thumb-gradient"></div>
         <div class="video-profit-badge">+$399K</div>
@@ -1442,7 +1422,7 @@
       </div>
       <div class="video-info">
         <div class="video-info-top">
-          <div class="video-name">Nigel Lievers.</div>
+          <div class="video-name">Nigel Lievers</div>
           <div class="video-stars"><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i></div>
         </div>
         <div class="video-role">Tech Executive · Porto, Portugal</div>
@@ -1450,7 +1430,7 @@
       </div>
     </div>
 
-    <!-- Video Card 3 — Priya M. -->
+    <!-- Video Card 3 — Legacy M. -->
     <div class="video-card reveal reveal-d3" onclick="openVideoModal(2)">
       <div class="video-thumb-wrap">
         <img class="video-poster"
@@ -1475,7 +1455,7 @@
   </div>
 </section>
 
-<!-- ═══════════ VIDEO MODAL ═══════════ -->
+<!-- VIDEO MODAL -->
 <div id="videoModal" onclick="handleModalBg(event)">
   <div class="vm-box">
     <button class="vm-close" onclick="closeVideoModal()"><i class="fas fa-xmark"></i></button>
@@ -1490,7 +1470,8 @@
     </div>
     <div class="vm-info">
       <div class="vm-person">
-        <img id="vmAvatar" class="vm-avatar" src="" alt="">
+        <img id="vmAvatar" class="vm-avatar" src="" alt=""
+          onerror="this.style.visibility='hidden'; this.style.width='0'; this.style.margin='0'">
         <div>
           <div id="vmName" class="vm-name"></div>
           <div id="vmRole" class="vm-role"></div>
@@ -1542,19 +1523,6 @@
     <strong>Risk Disclaimer:</strong> Investing involves substantial risk of loss. Past performance is not indicative of future results. Real estate investments are illiquid and subject to market fluctuations. Aurum Capital is a registered investment platform regulated under applicable financial services law. Profit figures shown are illustrative of verified investor outcomes and do not guarantee future results.
   </div>
 </footer>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <script>
 /* ══════ SCROLL PROGRESS ══════ */
@@ -1609,16 +1577,8 @@ function filterTestis(cat, btn) {
   });
 }
 
-/* ══════════════════════════════════════════
-   LIVE TICKER — same CoinGecko approach as index.html
-   Strategy:
-   1. Render initial items from static fallback prices immediately
-   2. Fetch from CoinGecko API (or hook into existing coingecko-sync.js)
-   3. Re-render track on every update to keep prices current
-   The track is rendered twice for seamless looping marquee.
-══════════════════════════════════════════ */
+/* ══════ LIVE TICKER ══════ */
 (function () {
-  /* Symbols to show in ticker with static fallback prices */
   const TICKER_SYMBOLS = [
     { sym: 'BTC',  name: 'Bitcoin',   fallbackPrice: 103240, fallbackChg: 2.4,  geckoId: 'bitcoin' },
     { sym: 'ETH',  name: 'Ethereum',  fallbackPrice: 3812,   fallbackChg: 1.8,  geckoId: 'ethereum' },
@@ -1630,15 +1590,9 @@ function filterTestis(cat, btn) {
     { sym: 'GOLD', name: 'Gold',      fallbackPrice: 2348,   fallbackChg: 0.4,  geckoId: null },
   ];
 
-  /* Live price store — starts from fallbacks, updated by fetches */
-  const prices = {};
-  const changes = {};
-  TICKER_SYMBOLS.forEach(s => {
-    prices[s.sym]  = s.fallbackPrice;
-    changes[s.sym] = s.fallbackChg;
-  });
+  const prices = {}, changes = {};
+  TICKER_SYMBOLS.forEach(s => { prices[s.sym] = s.fallbackPrice; changes[s.sym] = s.fallbackChg; });
 
-  /* Format price for display */
   function fmtPrice(p) {
     if (p >= 10000) return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 0 });
     if (p >= 1000)  return '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1646,38 +1600,29 @@ function filterTestis(cat, btn) {
     return '$' + parseFloat(p).toFixed(4);
   }
 
-  /* Build one set of ticker items HTML */
   function buildTickerItems() {
     return TICKER_SYMBOLS.map(s => {
-      const chg = changes[s.sym];
-      const up  = chg >= 0;
+      const chg = changes[s.sym], up = chg >= 0;
       const chgStr = (up ? '+' : '') + parseFloat(chg).toFixed(2) + '%';
       return `<span class="ticker-item" data-sym="${s.sym}">
         <span class="t-sym">${s.sym}</span>
-        <span class="t-price" id="tick-px-${s.sym}">${fmtPrice(prices[s.sym])}</span>
-        <span class="${up ? 't-up' : 't-down'}" id="tick-chg-${s.sym}">${chgStr}</span>
+        <span class="t-price">${fmtPrice(prices[s.sym])}</span>
+        <span class="${up ? 't-up' : 't-down'}">${chgStr}</span>
       </span>`;
     }).join('');
   }
 
-  /* Render full duplicated track (2× for seamless loop) */
   function renderTicker() {
     const track = document.getElementById('tickerTrack');
     if (!track) return;
     const items = buildTickerItems();
-    track.innerHTML = items + items; // duplicate for loop
+    track.innerHTML = items + items;
   }
 
-  /* Update a single item without full re-render (avoids animation jitter) */
   function updateTickerItem(sym) {
-    const pxEl  = document.getElementById('tick-px-' + sym);
-    const chgEl = document.getElementById('tick-chg-' + sym);
-    // There are two copies — update both
     document.querySelectorAll(`[data-sym="${sym}"] .t-price`).forEach(el => {
       el.textContent = fmtPrice(prices[sym]);
-      el.classList.remove('t-flash');
-      void el.offsetWidth;
-      el.classList.add('t-flash');
+      el.classList.remove('t-flash'); void el.offsetWidth; el.classList.add('t-flash');
     });
     document.querySelectorAll(`[data-sym="${sym}"] span:last-child`).forEach(el => {
       const chg = changes[sym];
@@ -1686,49 +1631,35 @@ function filterTestis(cat, btn) {
     });
   }
 
-  /* Initial render */
   renderTicker();
 
-  /* ── CoinGecko fetch ── */
   const GECKO_IDS = TICKER_SYMBOLS.filter(s => s.geckoId).map(s => s.geckoId).join(',');
 
   async function fetchCoinGecko() {
     try {
       const url = `https://api.coingecko.com/api/v3/simple/price?ids=${GECKO_IDS}&vs_currencies=usd&include_24hr_change=true`;
-      const res  = await fetch(url, { cache: 'no-store' });
+      const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) return;
       const data = await res.json();
-
       TICKER_SYMBOLS.forEach(s => {
         if (!s.geckoId || !data[s.geckoId]) return;
-        const prev = prices[s.sym];
         prices[s.sym]  = data[s.geckoId].usd;
         changes[s.sym] = data[s.geckoId].usd_24h_change || 0;
         updateTickerItem(s.sym);
-
-        /* Mirror into shared window.PRICES used by coingecko-sync.js */
         if (!window.PRICES)  window.PRICES  = {};
         if (!window.CHANGES) window.CHANGES = {};
         window.PRICES[s.sym]  = prices[s.sym];
         window.CHANGES[s.sym] = changes[s.sym];
       });
-    } catch (e) {
-      /* Silently fall back to static prices already shown */
-    }
+    } catch (e) {}
   }
 
-  /* ── Hook into existing coingecko-sync.js if present ── */
   const _origOnPriceUpdate = window.onPriceUpdate;
   window.onPriceUpdate = function(sym, price, chg) {
     if (typeof _origOnPriceUpdate === 'function') _origOnPriceUpdate(sym, price, chg);
-    if (prices[sym] !== undefined) {
-      prices[sym]  = price;
-      changes[sym] = chg;
-      updateTickerItem(sym);
-    }
+    if (prices[sym] !== undefined) { prices[sym] = price; changes[sym] = chg; updateTickerItem(sym); }
   };
 
-  /* Also listen to localStorage broadcast */
   window.addEventListener('storage', function(e) {
     if (e.key === 'aurum_live_prices') {
       try {
@@ -1746,17 +1677,14 @@ function filterTestis(cat, btn) {
     }
   });
 
-  /* Fetch immediately + every 60 s */
   fetchCoinGecko();
   setInterval(fetchCoinGecko, 60000);
 })();
 
 /* ══════════════════════════════════════════
-   VIDEO MODAL
-   openVideoModal(index) — opens centred modal
-   with the correct video file & metadata.
-   Video plays at its natural aspect ratio (contain),
-   never zoomed or cropped.
+   VIDEO MODAL — names, roles & avatars all
+   sourced from the same poster image used
+   on the thumbnail card.
 ══════════════════════════════════════════ */
 const VIDEO_DATA = [
   {
@@ -1764,27 +1692,30 @@ const VIDEO_DATA = [
     poster: 'videos/testimony1.jpeg',
     fallbackPoster: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=860&q=80',
     name:   'Marcus T.',
-    role:   'Private Investor · Zürich, Switzerland',
+    role:   'Private Investor · Texas, USA',
     profit: '+$218,400',
-    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&q=80',
+    avatar: 'videos/testimony1.jpeg',        // same image as card poster
+    avatarFallback: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&q=80',
   },
   {
     src:    'videos/testimony2.mp4',
     poster: 'videos/testimony2.jpeg',
     fallbackPoster: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=860&q=80',
-    name:   'Omar H.',
-    role:   'Tech Executive · New York, USA',
+    name:   'Nigel Lievers',
+    role:   'Tech Executive · Porto, Portugal',
     profit: '+$399,800',
-    avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80&q=80',
+    avatar: 'videos/testimony2.jpeg',        // same image as card poster
+    avatarFallback: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80&q=80',
   },
   {
     src:    'videos/testimony3.mp4',
     poster: 'videos/testimony3.jpeg',
     fallbackPoster: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=860&q=80',
-    name:   'Priya M.',
+    name:   'Legacy M.',
     role:   'Doctor · Sydney, Australia',
     profit: '+$193,400',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80',
+    avatar: 'videos/testimony3.jpeg',        // same image as card poster
+    avatarFallback: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80',
   }
 ];
 
@@ -1795,27 +1726,37 @@ function openVideoModal(idx) {
   const player = document.getElementById('vmPlayer');
   const d = VIDEO_DATA[idx];
 
-  /* Populate info strip */
   document.getElementById('vmName').textContent = d.name;
   document.getElementById('vmRole').textContent = d.role;
   document.getElementById('vmProfitVal').textContent = d.profit;
+
   const avatarEl = document.getElementById('vmAvatar');
+  avatarEl.style.visibility = '';
+  avatarEl.style.width = '';
+  avatarEl.style.margin = '';
   avatarEl.src = d.avatar;
   avatarEl.alt = d.name;
+  avatarEl.onerror = function() {
+    // Try the Unsplash fallback before hiding
+    if (this.src !== d.avatarFallback) {
+      this.src = d.avatarFallback;
+    } else {
+      this.style.visibility = 'hidden';
+      this.style.width = '0';
+      this.style.margin = '0';
+    }
+  };
 
-  /* Set video source + poster */
   player.poster = d.poster || d.fallbackPoster;
   player.src    = d.src;
   player.load();
 
   vmCurrentIndex = idx;
   modal.style.display = 'flex';
-  /* Force reflow so transition fires */
   void modal.offsetWidth;
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  /* Auto-play */
   player.play().catch(() => {});
 }
 
@@ -1826,13 +1767,11 @@ function closeVideoModal() {
   player.src = '';
   modal.classList.remove('open');
   document.body.style.overflow = '';
-  /* Hide after transition */
   setTimeout(() => { modal.style.display = 'none'; }, 350);
   vmCurrentIndex = null;
 }
 
 function handleModalBg(e) {
-  /* Close only if clicking the dark backdrop, not the box */
   if (e.target === document.getElementById('videoModal')) closeVideoModal();
 }
 
@@ -1876,7 +1815,6 @@ const baseChartOptions = {
   elements: { point: { radius: 0, hoverRadius: 5, hoverBackgroundColor: '#c9a84c', hoverBorderColor: '#040608', hoverBorderWidth: 2 } }
 };
 
-/* Monthly */
 const monthlyDatasets = {
   profit:    { data: [18.2,22.4,27.8,31.5,42.1,38.6,44.3,52.8,49.2,58.7,63.4,71.1], label: 'Monthly Profit ($M)', color: 'gold' },
   volume:    { data: [120,145,180,210,290,265,310,380,345,420,460,510], label: 'Trading Volume ($M)', color: 'gold' },
@@ -1902,7 +1840,6 @@ function switchMonthly(type, btn) {
   btn.classList.add('active'); buildMonthlyChart(type);
 }
 
-/* Yearly */
 const yearlyDatasets = {
   profit:  { data:[12,28,48,76,115,142,142], label:'Annual Profit ($M)', color:'gold' },
   aum:     { data:[180,420,820,1400,2200,3600,4200], label:'AUM ($M)', color:'green' },
@@ -1929,7 +1866,6 @@ function switchYearly(type,btn) {
   btn.classList.add('active'); buildYearlyChart(type);
 }
 
-/* Cumulative */
 function buildCumulativeChart() {
   const labels=['Q1 19','Q2 19','Q3 19','Q4 19','Q1 20','Q2 20','Q3 20','Q4 20','Q1 21','Q2 21','Q3 21','Q4 21','Q1 22','Q2 22','Q3 22','Q4 22','Q1 23','Q2 23','Q3 23','Q4 23','Q1 24','Q2 24','Q3 24','Q4 24','Q1 25','Q2 25'];
   const data=[2.8,5.4,8.2,12,15.8,21,28.4,38,48,60,74,92,106,122,140,160,186,218,252,298,360,430,520,620,740,875];
