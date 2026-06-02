@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testimonials — Aurum Capital</title>
+  <link rel="icon" type="image/png" href="./image/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="coingecko-sync.js"></script>
+  <script src="chat-widget.js"></script>
+
+  <style>
+    :root {
+      --gold:       #c9a84c;
+      --gold-light: #e2c97e;
+      --gold-dark:  #a87c28;
+      --gold-glow:  rgba(201,168,76,0.18);
+      --bg:         #04080f;
+      --bg2:        #060c14;
+      --bg3:        #08101a;
+      --surface:    rgba(255,255,255,0.035);
+      --border:     rgba(255,255,255,0.07);
+      --border-gold:rgba(201,168,76,0.22);
+      --text:       #edf2f8;
+      --text-dim:   #8c9db5;
+      --text-mute:  #5a6880;
+      --green:      #22c55e;
+      --red:        #ef4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px;
+    }
+
+    /* HEADER */
+    #mainHeader {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 72px;
+      background: rgba(4,8,15,0.72);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s;
+    }
+    #mainHeader.scrolled { background: rgba(4,8,15,0.92); box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; letter-spacing: 0.1em; color: var(--text); font-weight: 400;
+    }
+    .logo-mark {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, #c9a84c, #a87c28);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700;
+      color: #040608; font-size: 14px;
+      box-shadow: 0 0 20px rgba(201,168,76,0.25);
+    }
+
+    nav.desk { display: flex; align-items: center; gap: 6px; }
+    nav.desk a {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
+      color: var(--text-dim); text-decoration: none; padding: 8px 14px;
+      border-radius: 9px; letter-spacing: 0.02em;
+      transition: color 0.2s, background 0.2s;
+    }
+    nav.desk a:hover, nav.desk a.on { color: var(--text); background: rgba(255,255,255,0.05); }
+    nav.desk a.on { color: var(--gold); }
+
+    .head-right { display: flex; align-items: center; gap: 10px; }
+    .btn-outline-sm {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--text-dim); padding: 8px 18px; border-radius: 10px;
+      border: 1px solid var(--border); background: transparent;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .btn-outline-sm:hover { color: var(--text); border-color: rgba(255,255,255,0.15); background: var(--surface); }
+    .btn-gold {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      color: #040608; padding: 8px 20px; border-radius: 10px;
+      background: linear-gradient(135deg, #c9a84c, #a87c28);
+      text-decoration: none; transition: opacity 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(201,168,76,0.22);
+    }
+    .btn-gold:hover { opacity: 0.88; box-shadow: 0 6px 24px rgba(201,168,76,0.38); }
+
+    @media(max-width:1024px) { nav.desk, .head-right { display: none; } }
+
+    /* MOBILE NAV TOGGLE */
+    .lp-nav-toggle {
+      display: none;
+      width: 48px; height: 48px; border-radius: 14px;
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.2);
+      cursor: pointer;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 5px; z-index: 600;
+      transition: background .3s, border-color .3s, box-shadow .3s;
+      flex-shrink: 0;
+    }
+    .lp-nav-toggle:hover { background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.4); }
+    .lp-nav-toggle .bar {
+      display: block; width: 20px; height: 1.5px;
+      background: #c9a84c; border-radius: 2px;
+      transition: transform .5s cubic-bezier(.77,0,.175,1), opacity .3s, width .3s;
+      transform-origin: center;
+    }
+    .lp-nav-toggle.open .bar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .lp-nav-toggle.open .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .lp-nav-toggle.open .bar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    @media(max-width:1024px) { .lp-nav-toggle { display: flex !important; } }
+
+    .lp-mobile-menu {
+      display: none; position: fixed; inset: 0;
+      z-index: 500; pointer-events: none;
+    }
+    .lp-menu-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(2,4,6,0);
+      backdrop-filter: blur(0px);
+      transition: background .6s cubic-bezier(.4,0,.2,1), backdrop-filter .6s;
+    }
+    .lp-menu-panel {
+      position: absolute; top: 0; right: 0;
+      width: min(400px,96vw); height: 100%;
+      background: linear-gradient(168deg,#070d18 0%,#05090f 55%,#030608 100%);
+      border-left: 1px solid rgba(201,168,76,0.1);
+      transform: translateX(100%);
+      transition: transform .65s cubic-bezier(.77,0,.175,1);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .lp-mobile-menu.open { pointer-events: all; }
+    .lp-mobile-menu.open .lp-menu-backdrop { background: rgba(2,4,6,.82); backdrop-filter: blur(16px); }
+    .lp-mobile-menu.open .lp-menu-panel { transform: translateX(0); }
+    @media(max-width:1024px) { .lp-mobile-menu { display: block !important; } }
+    @media(min-width:1025px) { .lp-mobile-menu { display: none !important; } }
+    body.lp-menu-open { overflow: hidden; }
+
+    .lp-panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 26px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      position: relative; z-index: 2; flex-shrink: 0;
+    }
+    .lp-panel-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .lp-panel-logo-mark {
+      width: 36px; height: 36px; border-radius: 11px;
+      background: linear-gradient(135deg,#c9a84c,#a87c28);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700;
+      color: #040608; font-size: 15px; box-shadow: 0 0 24px rgba(201,168,76,0.3);
+    }
+    .lp-panel-wordmark { font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .14em; color: #edf2f8; }
+    .lp-panel-wordmark em { color: #c9a84c; font-style: italic; }
+    .lp-panel-close {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #5a6880; font-size: 14px;
+      transition: color .2s, background .2s, border-color .2s;
+    }
+    .lp-panel-close:hover { color: #c9a84c; border-color: rgba(201,168,76,0.35); background: rgba(201,168,76,0.07); }
+
+    .lp-panel-nav {
+      flex: 1 1 0; min-height: 0; overflow-y: auto; overflow-x: hidden;
+      padding: 16px 20px 8px;
+      display: flex; flex-direction: column; gap: 2px;
+      position: relative; z-index: 2;
+      scrollbar-width: thin; scrollbar-color: rgba(201,168,76,0.2) transparent;
+    }
+    .lp-nav-link {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 16px; border-radius: 16px;
+      text-decoration: none; color: #8c9db5;
+      background: transparent; border: 1px solid transparent;
+      cursor: pointer; width: 100%; text-align: left;
+      font-family: 'DM Sans', sans-serif; margin-bottom: 3px;
+      transition: background .28s, border-color .28s, color .28s;
+    }
+    .lp-nav-link:hover, .lp-nav-link.lp-active { color: #edf2f8; background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.07); }
+    .lp-nav-link.lp-active { color: #c9a84c; background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.2); }
+    .lp-nav-link-inner { display: flex; align-items: center; gap: 14px; }
+    .lp-nav-link-icon {
+      width: 42px; height: 42px; border-radius: 13px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: #5a6880; flex-shrink: 0; transition: all .25s;
+    }
+    .lp-nav-link:hover .lp-nav-link-icon, .lp-nav-link.lp-active .lp-nav-link-icon { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); color: #c9a84c; }
+    .lp-nav-link-text { flex: 1; }
+    .lp-nav-link-name { font-size: 15px; font-weight: 500; color: inherit; line-height: 1.1; margin-bottom: 2px; }
+    .lp-nav-link-sub { font-size: 10px; color: #5a6880; font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; }
+    .lp-nav-link-arrow { font-size: 9px; color: #5a6880; opacity: 0; transition: all .24s; }
+    .lp-nav-link:hover .lp-nav-link-arrow, .lp-nav-link.lp-active .lp-nav-link-arrow { opacity: 1; color: #c9a84c; }
+
+    .lp-nav-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px; letter-spacing: .22em; text-transform: uppercase;
+      color: #5a6880; padding: 0 6px;
+      margin-bottom: 6px; margin-top: 10px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .lp-nav-section-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
+
+    .lp-panel-cta {
+      flex-shrink: 0; padding: 18px 22px 30px;
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; gap: 10px;
+      background: linear-gradient(to top,#030608 55%,transparent);
+    }
+    .lp-cta-primary {
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 16px 20px; border-radius: 16px;
+      background: linear-gradient(135deg,#c9a84c,#a87c28);
+      color: #040608; font-weight: 700; font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none; border: none; cursor: pointer;
+      box-shadow: 0 6px 28px rgba(201,168,76,0.22);
+      transition: opacity .2s, box-shadow .2s, transform .18s;
+    }
+    .lp-cta-primary:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 8px 36px rgba(201,168,76,0.35); }
+    .lp-cta-secondary {
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 14px 20px; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.04);
+      color: #8c9db5; font-size: 14px; font-family: 'DM Sans', sans-serif;
+      text-decoration: none; cursor: pointer; transition: all .2s;
+    }
+    .lp-cta-secondary:hover { color: #edf2f8; background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); }
+    .lp-panel-status { display: flex; align-items: center; justify-content: center; gap: 8px; padding-top: 4px; }
+    .lp-status-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; animation: livePulse 2s infinite; }
+    .lp-status-text { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .12em; color: #5a6880; text-transform: uppercase; }
+    @keyframes livePulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+    /* HERO */
+    .testi-hero {
+      position: relative;
+      padding: 160px 40px 100px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .testi-hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent);
+    }
+    .testi-hero-orb-1 {
+      position: absolute; top: -80px; left: 15%; z-index: 0;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .testi-hero-orb-2 {
+      position: absolute; top: 20px; right: 10%; z-index: 0;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(98,126,234,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .testi-hero-inner { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .section-label::before { content: ''; width: 28px; height: 1px; background: var(--gold); opacity: 0.5; }
+    .section-label::after  { content: ''; width: 28px; height: 1px; background: var(--gold); opacity: 0.5; }
+
+    .testi-hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 300; line-height: 1.05;
+      color: var(--text); margin-bottom: 24px;
+    }
+    .testi-hero-title em { color: var(--gold); font-style: italic; }
+    .testi-hero-sub {
+      font-size: 16px; line-height: 1.7; color: var(--text-dim);
+      max-width: 520px; margin: 0 auto 48px;
+    }
+
+    .agg-stats {
+      display: flex; justify-content: center; gap: 0;
+      border: 1px solid var(--border-gold);
+      border-radius: 20px; overflow: hidden;
+      max-width: 640px; margin: 0 auto;
+      background: rgba(201,168,76,0.03);
+      backdrop-filter: blur(12px);
+    }
+    .agg-stat { flex: 1; padding: 24px 20px; text-align: center; border-right: 1px solid var(--border-gold); position: relative; }
+    .agg-stat:last-child { border-right: none; }
+    .agg-stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 300;
+      color: var(--gold); line-height: 1; margin-bottom: 6px;
+    }
+    .agg-stat-lbl { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-mute); }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* FEATURED */
+    .featured-section { padding: 0 40px 80px; max-width: 1200px; margin: 0 auto; }
+    .featured-card {
+      position: relative; border-radius: 28px; overflow: hidden;
+      border: 1px solid var(--border-gold);
+      background: linear-gradient(145deg, rgba(201,168,76,0.06) 0%, rgba(8,16,26,0.95) 55%);
+      padding: 60px;
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center;
+    }
+    .featured-card::before {
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse 60% 80% at 0% 50%, rgba(201,168,76,0.06), transparent 70%);
+    }
+    .featured-card::after {
+      content: '"'; position: absolute;
+      top: -20px; left: 50px; z-index: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 280px; line-height: 1; color: var(--gold);
+      opacity: 0.04; pointer-events: none; font-style: italic;
+    }
+    .featured-quote-side, .featured-person-side { position: relative; z-index: 1; }
+
+    .featured-stars { display: flex; gap: 5px; margin-bottom: 24px; }
+    .star { font-size: 18px; color: var(--gold); animation: starGlow 2s ease-in-out infinite alternate; }
+    .star:nth-child(2) { animation-delay: 0.15s; }
+    .star:nth-child(3) { animation-delay: 0.3s; }
+    .star:nth-child(4) { animation-delay: 0.45s; }
+    .star:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes starGlow {
+      from { text-shadow: 0 0 4px rgba(201,168,76,0.2); }
+      to   { text-shadow: 0 0 14px rgba(201,168,76,0.6), 0 0 28px rgba(201,168,76,0.3); }
+    }
+
+    .featured-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.3rem, 2.5vw, 1.9rem); font-weight: 300; line-height: 1.55;
+      color: var(--text); font-style: italic; margin-bottom: 32px;
+    }
+    .profit-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: 12px;
+      background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #22c55e;
+    }
+    .profit-badge i { font-size: 11px; }
+
+    .featured-person-side { text-align: center; }
+    .featured-avatar-wrap { position: relative; display: inline-block; margin-bottom: 24px; }
+    .featured-avatar {
+      width: 160px; height: 160px; border-radius: 50%;
+      object-fit: cover; border: 3px solid transparent;
+      background: linear-gradient(var(--bg), var(--bg)) padding-box,
+                  linear-gradient(135deg, #c9a84c, #a87c28) border-box;
+      box-shadow: 0 0 40px rgba(201,168,76,0.2), 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .featured-avatar-ring { position: absolute; inset: -8px; border-radius: 50%; border: 1px solid rgba(201,168,76,0.2); animation: ringPulse 3s ease-in-out infinite; }
+    .featured-avatar-ring2 { position: absolute; inset: -18px; border-radius: 50%; border: 1px solid rgba(201,168,76,0.1); animation: ringPulse 3s ease-in-out infinite 1s; }
+    @keyframes ringPulse { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.02); } }
+    .featured-name { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .featured-title-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 16px; }
+    .featured-location { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-dim); }
+    .featured-location i { color: var(--gold); font-size: 10px; }
+
+    @media(max-width: 768px) {
+      .featured-card { grid-template-columns: 1fr; padding: 36px 28px; gap: 36px; }
+      .featured-person-side { order: -1; }
+    }
+
+    /* PROFIT CHARTS SECTION */
+    .charts-section {
+      max-width: 1200px; margin: 0 auto 100px; padding: 0 40px;
+    }
+    .charts-section-head {
+      text-align: center; margin-bottom: 56px;
+    }
+    .charts-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .charts-section-title em { color: var(--gold); font-style: italic; }
+    .charts-section-sub { font-size: 14px; color: var(--text-dim); }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .chart-card {
+      position: relative;
+      border-radius: 24px;
+      border: 1px solid var(--border-gold);
+      background: linear-gradient(145deg, rgba(201,168,76,0.04) 0%, rgba(6,12,20,0.98) 60%);
+      padding: 32px 32px 28px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+    .chart-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.5;
+    }
+    .chart-card-glow {
+      position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .chart-card-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 8px; position: relative; z-index: 1;
+    }
+    .chart-card-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-mute);
+      margin-bottom: 6px;
+    }
+    .chart-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 400; color: var(--text);
+      line-height: 1.1;
+    }
+    .chart-card-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 12px; border-radius: 8px;
+      background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      color: #22c55e; margin-top: 8px;
+    }
+    .chart-card-badge i { font-size: 9px; }
+
+    .chart-card-stat { text-align: right; }
+    .chart-card-stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; color: var(--gold); line-height: 1;
+    }
+    .chart-card-stat-lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: 8px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-mute);
+      margin-top: 4px;
+    }
+
+    .chart-divider {
+      height: 1px; background: rgba(255,255,255,0.04);
+      margin: 16px 0; position: relative; z-index: 1;
+    }
+
+    .chart-tabs {
+      display: flex; gap: 6px; margin-bottom: 20px; position: relative; z-index: 1;
+    }
+    .chart-tab {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-mute); cursor: pointer; transition: all 0.2s;
+    }
+    .chart-tab:hover { border-color: rgba(201,168,76,0.2); color: var(--text-dim); }
+    .chart-tab.active {
+      border-color: var(--border-gold);
+      background: rgba(201,168,76,0.1);
+      color: var(--gold);
+    }
+
+    .chart-wrap { position: relative; z-index: 1; height: 220px; }
+    .chart-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 16px; position: relative; z-index: 1;
+    }
+    .chart-footer-live { display: flex; align-items: center; gap: 6px; }
+    .cf-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; animation: livePulse 1.8s infinite; }
+    .cf-text { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; color: var(--text-mute); text-transform: uppercase; }
+    .chart-footer-note { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--text-mute); letter-spacing: 0.05em; }
+
+    .chart-card-wide { grid-column: 1 / -1; padding-bottom: 32px; }
+    .chart-wrap-wide { height: 260px; }
+
+    @media(max-width: 768px) {
+      .charts-grid { grid-template-columns: 1fr; }
+      .chart-card-wide { grid-column: 1; }
+    }
+
+    /* TESTIMONIALS GRID */
+    .testi-section { padding: 0 40px 100px; max-width: 1280px; margin: 0 auto; }
+    .testi-section-head { text-align: center; margin-bottom: 60px; }
+    .testi-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .testi-section-title em { color: var(--gold); font-style: italic; }
+    .testi-section-sub { font-size: 14px; color: var(--text-dim); letter-spacing: 0.02em; }
+
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+    .testi-card {
+      position: relative; border-radius: 22px; border: 1px solid var(--border);
+      background: var(--bg2); padding: 32px 28px; overflow: hidden; cursor: default;
+      transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+    }
+    .testi-card::before {
+      content: ''; position: absolute; inset: 0; z-index: 0; border-radius: 22px;
+      opacity: 0; transition: opacity 0.4s;
+      background: radial-gradient(ellipse 80% 80% at 30% 20%, rgba(201,168,76,0.06), transparent 70%);
+    }
+    .testi-card:hover { border-color: var(--border-gold); box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(201,168,76,0.06); transform: translateY(-4px); }
+    .testi-card:hover::before { opacity: 1; }
+    .testi-card::after {
+      content: ''; position: absolute; top: 0; left: 28px; right: 28px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity 0.35s; border-radius: 0 0 2px 2px;
+    }
+    .testi-card:hover::after { opacity: 0.5; }
+    .testi-card-inner { position: relative; z-index: 1; }
+
+    .tc-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .tc-avatar-wrap { position: relative; flex-shrink: 0; }
+    .tc-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(201,168,76,0.2); transition: border-color 0.3s; }
+    .testi-card:hover .tc-avatar { border-color: rgba(201,168,76,0.5); }
+    .tc-verified { position: absolute; bottom: -2px; right: -2px; width: 18px; height: 18px; border-radius: 50%; background: var(--gold); border: 2px solid var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 8px; color: #040608; }
+    .tc-info { flex: 1; min-width: 0; }
+    .tc-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 3px; }
+    .tc-role { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-mute); }
+    .tc-stars { display: flex; gap: 3px; }
+    .tc-star { font-size: 11px; color: var(--gold); }
+
+    .tc-profit {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border-radius: 10px;
+      background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      color: #22c55e; margin-bottom: 16px;
+      animation: profitPulse 3s ease-in-out infinite;
+    }
+    .tc-profit i { font-size: 9px; }
+    .tc-profit-label { font-weight: 400; color: rgba(34,197,94,0.6); font-size: 9px; }
+
+    .tc-quote { font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--text-dim); margin-bottom: 18px; font-style: italic; }
+    .tc-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.04); }
+    .tc-location { display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-mute); }
+    .tc-location i { color: var(--gold); font-size: 9px; }
+    .tc-date { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.08em; color: var(--text-mute); }
+    .testi-card.tall { padding-bottom: 40px; }
+    .testi-card.highlight { border-color: rgba(201,168,76,0.22); background: linear-gradient(145deg, rgba(201,168,76,0.05), var(--bg2)); }
+    .tc-quote-mark { font-family: 'Cormorant Garamond', serif; font-size: 80px; line-height: 1; color: var(--gold); opacity: 0.08; font-style: italic; float: left; margin: -10px 6px -20px 0; }
+    .avatar-fallback { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: #040608; flex-shrink: 0; border: 2px solid rgba(201,168,76,0.3); }
+
+    /* FILTER TABS */
+    .testi-tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 48px; flex-wrap: wrap; }
+    .testi-tab {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 10px 22px; border-radius: 12px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-mute); cursor: pointer; transition: all 0.22s;
+    }
+    .testi-tab:hover { border-color: rgba(255,255,255,0.14); color: var(--text-dim); background: var(--surface); }
+    .testi-tab.on { border-color: var(--border-gold); background: rgba(201,168,76,0.1); color: var(--gold); }
+
+    /* LIVE STRIP */
+    .live-strip { max-width: 1200px; margin: 0 auto 80px; padding: 0 40px; }
+    .live-strip-inner {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid var(--border-gold);
+      background: linear-gradient(145deg, rgba(201,168,76,0.04), rgba(8,16,26,0.95));
+      backdrop-filter: blur(16px);
+    }
+    .ls-cell { padding: 28px 24px; text-align: center; border-right: 1px solid var(--border-gold); position: relative; }
+    .ls-cell:last-child { border-right: none; }
+    .ls-cell::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 40px; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+    .ls-val { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 2.8vw, 2.4rem); font-weight: 300; color: var(--gold); line-height: 1; margin-bottom: 6px; }
+    .ls-lbl { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-mute); }
+    .ls-live { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 8px; }
+    .ls-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; animation: livePulse 1.8s infinite; }
+    .ls-live-text { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.1em; color: #5a6880; }
+    @media(max-width: 640px) { .live-strip-inner { grid-template-columns: repeat(2,1fr); } .ls-cell:nth-child(2) { border-right: none; } .ls-cell:nth-child(3) { border-top: 1px solid var(--border-gold); } }
+
+    /* ═══════════════════════════════
+       VIDEO TESTIMONIALS — REDESIGNED
+       Cards are compact thumbnails;
+       clicking opens a centred modal.
+    ═══════════════════════════════ */
+    .video-section { max-width: 1200px; margin: 0 auto 80px; padding: 0 40px; }
+    .video-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+
+    /* ── Thumbnail card ── */
+    .video-card {
+      border-radius: 20px; overflow: hidden; position: relative;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      cursor: pointer;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .video-card:hover {
+      border-color: var(--border-gold);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.55), 0 0 32px rgba(201,168,76,0.07);
+    }
+
+    /* Fixed-height poster area — no zoom */
+    .video-thumb-wrap {
+      position: relative; overflow: hidden;
+      height: 210px;
+      background: var(--bg3);
+    }
+
+    /* Poster image — covers the area cleanly, centred, NO hover zoom */
+    .video-poster {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transition: filter 0.35s;
+      filter: brightness(0.62) saturate(0.7);
+    }
+    .video-card:hover .video-poster {
+      filter: brightness(0.72) saturate(0.85);
+    }
+
+    /* Gradient overlay — bottom fade for text legibility */
+    .video-thumb-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(4,8,15,0.0)  30%,
+        rgba(4,8,15,0.55) 70%,
+        rgba(4,8,15,0.88) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Cinematic gold accent line at top */
+    .video-thumb-wrap::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 3;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .video-card:hover .video-thumb-wrap::before { opacity: 0.7; }
+
+    /* Profit badge — top right */
+    .video-profit-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 4;
+      padding: 5px 11px; border-radius: 8px;
+      background: rgba(34,197,94,0.16); border: 1px solid rgba(34,197,94,0.35);
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: #22c55e;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Play button — centered on poster */
+    .video-play-btn {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(201,168,76,0.85);
+      border: 2px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: #040608; z-index: 4;
+      box-shadow: 0 0 0 8px rgba(201,168,76,0.15), 0 0 32px rgba(201,168,76,0.4);
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .video-card:hover .video-play-btn {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: var(--gold);
+      box-shadow: 0 0 0 12px rgba(201,168,76,0.18), 0 0 48px rgba(201,168,76,0.55);
+    }
+
+    /* Duration badge bottom-left */
+    .video-duration {
+      position: absolute; bottom: 10px; left: 12px; z-index: 4;
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.7);
+      background: rgba(0,0,0,0.5);
+      padding: 3px 7px; border-radius: 5px; backdrop-filter: blur(6px);
+    }
+
+    /* Info panel below thumb */
+    .video-info {
+      padding: 18px 20px 20px;
+      background: var(--bg2);
+      position: relative;
+    }
+    .video-info::before {
+      content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent);
+    }
+    .video-info-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .video-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text); }
+    .video-stars { display: flex; gap: 2px; }
+    .video-star { font-size: 10px; color: var(--gold); }
+    .video-role { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
+    .video-quote-preview { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-mute); font-style: italic; line-height: 1.55; }
+
+    /* ── Video Modal ── */
+    #videoModal {
+      position: fixed; inset: 0; z-index: 9500;
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+      background: rgba(2,4,8,0);
+      backdrop-filter: blur(0px);
+      transition: background 0.35s, backdrop-filter 0.35s;
+    }
+    #videoModal.open {
+      display: flex;
+      background: rgba(2,4,8,0.92);
+      backdrop-filter: blur(22px);
+    }
+    /* Animate-in the box */
+    #videoModal.open .vm-box {
+      animation: vmSlideIn 0.4s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes vmSlideIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
+
+    .vm-box {
+      position: relative;
+      width: 100%; max-width: 860px;
+      border-radius: 22px; overflow: hidden;
+      border: 1px solid var(--border-gold);
+      background: var(--bg2);
+      box-shadow: 0 60px 120px rgba(0,0,0,0.9), 0 0 60px rgba(201,168,76,0.08);
+    }
+
+    /* Gold top accent */
+    .vm-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 10;
+      background: linear-gradient(90deg, transparent 5%, var(--gold) 50%, transparent 95%);
+    }
+
+    /* Close button */
+    .vm-close {
+      position: absolute; top: 14px; right: 14px; z-index: 20;
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(4,8,15,0.7); border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim); font-size: 14px; cursor: pointer;
+      transition: color 0.2s, background 0.2s, border-color 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .vm-close:hover { color: var(--gold); border-color: var(--border-gold); background: rgba(201,168,76,0.1); }
+
+    /* Video container — 16:9 */
+    .vm-video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+    .vm-video-wrap video {
+      width: 100%; height: 100%;
+      object-fit: contain;   /* contain = no zoom, letterboxed cleanly */
+      display: block;
+      background: #000;
+    }
+
+    /* Info strip below video */
+    .vm-info {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 22px 18px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .vm-person { display: flex; align-items: center; gap: 12px; }
+    .vm-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(201,168,76,0.35);
+    }
+    .vm-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 500; color: var(--text); line-height: 1.1; }
+    .vm-role { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; color: var(--text-mute); text-transform: uppercase; margin-top: 2px; }
+    .vm-profit {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 10px;
+      background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #22c55e;
+    }
+    .vm-profit i { font-size: 9px; }
+
+    /* CTA BAND */
+    .cta-band { background: linear-gradient(135deg, rgba(201,168,76,0.06), rgba(98,126,234,0.04)); border-top: 1px solid var(--border-gold); border-bottom: 1px solid var(--border); padding: 80px 40px; }
+    .cta-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; color: var(--text); margin-bottom: 16px; }
+    .cta-title em { color: var(--gold); font-style: italic; }
+    .cta-sub { font-size: 15px; color: var(--text-dim); margin-bottom: 40px; line-height: 1.7; }
+    .cta-btns { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 9px; padding: 16px 36px; border-radius: 14px; background: linear-gradient(135deg, #c9a84c, #a87c28); color: #040608; font-weight: 700; font-size: 14px; font-family: 'DM Sans', sans-serif; text-decoration: none; box-shadow: 0 6px 28px rgba(201,168,76,0.3); transition: opacity 0.2s, box-shadow 0.2s, transform 0.18s; }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 10px 40px rgba(201,168,76,0.4); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 9px; padding: 15px 36px; border-radius: 14px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); font-size: 14px; font-family: 'DM Sans', sans-serif; text-decoration: none; transition: all 0.2s; }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text); background: var(--surface); }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 40px 0; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .footer-brand-desc { font-size: 13px; color: var(--text-mute); line-height: 1.7; margin-top: 12px; max-width: 280px; }
+    .footer-col-title { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { text-decoration: none; font-size: 13px; color: var(--text-mute); transition: color 0.2s; }
+    .footer-col ul li a:hover { color: var(--text); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+    .footer-legal { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--text-mute); }
+    .footer-social { display: flex; gap: 8px; }
+    .social-btn { width: 34px; height: 34px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-mute); text-decoration: none; font-size: 13px; transition: all 0.2s; }
+    .social-btn:hover { color: var(--gold); border-color: var(--border-gold); background: rgba(201,168,76,0.06); }
+    .disclaimer { padding: 20px 0; font-size: 11px; color: var(--text-mute); line-height: 1.7; border-top: 1px solid var(--border); max-width: 1200px; margin: 0 auto; }
+
+    @media(max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .video-grid { grid-template-columns: 1fr; }
+      .testi-hero { padding: 130px 24px 70px; }
+      .featured-section, .testi-section, .live-strip, .video-section, .charts-section { padding-left: 24px; padding-right: 24px; }
+    }
+    @media(max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .agg-stats { flex-direction: column; border-radius: 16px; }
+      .agg-stat { border-right: none; border-bottom: 1px solid var(--border-gold); }
+      .agg-stat:last-child { border-bottom: none; }
+      .vm-info { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+
+    .ambient-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+
+    @keyframes profitPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0.08); } }
+
+    #scrollProgress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 9999; background: linear-gradient(90deg, #c9a84c, #e2c97e, #c9a84c); transform-origin: left; transform: scaleX(0); transition: transform 0.1s linear; }
+
+    .testi-card {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), border-color 0.35s, box-shadow 0.35s;
+    }
+    .testi-card.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── LIVE TICKER (synced, dynamic) ── */
+    .ticker-bar {
+      position: fixed; top: 72px; left: 0; right: 0; z-index: 800;
+      height: 32px;
+      background: rgba(4,8,15,0.85);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+    .ticker-track {
+      display: flex; align-items: center; height: 100%;
+      /* JS controls the animation via CSS var */
+      white-space: nowrap;
+      animation: tickerScroll 40s linear infinite;
+      width: max-content;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    .ticker-item {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 0 26px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.07em;
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+    .t-sym { color: var(--text-dim); font-weight: 500; }
+    .t-price { color: var(--text); }
+    .t-up   { color: #22c55e; }
+    .t-down { color: #ef4444; }
+
+    @keyframes tickFlash { 0%{ opacity:1 } 30%{ opacity:.4 } 100%{ opacity:1 } }
+    .t-flash { animation: tickFlash 0.5s ease; }
+  </style>
+</head>
+<body>
+
+<div id="scrollProgress"></div>
+<canvas class="ambient-canvas" id="ambientCanvas"></canvas>
+
+<!-- HEADER -->
+<header id="mainHeader">
+  <a href="index.html" class="logo">
+    <div class="logo-mark">A</div>
+    Aurum Capital
+  </a>
+  <nav class="desk">
+    <a href="index.html#markets">Markets</a>
+    <a href="invest.html">Invest</a>
+    <a href="index.html#assets">Assets</a>
+    <a href="index.html#property">Property</a>
+    <a href="about.html">About</a>
+    <a href="testimonials.html" class="on">Testimonials</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="head-right">
+    <a href="signup.html" class="btn-outline-sm">Sign In</a>
+    <a href="signup.html" class="btn-gold">Open Account</a>
+  </div>
+  <button class="lp-nav-toggle" id="lpNavToggle" aria-label="Open navigation" aria-expanded="false">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </button>
+</header>
+
+<!-- ═══════════════════════════════════
+     LIVE TICKER — dynamic, CoinGecko-synced
+     Items are rendered by JS; the track is
+     duplicated so the marquee loops seamlessly.
+═══════════════════════════════════ -->
+<div class="ticker-bar">
+  <div class="ticker-track" id="tickerTrack">
+    <!-- JS populates two copies for seamless loop -->
+  </div>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="lp-mobile-menu" id="lpMobileMenu" role="dialog" aria-modal="true">
+  <div class="lp-menu-backdrop" id="lpMenuBackdrop"></div>
+  <div class="lp-menu-panel">
+    <div class="lp-panel-head">
+      <a href="index.html" class="lp-panel-logo" onclick="closeLpMenu()">
+        <div class="lp-panel-logo-mark">A</div>
+        <span class="lp-panel-wordmark">Aurum <em>Capital</em></span>
+      </a>
+      <button class="lp-panel-close" id="lpMenuClose" aria-label="Close navigation">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <nav class="lp-panel-nav">
+      <div class="lp-nav-section-label">// Explore</div>
+      <a href="index.html#markets" class="lp-nav-link" onclick="closeLpMenu()">
+        <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-chart-line"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Markets</div><div class="lp-nav-link-sub">Live prices &amp; trends</div></div></div>
+        <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+      </a>
+      <a href="invest.html" class="lp-nav-link">
+        <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-seedling"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Invest</div><div class="lp-nav-link-sub">Explore opportunities</div></div></div>
+        <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+      </a>
+      <a href="testimonials.html" class="lp-nav-link lp-active">
+        <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-star"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Testimonials</div><div class="lp-nav-link-sub">Real investor stories</div></div></div>
+        <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+      </a>
+      <a href="index.html#assets" class="lp-nav-link" onclick="closeLpMenu()">
+        <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-gem"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Assets</div><div class="lp-nav-link-sub">High-conviction picks</div></div></div>
+        <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+      </a>
+      <div class="lp-nav-section-label">// Company</div>
+      <a href="about.html" class="lp-nav-link">
+        <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-building-columns"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">About</div><div class="lp-nav-link-sub">Our story &amp; team</div></div></div>
+        <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+      </a>
+      <a href="contact.html" class="lp-nav-link">
+        <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-message"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Contact</div><div class="lp-nav-link-sub">Speak to an advisor</div></div></div>
+        <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+      </a>
+      <a href="signup.html" class="lp-nav-link">
+        <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-user-circle"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Sign In</div><div class="lp-nav-link-sub">Access your account</div></div></div>
+        <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+      </a>
+    </nav>
+    <div class="lp-panel-cta">
+      <a href="signup.html" class="lp-cta-primary"><i class="fas fa-rocket" style="font-size:13px;"></i>Open Account — Free</a>
+      <a href="invest.html" class="lp-cta-secondary"><i class="fas fa-chart-candlestick" style="font-size:13px;"></i>Explore Live Markets</a>
+      <div class="lp-panel-status"><div class="lp-status-dot"></div><span class="lp-status-text">All systems operational · 99.9% uptime</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="testi-hero">
+  <div class="testi-hero-grid"></div>
+  <div class="testi-hero-orb-1"></div>
+  <div class="testi-hero-orb-2"></div>
+  <div class="testi-hero-inner">
+    <div class="section-label reveal">Verified Investor Stories</div>
+    <h1 class="testi-hero-title reveal reveal-d1">
+      Real People,<br><em>Real Returns,</em><br>Real Impact
+    </h1>
+    <p class="testi-hero-sub reveal reveal-d2">
+      Over 180,000 investors trust Aurum Capital with their portfolios. Here are their stories — unfiltered, verified, and extraordinary.
+    </p>
+    <div class="agg-stats reveal reveal-d3">
+      <div class="agg-stat">
+        <div class="agg-stat-val" id="cntReviews">0</div>
+        <div class="agg-stat-lbl">5-Star Reviews</div>
+      </div>
+      <div class="agg-stat">
+        <div class="agg-stat-val">4.97<span style="font-size:60%;opacity:0.6;">/5</span></div>
+        <div class="agg-stat-lbl">Avg Rating</div>
+      </div>
+      <div class="agg-stat">
+        <div class="agg-stat-val" id="cntProfit">$0</div>
+        <div class="agg-stat-lbl">Total Client Profit</div>
+      </div>
+      <div class="agg-stat">
+        <div class="agg-stat-val">98.4%</div>
+        <div class="agg-stat-lbl">Would Recommend</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED TESTIMONIAL -->
+<section class="featured-section">
+  <div class="featured-card reveal">
+    <div class="featured-quote-side">
+      <div class="featured-stars">
+        <i class="fas fa-star star"></i><i class="fas fa-star star"></i><i class="fas fa-star star"></i><i class="fas fa-star star"></i><i class="fas fa-star star"></i>
+      </div>
+      <blockquote class="featured-quote">
+        "I came to Aurum Capital skeptical. I'd tried three other platforms and always felt like just another account number. Within six months, my portfolio had grown by $218,000 — but more importantly, I finally understood what my money was doing. The transparency is unmatched."
+      </blockquote>
+      <div class="profit-badge">
+        <i class="fas fa-arrow-trend-up"></i>
+        +$218,400 Net Profit
+        <span style="font-weight:400; font-size:9px; opacity:0.6; margin-left:4px;">· 6 months</span>
+      </div>
+      <div style="margin-top:20px; display:flex; gap:16px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.1em; color:var(--text-mute); text-transform:uppercase;">Asset class</span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--gold); background:rgba(201,168,76,.1); border:1px solid rgba(201,168,76,.2); padding:3px 10px; border-radius:6px;">Crypto + Equities</span>
+        </div>
+      </div>
+    </div>
+    <div class="featured-person-side">
+      <div class="featured-avatar-wrap">
+        <div class="featured-avatar-ring2"></div>
+        <div class="featured-avatar-ring"></div>
+        <img class="featured-avatar" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=320&q=80" alt="Marcus T."
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <div class="avatar-fallback" style="display:none; width:160px; height:160px; font-size:48px; background:linear-gradient(135deg,#c9a84c,#a87c28); border-radius:50%;">MT</div>
+      </div>
+      <div class="featured-name">Marcus T.</div>
+      <div class="featured-title-text">Portfolio Manager · Private Investor</div>
+      <div class="featured-location"><i class="fas fa-location-dot"></i> Zürich, Switzerland · Member since 2022</div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE STATS STRIP -->
+<div class="live-strip">
+  <div class="live-strip-inner reveal">
+    <div class="ls-cell">
+      <div class="ls-val">$4.2B+</div>
+      <div class="ls-lbl">Assets Under Management</div>
+      <div class="ls-live"><div class="ls-dot"></div><span class="ls-live-text">Live</span></div>
+    </div>
+    <div class="ls-cell">
+      <div class="ls-val">+34.8%</div>
+      <div class="ls-lbl">Average Annual Return</div>
+      <div class="ls-live"><div class="ls-dot"></div><span class="ls-live-text">2024 avg</span></div>
+    </div>
+    <div class="ls-cell">
+      <div class="ls-val">180K+</div>
+      <div class="ls-lbl">Active Investors</div>
+      <div class="ls-live"><div class="ls-dot"></div><span class="ls-live-text">Growing</span></div>
+    </div>
+    <div class="ls-cell">
+      <div class="ls-val">$1.2B+</div>
+      <div class="ls-lbl">Total Client Profits</div>
+      <div class="ls-live"><div class="ls-dot"></div><span class="ls-live-text">Cumulative</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFIT CHARTS SECTION -->
+<section class="charts-section">
+  <div class="charts-section-head">
+    <div class="section-label">Performance Analytics</div>
+    <h2 class="charts-section-title reveal"><em>Total Company</em> Profit Growth</h2>
+    <p class="charts-section-sub reveal reveal-d1">Audited figures showing cumulative client profit delivered across all asset classes.</p>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card reveal reveal-d1">
+      <div class="chart-card-glow"></div>
+      <div class="chart-card-header">
+        <div class="chart-card-left">
+          <div class="chart-card-label">Monthly Overview</div>
+          <div class="chart-card-title">Profit This Year</div>
+          <div class="chart-card-badge"><i class="fas fa-arrow-trend-up"></i> +38.4% vs last year</div>
+        </div>
+        <div class="chart-card-stat">
+          <div class="chart-card-stat-val">$142M</div>
+          <div class="chart-card-stat-lbl">2025 YTD</div>
+        </div>
+      </div>
+      <div class="chart-divider"></div>
+      <div class="chart-tabs">
+        <button class="chart-tab active" onclick="switchMonthly('profit', this)">Profit</button>
+        <button class="chart-tab" onclick="switchMonthly('volume', this)">Volume</button>
+        <button class="chart-tab" onclick="switchMonthly('investors', this)">Investors</button>
+      </div>
+      <div class="chart-wrap"><canvas id="monthlyChart"></canvas></div>
+      <div class="chart-footer">
+        <div class="chart-footer-live"><div class="cf-dot"></div><span class="cf-text">Updated daily</span></div>
+        <div class="chart-footer-note">Jan – May 2025</div>
+      </div>
+    </div>
+
+    <div class="chart-card reveal reveal-d2">
+      <div class="chart-card-glow"></div>
+      <div class="chart-card-header">
+        <div class="chart-card-left">
+          <div class="chart-card-label">Annual Overview</div>
+          <div class="chart-card-title">Yearly Growth</div>
+          <div class="chart-card-badge"><i class="fas fa-arrow-trend-up"></i> +$820M since 2019</div>
+        </div>
+        <div class="chart-card-stat">
+          <div class="chart-card-stat-val">$1.2B</div>
+          <div class="chart-card-stat-lbl">All-time profit</div>
+        </div>
+      </div>
+      <div class="chart-divider"></div>
+      <div class="chart-tabs">
+        <button class="chart-tab active" onclick="switchYearly('profit', this)">Profit</button>
+        <button class="chart-tab" onclick="switchYearly('aum', this)">AUM</button>
+        <button class="chart-tab" onclick="switchYearly('clients', this)">Clients</button>
+      </div>
+      <div class="chart-wrap"><canvas id="yearlyChart"></canvas></div>
+      <div class="chart-footer">
+        <div class="chart-footer-live"><div class="cf-dot"></div><span class="cf-text">Updated monthly</span></div>
+        <div class="chart-footer-note">2019 – 2025</div>
+      </div>
+    </div>
+
+    <div class="chart-card chart-card-wide reveal reveal-d3">
+      <div class="chart-card-glow"></div>
+      <div class="chart-card-header">
+        <div class="chart-card-left">
+          <div class="chart-card-label">Cumulative Performance</div>
+          <div class="chart-card-title">Total Client Profit — All Time</div>
+          <div class="chart-card-badge"><i class="fas fa-arrow-trend-up"></i> Compounding growth trajectory</div>
+        </div>
+        <div class="chart-card-stat">
+          <div class="chart-card-stat-val">$1.24B</div>
+          <div class="chart-card-stat-lbl">Cumulative total</div>
+        </div>
+      </div>
+      <div class="chart-divider"></div>
+      <div class="chart-wrap chart-wrap-wide"><canvas id="cumulativeChart"></canvas></div>
+      <div class="chart-footer">
+        <div class="chart-footer-live"><div class="cf-dot"></div><span class="cf-text">Live tracking</span></div>
+        <div class="chart-footer-note">Verified · Audited quarterly · Across all asset classes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS GRID -->
+<section class="testi-section" id="testimonials">
+  <div class="testi-section-head">
+    <div class="section-label">Investor Voices</div>
+    <h2 class="testi-section-title reveal"><em>Extraordinary</em> Stories from Our Community</h2>
+    <p class="testi-section-sub reveal reveal-d1">Every return is real. Every story is verified.</p>
+  </div>
+
+  <div class="testi-tabs reveal">
+    <button class="testi-tab on" onclick="filterTestis('all',this)">All</button>
+    <button class="testi-tab" onclick="filterTestis('crypto',this)">Crypto</button>
+    <button class="testi-tab" onclick="filterTestis('equities',this)">Equities</button>
+    <button class="testi-tab" onclick="filterTestis('realestate',this)">Real Estate</button>
+    <button class="testi-tab" onclick="filterTestis('mixed',this)">Mixed</button>
+  </div>
+
+  <div class="testi-grid" id="testiGrid">
+    <div class="testi-card" data-cat="crypto" style="transition-delay:0.05s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80" alt="James W.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">James W.</div><div class="tc-role">Software Engineer</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$84,200 <span class="tc-profit-label">profit · 8 months</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>The crypto allocation tools on Aurum are unlike anything I've used. I automated my DCA strategy and watched my BTC position grow by 84K in eight months with zero stress.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> San Francisco, USA</div><div class="tc-date">Mar 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card highlight" data-cat="equities" style="transition-delay:0.1s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&q=80" alt="Sophia L.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Sophia L.</div><div class="tc-role">Entrepreneur</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$142,600 <span class="tc-profit-label">profit · 1 year</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>I moved my entire tech-stock portfolio over to Aurum and the concentrated equity strategies delivered 142K in gains — in a year when most platforms couldn't break even. Phenomenal.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> London, UK</div><div class="tc-date">Jan 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card" data-cat="realestate" style="transition-delay:0.15s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&q=80" alt="David K.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">David K.</div><div class="tc-role">Architect</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$67,800 <span class="tc-profit-label">yield · 2 years</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>The real estate vertical gave me exposure to Frankfurt prime assets I could never access alone. 7.3% yield, consistent distributions — exactly what it said on the tin.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Frankfurt, Germany</div><div class="tc-date">Feb 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card" data-cat="mixed" style="transition-delay:0.2s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=80" alt="Priya M.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Priya M.</div><div class="tc-role">Doctor</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$193,400 <span class="tc-profit-label">profit · 18 months</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>I never had time to manage investments between shifts. Aurum's automated mixed-asset portfolio did it all. 193K up in eighteen months — I almost didn't believe the dashboard.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Sydney, Australia</div><div class="tc-date">Apr 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card tall" data-cat="crypto" style="transition-delay:0.25s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80" alt="Ryan O.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Ryan O.</div><div class="tc-role">Finance Director</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$326,000 <span class="tc-profit-label">profit · 14 months</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>In my career I've seen investment platforms come and go. Aurum is genuinely different. The institutional-grade risk controls gave me the confidence to size up positions I'd previously been too cautious to take. The result was my best year on record — $326K. I've recommended this to every colleague in my firm.</div>
+        <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+          <span style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--gold); background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.18); padding:4px 10px; border-radius:7px;">BTC</span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--gold); background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.18); padding:4px 10px; border-radius:7px;">ETH</span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--gold); background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.18); padding:4px 10px; border-radius:7px;">SOL</span>
+        </div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Dubai, UAE</div><div class="tc-date">May 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card highlight" data-cat="realestate" style="transition-delay:0.3s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&q=80" alt="Elena V.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Elena V.</div><div class="tc-role">Interior Designer</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$112,500 <span class="tc-profit-label">capital gain · 3 years</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>Owning a fraction of a Santa Monica beach property seemed impossible on my budget. Aurum made it real. My $50K stake has returned $112K. The quarterly income reports are beautiful.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Milan, Italy</div><div class="tc-date">Feb 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card" data-cat="equities" style="transition-delay:0.35s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=120&q=80" alt="Nathan B.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Nathan B.</div><div class="tc-role">Marketing VP</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$58,300 <span class="tc-profit-label">profit · 10 months</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>I rode the NVDA wave through Aurum's equities desk. The execution speed and the insight reports made the difference — $58K in 10 months from a $40K starting position.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Toronto, Canada</div><div class="tc-date">Mar 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card" data-cat="mixed" style="transition-delay:0.4s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&q=80" alt="Aisha N.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Aisha N.</div><div class="tc-role">Investment Analyst</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$241,000 <span class="tc-profit-label">profit · 2 years</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>As someone who works in finance, I'm extremely critical of fintech products. Aurum earned my respect. The multi-asset allocation engine is genuinely sophisticated and my portfolio reflects it.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Singapore</div><div class="tc-date">Apr 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card tall" data-cat="crypto" style="transition-delay:0.45s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&q=80" alt="Luca F.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Luca F.</div><div class="tc-role">Startup Founder</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$177,200 <span class="tc-profit-label">profit · 11 months</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>After exiting my startup, I needed somewhere to park and grow a significant sum quickly but safely. Aurum's crypto strategies with built-in hedging were exactly what I needed. $177K in 11 months and I slept well every night.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Rome, Italy</div><div class="tc-date">May 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card" data-cat="realestate" style="transition-delay:0.5s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80" alt="Claire D.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Claire D.</div><div class="tc-role">Retired Educator</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$44,100 <span class="tc-profit-label">yield income · 3 years</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>I'm retired and needed reliable income, not speculation. The property income fund has paid like clockwork every quarter. 44K in yield over three years — this funds my holidays.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Melbourne, Australia</div><div class="tc-date">Jan 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card highlight" data-cat="equities" style="transition-delay:0.55s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=120&q=80" alt="Omar H.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Omar H.</div><div class="tc-role">Tech Executive</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$399,800 <span class="tc-profit-label">profit · 2 years</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>Almost 400K in two years through the equities desk. The AI-driven portfolio rebalancing and sector-rotation signals are genuinely alpha-generating. I've moved my entire personal wealth here.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> New York, USA</div><div class="tc-date">May 2025</div></div>
+      </div>
+    </div>
+
+    <div class="testi-card" data-cat="mixed" style="transition-delay:0.6s">
+      <div class="testi-card-inner">
+        <div class="tc-header">
+          <div class="tc-avatar-wrap">
+            <img class="tc-avatar" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=120&q=80" alt="Yuki T.">
+            <div class="tc-verified"><i class="fas fa-check"></i></div>
+          </div>
+          <div class="tc-info"><div class="tc-name">Yuki T.</div><div class="tc-role">Academic Researcher</div></div>
+          <div class="tc-stars"><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i><i class="fas fa-star tc-star"></i></div>
+        </div>
+        <div class="tc-profit"><i class="fas fa-arrow-trend-up"></i> +$76,500 <span class="tc-profit-label">profit · 16 months</span></div>
+        <div class="tc-quote"><span class="tc-quote-mark">"</span>I appreciate data and evidence above all else. Aurum's performance reporting is the most transparent I've encountered — and the results back it up. 76K in profit, all verifiable on-chain.</div>
+        <div class="tc-footer"><div class="tc-location"><i class="fas fa-location-dot"></i> Tokyo, Japan</div><div class="tc-date">Apr 2025</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ VIDEO TESTIMONIALS ═══════════ -->
+<section class="video-section">
+  <div class="testi-section-head" style="margin-bottom:40px;">
+    <div class="section-label">Video Proof</div>
+    <h2 class="testi-section-title reveal">Hear It <em>Directly</em></h2>
+    <p class="testi-section-sub reveal reveal-d1">Three investors share their Aurum journey on camera — unscripted and unfiltered.</p>
+  </div>
+
+  <div class="video-grid">
+
+    <!-- Video Card 1 — Marcus T. -->
+    <div class="video-card reveal reveal-d1" onclick="openVideoModal(0)">
+      <div class="video-thumb-wrap">
+        <!-- Convincing financial/professional poster using Unsplash -->
+        <img class="video-poster"
+          src="videos/testimony1.jpeg"
+          alt="Marcus T. — Investor"
+          onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=640&q=80'" style="object-position: center;">
+        <div class="video-thumb-gradient"></div>
+        <div class="video-profit-badge">+$218K</div>
+        <div class="video-play-btn"><i class="fas fa-play" style="margin-left:3px;"></i></div>
+        <div class="video-duration">2:34</div>
+      </div>
+      <div class="video-info">
+        <div class="video-info-top">
+          <div class="video-name">Marcus T.</div>
+          <div class="video-stars"><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i></div>
+        </div>
+        <div class="video-role">Private Investor · Texas, USA</div>
+        <div class="video-quote-preview">"I finally understood what my money was doing. The transparency is unmatched."</div>
+      </div>
+    </div>
+
+    <!-- Video Card 2 — Omar H. -->
+    <div class="video-card reveal reveal-d2" onclick="openVideoModal(1)">
+      <div class="video-thumb-wrap">
+        <img class="video-poster"
+          src="videos/testimony2.jpeg"
+          alt="Nigel Lievers. — Investor"
+          onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=640&q=80'" style="object-position: center;">
+        <div class="video-thumb-gradient"></div>
+        <div class="video-profit-badge">+$399K</div>
+        <div class="video-play-btn"><i class="fas fa-play" style="margin-left:3px;"></i></div>
+        <div class="video-duration">3:12</div>
+      </div>
+      <div class="video-info">
+        <div class="video-info-top">
+          <div class="video-name">Nigel Lievers.</div>
+          <div class="video-stars"><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i></div>
+        </div>
+        <div class="video-role">Tech Executive · Porto, Portugal</div>
+        <div class="video-quote-preview">"Almost 400K in two years. The AI-driven rebalancing generates genuine alpha."</div>
+      </div>
+    </div>
+
+    <!-- Video Card 3 — Priya M. -->
+    <div class="video-card reveal reveal-d3" onclick="openVideoModal(2)">
+      <div class="video-thumb-wrap">
+        <img class="video-poster"
+          src="videos/testimony3.jpeg"
+          alt="Legacy M. — Investor"
+          onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=640&q=80'" style="object-position: center;">
+        <div class="video-thumb-gradient"></div>
+        <div class="video-profit-badge">+$193K</div>
+        <div class="video-play-btn"><i class="fas fa-play" style="margin-left:3px;"></i></div>
+        <div class="video-duration">2:58</div>
+      </div>
+      <div class="video-info">
+        <div class="video-info-top">
+          <div class="video-name">Legacy M.</div>
+          <div class="video-stars"><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i><i class="fas fa-star video-star"></i></div>
+        </div>
+        <div class="video-role">Doctor · Sydney, Australia</div>
+        <div class="video-quote-preview">"193K up in eighteen months. I almost didn't believe the dashboard."</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════ VIDEO MODAL ═══════════ -->
+<div id="videoModal" onclick="handleModalBg(event)">
+  <div class="vm-box">
+    <button class="vm-close" onclick="closeVideoModal()"><i class="fas fa-xmark"></i></button>
+    <div class="vm-video-wrap">
+      <video id="vmPlayer"
+        controls
+        preload="metadata"
+        playsinline
+        style="background:#000;">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <div class="vm-info">
+      <div class="vm-person">
+        <img id="vmAvatar" class="vm-avatar" src="" alt="">
+        <div>
+          <div id="vmName" class="vm-name"></div>
+          <div id="vmRole" class="vm-role"></div>
+        </div>
+      </div>
+      <div id="vmProfit" class="vm-profit">
+        <i class="fas fa-arrow-trend-up"></i>
+        <span id="vmProfitVal"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="cta-inner reveal">
+    <div class="section-label" style="justify-content:center;">Join 180,000+ Investors</div>
+    <h2 class="cta-title">Your story could be <em>next.</em></h2>
+    <p class="cta-sub">Open a free account and access the same tools that generated these returns. No minimum balance. Instant onboarding.</p>
+    <div class="cta-btns">
+      <a href="signup.html" class="btn-primary"><i class="fas fa-rocket" style="font-size:12px;"></i> Open Free Account</a>
+      <a href="invest.html" class="btn-secondary"><i class="fas fa-chart-line" style="font-size:12px;"></i> Explore Markets</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo" style="font-size:1.15rem;margin-bottom:16px;">Aurum Capital</a>
+        <p class="footer-brand-desc">Aurum Capital empowers investors with a modern, secure platform for crypto, stocks, and real estate investing.</p>
+      </div>
+      <div class="footer-col"><div class="footer-col-title">Company</div><ul><li><a href="about.html">About</a></li><li><a href="career.html">Careers</a></li><li><a href="#">Press</a></li></ul></div>
+      <div class="footer-col"><div class="footer-col-title">Explore</div><ul><li><a href="index.html#markets">Markets</a></li><li><a href="invest.html">Invest</a></li><li><a href="index.html#assets">Assets</a></li></ul></div>
+      <div class="footer-col"><div class="footer-col-title">Support</div><ul><li><a href="#">Help Center</a></li><li><a href="#">Terms</a></li><li><a href="#">Privacy</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">©️ 2026 Aurum Capital. All rights reserved.</div>
+      <div class="footer-social">
+        <a class="social-btn" href="#"><i class="fab fa-twitter"></i></a>
+        <a class="social-btn" href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a class="social-btn" href="#"><i class="fab fa-telegram"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="disclaimer" style="padding-left:0; padding-right:0;">
+    <strong>Risk Disclaimer:</strong> Investing involves substantial risk of loss. Past performance is not indicative of future results. Real estate investments are illiquid and subject to market fluctuations. Aurum Capital is a registered investment platform regulated under applicable financial services law. Profit figures shown are illustrative of verified investor outcomes and do not guarantee future results.
+  </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+/* ══════ SCROLL PROGRESS ══════ */
+const progressBar = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.transform = `scaleX(${window.scrollY / max})`;
+});
+
+/* ══════ HEADER ══════ */
+const header = document.getElementById('mainHeader');
+window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 40));
+
+/* ══════ SCROLL REVEAL ══════ */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal, .testi-card').forEach(el => revealObserver.observe(el));
+
+/* ══════ COUNTERS ══════ */
+function animateCount(el, end, prefix = '', suffix = '', decimals = 0, duration = 2000) {
+  let start = 0;
+  const step = (ts) => {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = prefix + (decimals > 0 ? (eased * end).toFixed(decimals) : Math.floor(eased * end).toLocaleString()) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      if (e.target.id === 'cntReviews') animateCount(e.target, 12847, '', '+');
+      if (e.target.id === 'cntProfit') animateCount(e.target, 1.2, '$', 'B+', 1);
+      counterObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+['cntReviews','cntProfit'].forEach(id => { const el = document.getElementById(id); if (el) counterObs.observe(el); });
+
+/* ══════ FILTER TABS ══════ */
+function filterTestis(cat, btn) {
+  document.querySelectorAll('.testi-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.testi-card').forEach(card => {
+    const match = cat === 'all' || card.dataset.cat === cat;
+    card.style.transition = 'opacity 0.35s, transform 0.35s';
+    if (match) { card.style.opacity = '1'; card.style.transform = 'translateY(0)'; card.style.display = ''; }
+    else { card.style.opacity = '0'; card.style.transform = 'translateY(12px)'; setTimeout(() => { card.style.display = 'none'; }, 350); }
+  });
+}
+
+/* ══════════════════════════════════════════
+   LIVE TICKER — same CoinGecko approach as index.html
+   Strategy:
+   1. Render initial items from static fallback prices immediately
+   2. Fetch from CoinGecko API (or hook into existing coingecko-sync.js)
+   3. Re-render track on every update to keep prices current
+   The track is rendered twice for seamless looping marquee.
+══════════════════════════════════════════ */
+(function () {
+  /* Symbols to show in ticker with static fallback prices */
+  const TICKER_SYMBOLS = [
+    { sym: 'BTC',  name: 'Bitcoin',   fallbackPrice: 103240, fallbackChg: 2.4,  geckoId: 'bitcoin' },
+    { sym: 'ETH',  name: 'Ethereum',  fallbackPrice: 3812,   fallbackChg: 1.8,  geckoId: 'ethereum' },
+    { sym: 'SOL',  name: 'Solana',    fallbackPrice: 198.40, fallbackChg: 3.2,  geckoId: 'solana' },
+    { sym: 'XRP',  name: 'XRP',       fallbackPrice: 2.14,   fallbackChg: -0.9, geckoId: 'ripple' },
+    { sym: 'BNB',  name: 'BNB',       fallbackPrice: 611,    fallbackChg: 1.2,  geckoId: 'binancecoin' },
+    { sym: 'AAPL', name: 'Apple',     fallbackPrice: 224.30, fallbackChg: 0.7,  geckoId: null },
+    { sym: 'NVDA', name: 'NVIDIA',    fallbackPrice: 1087,   fallbackChg: 4.1,  geckoId: null },
+    { sym: 'GOLD', name: 'Gold',      fallbackPrice: 2348,   fallbackChg: 0.4,  geckoId: null },
+  ];
+
+  /* Live price store — starts from fallbacks, updated by fetches */
+  const prices = {};
+  const changes = {};
+  TICKER_SYMBOLS.forEach(s => {
+    prices[s.sym]  = s.fallbackPrice;
+    changes[s.sym] = s.fallbackChg;
+  });
+
+  /* Format price for display */
+  function fmtPrice(p) {
+    if (p >= 10000) return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    if (p >= 1000)  return '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (p >= 1)     return '$' + parseFloat(p).toFixed(2);
+    return '$' + parseFloat(p).toFixed(4);
+  }
+
+  /* Build one set of ticker items HTML */
+  function buildTickerItems() {
+    return TICKER_SYMBOLS.map(s => {
+      const chg = changes[s.sym];
+      const up  = chg >= 0;
+      const chgStr = (up ? '+' : '') + parseFloat(chg).toFixed(2) + '%';
+      return `<span class="ticker-item" data-sym="${s.sym}">
+        <span class="t-sym">${s.sym}</span>
+        <span class="t-price" id="tick-px-${s.sym}">${fmtPrice(prices[s.sym])}</span>
+        <span class="${up ? 't-up' : 't-down'}" id="tick-chg-${s.sym}">${chgStr}</span>
+      </span>`;
+    }).join('');
+  }
+
+  /* Render full duplicated track (2× for seamless loop) */
+  function renderTicker() {
+    const track = document.getElementById('tickerTrack');
+    if (!track) return;
+    const items = buildTickerItems();
+    track.innerHTML = items + items; // duplicate for loop
+  }
+
+  /* Update a single item without full re-render (avoids animation jitter) */
+  function updateTickerItem(sym) {
+    const pxEl  = document.getElementById('tick-px-' + sym);
+    const chgEl = document.getElementById('tick-chg-' + sym);
+    // There are two copies — update both
+    document.querySelectorAll(`[data-sym="${sym}"] .t-price`).forEach(el => {
+      el.textContent = fmtPrice(prices[sym]);
+      el.classList.remove('t-flash');
+      void el.offsetWidth;
+      el.classList.add('t-flash');
+    });
+    document.querySelectorAll(`[data-sym="${sym}"] span:last-child`).forEach(el => {
+      const chg = changes[sym];
+      el.textContent = (chg >= 0 ? '+' : '') + parseFloat(chg).toFixed(2) + '%';
+      el.className = chg >= 0 ? 't-up' : 't-down';
+    });
+  }
+
+  /* Initial render */
+  renderTicker();
+
+  /* ── CoinGecko fetch ── */
+  const GECKO_IDS = TICKER_SYMBOLS.filter(s => s.geckoId).map(s => s.geckoId).join(',');
+
+  async function fetchCoinGecko() {
+    try {
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${GECKO_IDS}&vs_currencies=usd&include_24hr_change=true`;
+      const res  = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+
+      TICKER_SYMBOLS.forEach(s => {
+        if (!s.geckoId || !data[s.geckoId]) return;
+        const prev = prices[s.sym];
+        prices[s.sym]  = data[s.geckoId].usd;
+        changes[s.sym] = data[s.geckoId].usd_24h_change || 0;
+        updateTickerItem(s.sym);
+
+        /* Mirror into shared window.PRICES used by coingecko-sync.js */
+        if (!window.PRICES)  window.PRICES  = {};
+        if (!window.CHANGES) window.CHANGES = {};
+        window.PRICES[s.sym]  = prices[s.sym];
+        window.CHANGES[s.sym] = changes[s.sym];
+      });
+    } catch (e) {
+      /* Silently fall back to static prices already shown */
+    }
+  }
+
+  /* ── Hook into existing coingecko-sync.js if present ── */
+  const _origOnPriceUpdate = window.onPriceUpdate;
+  window.onPriceUpdate = function(sym, price, chg) {
+    if (typeof _origOnPriceUpdate === 'function') _origOnPriceUpdate(sym, price, chg);
+    if (prices[sym] !== undefined) {
+      prices[sym]  = price;
+      changes[sym] = chg;
+      updateTickerItem(sym);
+    }
+  };
+
+  /* Also listen to localStorage broadcast */
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'aurum_live_prices') {
+      try {
+        const data = JSON.parse(e.newValue);
+        if (data && typeof data === 'object') {
+          Object.keys(data).forEach(sym => {
+            if (prices[sym] !== undefined) {
+              if (data[sym].price  != null) prices[sym]  = data[sym].price;
+              if (data[sym].change != null) changes[sym] = data[sym].change;
+              updateTickerItem(sym);
+            }
+          });
+        }
+      } catch(err) {}
+    }
+  });
+
+  /* Fetch immediately + every 60 s */
+  fetchCoinGecko();
+  setInterval(fetchCoinGecko, 60000);
+})();
+
+/* ══════════════════════════════════════════
+   VIDEO MODAL
+   openVideoModal(index) — opens centred modal
+   with the correct video file & metadata.
+   Video plays at its natural aspect ratio (contain),
+   never zoomed or cropped.
+══════════════════════════════════════════ */
+const VIDEO_DATA = [
+  {
+    src:    'videos/testimony1.mp4',
+    poster: 'videos/testimony1.jpeg',
+    fallbackPoster: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=860&q=80',
+    name:   'Marcus T.',
+    role:   'Private Investor · Zürich, Switzerland',
+    profit: '+$218,400',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&q=80',
+  },
+  {
+    src:    'videos/testimony2.mp4',
+    poster: 'videos/testimony2.jpeg',
+    fallbackPoster: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=860&q=80',
+    name:   'Omar H.',
+    role:   'Tech Executive · New York, USA',
+    profit: '+$399,800',
+    avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80&q=80',
+  },
+  {
+    src:    'videos/testimony3.mp4',
+    poster: 'videos/testimony3.jpeg',
+    fallbackPoster: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=860&q=80',
+    name:   'Priya M.',
+    role:   'Doctor · Sydney, Australia',
+    profit: '+$193,400',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80',
+  }
+];
+
+let vmCurrentIndex = null;
+
+function openVideoModal(idx) {
+  const modal  = document.getElementById('videoModal');
+  const player = document.getElementById('vmPlayer');
+  const d = VIDEO_DATA[idx];
+
+  /* Populate info strip */
+  document.getElementById('vmName').textContent = d.name;
+  document.getElementById('vmRole').textContent = d.role;
+  document.getElementById('vmProfitVal').textContent = d.profit;
+  const avatarEl = document.getElementById('vmAvatar');
+  avatarEl.src = d.avatar;
+  avatarEl.alt = d.name;
+
+  /* Set video source + poster */
+  player.poster = d.poster || d.fallbackPoster;
+  player.src    = d.src;
+  player.load();
+
+  vmCurrentIndex = idx;
+  modal.style.display = 'flex';
+  /* Force reflow so transition fires */
+  void modal.offsetWidth;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  /* Auto-play */
+  player.play().catch(() => {});
+}
+
+function closeVideoModal() {
+  const modal  = document.getElementById('videoModal');
+  const player = document.getElementById('vmPlayer');
+  player.pause();
+  player.src = '';
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  /* Hide after transition */
+  setTimeout(() => { modal.style.display = 'none'; }, 350);
+  vmCurrentIndex = null;
+}
+
+function handleModalBg(e) {
+  /* Close only if clicking the dark backdrop, not the box */
+  if (e.target === document.getElementById('videoModal')) closeVideoModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && vmCurrentIndex !== null) closeVideoModal();
+});
+
+/* ══════ CHART HELPERS ══════ */
+function goldGradient(ctx, chartArea) {
+  const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+  g.addColorStop(0,   'rgba(201,168,76,0.35)');
+  g.addColorStop(0.5, 'rgba(201,168,76,0.12)');
+  g.addColorStop(1,   'rgba(201,168,76,0.01)');
+  return g;
+}
+function greenGradient(ctx, chartArea) {
+  const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+  g.addColorStop(0,   'rgba(34,197,94,0.28)');
+  g.addColorStop(0.5, 'rgba(34,197,94,0.08)');
+  g.addColorStop(1,   'rgba(34,197,94,0.01)');
+  return g;
+}
+
+const baseChartOptions = {
+  responsive: true, maintainAspectRatio: false,
+  interaction: { mode: 'index', intersect: false },
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: 'rgba(4,8,15,0.92)', borderColor: 'rgba(201,168,76,0.35)', borderWidth: 1,
+      titleColor: '#c9a84c', bodyColor: '#8c9db5', padding: 12,
+      titleFont: { family: "'JetBrains Mono', monospace", size: 10 },
+      bodyFont: { family: "'DM Sans', sans-serif", size: 12 },
+      callbacks: { label: (ctx) => `  $${ctx.parsed.y.toFixed(1)}M` }
+    }
+  },
+  scales: {
+    x: { grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false }, ticks: { color: '#5a6880', font: { family: "'JetBrains Mono', monospace", size: 9 }, maxRotation: 0 }, border: { display: false } },
+    y: { grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false }, ticks: { color: '#5a6880', font: { family: "'JetBrains Mono', monospace", size: 9 }, callback: v => '$' + v + 'M' }, border: { display: false } }
+  },
+  elements: { point: { radius: 0, hoverRadius: 5, hoverBackgroundColor: '#c9a84c', hoverBorderColor: '#040608', hoverBorderWidth: 2 } }
+};
+
+/* Monthly */
+const monthlyDatasets = {
+  profit:    { data: [18.2,22.4,27.8,31.5,42.1,38.6,44.3,52.8,49.2,58.7,63.4,71.1], label: 'Monthly Profit ($M)', color: 'gold' },
+  volume:    { data: [120,145,180,210,290,265,310,380,345,420,460,510], label: 'Trading Volume ($M)', color: 'gold' },
+  investors: { data: [8.2,9.1,10.4,11.8,13.2,14.0,15.5,17.2,18.4,20.1,21.6,23.0], label: 'Investors (K)', color: 'green' }
+};
+const monthlyLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+let monthlyChart;
+function buildMonthlyChart(type = 'profit') {
+  if (monthlyChart) monthlyChart.destroy();
+  const d = monthlyDatasets[type];
+  monthlyChart = new Chart(document.getElementById('monthlyChart'), {
+    type: 'line',
+    data: { labels: monthlyLabels, datasets: [{ label: d.label, data: d.data, fill: true, tension: 0.45,
+      borderColor: d.color === 'green' ? '#22c55e' : '#c9a84c', borderWidth: 2,
+      backgroundColor: ctx => { const {ctx:c,chartArea}=ctx.chart; if(!chartArea) return 'transparent'; return d.color==='green'?greenGradient(c,chartArea):goldGradient(c,chartArea); },
+      pointRadius:0, pointHoverRadius:5 }] },
+    options: JSON.parse(JSON.stringify(baseChartOptions))
+  });
+}
+function switchMonthly(type, btn) {
+  btn.closest('.chart-tabs').querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); buildMonthlyChart(type);
+}
+
+/* Yearly */
+const yearlyDatasets = {
+  profit:  { data:[12,28,48,76,115,142,142], label:'Annual Profit ($M)', color:'gold' },
+  aum:     { data:[180,420,820,1400,2200,3600,4200], label:'AUM ($M)', color:'green' },
+  clients: { data:[4.2,12,28,58,96,148,180], label:'Clients (K)', color:'gold' }
+};
+const yearlyLabels = ['2019','2020','2021','2022','2023','2024','2025'];
+
+let yearlyChart;
+function buildYearlyChart(type='profit') {
+  if (yearlyChart) yearlyChart.destroy();
+  const d = yearlyDatasets[type];
+  yearlyChart = new Chart(document.getElementById('yearlyChart'), {
+    type:'line',
+    data:{ labels:yearlyLabels, datasets:[{ label:d.label, data:d.data, fill:true, tension:0.45,
+      borderColor:d.color==='green'?'#22c55e':'#c9a84c', borderWidth:2,
+      backgroundColor:ctx=>{ const{ctx:c,chartArea}=ctx.chart;if(!chartArea)return'transparent';return d.color==='green'?greenGradient(c,chartArea):goldGradient(c,chartArea); },
+      pointRadius:3, pointBackgroundColor:d.color==='green'?'#22c55e':'#c9a84c',
+      pointBorderColor:'#04080f', pointBorderWidth:2, pointHoverRadius:6 }] },
+    options:JSON.parse(JSON.stringify(baseChartOptions))
+  });
+}
+function switchYearly(type,btn) {
+  btn.closest('.chart-tabs').querySelectorAll('.chart-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); buildYearlyChart(type);
+}
+
+/* Cumulative */
+function buildCumulativeChart() {
+  const labels=['Q1 19','Q2 19','Q3 19','Q4 19','Q1 20','Q2 20','Q3 20','Q4 20','Q1 21','Q2 21','Q3 21','Q4 21','Q1 22','Q2 22','Q3 22','Q4 22','Q1 23','Q2 23','Q3 23','Q4 23','Q1 24','Q2 24','Q3 24','Q4 24','Q1 25','Q2 25'];
+  const data=[2.8,5.4,8.2,12,15.8,21,28.4,38,48,60,74,92,106,122,140,160,186,218,252,298,360,430,520,620,740,875];
+  const opts=JSON.parse(JSON.stringify(baseChartOptions));
+  opts.scales.x.ticks.maxTicksLimit=13;
+  opts.plugins.tooltip.callbacks.label=ctx=>`  $${ctx.parsed.y.toFixed(0)}M cumulative`;
+  new Chart(document.getElementById('cumulativeChart'),{
+    type:'line',
+    data:{ labels, datasets:[{ label:'Cumulative Profit', data, fill:true, tension:0.5,
+      borderColor:'#c9a84c', borderWidth:2.5,
+      backgroundColor:ctx=>{ const{ctx:c,chartArea}=ctx.chart;if(!chartArea)return'transparent';
+        const g=c.createLinearGradient(0,chartArea.top,0,chartArea.bottom);
+        g.addColorStop(0,'rgba(201,168,76,0.4)');g.addColorStop(0.4,'rgba(201,168,76,0.18)');g.addColorStop(1,'rgba(201,168,76,0.01)');return g; },
+      pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#c9a84c',pointHoverBorderColor:'#04080f',pointHoverBorderWidth:2 }] },
+    options:opts
+  });
+}
+
+const chartObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ buildMonthlyChart(); buildYearlyChart(); buildCumulativeChart(); chartObserver.disconnect(); } });
+},{ threshold:0.15 });
+const chartsSection = document.querySelector('.charts-section');
+if (chartsSection) chartObserver.observe(chartsSection);
+
+/* ══════ AMBIENT PARTICLES ══════ */
+(function(){
+  const canvas=document.getElementById('ambientCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,particles;
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function init(){ particles=Array.from({length:55},()=>({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.4+0.3, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25, alpha:Math.random()*.5+.1, gold:Math.random()>.6 })); }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{ ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.gold?`rgba(201,168,76,${p.alpha})`:`rgba(140,157,181,${p.alpha*.4})`;ctx.fill(); p.x+=p.vx;p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; });
+    requestAnimationFrame(draw);
+  }
+  resize();init();draw();
+  window.addEventListener('resize',()=>{ resize();init(); });
+})();
+
+/* ══════ MOBILE NAV ══════ */
+(function(){
+  const toggle=document.getElementById('lpNavToggle');
+  const menu=document.getElementById('lpMobileMenu');
+  const backdrop=document.getElementById('lpMenuBackdrop');
+  const closeBtn=document.getElementById('lpMenuClose');
+  function openLpMenu(){ menu.classList.add('open');toggle.classList.add('open');toggle.setAttribute('aria-expanded','true');document.body.classList.add('lp-menu-open'); }
+  function closeLpMenu(){ menu.classList.remove('open');toggle.classList.remove('open');toggle.setAttribute('aria-expanded','false');document.body.classList.remove('lp-menu-open'); }
+  toggle.addEventListener('click',()=>menu.classList.contains('open')?closeLpMenu():openLpMenu());
+  closeBtn.addEventListener('click',closeLpMenu);
+  backdrop.addEventListener('click',closeLpMenu);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeLpMenu(); });
+  window.closeLpMenu=closeLpMenu;
+})();
+
+/* ══════ CARD HOVER TILT ══════ */
+document.querySelectorAll('.testi-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{ const rect=card.getBoundingClientRect(); const x=(e.clientX-rect.left)/rect.width-.5; const y=(e.clientY-rect.top)/rect.height-.5; card.style.transform=`translateY(-4px) perspective(900px) rotateX(${-y*4}deg) rotateY(${x*4}deg)`; });
+  card.addEventListener('mouseleave',()=>{ card.style.transform=''; });
+});
+</script>
+<script src="price-sync.js"></script>
+</body>
+</html>

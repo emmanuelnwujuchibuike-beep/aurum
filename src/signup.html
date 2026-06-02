@@ -44,9 +44,28 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
   .pw-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5a6880;cursor:pointer;padding:4px;transition:color .2s;}
   .pw-toggle:hover{color:#edf2f8;}
   .str{height:3px;border-radius:2px;width:0%;transition:width .35s ease,background .35s ease;}
-  .chk-wrap{display:flex;align-items:flex-start;gap:10px;cursor:pointer;user-select:none;}
-  .chk-box{width:18px;height:18px;flex-shrink:0;border-radius:5px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:2px;}
-  .chk-box.on{background:#c9a84c;border-color:#c9a84c;}
+
+  /* ── Checkbox ── */
+  .chk-wrap{
+    display:flex;align-items:flex-start;gap:10px;
+    cursor:pointer;user-select:none;
+  }
+  .chk-box{
+    width:20px;height:20px;flex-shrink:0;
+    border-radius:6px;
+    border:2px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.04);
+    display:flex;align-items:center;justify-content:center;
+    transition:background .2s,border-color .2s,box-shadow .2s;
+    margin-top:1px;
+  }
+  .chk-box.on{
+    background:linear-gradient(135deg,#c9a84c,#a87c28);
+    border-color:#c9a84c;
+    box-shadow:0 0 0 3px rgba(201,168,76,.18);
+  }
+  .chk-box:not(.on):hover{border-color:rgba(201,168,76,.5);}
+
   @keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   .stat-item{animation:countUp .7s ease forwards;opacity:0;}
   .stat-item:nth-child(1){animation-delay:.5s}.stat-item:nth-child(2){animation-delay:.65s}
@@ -126,9 +145,6 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
           <p class="text-steel text-sm">Create your free account in under 2 minutes.</p>
         </div>
 
-       
-
-        <!-- ✅ FIX: form tag wraps ALL fields — was closed too early before -->
         <form id="signup-form" novalidate class="space-y-4 au au3">
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -177,22 +193,39 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
               <button type="button" class="pw-toggle" onclick="togPw('confirm-password-input',this)"><i class="fas fa-eye text-xs"></i></button>
             </div>
           </div>
-          <!-- Terms -->
-          <div class="chk-wrap" onclick="togChk()">
+
+          <!-- ── Terms Checkbox ── -->
+          <div class="chk-wrap" onclick="togChk()" role="checkbox" aria-checked="false" id="chkWrap" tabindex="0"
+               onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togChk();}">
             <div class="chk-box" id="chkBox"></div>
-            <input type="checkbox" id="suTerms" class="sr-only">
-            <span class="text-sm text-steel leading-relaxed">I agree to the <a href="#" onclick="event.stopPropagation()" class="text-gold underline hover:text-gold-bright">Terms of Service</a> and <a href="#" onclick="event.stopPropagation()" class="text-gold underline hover:text-gold-bright">Privacy Policy</a></span>
+            <input type="checkbox" id="suTerms" class="sr-only" tabindex="-1">
+            <span class="text-sm text-steel leading-relaxed">
+              I have read and agree to the
+              <button type="button"
+                onclick="event.stopPropagation(); window.AurumTerms && window.AurumTerms.open('tos')"
+                class="text-gold underline underline-offset-2 hover:text-yellow-300 transition-colors font-medium">
+                Terms of Service
+              </button>
+              and
+              <button type="button"
+                onclick="event.stopPropagation(); window.AurumTerms && window.AurumTerms.open('privacy')"
+                class="text-gold underline underline-offset-2 hover:text-yellow-300 transition-colors font-medium">
+                Privacy Policy
+              </button>
+            </span>
           </div>
+
           <!-- Error -->
           <div id="suErr" class="hidden p-4 bg-loss/10 border border-loss/25 rounded-xl">
             <p class="font-mono text-[11px] text-loss flex items-center gap-2"><i class="fas fa-circle-exclamation"></i><span id="suErrMsg"></span></p>
           </div>
+
           <button type="submit" id="suBtn" class="btn-gold mt-1">
             <i class="fas fa-user-plus text-sm"></i><span id="suBtnLbl">Create My Account</span>
             <span id="suSpin" class="hidden spin"><i class="fas fa-spinner text-sm"></i></span>
           </button>
         </form>
-        <!-- ✅ This paragraph is now correctly OUTSIDE the form -->
+
         <p class="text-center text-sm text-steel mt-5 au au4">Already have an account? <button class="text-gold hover:text-gold-bright font-medium transition-colors" onclick="showTab('li')">Sign in →</button></p>
       </div>
 
@@ -202,8 +235,6 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
           <h1 class="font-display text-[2rem] font-light text-snow mb-1">Welcome <em class="italic text-gold">back</em></h1>
           <p class="text-steel text-sm">Sign in to access your portfolio.</p>
         </div>
-
-        
 
         <form id="liForm" onsubmit="doLogin(event)" novalidate class="space-y-4 au au3">
           <div>
@@ -268,8 +299,13 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
   </div>
 </div>
 
+<!--
+  terms-widget.js:  Drop this ONE line on EVERY page where you want the Terms pill.
+  It self-initialises — no extra setup needed.
+-->
+<script src="terms-widget.js"></script>
 
-<!-- ✅ FIX: type="module" (not "modules"), loaded once at end of body -->
+<!-- signup logic (ES module) -->
 <script type="module" src="signup.js"></script>
 </body>
 </html>
