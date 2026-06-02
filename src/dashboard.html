@@ -1384,9 +1384,89 @@ body.dash-menu-open{overflow:hidden}
     <div><p id="toast-title" style="font-size:13px;font-weight:600;color:#edf2f8"></p><p id="toast-sub" style="font-size:11px;color:#5a6880;margin-top:2px"></p></div>
   </div>
 
-<script src="price-sync.js"></script>
-<script src="coingecko-sync.js"></script>
-<script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="coingecko-sync.js"></script>
+  <script src="price-sync.js"></script>
+  <script>
   const SUPABASE_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
   const EDGE_FN_URL   = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment';
@@ -3213,208 +3293,208 @@ body.dash-menu-open{overflow:hidden}
     localStorage.removeItem('aurum_price_overrides');
   } catch (e) {}
 
-  /* ── 2. Install the real onPriceUpdate SYNCHRONOUSLY ────────────────────
-     coingecko-sync.js installs a stub first, then checks _isStub to decide
-     whether to drain its queue. By setting the real handler here — before
-     DOMContentLoaded — we guarantee the queue drains into the real handler
-     once the DOM is ready, with no race condition.                          */
-  function realOnPriceUpdate(sym, newPrice, newChg) {
-    var finalPrice = newPrice;
-    var finalChg   = (newChg != null) ? newChg : 0;
-    if (!finalPrice || finalPrice <= 0) return;
+    /* ── 2. Install the real onPriceUpdate SYNCHRONOUSLY ────────────────────
+      coingecko-sync.js installs a stub first, then checks _isStub to decide
+      whether to drain its queue. By setting the real handler here — before
+      DOMContentLoaded — we guarantee the queue drains into the real handler
+      once the DOM is ready, with no race condition.                          */
+    function realOnPriceUpdate(sym, newPrice, newChg) {
+      var finalPrice = newPrice;
+      var finalChg   = (newChg != null) ? newChg : 0;
+      if (!finalPrice || finalPrice <= 0) return;
 
-    /* ── Update global state (PRICES / CHANGES / ASSETS_LIST) ─────────── */
-    if (window.PRICES)  window.PRICES[sym]  = finalPrice;
-    if (window.CHANGES) window.CHANGES[sym] = finalChg;
-    var assetsList = window.ASSETS_LIST;
-    if (assetsList) {
-      var asset = null;
-      for (var i = 0; i < assetsList.length; i++) {
-        if (assetsList[i].sym === sym) { asset = assetsList[i]; break; }
+      /* ── Update global state (PRICES / CHANGES / ASSETS_LIST) ─────────── */
+      if (window.PRICES)  window.PRICES[sym]  = finalPrice;
+      if (window.CHANGES) window.CHANGES[sym] = finalChg;
+      var assetsList = window.ASSETS_LIST;
+      if (assetsList) {
+        var asset = null;
+        for (var i = 0; i < assetsList.length; i++) {
+          if (assetsList[i].sym === sym) { asset = assetsList[i]; break; }
+        }
+        if (asset) { asset.price = finalPrice; asset.chg = finalChg; }
       }
-      if (asset) { asset.price = finalPrice; asset.chg = finalChg; }
-    }
 
-    /* ── Crypto grid: price cell ─────────────────────────────────────── */
-    var prEl = document.getElementById('grid-pr-' + sym);
-    if (prEl) {
-      var oldGridVal = parseFloat((prEl.textContent || '').replace(/[$,]/g, '')) || 0;
-      prEl.textContent = '$' + fmtPrice(finalPrice);
-      prEl.classList.remove('price-up', 'price-down');
-      void prEl.offsetWidth;
-      prEl.classList.add(finalPrice >= oldGridVal ? 'price-up' : 'price-down');
-      var _prEl = prEl;
-      setTimeout(function () { _prEl.classList.remove('price-up', 'price-down'); }, 1400);
-    }
-
-    /* ── Crypto grid: change % cell ──────────────────────────────────── */
-    var chgEl = document.getElementById('grid-chg-' + sym);
-    if (chgEl) {
-      var upG = finalChg >= 0;
-      chgEl.textContent      = (upG ? '+' : '') + finalChg.toFixed(2) + '%';
-      chgEl.style.color      = upG ? '#22c55e' : '#ef4444';
-      chgEl.style.background = upG ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
-    }
-
-    /* ── Ticker: ALL price spans for this symbol (both marquee copies) ── */
-    document.querySelectorAll('.tick-price-' + sym).forEach(function (el) {
-      var oldVal = parseFloat((el.textContent || '').replace(/[$,]/g, '')) || 0;
-      el.textContent = '$' + fmtPrice(finalPrice);
-      var item = el.closest('.ticker-item');
-      if (item) {
-        item.classList.remove('tick-up', 'tick-down');
-        void item.offsetWidth;
-        item.classList.add(finalPrice >= oldVal ? 'tick-up' : 'tick-down');
-        var _item = item;
-        setTimeout(function () { _item.classList.remove('tick-up', 'tick-down'); }, 1000);
+      /* ── Crypto grid: price cell ─────────────────────────────────────── */
+      var prEl = document.getElementById('grid-pr-' + sym);
+      if (prEl) {
+        var oldGridVal = parseFloat((prEl.textContent || '').replace(/[$,]/g, '')) || 0;
+        prEl.textContent = '$' + fmtPrice(finalPrice);
+        prEl.classList.remove('price-up', 'price-down');
+        void prEl.offsetWidth;
+        prEl.classList.add(finalPrice >= oldGridVal ? 'price-up' : 'price-down');
+        var _prEl = prEl;
+        setTimeout(function () { _prEl.classList.remove('price-up', 'price-down'); }, 1400);
       }
-    });
 
-    /* ── Ticker: ALL change % spans for this symbol ──────────────────── */
-    document.querySelectorAll('.tick-chg-' + sym).forEach(function (el) {
-      var upT = finalChg >= 0;
-      el.textContent = (upT ? '+' : '') + Math.abs(finalChg).toFixed(2) + '%';
-      el.style.color = upT ? '#22c55e' : '#ef4444';
-    });
-
-    /* ── Chart modal (if open for this symbol) ───────────────────────── */
-    if (window.activeChartAsset === sym) {
-      var cmp = document.getElementById('chart-modal-price');
-      if (cmp) cmp.textContent = '$' + fmtPrice(finalPrice);
-      var cChg = document.getElementById('chart-modal-chg');
-      if (cChg) {
-        var upC = finalChg >= 0;
-        cChg.textContent      = (upC ? '+' : '') + finalChg.toFixed(2) + '%';
-        cChg.style.background = upC ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
-        cChg.style.color      = upC ? '#22c55e' : '#ef4444';
+      /* ── Crypto grid: change % cell ──────────────────────────────────── */
+      var chgEl = document.getElementById('grid-chg-' + sym);
+      if (chgEl) {
+        var upG = finalChg >= 0;
+        chgEl.textContent      = (upG ? '+' : '') + finalChg.toFixed(2) + '%';
+        chgEl.style.color      = upG ? '#22c55e' : '#ef4444';
+        chgEl.style.background = upG ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
       }
-    }
 
-    /* ── Trade modal (if open for this symbol) ───────────────────────── */
-    if (window.tradeModalAsset && window.tradeModalAsset.sym === sym) {
-      var tpr = document.getElementById('trade-live-price');
-      if (tpr) tpr.textContent = '$' + fmtPrice(finalPrice);
-      var tChg = document.getElementById('trade-chg');
-      if (tChg) {
-        var upTr = finalChg >= 0;
-        tChg.textContent = (upTr ? '+' : '') + finalChg.toFixed(2) + '%';
-        tChg.style.color = upTr ? '#22c55e' : '#ef4444';
-      }
-      window.tradeModalAsset.price = finalPrice;
-      window.tradeModalAsset.chg   = finalChg;
-      if (typeof window.updateTradeModalCalc === 'function') {
-        window.updateTradeModalCalc();
-      }
-    }
-
-    /* ── Portfolio P&L (debounced — avoids re-querying DB on every tick) ─ */
-    if (typeof window.loadPortfolioStats === 'function') {
-      clearTimeout(realOnPriceUpdate._pnlTimer);
-      realOnPriceUpdate._pnlTimer = setTimeout(window.loadPortfolioStats, 300);
-    }
-  }
-  realOnPriceUpdate._pnlTimer = null;
-  realOnPriceUpdate._isStub   = false;   /* tells coingecko-sync this is real */
-
-  window.onPriceUpdate = realOnPriceUpdate;
-
-  /* ── 3. Patched buildTicker ──────────────────────────────────────────────
-     Replaces dashboard.js's version so the marquee gets .ticker-track and
-     the correct class names for in-place updates.                           */
-  function buildTickerPatched() {
-    var ASSETS_LIST = window.ASSETS_LIST || [];
-    var PRICES      = window.PRICES      || {};
-    var CHANGES     = window.CHANGES     || {};
-
-    var tickerEl = document.getElementById('liveTicker');
-    if (!tickerEl) return;
-
-    function makeItems(items) {
-      return items.map(function (a) {
-        var price = PRICES[a.sym] || a.price || 0;
-        var chg   = (CHANGES[a.sym] != null) ? CHANGES[a.sym] : (a.chg || 0);
-        var up    = chg >= 0;
-        return (
-          '<div class="ticker-item" style="display:flex;align-items:center;gap:8px;padding:0 20px;white-space:nowrap">' +
-            '<i class="' + a.icon + '" style="color:' + a.color + ';font-size:13px"></i>' +
-            '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#edf2f8;font-weight:500">' + a.sym + '</span>' +
-            '<span class="tick-price-' + a.sym + '" style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#edf2f8">$' + fmtPrice(price) + '</span>' +
-            '<span class="tick-chg-'  + a.sym + '" style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:' + (up ? '#22c55e' : '#ef4444') + '">' + (up ? '+' : '') + Math.abs(chg).toFixed(2) + '%</span>' +
-          '</div>'
-        );
-      }).join('');
-    }
-
-    /* Two copies inside .ticker-track for seamless CSS marquee loop */
-    var html = makeItems(ASSETS_LIST);
-    tickerEl.innerHTML = '<div class="ticker-track">' + html + html + '</div>';
-  }
-
-  /* Override as soon as possible; dashboard.js will call window.buildTicker()
-     inside its own DOMContentLoaded handler, so overriding it at parse-time
-     here means our version runs instead.                                     */
-  window.buildTicker = buildTickerPatched;
-
-  /* ── 4. Admin price save — write override AND broadcast ─────────────────
-     When an admin sets a price, write to localStorage AND call onPriceUpdate
-     so all open tabs update immediately. On non-admin page loads the override
-     key is cleared (step 1 above) so it never persists to users.            */
-  var _origAdmSetSinglePrice = null;
-
-  function hookAdminPriceSave() {
-    if (typeof window.admSetSinglePrice !== 'function') return;
-    if (window.admSetSinglePrice._hooked) return;
-    _origAdmSetSinglePrice = window.admSetSinglePrice;
-
-    window.admSetSinglePrice = async function (sym) {
-      await _origAdmSetSinglePrice(sym);
-      /* After the edge-function save, also write to localStorage so that
-         the admin's own tab reflects the override immediately.             */
-      try {
-        var inp = document.getElementById('price-input-' + sym);
-        if (!inp) return;
-        var n = parseFloat(inp.value);
-        if (isNaN(n) || n <= 0) return;
-        var overrides = {};
-        try { overrides = JSON.parse(localStorage.getItem('aurum_price_overrides') || '{}'); } catch (e) {}
-        overrides[sym] = { price: n, chg: (window.CHANGES && window.CHANGES[sym]) || 0 };
-        localStorage.setItem('aurum_price_overrides', JSON.stringify(overrides));
-      } catch (e) {}
-    };
-    window.admSetSinglePrice._hooked = true;
-  }
-
-  /* ── 5. Cross-tab sync: when admin sets a price in another tab ──────────
-     Listen for the storage event that coingecko-sync.js fires.              */
-  window.addEventListener('storage', function (e) {
-    if (e.key !== 'aurum_live_prices') return;
-    try {
-      var live = JSON.parse(e.newValue || '{}');
-      Object.keys(live).forEach(function (sym) {
-        var entry = live[sym];
-        if (entry && entry.price > 0) {
-          window.onPriceUpdate(sym, entry.price, entry.changePct24h || 0);
+      /* ── Ticker: ALL price spans for this symbol (both marquee copies) ── */
+      document.querySelectorAll('.tick-price-' + sym).forEach(function (el) {
+        var oldVal = parseFloat((el.textContent || '').replace(/[$,]/g, '')) || 0;
+        el.textContent = '$' + fmtPrice(finalPrice);
+        var item = el.closest('.ticker-item');
+        if (item) {
+          item.classList.remove('tick-up', 'tick-down');
+          void item.offsetWidth;
+          item.classList.add(finalPrice >= oldVal ? 'tick-up' : 'tick-down');
+          var _item = item;
+          setTimeout(function () { _item.classList.remove('tick-up', 'tick-down'); }, 1000);
         }
       });
-    } catch (err) {}
-  });
 
-  /* ── 6. Hook admin functions once DOM is ready ─────────────────────────── */
-  document.addEventListener('DOMContentLoaded', function () {
-    /* Rebuild ticker in case dashboard.js already ran buildTicker()
-       before our override was in place.                                    */
-    if (window.ASSETS_LIST) buildTickerPatched();
+      /* ── Ticker: ALL change % spans for this symbol ──────────────────── */
+      document.querySelectorAll('.tick-chg-' + sym).forEach(function (el) {
+        var upT = finalChg >= 0;
+        el.textContent = (upT ? '+' : '') + Math.abs(finalChg).toFixed(2) + '%';
+        el.style.color = upT ? '#22c55e' : '#ef4444';
+      });
 
-    /* Hook admin price save if admin panel loaded this session */
-    setTimeout(hookAdminPriceSave, 2000);
+      /* ── Chart modal (if open for this symbol) ───────────────────────── */
+      if (window.activeChartAsset === sym) {
+        var cmp = document.getElementById('chart-modal-price');
+        if (cmp) cmp.textContent = '$' + fmtPrice(finalPrice);
+        var cChg = document.getElementById('chart-modal-chg');
+        if (cChg) {
+          var upC = finalChg >= 0;
+          cChg.textContent      = (upC ? '+' : '') + finalChg.toFixed(2) + '%';
+          cChg.style.background = upC ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
+          cChg.style.color      = upC ? '#22c55e' : '#ef4444';
+        }
+      }
 
-    /* Drain any queued price broadcasts now that DOM elements exist */
-    if (typeof window._aurumDrainPriceQueue === 'function') {
-      window._aurumDrainPriceQueue();
+      /* ── Trade modal (if open for this symbol) ───────────────────────── */
+      if (window.tradeModalAsset && window.tradeModalAsset.sym === sym) {
+        var tpr = document.getElementById('trade-live-price');
+        if (tpr) tpr.textContent = '$' + fmtPrice(finalPrice);
+        var tChg = document.getElementById('trade-chg');
+        if (tChg) {
+          var upTr = finalChg >= 0;
+          tChg.textContent = (upTr ? '+' : '') + finalChg.toFixed(2) + '%';
+          tChg.style.color = upTr ? '#22c55e' : '#ef4444';
+        }
+        window.tradeModalAsset.price = finalPrice;
+        window.tradeModalAsset.chg   = finalChg;
+        if (typeof window.updateTradeModalCalc === 'function') {
+          window.updateTradeModalCalc();
+        }
+      }
+
+      /* ── Portfolio P&L (debounced — avoids re-querying DB on every tick) ─ */
+      if (typeof window.loadPortfolioStats === 'function') {
+        clearTimeout(realOnPriceUpdate._pnlTimer);
+        realOnPriceUpdate._pnlTimer = setTimeout(window.loadPortfolioStats, 300);
+      }
     }
-  });
+    realOnPriceUpdate._pnlTimer = null;
+    realOnPriceUpdate._isStub   = false;   /* tells coingecko-sync this is real */
 
-})();
+    window.onPriceUpdate = realOnPriceUpdate;
+
+    /* ── 3. Patched buildTicker ──────────────────────────────────────────────
+      Replaces dashboard.js's version so the marquee gets .ticker-track and
+      the correct class names for in-place updates.                           */
+    function buildTickerPatched() {
+      var ASSETS_LIST = window.ASSETS_LIST || [];
+      var PRICES      = window.PRICES      || {};
+      var CHANGES     = window.CHANGES     || {};
+
+      var tickerEl = document.getElementById('liveTicker');
+      if (!tickerEl) return;
+
+      function makeItems(items) {
+        return items.map(function (a) {
+          var price = PRICES[a.sym] || a.price || 0;
+          var chg   = (CHANGES[a.sym] != null) ? CHANGES[a.sym] : (a.chg || 0);
+          var up    = chg >= 0;
+          return (
+            '<div class="ticker-item" style="display:flex;align-items:center;gap:8px;padding:0 20px;white-space:nowrap">' +
+              '<i class="' + a.icon + '" style="color:' + a.color + ';font-size:13px"></i>' +
+              '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#edf2f8;font-weight:500">' + a.sym + '</span>' +
+              '<span class="tick-price-' + a.sym + '" style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#edf2f8">$' + fmtPrice(price) + '</span>' +
+              '<span class="tick-chg-'  + a.sym + '" style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:' + (up ? '#22c55e' : '#ef4444') + '">' + (up ? '+' : '') + Math.abs(chg).toFixed(2) + '%</span>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      /* Two copies inside .ticker-track for seamless CSS marquee loop */
+      var html = makeItems(ASSETS_LIST);
+      tickerEl.innerHTML = '<div class="ticker-track">' + html + html + '</div>';
+    }
+
+    /* Override as soon as possible; dashboard.js will call window.buildTicker()
+      inside its own DOMContentLoaded handler, so overriding it at parse-time
+      here means our version runs instead.                                     */
+    window.buildTicker = buildTickerPatched;
+
+    /* ── 4. Admin price save — write override AND broadcast ─────────────────
+      When an admin sets a price, write to localStorage AND call onPriceUpdate
+      so all open tabs update immediately. On non-admin page loads the override
+      key is cleared (step 1 above) so it never persists to users.            */
+    var _origAdmSetSinglePrice = null;
+
+    function hookAdminPriceSave() {
+      if (typeof window.admSetSinglePrice !== 'function') return;
+      if (window.admSetSinglePrice._hooked) return;
+      _origAdmSetSinglePrice = window.admSetSinglePrice;
+
+      window.admSetSinglePrice = async function (sym) {
+        await _origAdmSetSinglePrice(sym);
+        /* After the edge-function save, also write to localStorage so that
+          the admin's own tab reflects the override immediately.             */
+        try {
+          var inp = document.getElementById('price-input-' + sym);
+          if (!inp) return;
+          var n = parseFloat(inp.value);
+          if (isNaN(n) || n <= 0) return;
+          var overrides = {};
+          try { overrides = JSON.parse(localStorage.getItem('aurum_price_overrides') || '{}'); } catch (e) {}
+          overrides[sym] = { price: n, chg: (window.CHANGES && window.CHANGES[sym]) || 0 };
+          localStorage.setItem('aurum_price_overrides', JSON.stringify(overrides));
+        } catch (e) {}
+      };
+      window.admSetSinglePrice._hooked = true;
+    }
+
+    /* ── 5. Cross-tab sync: when admin sets a price in another tab ──────────
+      Listen for the storage event that coingecko-sync.js fires.              */
+    window.addEventListener('storage', function (e) {
+      if (e.key !== 'aurum_live_prices') return;
+      try {
+        var live = JSON.parse(e.newValue || '{}');
+        Object.keys(live).forEach(function (sym) {
+          var entry = live[sym];
+          if (entry && entry.price > 0) {
+            window.onPriceUpdate(sym, entry.price, entry.changePct24h || 0);
+          }
+        });
+      } catch (err) {}
+    });
+
+    /* ── 6. Hook admin functions once DOM is ready ─────────────────────────── */
+    document.addEventListener('DOMContentLoaded', function () {
+      /* Rebuild ticker in case dashboard.js already ran buildTicker()
+        before our override was in place.                                    */
+      if (window.ASSETS_LIST) buildTickerPatched();
+
+      /* Hook admin price save if admin panel loaded this session */
+      setTimeout(hookAdminPriceSave, 2000);
+
+      /* Drain any queued price broadcasts now that DOM elements exist */
+      if (typeof window._aurumDrainPriceQueue === 'function') {
+        window._aurumDrainPriceQueue();
+      }
+    });
+
+  })();
   </script>
   <script src="portfolio-sync.js"></script>
 </body>

@@ -14,17 +14,18 @@
   <link rel="stylesheet" href="output.css">
   <link rel="stylesheet" href="input.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <link rel="icon" type="image/png" href="./image/logo.jpeg">
-  
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
   <script src="coingecko-sync.js"></script>
   <script src="chat-widget.js"></script>
-  <!-- <script src="aurum-live-prices.js"></script> -->
-  <!-- <script src="portfolio-sync.js"></script> -->
+
   <style>
-    /* ── Chart modal ──────────────────────────────────── */
+    /* ══════════════════════════════════════════════
+       CHART MODAL
+    ══════════════════════════════════════════════ */
     #idx-chart-modal{
       position:fixed;inset:0;z-index:9000;
       background:rgba(0,0,0,.88);backdrop-filter:blur(20px);
@@ -48,7 +49,7 @@
     .cha-chg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 9px;border-radius:7px;margin-left:7px;}
     .cha-close{width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.09);color:#5a6880;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+      display:flex;align-items:center;justify-content:center;font-size:14px;}
     .cha-close:hover{background:rgba(255,255,255,.1);color:#edf2f8;}
     .cha-stats{display:grid;grid-template-columns:repeat(5,1fr);flex-shrink:0;
       border-bottom:1px solid rgba(255,255,255,.05);}
@@ -97,7 +98,6 @@
     @keyframes pxFlash{0%{color:#c9a84c}100%{color:inherit}}
     .px-flash{animation:pxFlash .7s ease forwards;}
 
-    /* Live price pulse on chart header when price updates */
     @keyframes chartPriceFlash{0%{color:#c9a84c;text-shadow:0 0 12px rgba(201,168,76,.6)}100%{color:#edf2f8;text-shadow:none}}
     .chart-px-flash{animation:chartPriceFlash .8s ease forwards;}
 
@@ -107,6 +107,447 @@
       #idx-chart-box{border-radius:16px;}
       .cha-aname{font-size:19px;}
     }
+
+    /* ══════════════════════════════════════════════
+       PREMIUM LANDING MOBILE NAV
+    ══════════════════════════════════════════════ */
+
+    .lp-nav-toggle{
+      display:none;
+      position:relative;
+      width:48px;height:48px;
+      border-radius:14px;
+      background:rgba(201,168,76,.06);
+      border:1px solid rgba(201,168,76,.2);
+      cursor:pointer;
+      align-items:center;justify-content:center;
+      flex-direction:column;gap:5px;
+      z-index:600;
+      transition:background .3s,border-color .3s,box-shadow .3s;
+      flex-shrink:0;
+    }
+    .lp-nav-toggle:hover{
+      background:rgba(201,168,76,.12);
+      border-color:rgba(201,168,76,.4);
+      box-shadow:0 0 28px rgba(201,168,76,.15);
+    }
+    .lp-nav-toggle .bar{
+      display:block;width:20px;height:1.5px;
+      background:#c9a84c;border-radius:2px;
+      transition:transform .5s cubic-bezier(.77,0,.175,1),opacity .3s,width .3s;
+      transform-origin:center;
+    }
+    .lp-nav-toggle.open .bar:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+    .lp-nav-toggle.open .bar:nth-child(2){opacity:0;transform:scaleX(0);}
+    .lp-nav-toggle.open .bar:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+    .lp-nav-toggle.open{
+      background:rgba(201,168,76,.14);
+      border-color:rgba(201,168,76,.45);
+      animation:lpTogglePulse .7s ease forwards;
+    }
+    @keyframes lpTogglePulse{
+      0%{box-shadow:0 0 0 0 rgba(201,168,76,.4)}
+      60%{box-shadow:0 0 0 14px rgba(201,168,76,.0)}
+      100%{box-shadow:0 0 28px rgba(201,168,76,.14)}
+    }
+
+    .lp-mobile-menu{
+      display:none;
+      position:fixed;inset:0;
+      z-index:500;
+      pointer-events:none;
+    }
+
+    .lp-menu-backdrop{
+      position:absolute;inset:0;
+      background:rgba(2,4,6,0);
+      backdrop-filter:blur(0px);
+      transition:background .6s cubic-bezier(.4,0,.2,1),backdrop-filter .6s;
+    }
+
+    .lp-menu-panel{
+      position:absolute;top:0;right:0;
+      width:min(400px,96vw);
+      height:100%;
+      background:linear-gradient(168deg,#070d18 0%,#05090f 55%,#030608 100%);
+      border-left:1px solid rgba(201,168,76,.1);
+      transform:translateX(100%);
+      transition:transform .65s cubic-bezier(.77,0,.175,1);
+      display:flex;flex-direction:column;
+      overflow:hidden;
+    }
+
+    .lp-menu-panel::before{
+      content:'';position:absolute;inset:0;pointer-events:none;
+      opacity:.03;z-index:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size:256px;
+    }
+
+    .lp-menu-panel::after{
+      content:'';position:absolute;
+      top:-120px;right:-100px;
+      width:500px;height:500px;border-radius:50%;
+      background:radial-gradient(circle,rgba(201,168,76,.07) 0%,transparent 65%);
+      pointer-events:none;z-index:0;
+    }
+
+    .lp-panel-orb-bottom{
+      position:absolute;bottom:-100px;left:-80px;
+      width:380px;height:380px;border-radius:50%;
+      background:radial-gradient(circle,rgba(201,168,76,.04) 0%,transparent 70%);
+      pointer-events:none;z-index:0;
+    }
+
+    .lp-panel-shimmer{
+      position:absolute;top:0;left:-100%;width:60%;height:100%;
+      background:linear-gradient(105deg,transparent 35%,rgba(201,168,76,.06) 50%,transparent 65%);
+      pointer-events:none;z-index:1;opacity:0;
+    }
+    .lp-mobile-menu.open .lp-panel-shimmer{
+      animation:lpShimmerSweep .9s .3s ease-out forwards;
+    }
+    @keyframes lpShimmerSweep{0%{left:-100%;opacity:1}100%{left:160%;opacity:1}}
+
+    .lp-mobile-menu.open{pointer-events:all;}
+    .lp-mobile-menu.open .lp-menu-backdrop{
+      background:rgba(2,4,6,.82);
+      backdrop-filter:blur(16px);
+    }
+    .lp-mobile-menu.open .lp-menu-panel{transform:translateX(0);}
+
+    .lp-panel-head{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:26px 28px;
+      border-bottom:1px solid rgba(255,255,255,.04);
+      position:relative;z-index:2;flex-shrink:0;
+    }
+    .lp-panel-logo{
+      display:flex;align-items:center;gap:12px;text-decoration:none;
+      opacity:0;transform:translateX(24px);
+      transition:opacity .45s .24s,transform .45s .24s;
+    }
+    .lp-mobile-menu.open .lp-panel-logo{opacity:1;transform:translateX(0);}
+    .lp-panel-logo-mark{
+      width:36px;height:36px;border-radius:11px;
+      background:linear-gradient(135deg,#c9a84c,#a87c28);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:15px;
+      box-shadow:0 0 24px rgba(201,168,76,.3);
+    }
+    .lp-panel-wordmark{
+      font-family:'Cormorant Garamond',serif;
+      font-size:22px;letter-spacing:.14em;color:#edf2f8;
+    }
+    .lp-panel-wordmark em{color:#c9a84c;font-style:italic;}
+    .lp-panel-close{
+      width:40px;height:40px;border-radius:12px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.07);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;color:#5a6880;font-size:14px;
+      opacity:0;transform:rotate(-90deg) scale(.7);
+      transition:color .2s,background .2s,border-color .2s,opacity .4s .32s,transform .4s .32s;
+    }
+    .lp-mobile-menu.open .lp-panel-close{opacity:1;transform:rotate(0) scale(1);}
+    .lp-panel-close:hover{
+      color:#c9a84c;border-color:rgba(201,168,76,.35);
+      background:rgba(201,168,76,.07);
+    }
+
+    /* ── Market Strip (top 4 coins) ── */
+    .lp-market-strip{
+      display:flex;gap:0;
+      border-bottom:1px solid rgba(255,255,255,.04);
+      position:relative;z-index:2;flex-shrink:0;
+      opacity:0;transform:translateY(8px);
+      transition:opacity .4s .34s,transform .4s .34s;
+    }
+    .lp-mobile-menu.open .lp-market-strip{opacity:1;transform:translateY(0);}
+    .lp-market-item{
+      flex:1;padding:12px 10px;text-align:center;
+      border-right:1px solid rgba(255,255,255,.04);
+      cursor:pointer;transition:background .2s;
+    }
+    .lp-market-item:last-child{border-right:none;}
+    .lp-market-item:hover{background:rgba(255,255,255,.03);}
+    .lp-market-sym{
+      font-family:'JetBrains Mono',monospace;font-size:9px;
+      letter-spacing:.12em;color:#5a6880;text-transform:uppercase;margin-bottom:4px;
+    }
+    .lp-market-price{
+      font-family:'Cormorant Garamond',serif;font-size:14px;color:#edf2f8;font-weight:300;
+    }
+    .lp-market-chg{
+      font-family:'JetBrains Mono',monospace;font-size:8px;margin-top:2px;
+    }
+
+    /* Flash animation for live price updates in mobile nav */
+    @keyframes lpPriceFlash{
+      0%{color:#c9a84c;opacity:1}
+      60%{color:#c9a84c;opacity:.7}
+      100%{color:inherit;opacity:1}
+    }
+    .lp-price-flash{animation:lpPriceFlash .6s ease forwards;}
+
+    @keyframes lpAssetPriceFlash{
+      0%{color:#c9a84c}
+      100%{color:#edf2f8}
+    }
+    .lp-asset-price-flash{animation:lpAssetPriceFlash .7s ease forwards;}
+
+    .lp-nav-section-label{
+      font-family:'JetBrains Mono',monospace;
+      font-size:8px;letter-spacing:.22em;text-transform:uppercase;
+      color:#5a6880;padding:0 6px;
+      margin-bottom:6px;margin-top:10px;
+      display:flex;align-items:center;gap:10px;
+      opacity:0;transition:opacity .35s;
+    }
+    .lp-nav-section-label::after{
+      content:'';flex:1;height:1px;background:rgba(255,255,255,.05);
+    }
+    .lp-mobile-menu.open .lp-nav-section-label{opacity:1;}
+    .lp-mobile-menu.open .lp-nav-section-label.s1{transition-delay:.32s;}
+    .lp-mobile-menu.open .lp-nav-section-label.s2{transition-delay:.46s;}
+
+    .lp-panel-nav{
+      flex:1 1 0;min-height:0;
+      overflow-y:auto;overflow-x:hidden;
+      padding:16px 20px 8px;
+      display:flex;flex-direction:column;gap:2px;
+      position:relative;z-index:2;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(201,168,76,.2) transparent;
+      -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 14px,black calc(100% - 14px),transparent 100%);
+      mask-image:linear-gradient(to bottom,transparent 0,black 14px,black calc(100% - 14px),transparent 100%);
+    }
+    .lp-panel-nav::-webkit-scrollbar{width:2px;}
+    .lp-panel-nav::-webkit-scrollbar-track{background:transparent;}
+    .lp-panel-nav::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2);border-radius:2px;}
+    .lp-panel-nav > *{flex-shrink:0;}
+
+    .lp-nav-link{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:14px 16px;border-radius:16px;
+      text-decoration:none;color:#8c9db5;
+      background:transparent;border:1px solid transparent;
+      position:relative;overflow:hidden;
+      cursor:pointer;width:100%;text-align:left;
+      font-family:'DM Sans',sans-serif;
+      margin-bottom:3px;
+      opacity:0;transform:translateX(28px);
+      transition:
+        background .28s,border-color .28s,color .28s,box-shadow .28s,
+        opacity .44s cubic-bezier(.4,0,.2,1),
+        transform .44s cubic-bezier(.4,0,.2,1);
+    }
+    .lp-mobile-menu.open .lp-nav-link{opacity:1;transform:translateX(0);}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(1){transition-delay:.10s;}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(2){transition-delay:.15s;}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(3){transition-delay:.19s;}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(4){transition-delay:.23s;}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(5){transition-delay:.27s;}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(6){transition-delay:.31s;}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(7){transition-delay:.35s;}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(8){transition-delay:.38s;}
+    .lp-mobile-menu.open .lp-nav-link:nth-child(9){transition-delay:.41s;}
+
+    .lp-nav-link::before{
+      content:'';position:absolute;left:0;top:12%;bottom:12%;width:0;
+      background:linear-gradient(180deg,rgba(201,168,76,.0),rgba(201,168,76,.6),rgba(201,168,76,.0));
+      border-radius:0 3px 3px 0;transition:width .25s;
+    }
+    .lp-nav-link:hover,.lp-nav-link.lp-active{
+      color:#edf2f8;
+      background:rgba(255,255,255,.04);
+      border-color:rgba(255,255,255,.07);
+    }
+    .lp-nav-link:hover::before,.lp-nav-link.lp-active::before{width:2px;}
+    .lp-nav-link.lp-active{
+      color:#c9a84c;
+      background:rgba(201,168,76,.08);
+      border-color:rgba(201,168,76,.2);
+      box-shadow:inset 0 0 32px rgba(201,168,76,.04);
+    }
+
+    .lp-ripple{
+      position:absolute;border-radius:50%;
+      background:rgba(201,168,76,.16);
+      transform:scale(0);
+      animation:lpRipple .6s ease-out forwards;
+      pointer-events:none;
+    }
+    @keyframes lpRipple{to{transform:scale(5);opacity:0;}}
+
+    .lp-nav-link-inner{display:flex;align-items:center;gap:14px;}
+    .lp-nav-link-icon{
+      width:42px;height:42px;border-radius:13px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:center;justify-content:center;
+      font-size:15px;color:#5a6880;flex-shrink:0;
+      transition:all .25s;
+    }
+    .lp-nav-link:hover .lp-nav-link-icon,
+    .lp-nav-link.lp-active .lp-nav-link-icon{
+      background:rgba(201,168,76,.1);
+      border-color:rgba(201,168,76,.25);
+      color:#c9a84c;
+      box-shadow:0 0 14px rgba(201,168,76,.14);
+    }
+    .lp-nav-link-text{flex:1;}
+    .lp-nav-link-name{font-size:15px;font-weight:500;color:inherit;letter-spacing:.01em;line-height:1.1;margin-bottom:2px;}
+    .lp-nav-link-sub{font-size:10px;color:#5a6880;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;}
+    .lp-nav-link-arrow{
+      font-size:9px;color:#5a6880;
+      opacity:0;transform:translateX(-6px);
+      transition:all .24s;flex-shrink:0;
+    }
+    .lp-nav-link:hover .lp-nav-link-arrow,
+    .lp-nav-link.lp-active .lp-nav-link-arrow{opacity:1;transform:translateX(0);color:#c9a84c;}
+
+    /* ── Asset mini-cards (live prices) ── */
+    .lp-asset-cards{
+      display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+      margin:10px 0 6px;position:relative;z-index:2;
+    }
+    .lp-asset-card{
+      text-decoration:none;border-radius:14px;padding:14px 10px;text-align:center;
+      transition:all .2s;display:block;
+    }
+    .lp-asset-card-icon{font-size:20px;display:block;margin-bottom:6px;}
+    .lp-asset-card-label{
+      font-family:'JetBrains Mono',monospace;font-size:8px;
+      letter-spacing:.1em;text-transform:uppercase;display:block;
+    }
+    /* Live price value — shown below label */
+    .lp-asset-card-price{
+      font-family:'JetBrains Mono',monospace;font-size:9px;
+      color:#8c9db5;display:block;margin-top:2px;
+      min-height:12px;
+    }
+    /* Change % */
+    .lp-asset-card-chg{
+      font-family:'Cormorant Garamond',serif;font-size:15px;
+      color:#edf2f8;display:block;margin-top:3px;font-weight:300;
+    }
+
+    /* Per-card colour themes */
+    .lp-ac-crypto{
+      background:rgba(247,147,26,.07);
+      border:1px solid rgba(247,147,26,.18);
+    }
+    .lp-ac-crypto:hover{background:rgba(247,147,26,.14);}
+    .lp-ac-crypto .lp-asset-card-icon,
+    .lp-ac-crypto .lp-asset-card-label{color:#f7931a;}
+
+    .lp-ac-equities{
+      background:rgba(98,126,234,.07);
+      border:1px solid rgba(98,126,234,.18);
+    }
+    .lp-ac-equities:hover{background:rgba(98,126,234,.14);}
+    .lp-ac-equities .lp-asset-card-icon,
+    .lp-ac-equities .lp-asset-card-label{color:#627eea;}
+
+    .lp-ac-realestate{
+      background:rgba(201,168,76,.07);
+      border:1px solid rgba(201,168,76,.18);
+    }
+    .lp-ac-realestate:hover{background:rgba(201,168,76,.14);}
+    .lp-ac-realestate .lp-asset-card-icon,
+    .lp-ac-realestate .lp-asset-card-label{color:#c9a84c;}
+
+    /* ── Trust stats band ── */
+    .lp-trust-strip{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      border-top:1px solid rgba(255,255,255,.04);
+      border-bottom:1px solid rgba(255,255,255,.04);
+      position:relative;z-index:2;
+      flex-shrink:0;
+      opacity:0;transform:translateY(10px);
+      transition:opacity .45s .46s,transform .45s .46s;
+    }
+    .lp-mobile-menu.open .lp-trust-strip{opacity:1;transform:translateY(0);}
+    .lp-trust-cell{
+      padding:14px 10px;text-align:center;
+      border-right:1px solid rgba(255,255,255,.04);
+    }
+    .lp-trust-cell:last-child{border-right:none;}
+    .lp-trust-val{
+      font-family:'Cormorant Garamond',serif;font-size:16px;
+      color:#c9a84c;font-weight:300;line-height:1;margin-bottom:3px;
+    }
+    .lp-trust-lbl{
+      font-family:'JetBrains Mono',monospace;font-size:7px;
+      letter-spacing:.1em;color:#5a6880;text-transform:uppercase;
+    }
+
+    .lp-panel-cta{
+      flex-shrink:0;
+      padding:18px 22px 30px;
+      position:relative;z-index:2;
+      display:flex;flex-direction:column;gap:10px;
+      background:linear-gradient(to top,#030608 55%,transparent);
+      opacity:0;transform:translateY(16px);
+      transition:opacity .45s .48s,transform .45s .48s;
+    }
+    .lp-mobile-menu.open .lp-panel-cta{opacity:1;transform:translateY(0);}
+
+    .lp-cta-primary{
+      display:flex;align-items:center;justify-content:center;gap:9px;
+      padding:16px 20px;border-radius:16px;
+      background:linear-gradient(135deg,#c9a84c,#a87c28);
+      color:#040608;font-weight:700;font-size:14px;
+      font-family:'DM Sans',sans-serif;
+      text-decoration:none;border:none;cursor:pointer;
+      box-shadow:0 6px 28px rgba(201,168,76,.22);
+      transition:opacity .2s,box-shadow .2s,transform .18s;
+    }
+    .lp-cta-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 36px rgba(201,168,76,.35);}
+
+    .lp-cta-secondary{
+      display:flex;align-items:center;justify-content:center;gap:9px;
+      padding:14px 20px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.09);
+      background:rgba(255,255,255,.04);
+      color:#8c9db5;font-size:14px;font-family:'DM Sans',sans-serif;
+      text-decoration:none;cursor:pointer;
+      transition:all .2s;
+    }
+    .lp-cta-secondary:hover{color:#edf2f8;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16);}
+
+    .lp-panel-status{
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      padding-top:4px;
+    }
+    .lp-status-dot{
+      width:5px;height:5px;border-radius:50%;background:#22c55e;
+      animation:livePulse 2s infinite;
+    }
+    .lp-status-text{
+      font-family:'JetBrains Mono',monospace;font-size:8px;
+      letter-spacing:.12em;color:#5a6880;text-transform:uppercase;
+    }
+
+    @media(max-width:1024px){
+      .lp-nav-toggle{display:flex!important;}
+      .lp-mobile-menu{display:block!important;}
+    }
+    @media(min-width:1025px){
+      .lp-nav-toggle{display:none!important;}
+      .lp-mobile-menu{display:none!important;}
+    }
+
+    @media(max-height:680px){
+      .lp-trust-strip{display:none;}
+      .lp-nav-link{padding:11px 14px;}
+      .lp-nav-link-icon{width:36px;height:36px;font-size:13px;}
+      .lp-panel-cta{padding:14px 22px 22px;}
+    }
+
+    body.lp-menu-open{overflow:hidden;}
   </style>
 </head>
 <body class="overflow-x-hidden">
@@ -122,7 +563,7 @@
     <div class="ld-sub">Precision Investment Platform</div>
   </div>
 
-  <!-- HEADER -->
+  <!-- ══ HEADER ══ -->
   <header id="mainHeader">
     <a href="#" class="logo">
       <div class="logo-mark">A</div>
@@ -140,8 +581,12 @@
       <a href="signup.html" class="btn-outline-sm">Sign In</a>
       <a href="signup.html" class="btn-gold">Open Account</a>
     </div>
-    <button class="mob-btn" id="mobBtn">
-      <span></span><span></span><span></span>
+
+    <!-- Premium mobile hamburger -->
+    <button class="lp-nav-toggle" id="lpNavToggle" aria-label="Open navigation" aria-expanded="false">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
     </button>
   </header>
 
@@ -150,16 +595,210 @@
     <div class="ticker-inner" id="tickerInner"></div>
   </div>
 
-  <!-- MOBILE DRAWER -->
-  <div class="drawer-overlay" id="drawerOverlay"></div>
-  <div class="drawer" id="drawer">
-    <a href="#markets">Markets</a>
-    <a href="invest.html">Invest</a>
-    <a href="#assets">Assets</a>
-    <a href="#property">Property</a>
-    <a href="about.html">About</a>
-    <a href="signup.html" style="margin-top:12px;background:linear-gradient(135deg,var(--gold),#a87c28);color:var(--void);font-weight:600;border:none;text-align:center">Open Account</a>
+  <!-- ══ PREMIUM LANDING MOBILE MENU ══ -->
+  <div class="lp-mobile-menu" id="lpMobileMenu" role="dialog" aria-modal="true" aria-label="Navigation">
+    <div class="lp-menu-backdrop" id="lpMenuBackdrop"></div>
+    <div class="lp-menu-panel">
+      <div class="lp-panel-shimmer"></div>
+      <div class="lp-panel-orb-bottom"></div>
+
+      <!-- Panel header -->
+      <div class="lp-panel-head">
+        <a href="#" class="lp-panel-logo" onclick="closeLpMenu()">
+          <div class="lp-panel-logo-mark">A</div>
+          <span class="lp-panel-wordmark">Aurum <em>Capital</em></span>
+        </a>
+        <button class="lp-panel-close" id="lpMenuClose" aria-label="Close navigation">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Live mini market strip — BTC / ETH / SOL / XRP -->
+      <div class="lp-market-strip" id="lpMarketStrip">
+        <div class="lp-market-item" onclick="closeLpMenu();setTimeout(()=>openAssetChart&&openAssetChart('BTC'),120)">
+          <div class="lp-market-sym">BTC</div>
+          <div class="lp-market-price" id="lp-px-BTC">—</div>
+          <div class="lp-market-chg" id="lp-chg-BTC" style="color:#22c55e">—</div>
+        </div>
+        <div class="lp-market-item" onclick="closeLpMenu();setTimeout(()=>openAssetChart&&openAssetChart('ETH'),120)">
+          <div class="lp-market-sym">ETH</div>
+          <div class="lp-market-price" id="lp-px-ETH">—</div>
+          <div class="lp-market-chg" id="lp-chg-ETH" style="color:#22c55e">—</div>
+        </div>
+        <div class="lp-market-item" onclick="closeLpMenu();setTimeout(()=>openAssetChart&&openAssetChart('SOL'),120)">
+          <div class="lp-market-sym">SOL</div>
+          <div class="lp-market-price" id="lp-px-SOL">—</div>
+          <div class="lp-market-chg" id="lp-chg-SOL" style="color:#22c55e">—</div>
+        </div>
+        <div class="lp-market-item" onclick="closeLpMenu();setTimeout(()=>openAssetChart&&openAssetChart('XRP'),120)">
+          <div class="lp-market-sym">XRP</div>
+          <div class="lp-market-price" id="lp-px-XRP">—</div>
+          <div class="lp-market-chg" id="lp-chg-XRP" style="color:#ef4444">—</div>
+        </div>
+      </div>
+
+      <!-- Scrollable nav links -->
+      <nav class="lp-panel-nav" id="lpPanelNav">
+
+        <div class="lp-nav-section-label s1">// Explore</div>
+
+        <a href="#markets" class="lp-nav-link lp-active" onclick="closeLpMenu()">
+          <div class="lp-nav-link-inner">
+            <div class="lp-nav-link-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="lp-nav-link-text">
+              <div class="lp-nav-link-name">Markets</div>
+              <div class="lp-nav-link-sub">Live prices & trends</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+        </a>
+
+        <a href="invest.html" class="lp-nav-link">
+          <div class="lp-nav-link-inner">
+            <div class="lp-nav-link-icon"><i class="fas fa-seedling"></i></div>
+            <div class="lp-nav-link-text">
+              <div class="lp-nav-link-name">Invest</div>
+              <div class="lp-nav-link-sub">Explore opportunities</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+        </a>
+
+        <a href="#assets" class="lp-nav-link" onclick="closeLpMenu()">
+          <div class="lp-nav-link-inner">
+            <div class="lp-nav-link-icon"><i class="fas fa-gem"></i></div>
+            <div class="lp-nav-link-text">
+              <div class="lp-nav-link-name">Assets</div>
+              <div class="lp-nav-link-sub">High-conviction picks</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+        </a>
+
+        <a href="#property" class="lp-nav-link" onclick="closeLpMenu()">
+          <div class="lp-nav-link-inner">
+            <div class="lp-nav-link-icon"><i class="fas fa-building"></i></div>
+            <div class="lp-nav-link-text">
+              <div class="lp-nav-link-name">Property</div>
+              <div class="lp-nav-link-sub">Prime real estate</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+        </a>
+
+        <!--
+          ══════════════════════════════════════
+          LIVE ASSET MINI-CARDS
+          Prices are injected by updateMarketStrip()
+          via window.PRICES and window.CHANGES.
+          IDs used:
+            lp-ac-price-BTC   → BTC live price
+            lp-ac-chg-BTC     → BTC 24h change %
+            lp-ac-price-ETH   → ETH live price  (Equities card — shows ETH as proxy)
+            lp-ac-chg-ETH     → ETH 24h change %
+            lp-ac-chg-REAL    → static/blended (Real Estate has no live token)
+          ══════════════════════════════════════
+        -->
+        <div class="lp-asset-cards" id="lpAssetCards">
+
+          <!-- Crypto card — live BTC price -->
+          <a href="invest.html" class="lp-asset-card lp-ac-crypto">
+            <i class="fab fa-bitcoin lp-asset-card-icon" aria-hidden="true"></i>
+            <span class="lp-asset-card-label">Crypto</span>
+            <span class="lp-asset-card-price" id="lp-ac-price-BTC">—</span>
+            <span class="lp-asset-card-chg" id="lp-ac-chg-BTC">—</span>
+          </a>
+
+          <!-- Equities card — live ETH price as a live reference -->
+          <a href="invest.html" class="lp-asset-card lp-ac-equities">
+            <i class="fas fa-chart-bar lp-asset-card-icon" aria-hidden="true"></i>
+            <span class="lp-asset-card-label">Equities</span>
+            <span class="lp-asset-card-price" id="lp-ac-price-ETH">—</span>
+            <span class="lp-asset-card-chg" id="lp-ac-chg-ETH">—</span>
+          </a>
+
+          <!-- Real Estate card — static yield (no live token) -->
+          <a href="invest.html" class="lp-asset-card lp-ac-realestate">
+            <i class="fas fa-city lp-asset-card-icon" aria-hidden="true"></i>
+            <span class="lp-asset-card-label">Real Est.</span>
+            <span class="lp-asset-card-price" style="color:#c9a84c;opacity:.7;">Yield</span>
+            <span class="lp-asset-card-chg" id="lp-ac-chg-REAL" style="color:#c9a84c;">+8%</span>
+          </a>
+
+        </div>
+
+        <div class="lp-nav-section-label s2">// Company</div>
+
+        <a href="about.html" class="lp-nav-link">
+          <div class="lp-nav-link-inner">
+            <div class="lp-nav-link-icon"><i class="fas fa-building-columns"></i></div>
+            <div class="lp-nav-link-text">
+              <div class="lp-nav-link-name">About</div>
+              <div class="lp-nav-link-sub">Our story & team</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+        </a>
+
+        <a href="contact.html" class="lp-nav-link">
+          <div class="lp-nav-link-inner">
+            <div class="lp-nav-link-icon"><i class="fas fa-message"></i></div>
+            <div class="lp-nav-link-text">
+              <div class="lp-nav-link-name">Contact</div>
+              <div class="lp-nav-link-sub">Speak to an advisor</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+        </a>
+
+        <a href="signup.html" class="lp-nav-link">
+          <div class="lp-nav-link-inner">
+            <div class="lp-nav-link-icon"><i class="fas fa-user-circle"></i></div>
+            <div class="lp-nav-link-text">
+              <div class="lp-nav-link-name">Sign In</div>
+              <div class="lp-nav-link-sub">Access your account</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
+        </a>
+
+      </nav>
+
+      <!-- Trust metrics strip -->
+      <div class="lp-trust-strip">
+        <div class="lp-trust-cell">
+          <div class="lp-trust-val">$4.2B+</div>
+          <div class="lp-trust-lbl">Assets Under Mgmt</div>
+        </div>
+        <div class="lp-trust-cell">
+          <div class="lp-trust-val">180K+</div>
+          <div class="lp-trust-lbl">Active Investors</div>
+        </div>
+        <div class="lp-trust-cell">
+          <div class="lp-trust-val">98.4%</div>
+          <div class="lp-trust-lbl">Uptime</div>
+        </div>
+      </div>
+
+      <!-- Bottom CTAs -->
+      <div class="lp-panel-cta">
+        <a href="signup.html" class="lp-cta-primary">
+          <i class="fas fa-rocket" style="font-size:13px;"></i>
+          Open Account — Free
+        </a>
+        <a href="invest.html" class="lp-cta-secondary">
+          <i class="fas fa-chart-candlestick" style="font-size:13px;"></i>
+          Explore Live Markets
+        </a>
+        <div class="lp-panel-status">
+          <div class="lp-status-dot"></div>
+          <span class="lp-status-text">All systems operational · 99.9% uptime</span>
+        </div>
+      </div>
+
+    </div>
   </div>
+  <!-- END PREMIUM LANDING MOBILE MENU -->
 
   <!-- ══ HERO ══ -->
   <section class="hero">
@@ -340,12 +979,9 @@
     </div>
   </footer>
 
-  <!-- ══════════════════════════════════════════════════════
-       PROFESSIONAL CHART MODAL
-  ══════════════════════════════════════════════════════ -->
+  <!-- ══ CHART MODAL ══ -->
   <div id="idx-chart-modal" onclick="handleChartBg(event)">
     <div id="idx-chart-box">
-
       <div class="cha-hdr">
         <div class="cha-asset">
           <div class="cha-ico" id="cha-ico"></div>
@@ -368,7 +1004,6 @@
           <button class="cha-close" onclick="closeAssetChart()">✕</button>
         </div>
       </div>
-
       <div class="cha-stats">
         <div class="cha-stat"><div class="cha-stat-l">Open</div><div class="cha-stat-v" id="cha-open">—</div></div>
         <div class="cha-stat"><div class="cha-stat-l">24H High</div><div class="cha-stat-v" id="cha-high" style="color:#22c55e">—</div></div>
@@ -376,21 +1011,12 @@
         <div class="cha-stat"><div class="cha-stat-l">Market Cap</div><div class="cha-stat-v" id="cha-mcap">—</div></div>
         <div class="cha-stat"><div class="cha-stat-l">Volume 24H</div><div class="cha-stat-v" id="cha-vol24">—</div></div>
       </div>
-
       <div class="cha-ctrl">
         <div class="cha-btn-grp" id="cha-type-grp">
-          <button class="cha-btn on" onclick="setChartType('candlestick',this)">
-            <i class="fas fa-chart-candlestick" style="margin-right:3px;font-size:9px;"></i>Candles
-          </button>
-          <button class="cha-btn" onclick="setChartType('line',this)">
-            <i class="fas fa-chart-line" style="margin-right:3px;font-size:9px;"></i>Line
-          </button>
-          <button class="cha-btn" onclick="setChartType('area',this)">
-            <i class="fas fa-chart-area" style="margin-right:3px;font-size:9px;"></i>Area
-          </button>
-          <button class="cha-btn" onclick="setChartType('bar',this)">
-            <i class="fas fa-chart-bar" style="margin-right:3px;font-size:9px;"></i>Bars
-          </button>
+          <button class="cha-btn on" onclick="setChartType('candlestick',this)"><i class="fas fa-chart-candlestick" style="margin-right:3px;font-size:9px;"></i>Candles</button>
+          <button class="cha-btn" onclick="setChartType('line',this)"><i class="fas fa-chart-line" style="margin-right:3px;font-size:9px;"></i>Line</button>
+          <button class="cha-btn" onclick="setChartType('area',this)"><i class="fas fa-chart-area" style="margin-right:3px;font-size:9px;"></i>Area</button>
+          <button class="cha-btn" onclick="setChartType('bar',this)"><i class="fas fa-chart-bar" style="margin-right:3px;font-size:9px;"></i>Bars</button>
         </div>
         <div class="cha-btn-grp" id="cha-tf-grp">
           <button class="cha-btn" onclick="setChartTF('1H',this)">1H</button>
@@ -402,7 +1028,6 @@
           <button class="cha-btn" onclick="setChartTF('1Y',this)">1Y</button>
         </div>
       </div>
-
       <div class="cha-ohlcv">
         <span class="cha-ov-item"><span class="cha-ov-lbl">O</span><span id="ov-o" style="color:#edf2f8">—</span></span>
         <span class="cha-ov-item"><span class="cha-ov-lbl">H</span><span id="ov-h" style="color:#22c55e">—</span></span>
@@ -413,10 +1038,8 @@
           <span class="cha-ov-lbl">Chg</span><span id="ov-chg">—</span>
         </span>
       </div>
-
       <div id="cha-main"></div>
       <div id="cha-vol"></div>
-
       <div class="cha-foot">
         <button class="cha-foot-buy" onclick="window.location.href='invest.html'">
           <i class="fas fa-arrow-trend-up" style="font-size:12px;"></i> Buy
@@ -428,7 +1051,6 @@
           <i class="fas fa-star"></i>
         </button>
       </div>
-
     </div>
   </div>
 
@@ -436,7 +1058,253 @@
   <script src="script.js" defer></script>
 
   <script>
-    
+    /* ══════════════════════════════════════════════
+       PREMIUM LANDING PAGE MOBILE NAV CONTROLLER
+       — fully wired to live CoinGecko prices —
+    ══════════════════════════════════════════════ */
+    (function () {
+
+      var toggle   = document.getElementById('lpNavToggle');
+      var menu     = document.getElementById('lpMobileMenu');
+      var backdrop = document.getElementById('lpMenuBackdrop');
+      var closeBtn = document.getElementById('lpMenuClose');
+      var nav      = document.getElementById('lpPanelNav');
+
+      /* ─────────────────────────────────────────────
+         Price helpers
+      ───────────────────────────────────────────── */
+
+      /**
+       * Format a price number for display.
+       * ≥1000  → $XX,XXX.XX
+       * ≥1     → $X.XX
+       * <1     → $0.XXXX
+       */
+      function fmtP(p) {
+        if (!p || p <= 0) return '—';
+        if (p >= 1000) return '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        if (p >= 1)    return '$' + parseFloat(p).toFixed(2);
+        return '$' + parseFloat(p).toFixed(4);
+      }
+
+      /**
+       * Compact price for the small asset-card price row (e.g. "$104.2K").
+       */
+      function fmtCompact(p) {
+        if (!p || p <= 0) return '—';
+        if (p >= 1e6)  return '$' + (p / 1e6).toFixed(2) + 'M';
+        if (p >= 1e3)  return '$' + (p / 1e3).toFixed(1) + 'K';
+        if (p >= 1)    return '$' + parseFloat(p).toFixed(2);
+        return '$' + parseFloat(p).toFixed(4);
+      }
+
+      /**
+       * Flash a DOM element with the gold-to-white animation.
+       * Works for both the strip prices and asset-card prices.
+       */
+      function flashEl(el, cls) {
+        if (!el) return;
+        el.classList.remove(cls);
+        void el.offsetWidth; // reflow to restart animation
+        el.classList.add(cls);
+        setTimeout(function() { el.classList.remove(cls); }, 800);
+      }
+
+      /* ─────────────────────────────────────────────
+         updateMarketStrip
+         Reads window.PRICES and window.CHANGES
+         (populated by price-sync.js / coingecko-sync.js)
+         and pushes values into every live element.
+      ───────────────────────────────────────────── */
+      function updateMarketStrip() {
+        var PRICES  = window.PRICES  || {};
+        var CHANGES = window.CHANGES || {};
+
+        /* ── Top strip: BTC / ETH / SOL / XRP ── */
+        ['BTC', 'ETH', 'SOL', 'XRP'].forEach(function(sym) {
+          var pxEl  = document.getElementById('lp-px-'  + sym);
+          var chgEl = document.getElementById('lp-chg-' + sym);
+
+          if (pxEl && PRICES[sym]) {
+            var newPx = fmtP(PRICES[sym]);
+            if (pxEl.textContent !== newPx) {
+              pxEl.textContent = newPx;
+              flashEl(pxEl, 'lp-price-flash');
+            }
+          }
+
+          if (chgEl && CHANGES[sym] != null) {
+            var c = CHANGES[sym];
+            var chgStr = (c >= 0 ? '+' : '') + parseFloat(c).toFixed(2) + '%';
+            chgEl.textContent = chgStr;
+            chgEl.style.color = c >= 0 ? '#22c55e' : '#ef4444';
+          }
+        });
+
+        /* ── Asset mini-cards ── */
+
+        /* Crypto card — BTC live price + change */
+        var acPriceBTC = document.getElementById('lp-ac-price-BTC');
+        var acChgBTC   = document.getElementById('lp-ac-chg-BTC');
+
+        if (acPriceBTC && PRICES['BTC']) {
+          var btcCompact = fmtCompact(PRICES['BTC']);
+          if (acPriceBTC.textContent !== btcCompact) {
+            acPriceBTC.textContent = btcCompact;
+            flashEl(acPriceBTC, 'lp-asset-price-flash');
+          }
+        }
+        if (acChgBTC && CHANGES['BTC'] != null) {
+          var bc = CHANGES['BTC'];
+          acChgBTC.textContent = (bc >= 0 ? '+' : '') + parseFloat(bc).toFixed(2) + '%';
+          acChgBTC.style.color = bc >= 0 ? '#22c55e' : '#ef4444';
+        }
+
+        /* Equities card — ETH live price + change (as live market reference) */
+        var acPriceETH = document.getElementById('lp-ac-price-ETH');
+        var acChgETH   = document.getElementById('lp-ac-chg-ETH');
+
+        if (acPriceETH && PRICES['ETH']) {
+          var ethCompact = fmtCompact(PRICES['ETH']);
+          if (acPriceETH.textContent !== ethCompact) {
+            acPriceETH.textContent = ethCompact;
+            flashEl(acPriceETH, 'lp-asset-price-flash');
+          }
+        }
+        if (acChgETH && CHANGES['ETH'] != null) {
+          var ec = CHANGES['ETH'];
+          acChgETH.textContent = (ec >= 0 ? '+' : '') + parseFloat(ec).toFixed(2) + '%';
+          acChgETH.style.color = ec >= 0 ? '#22c55e' : '#ef4444';
+        }
+
+        /* Real Estate card — static, no live token needed */
+        /* (lp-ac-chg-REAL stays at the static +8% set in the HTML) */
+      }
+
+      /* ─────────────────────────────────────────────
+         Open / close helpers
+      ───────────────────────────────────────────── */
+
+      function openLpMenu() {
+        menu.classList.add('open');
+        toggle.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('lp-menu-open');
+        updateMarketStrip();
+
+        /* Re-apply staggered transition delays after re-open */
+        var links = nav.querySelectorAll('.lp-nav-link');
+        links.forEach(function(link, i) {
+          link.style.transition =
+            'background .28s, border-color .28s, color .28s, box-shadow .28s, ' +
+            'opacity .44s ' + (0.10 + i * 0.055) + 's cubic-bezier(.4,0,.2,1), ' +
+            'transform .44s ' + (0.10 + i * 0.055) + 's cubic-bezier(.4,0,.2,1)';
+        });
+      }
+
+      function closeLpMenu() {
+        menu.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('lp-menu-open');
+      }
+
+      /* ─────────────────────────────────────────────
+         Ripple effect on nav links
+      ───────────────────────────────────────────── */
+      function addRipples() {
+        nav.querySelectorAll('.lp-nav-link').forEach(function(link) {
+          link.addEventListener('click', function(e) {
+            var rect   = this.getBoundingClientRect();
+            var size   = Math.max(rect.width, rect.height);
+            var ripple = document.createElement('span');
+            ripple.className = 'lp-ripple';
+            ripple.style.width  = size + 'px';
+            ripple.style.height = size + 'px';
+            ripple.style.left   = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top    = (e.clientY - rect.top  - size / 2) + 'px';
+            this.appendChild(ripple);
+            setTimeout(function() { ripple.remove(); }, 700);
+
+            if (this.tagName === 'A' && this.href && !this.href.includes('#')) {
+              setTimeout(closeLpMenu, 100);
+            }
+          });
+        });
+      }
+
+      /* ─────────────────────────────────────────────
+         Hook into the page's price-update broadcast.
+         price-sync.js / coingecko-sync.js call
+         window.onPriceUpdate(sym, price, chg) each
+         time a price refreshes. We chain onto it so
+         the mobile panel stays live while open.
+      ───────────────────────────────────────────── */
+      var _origOnPriceUpdate = window.onPriceUpdate;
+      window.onPriceUpdate = function(sym, price, chg) {
+        /* Forward to any existing handler first */
+        if (typeof _origOnPriceUpdate === 'function') {
+          _origOnPriceUpdate(sym, price, chg);
+        }
+
+        /* Mirror update into window.PRICES / window.CHANGES
+           in case price-sync.js doesn't do this itself */
+        if (!window.PRICES)  window.PRICES  = {};
+        if (!window.CHANGES) window.CHANGES = {};
+        window.PRICES[sym]  = price;
+        window.CHANGES[sym] = chg;
+
+        /* Refresh strip whenever a relevant coin updates,
+           regardless of whether the panel is open —
+           so data is fresh the instant the panel opens */
+        updateMarketStrip();
+      };
+
+      /* Also listen to localStorage broadcast from coingecko-sync.js */
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'aurum_live_prices') {
+          try {
+            var data = JSON.parse(e.newValue);
+            if (data && typeof data === 'object') {
+              window.PRICES  = window.PRICES  || {};
+              window.CHANGES = window.CHANGES || {};
+              Object.keys(data).forEach(function(sym) {
+                if (data[sym].price != null)  window.PRICES[sym]  = data[sym].price;
+                if (data[sym].change != null) window.CHANGES[sym] = data[sym].change;
+              });
+              updateMarketStrip();
+            }
+          } catch(err) {}
+        }
+      });
+
+      /* ─────────────────────────────────────────────
+         Event bindings
+      ───────────────────────────────────────────── */
+      toggle.addEventListener('click', function() {
+        menu.classList.contains('open') ? closeLpMenu() : openLpMenu();
+      });
+      closeBtn.addEventListener('click', closeLpMenu);
+      backdrop.addEventListener('click', closeLpMenu);
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && menu.classList.contains('open')) closeLpMenu();
+      });
+
+      /* Expose globally so onclick="closeLpMenu()" works in templates */
+      window.closeLpMenu = closeLpMenu;
+      window.openLpMenu  = openLpMenu;
+
+      /* Init after DOM is ready */
+      document.addEventListener('DOMContentLoaded', function() {
+        addRipples();
+        /* Seed with whatever is already cached in window.PRICES */
+        updateMarketStrip();
+      });
+
+      /* Periodic refresh every 30 s as a safety net */
+      setInterval(updateMarketStrip, 30000);
+
+    })();
   </script>
 
 </body>
