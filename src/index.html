@@ -19,9 +19,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
-  <script src="coingecko-sync.js"></script>
+ 
   <script src="chat-widget.js"></script>
-
+   <script src="coingecko-sync.js"></script>
   <style>
     /* ══════════════════════════════════════════════
        CHART MODAL
@@ -109,9 +109,8 @@
     }
 
     /* ══════════════════════════════════════════════
-       PREMIUM MOBILE NAV — matches privacy-policy.html exactly
+       PREMIUM MOBILE NAV
     ══════════════════════════════════════════════ */
-
     .lp-nav-toggle {
       display: none;
       position: relative;
@@ -151,7 +150,6 @@
       100%{ box-shadow: 0 0 28px rgba(201,168,76,.14) }
     }
 
-    /* ══ MOBILE MENU OVERLAY ══ */
     .lp-mobile-menu {
       display: none;
       position: fixed; inset: 0;
@@ -211,7 +209,6 @@
     }
     .lp-mobile-menu.open .lp-menu-panel { transform: translateX(0); }
 
-    /* Panel header */
     .lp-panel-head {
       display: flex; align-items: center; justify-content: space-between;
       padding: 26px 28px;
@@ -251,7 +248,7 @@
       background: rgba(201,168,76,.07);
     }
 
-    /* Mini market strip */
+    /* ── LIVE MARKET STRIP ── */
     .lp-market-strip {
       display: flex; gap: 0;
       border-bottom: 1px solid rgba(255,255,255,.04);
@@ -262,22 +259,67 @@
     }
     .lp-mobile-menu.open .lp-market-strip { opacity: 1; transform: translateY(0); }
     .lp-market-item {
-      flex: 1; padding: 12px 10px; text-align: center;
+      flex: 1; padding: 10px 6px; text-align: center;
       border-right: 1px solid rgba(255,255,255,.04);
       cursor: pointer; transition: background .2s;
+      position: relative;
     }
     .lp-market-item:last-child { border-right: none; }
     .lp-market-item:hover { background: rgba(255,255,255,.03); }
-    .lp-market-sym { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .12em; color: #5a6880; text-transform: uppercase; margin-bottom: 4px; }
-    .lp-market-price { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: #edf2f8; font-weight: 300; }
-    .lp-market-chg { font-family: 'JetBrains Mono', monospace; font-size: 8px; margin-top: 2px; }
+    .lp-market-sym { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .12em; color: #5a6880; text-transform: uppercase; margin-bottom: 3px; }
+    .lp-market-price { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: #edf2f8; font-weight: 300; line-height: 1.1; }
 
-    @keyframes lpPriceFlash { 0%{color:#c9a84c;opacity:1} 60%{color:#c9a84c;opacity:.7} 100%{color:inherit;opacity:1} }
-    .lp-price-flash { animation: lpPriceFlash .6s ease forwards; }
-    @keyframes lpAssetPriceFlash { 0%{color:#c9a84c} 100%{color:#edf2f8} }
-    .lp-asset-price-flash { animation: lpAssetPriceFlash .7s ease forwards; }
+    /* ── REAL-TIME percentage pill — coloured by direction ── */
+    .lp-market-chg {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      margin-top: 4px;
+      padding: 2px 5px;
+      border-radius: 5px;
+      display: inline-block;
+      transition: color .3s, background .3s;
+      color: #5a6880;
+    }
+    .lp-market-chg.pos { background: rgba(34,197,94,.13); color: #22c55e; }
+    .lp-market-chg.neg { background: rgba(239,68,68,.12);  color: #ef4444; }
 
-    /* Section labels */
+    /* live flash indicator dot per strip item */
+    .lp-market-live-dot {
+      position: absolute; top: 8px; right: 6px;
+      width: 4px; height: 4px; border-radius: 50%;
+      background: #22c55e;
+      animation: livePulse 2s infinite;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .lp-market-item.just-updated .lp-market-live-dot { opacity: 1; }
+
+    /* price flash animations — direction-aware */
+    @keyframes lpPriceFlash {
+      0%   { color: #c9a84c; text-shadow: 0 0 8px rgba(201,168,76,.6); }
+      60%  { color: #c9a84c; opacity: .8; }
+      100% { color: #edf2f8; text-shadow: none; }
+    }
+    @keyframes lpPriceFlashDown {
+      0%   { color: #ef4444; text-shadow: 0 0 8px rgba(239,68,68,.5); }
+      60%  { color: #ef4444; opacity: .8; }
+      100% { color: #edf2f8; text-shadow: none; }
+    }
+    @keyframes lpChgFlash {
+      0%   { opacity: 1; transform: scale(1.12); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .lp-price-flash-up   { animation: lpPriceFlash .9s ease forwards; }
+    .lp-price-flash-down { animation: lpPriceFlashDown .9s ease forwards; }
+    .lp-chg-flash        { animation: lpChgFlash .5s ease forwards; }
+
+    /* asset mini-card flash */
+    @keyframes lpAssetFlashUp   { 0%{color:#c9a84c;transform:scale(1.05)} 100%{color:#edf2f8;transform:scale(1)} }
+    @keyframes lpAssetFlashDown { 0%{color:#ef4444;transform:scale(1.05)} 100%{color:#edf2f8;transform:scale(1)} }
+    .lp-asset-flash-up   { animation: lpAssetFlashUp .8s ease forwards; }
+    .lp-asset-flash-down { animation: lpAssetFlashDown .8s ease forwards; }
+
+    /* section labels */
     .lp-nav-section-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 8px; letter-spacing: .22em; text-transform: uppercase;
@@ -291,7 +333,6 @@
     .lp-mobile-menu.open .lp-nav-section-label.s1 { transition-delay: .32s; }
     .lp-mobile-menu.open .lp-nav-section-label.s2 { transition-delay: .46s; }
 
-    /* Scrollable nav */
     .lp-panel-nav {
       flex: 1 1 0; min-height: 0;
       overflow-y: auto; overflow-x: hidden;
@@ -309,7 +350,6 @@
     .lp-panel-nav::-webkit-scrollbar-thumb { background: rgba(201,168,76,.2); border-radius: 2px; }
     .lp-panel-nav > * { flex-shrink: 0; }
 
-    /* Nav links */
     .lp-nav-link {
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
       padding: 14px 16px; border-radius: 16px;
@@ -390,7 +430,7 @@
     .lp-nav-link:hover .lp-nav-link-arrow,
     .lp-nav-link.lp-active .lp-nav-link-arrow { opacity: 1; transform: translateX(0); color: #c9a84c; }
 
-    /* Asset mini-cards */
+    /* ── ASSET MINI-CARDS ── */
     .lp-asset-cards {
       display: grid; grid-template-columns: 1fr 1fr 1fr;
       gap: 8px; margin: 10px 0 6px; position: relative; z-index: 2;
@@ -402,7 +442,21 @@
     .lp-asset-card-icon  { font-size: 20px; display: block; margin-bottom: 6px; }
     .lp-asset-card-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .1em; text-transform: uppercase; display: block; }
     .lp-asset-card-price { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #8c9db5; display: block; margin-top: 2px; min-height: 12px; }
-    .lp-asset-card-chg   { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: #edf2f8; display: block; margin-top: 3px; font-weight: 300; }
+
+    /* ── REAL-TIME asset card % pill ── */
+    .lp-asset-card-chg {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #edf2f8;
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: color .3s, background .3s;
+    }
+    .lp-asset-card-chg.pos { background: rgba(34,197,94,.15); color: #22c55e; }
+    .lp-asset-card-chg.neg { background: rgba(239,68,68,.13);  color: #ef4444; }
 
     .lp-ac-crypto    { background: rgba(247,147,26,.07); border: 1px solid rgba(247,147,26,.18); }
     .lp-ac-crypto:hover { background: rgba(247,147,26,.14); }
@@ -414,7 +468,7 @@
     .lp-ac-realestate:hover { background: rgba(201,168,76,.14); }
     .lp-ac-realestate .lp-asset-card-icon, .lp-ac-realestate .lp-asset-card-label { color: #c9a84c; }
 
-    /* Trust strip */
+    /* ── TRUST STRIP ── */
     .lp-trust-strip {
       display: grid; grid-template-columns: repeat(3,1fr);
       border-top: 1px solid rgba(255,255,255,.04);
@@ -429,7 +483,7 @@
     .lp-trust-val   { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: #c9a84c; font-weight: 300; line-height: 1; margin-bottom: 3px; }
     .lp-trust-lbl   { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: .1em; color: #5a6880; text-transform: uppercase; }
 
-    /* Bottom CTA */
+    /* ── BOTTOM CTA ── */
     .lp-panel-cta {
       flex-shrink: 0;
       padding: 18px 22px 30px;
@@ -465,7 +519,16 @@
     .lp-status-dot   { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; animation: livePulse 2s infinite; }
     .lp-status-text  { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .12em; color: #5a6880; text-transform: uppercase; }
 
-    /* Show toggle on mobile only */
+    /* ── PORTFOLIO CARD LIVE FLASH ANIMATIONS ── */
+    @keyframes portChgFlashUp   { 0%{transform:scale(1.15);color:#22c55e} 100%{transform:scale(1)} }
+    @keyframes portChgFlashDown { 0%{transform:scale(1.15);color:#ef4444} 100%{transform:scale(1)} }
+    .port-chg-flash-up   { animation: portChgFlashUp .6s ease forwards; }
+    .port-chg-flash-down { animation: portChgFlashDown .6s ease forwards; }
+
+    @keyframes portValFlash { 0%{color:#c9a84c} 100%{color:inherit} }
+    .port-val-flash { animation: portValFlash .8s ease forwards; }
+
+    /* ── SHOW TOGGLE ON MOBILE ONLY ── */
     @media (max-width: 1024px) {
       .lp-nav-toggle   { display: flex !important; }
       .lp-mobile-menu  { display: block !important; }
@@ -550,27 +613,31 @@
         </button>
       </div>
 
-      <!-- Live mini market strip -->
+      <!-- Live mini market strip — 4 coins with live % change pills -->
       <div class="lp-market-strip" id="lpMarketStrip">
-        <div class="lp-market-item">
+        <div class="lp-market-item" id="lp-item-BTC" onclick="closeLpMenu();openAssetChart&&openAssetChart('BTC')">
+          <div class="lp-market-live-dot"></div>
           <div class="lp-market-sym">BTC</div>
           <div class="lp-market-price" id="lp-px-BTC">—</div>
-          <div class="lp-market-chg" id="lp-chg-BTC" style="color:#22c55e">—</div>
+          <div class="lp-market-chg" id="lp-chg-BTC">—</div>
         </div>
-        <div class="lp-market-item">
+        <div class="lp-market-item" id="lp-item-ETH" onclick="closeLpMenu();openAssetChart&&openAssetChart('ETH')">
+          <div class="lp-market-live-dot"></div>
           <div class="lp-market-sym">ETH</div>
           <div class="lp-market-price" id="lp-px-ETH">—</div>
-          <div class="lp-market-chg" id="lp-chg-ETH" style="color:#22c55e">—</div>
+          <div class="lp-market-chg" id="lp-chg-ETH">—</div>
         </div>
-        <div class="lp-market-item">
+        <div class="lp-market-item" id="lp-item-SOL" onclick="closeLpMenu();openAssetChart&&openAssetChart('SOL')">
+          <div class="lp-market-live-dot"></div>
           <div class="lp-market-sym">SOL</div>
           <div class="lp-market-price" id="lp-px-SOL">—</div>
-          <div class="lp-market-chg" id="lp-chg-SOL" style="color:#22c55e">—</div>
+          <div class="lp-market-chg" id="lp-chg-SOL">—</div>
         </div>
-        <div class="lp-market-item">
+        <div class="lp-market-item" id="lp-item-XRP" onclick="closeLpMenu();openAssetChart&&openAssetChart('XRP')">
+          <div class="lp-market-live-dot"></div>
           <div class="lp-market-sym">XRP</div>
           <div class="lp-market-price" id="lp-px-XRP">—</div>
-          <div class="lp-market-chg" id="lp-chg-XRP" style="color:#ef4444">—</div>
+          <div class="lp-market-chg" id="lp-chg-XRP">—</div>
         </div>
       </div>
 
@@ -623,25 +690,25 @@
           <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
         </a>
 
-        <!-- Asset mini-cards -->
+        <!-- Asset mini-cards with live prices -->
         <div class="lp-asset-cards" id="lpAssetCards">
           <a href="invest.html" class="lp-asset-card lp-ac-crypto">
             <i class="fab fa-bitcoin lp-asset-card-icon"></i>
             <span class="lp-asset-card-label">Crypto</span>
             <span class="lp-asset-card-price" id="lp-ac-price-BTC">—</span>
-            <span class="lp-asset-card-chg"   id="lp-ac-chg-BTC">—</span>
+            <span class="lp-asset-card-chg" id="lp-ac-chg-BTC">—</span>
           </a>
           <a href="invest.html" class="lp-asset-card lp-ac-equities">
             <i class="fas fa-chart-bar lp-asset-card-icon"></i>
             <span class="lp-asset-card-label">Equities</span>
             <span class="lp-asset-card-price" id="lp-ac-price-ETH">—</span>
-            <span class="lp-asset-card-chg"   id="lp-ac-chg-ETH">—</span>
+            <span class="lp-asset-card-chg" id="lp-ac-chg-ETH">—</span>
           </a>
           <a href="invest.html" class="lp-asset-card lp-ac-realestate">
             <i class="fas fa-city lp-asset-card-icon"></i>
             <span class="lp-asset-card-label">Real Est.</span>
             <span class="lp-asset-card-price" style="color:#c9a84c;opacity:.7;">Yield</span>
-            <span class="lp-asset-card-chg"   id="lp-ac-chg-REAL" style="color:#c9a84c;">+8%</span>
+            <span class="lp-asset-card-chg pos" id="lp-ac-chg-REAL">+8%</span>
           </a>
         </div>
 
@@ -986,171 +1053,317 @@
   <script src="price-sync.js"></script>
   <script src="script.js" defer></script>
 
-  <script>
-    /* ══════════════════════════════════════════════
+  <!-- ══════════════════════════════════════════════
        PREMIUM MOBILE NAV CONTROLLER
-       — identical logic to privacy-policy.html —
-    ══════════════════════════════════════════════ */
-    (function () {
-      var toggle   = document.getElementById('lpNavToggle');
-      var menu     = document.getElementById('lpMobileMenu');
-      var backdrop = document.getElementById('lpMenuBackdrop');
-      var closeBtn = document.getElementById('lpMenuClose');
-      var nav      = document.getElementById('lpPanelNav');
+       Full live price sync — strip + asset cards + portfolio card
+       Matches privacy-policy page behaviour exactly:
+         • coloured pos/neg pill classes on % change
+         • direction-aware price flash (gold = up, red = down)
+         • live dot pulse per strip item on every tick
+         • portfolio card value computed from real BTC/XRP changes
+  ══════════════════════════════════════════════ -->
+  <script>
+  (function () {
 
-      function fmtP(p) {
-        if (!p || p <= 0) return '—';
-        if (p >= 1000) return '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        if (p >= 1)    return '$' + parseFloat(p).toFixed(2);
-        return '$' + parseFloat(p).toFixed(4);
+    /* ── DOM refs ── */
+    var toggle   = document.getElementById('lpNavToggle');
+    var menu     = document.getElementById('lpMobileMenu');
+    var backdrop = document.getElementById('lpMenuBackdrop');
+    var closeBtn = document.getElementById('lpMenuClose');
+    var nav      = document.getElementById('lpPanelNav');
+
+    /* ── Shared price/change store ── */
+    if (!window.PRICES)  window.PRICES  = {};
+    if (!window.CHANGES) window.CHANGES = {};
+
+    /* ── Previous price cache for direction tracking ── */
+    var _prevPrices = {};
+
+    /* ── Portfolio base value (matches hero card default) ── */
+    var PORTFOLIO_BASE = 94320;
+
+    /* ── Format helpers ── */
+    function fmtP(p) {
+      if (!p || p <= 0) return '—';
+      if (p >= 1000) return '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (p >= 1)    return '$' + parseFloat(p).toFixed(2);
+      return '$' + parseFloat(p).toFixed(4);
+    }
+    function fmtCompact(p) {
+      if (!p || p <= 0) return '—';
+      if (p >= 1e6) return '$' + (p / 1e6).toFixed(2) + 'M';
+      if (p >= 1e3) return '$' + (p / 1e3).toFixed(1) + 'K';
+      if (p >= 1)   return '$' + parseFloat(p).toFixed(2);
+      return '$' + parseFloat(p).toFixed(4);
+    }
+    function fmtChg(c) {
+      if (c == null || isNaN(c)) return '—';
+      return (c >= 0 ? '+' : '') + parseFloat(c).toFixed(2) + '%';
+    }
+
+    /* ── Generic flash helper ── */
+    function doFlash(el, cls, duration) {
+      if (!el) return;
+      el.classList.remove(cls);
+      void el.offsetWidth;
+      el.classList.add(cls);
+      setTimeout(function () { el.classList.remove(cls); }, duration || 900);
+    }
+
+    /* ── Price flash — direction-aware (matches privacy-policy exactly) ── */
+    function flashPrice(el, isUp) {
+      if (!el) return;
+      var cls = isUp ? 'lp-price-flash-up' : 'lp-price-flash-down';
+      el.classList.remove('lp-price-flash-up', 'lp-price-flash-down');
+      void el.offsetWidth;
+      el.classList.add(cls);
+      setTimeout(function () { el.classList.remove(cls); }, 1000);
+    }
+    function flashChg(el) { doFlash(el, 'lp-chg-flash', 600); }
+    function flashAsset(el, isUp) {
+      if (!el) return;
+      var cls = isUp ? 'lp-asset-flash-up' : 'lp-asset-flash-down';
+      el.classList.remove('lp-asset-flash-up', 'lp-asset-flash-down');
+      void el.offsetWidth;
+      el.classList.add(cls);
+      setTimeout(function () { el.classList.remove(cls); }, 900);
+    }
+
+    /* ── Pulse the live dot on a strip item ── */
+    function pulseItem(sym) {
+      var item = document.getElementById('lp-item-' + sym);
+      if (!item) return;
+      item.classList.add('just-updated');
+      clearTimeout(item._dotTimer);
+      item._dotTimer = setTimeout(function () {
+        item.classList.remove('just-updated');
+      }, 2500);
+    }
+
+    /* ── Market strip update — coloured % pill matching privacy-policy ── */
+    function updateStrip(sym, price, chg) {
+      var pxEl  = document.getElementById('lp-px-'  + sym);
+      var chgEl = document.getElementById('lp-chg-' + sym);
+      if (!pxEl || !chgEl) return;
+
+      /* price with direction flash */
+      var newPx = fmtP(price);
+      var isUp  = (_prevPrices[sym] != null) ? price >= _prevPrices[sym] : (chg >= 0);
+      if (pxEl.textContent !== newPx) {
+        pxEl.textContent = newPx;
+        flashPrice(pxEl, isUp);
+        pulseItem(sym);
       }
-      function fmtCompact(p) {
-        if (!p || p <= 0) return '—';
-        if (p >= 1e6) return '$' + (p/1e6).toFixed(2) + 'M';
-        if (p >= 1e3) return '$' + (p/1e3).toFixed(1) + 'K';
-        if (p >= 1)   return '$' + parseFloat(p).toFixed(2);
-        return '$' + parseFloat(p).toFixed(4);
-      }
-      function flashEl(el, cls) {
-        if (!el) return;
-        el.classList.remove(cls);
-        void el.offsetWidth;
-        el.classList.add(cls);
-        setTimeout(function() { el.classList.remove(cls); }, 800);
+      _prevPrices[sym] = price;
+
+      /* percentage pill — pos/neg class for green/red colour */
+      var newChg = fmtChg(chg);
+      var oldChg = chgEl.textContent;
+      chgEl.textContent = newChg;
+      chgEl.classList.toggle('pos', chg >= 0);
+      chgEl.classList.toggle('neg', chg < 0);
+      if (oldChg !== newChg) flashChg(chgEl);
+    }
+
+    /* ── Asset card update ── */
+    function updateAssetCard(sym, price, chg) {
+      var priceEl = document.getElementById('lp-ac-price-' + sym);
+      var chgEl   = document.getElementById('lp-ac-chg-'   + sym);
+      if (!priceEl || !chgEl) return;
+
+      var newCompact = fmtCompact(price);
+      var isUp       = chg >= 0;
+      if (priceEl.textContent !== newCompact) {
+        priceEl.textContent = newCompact;
+        flashAsset(priceEl, isUp);
       }
 
-      function updateMarketStrip() {
-        var PRICES  = window.PRICES  || {};
-        var CHANGES = window.CHANGES || {};
+      var newChgStr = fmtChg(chg);
+      var oldChgStr = chgEl.textContent;
+      chgEl.textContent = newChgStr;
+      /* coloured pill — same pos/neg system as strip */
+      chgEl.classList.toggle('pos', isUp);
+      chgEl.classList.toggle('neg', !isUp);
+      if (oldChgStr !== newChgStr) flashChg(chgEl);
+    }
 
-        ['BTC','ETH','SOL','XRP'].forEach(function(sym) {
-          var pxEl  = document.getElementById('lp-px-'  + sym);
-          var chgEl = document.getElementById('lp-chg-' + sym);
-          if (pxEl && PRICES[sym]) {
-            var newPx = fmtP(PRICES[sym]);
-            if (pxEl.textContent !== newPx) { pxEl.textContent = newPx; flashEl(pxEl, 'lp-price-flash'); }
+    /* ── Portfolio card — live blended % from BTC (60%) + XRP (40%) ──
+         Updates the badge colour and the dollar value in real time        */
+    function updatePortfolioCard() {
+      var C = window.CHANGES || {};
+      var btcChg = parseFloat(C['BTC']) || 0;
+      var xrpChg = parseFloat(C['XRP']) || 0;
+      var blended = (btcChg * 0.6) + (xrpChg * 0.4);
+
+      var chgEl = document.getElementById('hero-port-chg');
+      var valEl = document.getElementById('hero-port-val');
+
+      if (chgEl) {
+        var sign     = blended >= 0 ? '+' : '';
+        var newBadge = sign + blended.toFixed(2) + '%';
+        var oldBadge = chgEl.textContent;
+
+        chgEl.textContent = newBadge;
+        /* swap up/dn class so badge colour follows real direction */
+        chgEl.className = 'pc-change ' + (blended >= 0 ? 'up' : 'dn');
+
+        if (oldBadge !== newBadge) {
+          doFlash(chgEl, blended >= 0 ? 'port-chg-flash-up' : 'port-chg-flash-down', 700);
+        }
+      }
+
+      if (valEl) {
+        var newVal = PORTFOLIO_BASE * (1 + blended / 100);
+        var newStr = '$' + newVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        var oldStr = valEl.textContent;
+        valEl.textContent = newStr;
+        if (oldStr !== newStr) doFlash(valEl, 'port-val-flash', 900);
+      }
+
+      /* also update individual asset row change badges */
+      updateHeroAssetRow('BTC', btcChg);
+      updateHeroAssetRow('XRP', xrpChg);
+    }
+
+    /* ── Hero portfolio card — individual asset row ── */
+    function updateHeroAssetRow(sym, chg) {
+      var chgEl  = document.getElementById('chg-' + sym);
+      var prxEl  = document.getElementById('pr-'  + sym);
+      var P      = window.PRICES || {};
+
+      if (prxEl && P[sym]) {
+        prxEl.textContent = fmtP(P[sym]);
+      }
+
+      if (chgEl && chg != null) {
+        var sign   = chg >= 0 ? '+' : '';
+        var newStr = sign + parseFloat(chg).toFixed(2) + '%';
+        var oldStr = chgEl.textContent;
+        chgEl.textContent = newStr;
+        /* flip class — matches hero card's .up/.dn classes from style.css */
+        chgEl.className = 'asset-chg ' + (chg >= 0 ? 'up' : 'dn');
+        if (oldStr !== newStr) doFlash(chgEl, chg >= 0 ? 'port-chg-flash-up' : 'port-chg-flash-down', 600);
+      }
+    }
+
+    /* ── Master update — called on any price event ── */
+    function updateMobileNav(sym, price, chg) {
+      if (!sym || !price) return;
+      if (['BTC','ETH','SOL','XRP'].indexOf(sym) !== -1) {
+        updateStrip(sym, price, chg);
+      }
+      if (sym === 'BTC' || sym === 'ETH') {
+        updateAssetCard(sym, price, chg);
+      }
+    }
+
+    /* ── Bulk refresh from window.PRICES / window.CHANGES ── */
+    function refreshAll() {
+      var P = window.PRICES  || {};
+      var C = window.CHANGES || {};
+      ['BTC','ETH','SOL','XRP'].forEach(function (sym) {
+        if (P[sym] != null) updateMobileNav(sym, P[sym], C[sym] || 0);
+      });
+      updatePortfolioCard();
+    }
+
+    /* ── Intercept global price-sync hook (from coingecko-sync.js / price-sync.js) ── */
+    var _origHook = window.onPriceUpdate;
+    window.onPriceUpdate = function (sym, price, chg) {
+      window.PRICES[sym]  = price;
+      window.CHANGES[sym] = chg;
+      if (typeof _origHook === 'function') _origHook(sym, price, chg);
+      updateMobileNav(sym, price, chg);
+      updatePortfolioCard();
+    };
+
+    /* ── localStorage broadcast (some builds of price-sync use this) ── */
+    window.addEventListener('storage', function (e) {
+      if (e.key !== 'aurum_live_prices') return;
+      try {
+        var data = JSON.parse(e.newValue);
+        if (!data || typeof data !== 'object') return;
+        Object.keys(data).forEach(function (sym) {
+          var p = data[sym].price;
+          var c = data[sym].change;
+          if (p != null) {
+            window.PRICES[sym]  = p;
+            window.CHANGES[sym] = c != null ? c : 0;
+            updateMobileNav(sym, p, window.CHANGES[sym]);
           }
-          if (chgEl && CHANGES[sym] != null) {
-            var c = CHANGES[sym];
-            chgEl.textContent = (c >= 0 ? '+' : '') + parseFloat(c).toFixed(2) + '%';
-            chgEl.style.color = c >= 0 ? '#22c55e' : '#ef4444';
+        });
+        updatePortfolioCard();
+      } catch (err) {}
+    });
+
+    /* ── Polling fallback: pull from global stores every 8 s ── */
+    setInterval(refreshAll, 8000);
+
+    /* ── Menu open / close ── */
+    function openLpMenu() {
+      menu.classList.add('open');
+      toggle.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('lp-menu-open');
+      /* populate strip immediately on open */
+      refreshAll();
+      var links = nav.querySelectorAll('.lp-nav-link');
+      links.forEach(function (link, i) {
+        link.style.transition =
+          'background .28s, border-color .28s, color .28s, box-shadow .28s,' +
+          'opacity .44s ' + (0.10 + i * 0.055) + 's cubic-bezier(.4,0,.2,1),' +
+          'transform .44s ' + (0.10 + i * 0.055) + 's cubic-bezier(.4,0,.2,1)';
+      });
+    }
+    function closeLpMenu() {
+      menu.classList.remove('open');
+      toggle.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('lp-menu-open');
+    }
+
+    /* ── Ripple effect on nav links ── */
+    function addRipples() {
+      nav.querySelectorAll('.lp-nav-link').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          var rect   = this.getBoundingClientRect();
+          var size   = Math.max(rect.width, rect.height);
+          var ripple = document.createElement('span');
+          ripple.className = 'lp-ripple';
+          ripple.style.width  = size + 'px';
+          ripple.style.height = size + 'px';
+          ripple.style.left   = (e.clientX - rect.left  - size / 2) + 'px';
+          ripple.style.top    = (e.clientY - rect.top   - size / 2) + 'px';
+          this.appendChild(ripple);
+          setTimeout(function () { ripple.remove(); }, 700);
+          if (this.tagName === 'A' && this.href && !this.href.includes('#')) {
+            setTimeout(closeLpMenu, 100);
           }
         });
-
-        var acPriceBTC = document.getElementById('lp-ac-price-BTC');
-        var acChgBTC   = document.getElementById('lp-ac-chg-BTC');
-        if (acPriceBTC && PRICES['BTC']) {
-          var btcC = fmtCompact(PRICES['BTC']);
-          if (acPriceBTC.textContent !== btcC) { acPriceBTC.textContent = btcC; flashEl(acPriceBTC,'lp-asset-price-flash'); }
-        }
-        if (acChgBTC && CHANGES['BTC'] != null) {
-          var bc = CHANGES['BTC'];
-          acChgBTC.textContent = (bc >= 0 ? '+' : '') + parseFloat(bc).toFixed(2) + '%';
-          acChgBTC.style.color = bc >= 0 ? '#22c55e' : '#ef4444';
-        }
-
-        var acPriceETH = document.getElementById('lp-ac-price-ETH');
-        var acChgETH   = document.getElementById('lp-ac-chg-ETH');
-        if (acPriceETH && PRICES['ETH']) {
-          var ethC = fmtCompact(PRICES['ETH']);
-          if (acPriceETH.textContent !== ethC) { acPriceETH.textContent = ethC; flashEl(acPriceETH,'lp-asset-price-flash'); }
-        }
-        if (acChgETH && CHANGES['ETH'] != null) {
-          var ec = CHANGES['ETH'];
-          acChgETH.textContent = (ec >= 0 ? '+' : '') + parseFloat(ec).toFixed(2) + '%';
-          acChgETH.style.color = ec >= 0 ? '#22c55e' : '#ef4444';
-        }
-      }
-
-      function openLpMenu() {
-        menu.classList.add('open');
-        toggle.classList.add('open');
-        toggle.setAttribute('aria-expanded', 'true');
-        document.body.classList.add('lp-menu-open');
-        updateMarketStrip();
-        var links = nav.querySelectorAll('.lp-nav-link');
-        links.forEach(function(link, i) {
-          link.style.transition =
-            'background .28s, border-color .28s, color .28s, box-shadow .28s, ' +
-            'opacity .44s ' + (0.10 + i * 0.055) + 's cubic-bezier(.4,0,.2,1), ' +
-            'transform .44s ' + (0.10 + i * 0.055) + 's cubic-bezier(.4,0,.2,1)';
-        });
-      }
-
-      function closeLpMenu() {
-        menu.classList.remove('open');
-        toggle.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('lp-menu-open');
-      }
-
-      function addRipples() {
-        nav.querySelectorAll('.lp-nav-link').forEach(function(link) {
-          link.addEventListener('click', function(e) {
-            var rect   = this.getBoundingClientRect();
-            var size   = Math.max(rect.width, rect.height);
-            var ripple = document.createElement('span');
-            ripple.className = 'lp-ripple';
-            ripple.style.width  = size + 'px';
-            ripple.style.height = size + 'px';
-            ripple.style.left   = (e.clientX - rect.left - size/2) + 'px';
-            ripple.style.top    = (e.clientY - rect.top  - size/2) + 'px';
-            this.appendChild(ripple);
-            setTimeout(function() { ripple.remove(); }, 700);
-            if (this.tagName === 'A' && this.href && !this.href.includes('#')) {
-              setTimeout(closeLpMenu, 100);
-            }
-          });
-        });
-      }
-
-      /* Hook into global price updates */
-      var _orig = window.onPriceUpdate;
-      window.onPriceUpdate = function(sym, price, chg) {
-        if (typeof _orig === 'function') _orig(sym, price, chg);
-        if (!window.PRICES)  window.PRICES  = {};
-        if (!window.CHANGES) window.CHANGES = {};
-        window.PRICES[sym]  = price;
-        window.CHANGES[sym] = chg;
-        updateMarketStrip();
-      };
-
-      window.addEventListener('storage', function(e) {
-        if (e.key === 'aurum_live_prices') {
-          try {
-            var data = JSON.parse(e.newValue);
-            if (data && typeof data === 'object') {
-              window.PRICES  = window.PRICES  || {};
-              window.CHANGES = window.CHANGES || {};
-              Object.keys(data).forEach(function(sym) {
-                if (data[sym].price  != null) window.PRICES[sym]  = data[sym].price;
-                if (data[sym].change != null) window.CHANGES[sym] = data[sym].change;
-              });
-              updateMarketStrip();
-            }
-          } catch(err) {}
-        }
       });
+    }
 
-      toggle.addEventListener('click', function() {
-        menu.classList.contains('open') ? closeLpMenu() : openLpMenu();
-      });
-      closeBtn.addEventListener('click', closeLpMenu);
-      backdrop.addEventListener('click', closeLpMenu);
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && menu.classList.contains('open')) closeLpMenu();
-      });
+    /* ── Event bindings ── */
+    toggle.addEventListener('click', function () {
+      menu.classList.contains('open') ? closeLpMenu() : openLpMenu();
+    });
+    closeBtn.addEventListener('click', closeLpMenu);
+    backdrop.addEventListener('click', closeLpMenu);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.classList.contains('open')) closeLpMenu();
+    });
 
-      window.closeLpMenu = closeLpMenu;
-      window.openLpMenu  = openLpMenu;
+    /* ── Expose globals ── */
+    window.closeLpMenu = closeLpMenu;
+    window.openLpMenu  = openLpMenu;
 
-      document.addEventListener('DOMContentLoaded', function() {
-        addRipples();
-        updateMarketStrip();
-      });
+    /* ── Init on DOM ready ── */
+    document.addEventListener('DOMContentLoaded', function () {
+      addRipples();
+      refreshAll();
+    });
 
-      setInterval(updateMarketStrip, 30000);
-    })();
+  })();
   </script>
 
 </body>
