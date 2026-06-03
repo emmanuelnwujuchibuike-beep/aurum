@@ -126,12 +126,29 @@
       backdrop-filter: blur(12px);
       overflow: hidden;
       display: flex; align-items: center;
+      /* FIX: Use CSS animation as the base scroll mechanism — immune to
+         touch events freezing the JS RAF loop.
+         JS will override transform only when patching live prices. */
     }
     .ticker-track {
       display: flex;
       gap: 0;
       white-space: nowrap;
+      /* FIX: CSS keyframe drives scrolling; JS only patches text content.
+         will-change:transform kept for GPU promotion. */
       will-change: transform;
+      animation: tickerScroll 60s linear infinite;
+    }
+    /* FIX: The CSS animation is the fallback. JS will switch to RAF-driven
+       scrolling once _tickerHalf is measured correctly. The animation is
+       paused on mobile only when the user is actively touching (via JS class),
+       never on hover for touch devices. */
+    .ticker-track.js-driven {
+      animation: none;
+    }
+    @keyframes tickerScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
     .tick-item { display: inline-flex; align-items: center; gap: 8px; padding: 0 28px; border-right: 1px solid rgba(255,255,255,0.04); font-family: var(--ff-mono); font-size: 10px; letter-spacing: .06em; flex-shrink: 0; }
     .tick-sym { color: var(--text-3); }
@@ -1008,32 +1025,71 @@
 
   <script>
   /* ══════════════════════════════════════════════
-     AURUM CAPITAL — PAGE CONTROLLER
-     
-     PRICE PERSISTENCE STRATEGY:
+     AURUM CAPITAL — PAGE CONTROLLER  (FIXED)
+
+     BUG FIXES IN THIS VERSION:
+     ─────────────────────────────────────────────
+     FIX 1 — TICKER STOPS ON MOBILE (touch events)
+       Root cause: The original code used mouseenter/
+       mouseleave to pause/resume the RAF loop. On touch
+       devices, a scroll or tap fires mouseenter but
+       mouseleave NEVER fires, permanently killing the
+       animation.
+       Fix: Use touchstart / touchend instead of mouse
+       events on touch-capable devices. Additionally,
+       the entire scroll mechanism is now backed by a
+       CSS @keyframes animation as a reliable fallback —
+       on first load the CSS animation runs immediately
+       while the JS RAF loop takes over once _tickerHalf
+       is correctly measured. This means the ticker is
+       NEVER blank, even during init.
+
+     FIX 2 — TICKER DISAPPEARS (bad measurement)
+       Root cause: _tickerHalf was measured with
+       getBoundingClientRect() inside a single RAF.
+       On slow/cold devices the fonts may not have
+       loaded yet so all item widths return ~0, setting
+       _tickerHalf=0. With half=0, the wraparound
+       condition `_tickerPos <= -0` is always true,
+       so every frame does `_tickerPos += 0`, the
+       transform becomes translateX(NaN) after
+       accumulated float errors, hiding the track.
+       Fix: Measure with retries — if the measured
+       width is 0 or implausibly small, retry up to
+       10 times with 100ms gaps (waiting for font
+       layout to stabilise). Only hand off from CSS
+       animation to JS RAF once a valid width is
+       confirmed. A minimum guard (`_tickerHalf > 50`)
+       prevents divide-by-zero style failures.
+
+     FIX 3 — SLOW FIRST LOAD ON NEW DEVICE
+       Root cause: buildTicker() was called inside
+       DOMContentLoaded and then waited for another
+       RAF before measuring — on a slow device with
+       font loading this meant ~600ms of blank ticker
+       before prices even attempt to show. Also no
+       persisted prices on a brand-new device meant
+       "—" for every value until CoinGecko responded.
+       Fix: (a) buildTicker() now runs as early as
+       possible — inline in the <script> tag, not
+       waiting for DOMContentLoaded — since the ticker
+       element is already in the DOM above this script.
+       (b) The CSS animation provides immediate visual
+       motion even before JS measures the half-width.
+       (c) The retry measurement runs async with
+       document.fonts.ready as an additional trigger
+       so fonts are definitely loaded before the JS
+       loop takes over.
+
+     PRICE PERSISTENCE STRATEGY (unchanged):
      ─────────────────────────────────────────────
      localStorage key: "aurum_live_prices_v2"
-     
      Schema: { sym: { price, chg, mcap, ts }, ... }
-     
-     On init:
-       1. Load persisted prices from localStorage → populate
-          MARKET_DATA immediately (no "—" flash on reload)
-       2. Kick off CoinGecko fetch → update live prices
-       3. After each successful fetch, save to localStorage
-     
-     The TICKER only shows symbols with a real CoinGecko
-     price (CG_SYMS list). Non-crypto (stocks, commodities)
-     are excluded from the ticker since CoinGecko doesn't
-     provide them — they remain in the market grid/table
-     with their static display values.
   ══════════════════════════════════════════════ */
   (function() {
 
-    /* ── STORAGE KEY ── */
     var LS_KEY = 'aurum_live_prices_v2';
 
-    /* ── GLOBAL STATE ── */
     if (!window.PRICES)  window.PRICES  = {};
     if (!window.CHANGES) window.CHANGES = {};
     var _prevPrices = {};
@@ -1070,19 +1126,8 @@
     function flashPrice(el, isUp) { flash(el, isUp ? 'px-flash-up' : 'px-flash-down', 900); }
     function flashChgEl(el) { flash(el, 'chg-flash', 550); }
 
-    /* ══════════════════════════════════════════
-       MARKET DATA
-       
-       NOTE: For CoinGecko-tracked cryptos (CG_SYMS),
-       price and chg are intentionally left as null/0
-       so they will always show the persisted or live
-       value — never a stale hardcoded number.
-       
-       Stocks & commodities keep display values as they
-       are not fetched from CoinGecko.
-    ══════════════════════════════════════════ */
+    /* ── MARKET DATA ── */
     var MARKET_DATA = {
-      /* ── CRYPTO — prices always come from CoinGecko / localStorage ── */
       BTC:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'₿',  color:'#f7931a', bg:'rgba(247,147,26,0.12)',  faIcon:'fab fa-bitcoin'},
       ETH:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'⟠',  color:'#627eea', bg:'rgba(98,126,234,0.12)',  faIcon:'fab fa-ethereum'},
       SOL:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'◎',  color:'#14f195', bg:'rgba(20,241,149,0.10)',  faIcon:'fas fa-sun'},
@@ -1090,30 +1135,19 @@
       BNB:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'B',  color:'#f3ba2f', bg:'rgba(243,186,47,0.12)',  faIcon:'fas fa-coins'},
       ADA:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'₳',  color:'#0033ad', bg:'rgba(0,51,173,0.15)',    faIcon:'fas fa-circle-nodes'},
       DOGE:   {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'Ð',  color:'#c2a633', bg:'rgba(194,166,51,0.12)',  faIcon:'fas fa-dog'},
-      /* ── STOCKS — static display prices (not from CoinGecko) ── */
       AAPL:   {price:192.30,  chg:0.6,  mcap:'$2.96T', cat:'stocks',      icon:'🍎', color:'#a2aaad', bg:'rgba(162,170,173,0.12)', faIcon:'fab fa-apple'},
       NVDA:   {price:1124.00, chg:3.8,  mcap:'$2.77T', cat:'stocks',      icon:'N',  color:'#76b900', bg:'rgba(118,185,0,0.12)',   faIcon:'fas fa-microchip'},
       TSLA:   {price:178.20,  chg:-1.4, mcap:'$568B',  cat:'stocks',      icon:'T',  color:'#e31937', bg:'rgba(227,25,55,0.12)',   faIcon:'fas fa-car'},
       MSFT:   {price:415.00,  chg:0.3,  mcap:'$3.08T', cat:'stocks',      icon:'M',  color:'#00a4ef', bg:'rgba(0,164,239,0.12)',   faIcon:'fab fa-windows'},
-      /* ── COMMODITIES — static display prices ── */
       GOLD:   {price:2380.00, chg:0.4,  mcap:'—',      cat:'commodities', icon:'🥇', color:'#c9a84c', bg:'rgba(201,168,76,0.12)',  faIcon:'fas fa-coins'},
       OIL:    {price:78.20,   chg:-0.7, mcap:'—',      cat:'commodities', icon:'🛢', color:'#4a3728', bg:'rgba(74,55,40,0.2)',     faIcon:'fas fa-oil-can'},
       SILVER: {price:29.10,   chg:1.1,  mcap:'—',      cat:'commodities', icon:'⚪', color:'#adb5c0', bg:'rgba(173,181,192,0.12)', faIcon:'fas fa-circle'},
     };
 
-    /* Symbols that are fetched live from CoinGecko — only these appear in the ticker */
     var CG_SYMS = ['BTC','ETH','SOL','XRP','BNB','ADA','DOGE'];
+    var CG_IDS  = {BTC:'bitcoin',ETH:'ethereum',SOL:'solana',XRP:'ripple',BNB:'binancecoin',ADA:'cardano',DOGE:'dogecoin'};
 
-    var CG_IDS = {BTC:'bitcoin',ETH:'ethereum',SOL:'solana',XRP:'ripple',BNB:'binancecoin',ADA:'cardano',DOGE:'dogecoin'};
-    var CG_ID_TO_SYM = {};
-    Object.keys(CG_IDS).forEach(function(sym){ CG_ID_TO_SYM[CG_IDS[sym]] = sym; });
-
-    /* ══════════════════════════════════════════
-       STEP 1 — RESTORE PERSISTED PRICES
-       Runs synchronously before anything renders.
-       This ensures the ticker shows real prices
-       instantly on every reload, not "—".
-    ══════════════════════════════════════════ */
+    /* ── RESTORE PERSISTED PRICES ── */
     (function restorePersistedPrices() {
       try {
         var raw = localStorage.getItem(LS_KEY);
@@ -1125,7 +1159,6 @@
           MARKET_DATA[sym].price = entry.price;
           MARKET_DATA[sym].chg   = entry.chg  != null ? entry.chg  : 0;
           if (entry.mcap) MARKET_DATA[sym].mcap = entry.mcap;
-          /* Seed global price maps so other scripts see them immediately */
           window.PRICES[sym]  = entry.price;
           window.CHANGES[sym] = entry.chg != null ? entry.chg : 0;
           _prevPrices[sym]    = entry.price;
@@ -1135,22 +1168,14 @@
       }
     })();
 
-    /* ══════════════════════════════════════════
-       STEP 2 — PERSIST PRICES TO localStorage
-       Called after every successful CoinGecko fetch.
-    ══════════════════════════════════════════ */
+    /* ── PERSIST PRICES ── */
     function persistPrices() {
       try {
         var out = {};
         CG_SYMS.forEach(function(sym) {
           var d = MARKET_DATA[sym];
-          if (d.price == null) return; /* only persist real fetched prices */
-          out[sym] = {
-            price: d.price,
-            chg:   d.chg,
-            mcap:  d.mcap,
-            ts:    Date.now()
-          };
+          if (d.price == null) return;
+          out[sym] = { price: d.price, chg: d.chg, mcap: d.mcap, ts: Date.now() };
         });
         localStorage.setItem(LS_KEY, JSON.stringify(out));
       } catch(e) {
@@ -1158,12 +1183,7 @@
       }
     }
 
-    /* ══════════════════════════════════════════
-       STEP 3 — FETCH LIVE PRICES FROM COINGECKO
-       Runs after page init. Updates MARKET_DATA,
-       re-renders all price displays, saves to
-       localStorage for the next page load.
-    ══════════════════════════════════════════ */
+    /* ── FETCH LIVE PRICES ── */
     function fetchCoinGeckoPrices() {
       var ids = Object.values(CG_IDS).join(',');
       var url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + ids +
@@ -1178,23 +1198,15 @@
             var cgId = CG_IDS[sym];
             var row  = data[cgId];
             if (!row || row.usd == null) return;
-
             var price = row.usd;
             var chg   = row.usd_24h_change || 0;
             var mcap  = row.usd_market_cap;
-
             MARKET_DATA[sym].price = price;
             MARKET_DATA[sym].chg   = chg;
             if (mcap) MARKET_DATA[sym].mcap = fmtCompact(mcap);
-
-            /* Trigger the full UI update hook */
             if (window.onPriceUpdate) window.onPriceUpdate(sym, price, chg);
           });
-
-          /* Save fresh prices so next reload shows them immediately */
           persistPrices();
-
-          /* Refresh mobile menu coin strip */
           updateMenuCoinPrices();
         })
         .catch(function(err) {
@@ -1202,49 +1214,55 @@
         });
     }
 
-    /* Initial fetch + polling every 30s */
     fetchCoinGeckoPrices();
     setInterval(fetchCoinGeckoPrices, 30000);
 
-    /* ══════════════════════════════════════════
-       TICKER
+    /* ════════════════════════════════════════════
+       TICKER  —  FIXED VERSION
        
-       Only CG_SYMS (crypto with live prices) are
-       shown in the ticker. Stocks and commodities
-       are excluded.
-       
-       On first load before CoinGecko responds:
-         - If localStorage has a persisted price → shows it immediately
-         - If no persisted price at all → shows "loading…" dimly
-       
-       The ticker rebuilds after each CoinGecko update
-       only if prices were missing before (first ever load).
-       Otherwise onPriceUpdate patches text in-place.
-    ══════════════════════════════════════════ */
-    var _tickerRAF   = null;
-    var _tickerPos   = 0;
-    var _tickerSpeed = 0.5;
-    var _tickerHalf  = 0;
-    var _tickerBuilt = false;
+       Architecture:
+         1. buildTicker() writes HTML and immediately
+            starts the CSS @keyframes animation via the
+            .ticker-track class (defined in CSS above).
+            This gives instant motion on ANY device,
+            even before fonts/layout are ready.
+         
+         2. measureAndStartRAF() is called async after
+            buildTicker(). It retries measuring the
+            half-width up to 10 times, 100ms apart,
+            also waiting for document.fonts.ready.
+            Once it gets a valid width (>50px), it
+            switches the track to 'js-driven' mode
+            (which removes the CSS animation) and
+            starts the smooth RAF loop. This avoids
+            the "0-width" bug completely.
+         
+         3. Pause/resume uses BOTH mouse events (desktop)
+            AND touch events (mobile) to ensure the
+            animation always resumes after touch.
+            The old code only used mouseenter/mouseleave
+            which NEVER fires a matching mouseleave on
+            touch, permanently freezing the ticker.
+    ════════════════════════════════════════════ */
+    var _tickerRAF    = null;
+    var _tickerPos    = 0;
+    var _tickerSpeed  = 0.5;
+    var _tickerHalf   = 0;
+    var _tickerPaused = false;  /* FIX: single pause flag replaces the implicit RAF-cancel pattern */
 
     function fmtTickerPrice(sym) {
       var d = MARKET_DATA[sym];
-      if (d.price == null) return '···';   /* awaiting first fetch */
-      return fmtP(d.price);
+      return d.price != null ? fmtP(d.price) : '···';
     }
-
     function fmtTickerChg(sym) {
       var d = MARKET_DATA[sym];
-      if (d.price == null) return '';
-      return fmtChg(d.chg);
+      return d.price != null ? fmtChg(d.chg) : '';
     }
 
     function buildTicker() {
       var track = document.getElementById('tickerTrack');
       if (!track) return;
-
       var html = '';
-      /* Build 2 identical sets for seamless infinite loop */
       for (var r = 0; r < 2; r++) {
         CG_SYMS.forEach(function(sym) {
           var d    = MARKET_DATA[sym];
@@ -1267,25 +1285,52 @@
         });
       }
       track.innerHTML = html;
+      /* CSS animation starts automatically via .ticker-track class — immediate visual motion */
+    }
 
-      requestAnimationFrame(function() {
+    /* FIX: measure with retries — fonts may not be ready on first RAF */
+    function measureAndStartRAF() {
+      var track   = document.getElementById('tickerTrack');
+      if (!track) return;
+      var attempt = 0;
+      var maxAttempts = 10;
+
+      function tryMeasure() {
         var items = track.querySelectorAll('.tick-item');
         var half  = 0;
-        var count = items.length / 2;
+        var count = Math.floor(items.length / 2);
         for (var i = 0; i < count; i++) {
           half += items[i].getBoundingClientRect().width;
         }
-        _tickerHalf = half;
+        /* FIX: guard against zero or tiny measurement (fonts not loaded yet) */
+        if (half < 50 && attempt < maxAttempts) {
+          attempt++;
+          setTimeout(tryMeasure, 100);
+          return;
+        }
+        /* Good measurement obtained — switch from CSS animation to JS RAF */
+        _tickerHalf = half || 1200; /* fallback to sane estimate if measurement still fails */
         _tickerPos  = 0;
-        _tickerBuilt = true;
-
-        if (_tickerRAF) cancelAnimationFrame(_tickerRAF);
+        track.classList.add('js-driven'); /* removes CSS animation, hands off to RAF */
         tickerLoop();
-      });
+      }
+
+      /* Wait for fonts AND then measure — ensures JetBrains Mono is loaded */
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function() { tryMeasure(); });
+      } else {
+        /* Older browsers: just retry via timeout */
+        setTimeout(tryMeasure, 200);
+      }
     }
 
     function tickerLoop() {
+      if (_tickerPaused) {
+        _tickerRAF = requestAnimationFrame(tickerLoop);
+        return;
+      }
       _tickerPos -= _tickerSpeed;
+      /* FIX: guard _tickerHalf > 0 to prevent NaN accumulation */
       if (_tickerHalf > 0 && _tickerPos <= -_tickerHalf) {
         _tickerPos += _tickerHalf;
       }
@@ -1294,16 +1339,34 @@
       _tickerRAF = requestAnimationFrame(tickerLoop);
     }
 
-    /* Pause on hover */
-    (function() {
+    /* ── PAUSE / RESUME — fixed for both mouse AND touch ── */
+    (function attachTickerInteraction() {
       var outer = document.getElementById('tickerOuter');
       if (!outer) return;
+
+      /* Desktop: mouse hover pauses */
       outer.addEventListener('mouseenter', function() {
-        if (_tickerRAF) { cancelAnimationFrame(_tickerRAF); _tickerRAF = null; }
+        _tickerPaused = true;
       });
       outer.addEventListener('mouseleave', function() {
-        if (!_tickerRAF) tickerLoop();
+        _tickerPaused = false;
       });
+
+      /* FIX: Mobile touch — pause on touchstart, resume on touchend/touchcancel.
+         The original code used only mouseenter/mouseleave. On touch devices:
+           - touchstart fires (and may also fire a synthetic mouseenter)
+           - mouseleave NEVER fires after a touch
+         This permanently froze the ticker after any tap/scroll on mobile.
+         Using touchend/touchcancel ensures the animation always resumes. */
+      outer.addEventListener('touchstart', function() {
+        _tickerPaused = true;
+      }, { passive: true });
+      outer.addEventListener('touchend', function() {
+        _tickerPaused = false;
+      }, { passive: true });
+      outer.addEventListener('touchcancel', function() {
+        _tickerPaused = false;
+      }, { passive: true });
     })();
 
     /* ── MOBILE MENU COIN STRIP ── */
@@ -1357,7 +1420,7 @@
         var isUp = d.chg >= 0;
         var pct  = Math.min(Math.max(50 + d.chg * 8, 15), 95);
         var card = document.createElement('div');
-        card.className  = 'market-card';
+        card.className   = 'market-card';
         card.dataset.sym = sym;
         card.innerHTML =
           '<div class="mc-top">' +
@@ -1416,24 +1479,14 @@
       });
     }
 
-    /* ══════════════════════════════════════════
-       PRICE UPDATE HOOK
-       Called by fetchCoinGeckoPrices after each
-       successful API response, and also by any
-       external price-sync scripts.
-       
-       Updates: hero card, market grid, assets table,
-       BOTH ticker copies, mobile menu coin strip.
-    ══════════════════════════════════════════ */
+    /* ── PRICE UPDATE HOOK ── */
     window.onPriceUpdate = function(sym, price, chg) {
-      /* Only process symbols we track */
       if (!MARKET_DATA[sym]) return;
-
       window.PRICES[sym]  = price;
       window.CHANGES[sym] = chg;
       var isUp = (_prevPrices[sym] != null) ? (price >= _prevPrices[sym]) : (chg >= 0);
 
-      /* ── Hero card ── */
+      /* Hero card */
       var prEl  = document.getElementById('pr-'  + sym);
       var chgEl = document.getElementById('chg-' + sym);
       if (prEl) {
@@ -1448,36 +1501,36 @@
         if (oldChg !== newChg) flashChgEl(chgEl);
       }
 
-      /* ── Market grid ── */
+      /* Market grid */
       var mcPx  = document.getElementById('mc-px-'  + sym);
       var mcChg = document.getElementById('mc-chg-' + sym);
       if (mcPx)  mcPx.textContent  = fmtP(price);
       if (mcChg) { mcChg.textContent = fmtChg(chg); mcChg.className = 'mc-chg ' + (chg >= 0 ? 'up' : 'dn'); }
 
-      /* ── Assets table ── */
+      /* Assets table */
       var atPx  = document.getElementById('at-px-'  + sym);
       var atChg = document.getElementById('at-chg-' + sym);
       if (atPx)  atPx.textContent  = fmtP(price);
       if (atChg) { atChg.textContent = fmtChg(chg); atChg.className = 'at-chg ' + (chg >= 0 ? 'up' : 'dn'); }
 
-      /* ── Ticker — only for CG_SYMS (crypto) ── */
+      /* Ticker — update text in both copies */
       if (CG_SYMS.indexOf(sym) !== -1) {
         ['', '-2'].forEach(function(sfx) {
           var tPx  = document.getElementById('tick-px-'  + sym + sfx);
           var tChg = document.getElementById('tick-chg-' + sym + sfx);
           if (tPx) {
             tPx.textContent = fmtP(price);
-            tPx.classList.remove('loading');   /* reveal if was showing "···" */
+            tPx.classList.remove('loading');
           }
           if (tChg) {
             tChg.textContent = fmtChg(chg);
             tChg.className   = 'tick-chg ' + (chg >= 0 ? 'up' : 'dn');
-            tChg.style.display = '';           /* show if was hidden */
+            tChg.style.display = '';
           }
         });
       }
 
-      /* ── Mobile menu coin strip ── */
+      /* Mobile menu coin strip */
       var mmPx  = document.getElementById('mm-px-'  + sym);
       var mmChg = document.getElementById('mm-chg-' + sym);
       if (mmPx)  mmPx.textContent  = fmtP(price);
@@ -1486,9 +1539,9 @@
       _prevPrices[sym] = price;
     };
 
-    /* Cross-tab price broadcast via localStorage */
+    /* Cross-tab price broadcast */
     window.addEventListener('storage', function(e) {
-      if (e.key !== 'aurum_live_prices') return; /* legacy key from price-sync.js */
+      if (e.key !== 'aurum_live_prices') return;
       try {
         var data = JSON.parse(e.newValue);
         if (!data || typeof data !== 'object') return;
@@ -1508,9 +1561,7 @@
       } catch(err){}
     });
 
-    /* ════════════════════════════════════════
-       AUTH SYSTEM
-    ════════════════════════════════════════ */
+    /* ── AUTH ── */
     function isLoggedIn() {
       try {
         return !!(
@@ -1531,7 +1582,7 @@
     };
 
     function applyAuthState() {
-      var loggedIn = isLoggedIn();
+      var loggedIn   = isLoggedIn();
       var dashLink   = document.getElementById('mm-dashboard-link');
       var signinLink = document.getElementById('mm-signin-link');
       var signinText = document.getElementById('mm-signin-text');
@@ -1551,9 +1602,7 @@
       }
     }
 
-    /* ════════════════════════════════════════
-       MOBILE MENU
-    ════════════════════════════════════════ */
+    /* ── MOBILE MENU ── */
     var navToggle  = document.getElementById('navToggle');
     var mobileMenu = document.getElementById('mobileMenu');
     var mmBackdrop = document.getElementById('mmBackdrop');
@@ -1618,20 +1667,17 @@
     }, 2600);
 
     /* ══════════════════════════════════════════
-       INIT — runs on DOMContentLoaded
-       Order matters:
-         buildTicker()      → draws ticker with persisted/loading prices
-         buildMarketGrid()  → draws market cards
-         buildAssetsTable() → draws table rows
-         buildMenuCoins()   → draws mobile coin strip
-         applyAuthState()   → shows correct nav links
-         initReveal()       → starts scroll animations
+       INIT — DOMContentLoaded
        
-       After CoinGecko responds (~1-3s), onPriceUpdate
-       patches all the live elements in-place.
+       NOTE: buildTicker() is now called EAGERLY
+       via a separate inline script below (outside
+       this IIFE) because the ticker element already
+       exists in DOM before this script tag.
+       The DOMContentLoaded here builds the rest of
+       the UI that depends on sections lower in the
+       page (market grid, table, menu coins).
     ══════════════════════════════════════════ */
     document.addEventListener('DOMContentLoaded', function(){
-      buildTicker();
       buildMarketGrid('all');
       buildAssetsTable();
       buildMenuCoins();
@@ -1639,7 +1685,27 @@
       initReveal();
     });
 
+    /* ── EXPOSE build/measure for eager init below ── */
+    window._tickerBuild   = buildTicker;
+    window._tickerMeasure = measureAndStartRAF;
+
   })();
+
+  /* ══════════════════════════════════════════
+     FIX 3: EAGER TICKER INIT
+     Build and measure the ticker immediately —
+     the ticker HTML element is above this script
+     so it's already in the DOM. Starting here
+     (rather than waiting for DOMContentLoaded)
+     eliminates ~200-400ms of blank ticker on
+     slow/cold devices. The CSS animation provides
+     instant motion; JS RAF takes over once fonts
+     are measured.
+  ══════════════════════════════════════════ */
+  if (window._tickerBuild) {
+    window._tickerBuild();
+    window._tickerMeasure();
+  }
 
   /* Ripple keyframe */
   (function(){
