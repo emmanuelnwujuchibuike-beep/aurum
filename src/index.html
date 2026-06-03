@@ -35,7 +35,6 @@
       --ff-display:  'Playfair Display', Georgia, serif;
       --ff-body:     'Outfit', sans-serif;
       --ff-mono:     'JetBrains Mono', monospace;
-      /* invest.html palette aliases */
       --void:#050608; --abyss:#07090d; --surface:#0d1117; --lift:#141b24;
       --rim:rgba(255,255,255,.055); --rim-gold:rgba(201,166,60,.22);
       --fog:#3d5060; --ash:#6d8093; --pearl:#e2eaf3;
@@ -119,17 +118,31 @@
     .nav-toggle.open .bar:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 
     /* ── TICKER ── */
-    .ticker { position: fixed; top: 72px; left: 0; right: 0; height: 34px; z-index: 1000; background: rgba(6,9,14,0.92); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); overflow: hidden; display: flex; align-items: center; }
-    .ticker-track { display: flex; gap: 0; animation: tickerScroll 60s linear infinite; white-space: nowrap; }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    .tick-item { display: inline-flex; align-items: center; gap: 8px; padding: 0 28px; border-right: 1px solid rgba(255,255,255,0.04); font-family: var(--ff-mono); font-size: 10px; letter-spacing: .06em; }
+    .ticker {
+      position: fixed; top: 72px; left: 0; right: 0; height: 34px;
+      z-index: 1000;
+      background: rgba(6,9,14,0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      display: flex; align-items: center;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 0;
+      white-space: nowrap;
+      will-change: transform;
+    }
+    .tick-item { display: inline-flex; align-items: center; gap: 8px; padding: 0 28px; border-right: 1px solid rgba(255,255,255,0.04); font-family: var(--ff-mono); font-size: 10px; letter-spacing: .06em; flex-shrink: 0; }
     .tick-sym { color: var(--text-3); }
     .tick-px  { color: var(--text-1); font-weight: 500; }
     .tick-chg { padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
     .tick-chg.up  { background: rgba(34,197,94,0.12); color: var(--green); }
     .tick-chg.dn  { background: rgba(239,68,68,0.10); color: var(--red); }
     .tick-sep { color: var(--text-3); font-size: 7px; }
+
+    /* ── LOADING INDICATOR for ticker items awaiting live price ── */
+    .tick-px.loading { color: var(--text-3); font-style: italic; }
 
     /* ════════════════════════════════════
        MOBILE MENU
@@ -138,7 +151,7 @@
       position: fixed; 
       inset: 0; z-index: 7000; 
       pointer-events: none;
-      padding-top: 20px; /* header height */
+      padding-top: 20px;
      }
     .mobile-menu.open { pointer-events: all; }
     .mm-backdrop { position: absolute; inset: 0; background: rgba(4,6,8,0); backdrop-filter: blur(0px); transition: background .5s, backdrop-filter .5s; }
@@ -160,7 +173,6 @@
     .mobile-menu.open .mm-panel { transform: translateX(0); }
     .mm-panel::after { content: ''; position: absolute; top: -100px; right: -60px; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(201,166,60,.07) 0%, transparent 70%); pointer-events: none; z-index: 0; }
 
-    /* Panel head */
     .mm-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; border-bottom: 1px solid rgba(255,255,255,.05); position: relative; z-index: 2; flex-shrink: 0; }
     .mm-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; opacity: 0; transform: translateX(18px); transition: opacity .4s .2s, transform .4s .2s; }
     .mobile-menu.open .mm-logo { opacity: 1; transform: translateX(0); }
@@ -170,7 +182,6 @@
     .mobile-menu.open .mm-close { opacity: 1; transform: rotate(0deg) scale(1); }
     .mm-close:hover { color: #c9a63c; border-color: rgba(201,166,60,.3); background: rgba(201,166,60,.06); }
 
-    /* Coin strip */
     .mm-strip { border-bottom: 1px solid rgba(255,255,255,.05); position: relative; z-index: 2; flex-shrink: 0; opacity: 0; transform: translateY(8px); transition: opacity .4s .28s, transform .4s .28s; background: rgba(0,0,0,.18); }
     .mobile-menu.open .mm-strip { opacity: 1; transform: translateY(0); }
     .mm-strip-label { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: .18em; text-transform: uppercase; color: #3d5060; padding: 11px 18px 7px; }
@@ -184,7 +195,6 @@
     .chg-up { background: rgba(29,189,108,.12); color: #1dbd6c; }
     .chg-dn { background: rgba(232,72,72,.1); color: #e84848; }
 
-    /* Nav links */
     .mm-nav { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 14px 12px; display: flex; flex-direction: column; gap: 4px; position: relative; z-index: 2; scrollbar-width: thin; scrollbar-color: rgba(201,166,60,.2) transparent; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
     .mm-nav::-webkit-scrollbar { width: 2px; }
     .mm-nav::-webkit-scrollbar-thumb { background: rgba(201,166,60,.22); border-radius: 2px; }
@@ -217,12 +227,6 @@
     .mm-link:hover::before { width: 3px; }
     .mm-link.active { color: #c9a63c; background: rgba(201,166,60,.09); border-color: rgba(201,166,60,.22); }
     .mm-link.active::before { width: 3px; background: linear-gradient(90deg, #c9a63c, transparent); }
-    /* Auth-required links dimmed for guests */
-    .mm-link[data-auth="true"].auth-hidden { opacity: 0.38 !important; pointer-events: none; position: relative; }
-    .mm-link[data-auth="true"].auth-hidden::after {
-      content: '🔒'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-      font-size: 11px; opacity: .6;
-    }
     .mm-link-inner { display: flex; align-items: center; gap: 12px; }
     .mm-link-icon { width: 36px; height: 36px; border-radius: 11px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #5a6880; flex-shrink: 0; transition: all .22s; }
     .mm-link:hover .mm-link-icon, .mm-link.active .mm-link-icon { background: rgba(201,166,60,.1); border-color: rgba(201,166,60,.22); color: #c9a63c; }
@@ -232,7 +236,6 @@
     .mm-link:hover .mm-link-arrow, .mm-link.active .mm-link-arrow { opacity: 1; transform: translateX(0); color: #c9a63c; }
     .mm-divider { height: 1px; background: rgba(255,255,255,.05); margin: 8px 4px; flex-shrink: 0; }
 
-    /* CTA footer */
     .mm-cta { flex-shrink: 0; padding: 14px 14px 22px; border-top: 1px solid rgba(255,255,255,.06); position: relative; z-index: 2; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(to top, #060810 60%, transparent); opacity: 0; transform: translateY(12px); transition: opacity .42s .44s, transform .42s .44s; }
     .mobile-menu.open .mm-cta { opacity: 1; transform: translateY(0); }
     .mm-cta-btn { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 13px 16px; border-radius: 13px; font-weight: 600; font-size: 12.5px; font-family: 'Instrument Sans', sans-serif; text-decoration: none; cursor: pointer; border: none; transition: all .2s; }
@@ -246,33 +249,6 @@
     .mm-status-text { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: .12em; color: #3d5060; text-transform: uppercase; }
     @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.75)} }
     body.menu-open { overflow: hidden; }
-
-    /* ── AUTH GATE MODAL ── */
-    #auth-gate {
-      position: fixed; inset: 0; z-index: 90000;
-      background: rgba(2,4,6,.92); backdrop-filter: blur(20px) saturate(160%);
-      display: none; align-items: center; justify-content: center; padding: 20px;
-    }
-    #auth-gate.show { display: flex; }
-    .ag-box {
-      background: linear-gradient(155deg, #0a1420, #070d16);
-      border: 1px solid rgba(201,168,76,.22);
-      border-radius: 24px; padding: 44px 40px 36px;
-      max-width: 420px; width: 100%; text-align: center;
-      box-shadow: 0 60px 140px rgba(0,0,0,.9);
-      animation: modalIn .4s cubic-bezier(.25,.46,.45,.94);
-    }
-    @keyframes modalIn { from{opacity:0;transform:scale(.95) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
-    .ag-icon { font-size: 36px; margin-bottom: 18px; opacity: .85; }
-    .ag-title { font-family: var(--ff-display); font-size: 26px; font-weight: 400; color: var(--text-1); margin-bottom: 10px; }
-    .ag-sub { font-size: 14px; color: var(--text-2); font-weight: 300; line-height: 1.7; margin-bottom: 28px; }
-    .ag-btns { display: flex; flex-direction: column; gap: 10px; }
-    .ag-btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; border-radius: 13px; background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: var(--ink); font-family: var(--ff-body); font-size: 14px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: opacity .2s, transform .2s; }
-    .ag-btn-primary:hover { opacity: .88; transform: translateY(-1px); }
-    .ag-btn-secondary { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 24px; border-radius: 13px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04); color: var(--text-2); font-family: var(--ff-body); font-size: 14px; font-weight: 400; text-decoration: none; cursor: pointer; transition: all .2s; }
-    .ag-btn-secondary:hover { color: var(--text-1); border-color: rgba(255,255,255,.18); }
-    .ag-dismiss { margin-top: 16px; font-family: var(--ff-mono); font-size: 10px; letter-spacing: .1em; color: var(--text-3); cursor: pointer; background: none; border: none; transition: color .2s; }
-    .ag-dismiss:hover { color: var(--text-2); }
 
     /* ── HERO ── */
     .hero { min-height: 100svh; padding: 140px 40px 80px; position: relative; display: flex; align-items: center; overflow: hidden; }
@@ -470,6 +446,7 @@
     #idx-chart-modal { position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.92); backdrop-filter: blur(24px); display: none; align-items: center; justify-content: center; padding: 20px; }
     #idx-chart-modal.open { display: flex; }
     #idx-chart-box { background: linear-gradient(155deg, #09111a, #060c12); border: 1px solid rgba(255,255,255,0.09); border-radius: 24px; width: 100%; max-width: 920px; max-height: 96vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 60px 140px rgba(0,0,0,0.95); animation: modalIn .4s cubic-bezier(.25,.46,.45,.94); }
+    @keyframes modalIn { from{opacity:0;transform:scale(.95) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
     .cha-hdr { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid rgba(255,255,255,.06); flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
     .cha-asset { display: flex; align-items: center; gap: 14px; }
     .cha-ico { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
@@ -587,7 +564,7 @@
   </header>
 
   <!-- TICKER -->
-  <div class="ticker">
+  <div class="ticker" id="tickerOuter">
     <div class="ticker-track" id="tickerTrack"></div>
   </div>
 
@@ -599,7 +576,6 @@
         <a href="index.html" class="mm-logo" onclick="closeMenu()"></a>
       </div>
 
-      <!-- Live coin strip — seeded immediately from MARKET_DATA, refreshed on live fetch -->
       <div class="mm-strip">
         <div class="mm-strip-label">// Live Prices</div>
         <div class="mm-coins" id="mmCoins"></div>
@@ -657,7 +633,6 @@
         <div class="mm-divider"></div>
         <div class="mm-sec-label">// Account</div>
 
-        <!-- Auth-required links — get .auth-hidden class when user is a guest -->
         <a href="signup.html" class="mm-link" id="mm-signin-link">
           <div class="mm-link-inner">
             <div class="mm-link-icon"><i class="fas fa-user-circle"></i></div>
@@ -665,7 +640,7 @@
           </div>
           <i class="fas fa-chevron-right mm-link-arrow"></i>
         </a>
-        <a href="dashboard.html" class="mm-link" data-auth="true" id="mm-dashboard-link">
+        <a href="dashboard.html" class="mm-link" id="mm-dashboard-link">
           <div class="mm-link-inner">
             <div class="mm-link-icon"><i class="fas fa-gauge-high"></i></div>
             <div><div class="mm-link-name">Dashboard</div><div class="mm-link-desc">Portfolio overview</div></div>
@@ -686,20 +661,6 @@
           <span class="mm-status-text">All systems operational · 99.9% uptime</span>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- AUTH GATE MODAL (shown when guest clicks a protected page) -->
-  <div id="auth-gate">
-    <div class="ag-box">
-      <div class="ag-icon">🔐</div>
-      <div class="ag-title">Sign in to continue</div>
-      <div class="ag-sub" id="ag-sub-text">This section is for Aurum Capital members only. Create a free account or sign in to access your portfolio, dashboard and trading tools.</div>
-      <div class="ag-btns">
-        <a href="signup.html" class="ag-btn-primary"><i class="fas fa-rocket" style="font-size:12px;"></i> Create Free Account</a>
-        <a href="signup.html" class="ag-btn-secondary"><i class="fas fa-user" style="font-size:12px;"></i> Sign In Instead</a>
-      </div>
-      <button class="ag-dismiss" onclick="closeAuthGate()">← Continue browsing</button>
     </div>
   </div>
 
@@ -1048,8 +1009,29 @@
   <script>
   /* ══════════════════════════════════════════════
      AURUM CAPITAL — PAGE CONTROLLER
+     
+     PRICE PERSISTENCE STRATEGY:
+     ─────────────────────────────────────────────
+     localStorage key: "aurum_live_prices_v2"
+     
+     Schema: { sym: { price, chg, mcap, ts }, ... }
+     
+     On init:
+       1. Load persisted prices from localStorage → populate
+          MARKET_DATA immediately (no "—" flash on reload)
+       2. Kick off CoinGecko fetch → update live prices
+       3. After each successful fetch, save to localStorage
+     
+     The TICKER only shows symbols with a real CoinGecko
+     price (CG_SYMS list). Non-crypto (stocks, commodities)
+     are excluded from the ticker since CoinGecko doesn't
+     provide them — they remain in the market grid/table
+     with their static display values.
   ══════════════════════════════════════════════ */
   (function() {
+
+    /* ── STORAGE KEY ── */
+    var LS_KEY = 'aurum_live_prices_v2';
 
     /* ── GLOBAL STATE ── */
     if (!window.PRICES)  window.PRICES  = {};
@@ -1088,150 +1070,275 @@
     function flashPrice(el, isUp) { flash(el, isUp ? 'px-flash-up' : 'px-flash-down', 900); }
     function flashChgEl(el) { flash(el, 'chg-flash', 550); }
 
-    /* ── MARKET DATA (seed values — shown instantly, replaced by live fetch) ── */
+    /* ══════════════════════════════════════════
+       MARKET DATA
+       
+       NOTE: For CoinGecko-tracked cryptos (CG_SYMS),
+       price and chg are intentionally left as null/0
+       so they will always show the persisted or live
+       value — never a stale hardcoded number.
+       
+       Stocks & commodities keep display values as they
+       are not fetched from CoinGecko.
+    ══════════════════════════════════════════ */
     var MARKET_DATA = {
-      BTC:    {price:105200,  chg:2.4,  mcap:'$2.08T',   cat:'crypto',      icon:'₿',   color:'#f7931a', bg:'rgba(247,147,26,0.12)',  faIcon:'fab fa-bitcoin'},
-      ETH:    {price:3840,    chg:1.8,  mcap:'$462B',     cat:'crypto',      icon:'⟠',   color:'#627eea', bg:'rgba(98,126,234,0.12)',  faIcon:'fab fa-ethereum'},
-      SOL:    {price:172,     chg:3.2,  mcap:'$81B',      cat:'crypto',      icon:'◎',   color:'#14f195', bg:'rgba(20,241,149,0.10)',  faIcon:'fas fa-sun'},
-      XRP:    {price:1.72,    chg:-1.2, mcap:'$98B',      cat:'crypto',      icon:'X',   color:'#00aae4', bg:'rgba(0,174,228,0.12)',   faIcon:'fas fa-water'},
-      BNB:    {price:690,     chg:0.9,  mcap:'$100B',     cat:'crypto',      icon:'B',   color:'#f3ba2f', bg:'rgba(243,186,47,0.12)',  faIcon:'fas fa-coins'},
-      ADA:    {price:0.72,    chg:2.1,  mcap:'$25B',      cat:'crypto',      icon:'₳',   color:'#0033ad', bg:'rgba(0,51,173,0.15)',    faIcon:'fas fa-circle-nodes'},
-      DOGE:   {price:0.18,    chg:-0.8, mcap:'$26B',      cat:'crypto',      icon:'Ð',   color:'#c2a633', bg:'rgba(194,166,51,0.12)',  faIcon:'fas fa-dog'},
-      AAPL:   {price:192.30,  chg:0.6,  mcap:'$2.96T',    cat:'stocks',      icon:'🍎',  color:'#a2aaad', bg:'rgba(162,170,173,0.12)', faIcon:'fab fa-apple'},
-      NVDA:   {price:1124.00, chg:3.8,  mcap:'$2.77T',    cat:'stocks',      icon:'N',   color:'#76b900', bg:'rgba(118,185,0,0.12)',   faIcon:'fas fa-microchip'},
-      TSLA:   {price:178.20,  chg:-1.4, mcap:'$568B',     cat:'stocks',      icon:'T',   color:'#e31937', bg:'rgba(227,25,55,0.12)',   faIcon:'fas fa-car'},
-      MSFT:   {price:415.00,  chg:0.3,  mcap:'$3.08T',    cat:'stocks',      icon:'M',   color:'#00a4ef', bg:'rgba(0,164,239,0.12)',   faIcon:'fab fa-windows'},
-      GOLD:   {price:2380.00, chg:0.4,  mcap:'—',         cat:'commodities', icon:'🥇',  color:'#c9a84c', bg:'rgba(201,168,76,0.12)',  faIcon:'fas fa-coins'},
-      OIL:    {price:78.20,   chg:-0.7, mcap:'—',         cat:'commodities', icon:'🛢',  color:'#4a3728', bg:'rgba(74,55,40,0.2)',     faIcon:'fas fa-oil-can'},
-      SILVER: {price:29.10,   chg:1.1,  mcap:'—',         cat:'commodities', icon:'⚪',  color:'#adb5c0', bg:'rgba(173,181,192,0.12)', faIcon:'fas fa-circle'},
+      /* ── CRYPTO — prices always come from CoinGecko / localStorage ── */
+      BTC:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'₿',  color:'#f7931a', bg:'rgba(247,147,26,0.12)',  faIcon:'fab fa-bitcoin'},
+      ETH:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'⟠',  color:'#627eea', bg:'rgba(98,126,234,0.12)',  faIcon:'fab fa-ethereum'},
+      SOL:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'◎',  color:'#14f195', bg:'rgba(20,241,149,0.10)',  faIcon:'fas fa-sun'},
+      XRP:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'X',  color:'#00aae4', bg:'rgba(0,174,228,0.12)',   faIcon:'fas fa-water'},
+      BNB:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'B',  color:'#f3ba2f', bg:'rgba(243,186,47,0.12)',  faIcon:'fas fa-coins'},
+      ADA:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'₳',  color:'#0033ad', bg:'rgba(0,51,173,0.15)',    faIcon:'fas fa-circle-nodes'},
+      DOGE:   {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'Ð',  color:'#c2a633', bg:'rgba(194,166,51,0.12)',  faIcon:'fas fa-dog'},
+      /* ── STOCKS — static display prices (not from CoinGecko) ── */
+      AAPL:   {price:192.30,  chg:0.6,  mcap:'$2.96T', cat:'stocks',      icon:'🍎', color:'#a2aaad', bg:'rgba(162,170,173,0.12)', faIcon:'fab fa-apple'},
+      NVDA:   {price:1124.00, chg:3.8,  mcap:'$2.77T', cat:'stocks',      icon:'N',  color:'#76b900', bg:'rgba(118,185,0,0.12)',   faIcon:'fas fa-microchip'},
+      TSLA:   {price:178.20,  chg:-1.4, mcap:'$568B',  cat:'stocks',      icon:'T',  color:'#e31937', bg:'rgba(227,25,55,0.12)',   faIcon:'fas fa-car'},
+      MSFT:   {price:415.00,  chg:0.3,  mcap:'$3.08T', cat:'stocks',      icon:'M',  color:'#00a4ef', bg:'rgba(0,164,239,0.12)',   faIcon:'fab fa-windows'},
+      /* ── COMMODITIES — static display prices ── */
+      GOLD:   {price:2380.00, chg:0.4,  mcap:'—',      cat:'commodities', icon:'🥇', color:'#c9a84c', bg:'rgba(201,168,76,0.12)',  faIcon:'fas fa-coins'},
+      OIL:    {price:78.20,   chg:-0.7, mcap:'—',      cat:'commodities', icon:'🛢', color:'#4a3728', bg:'rgba(74,55,40,0.2)',     faIcon:'fas fa-oil-can'},
+      SILVER: {price:29.10,   chg:1.1,  mcap:'—',      cat:'commodities', icon:'⚪', color:'#adb5c0', bg:'rgba(173,181,192,0.12)', faIcon:'fas fa-circle'},
     };
 
-    /* ── Try restoring last known prices from sessionStorage ── */
-    (function restoreCachedPrices() {
-      try {
-        var cached = sessionStorage.getItem('aurum_price_cache');
-        if (!cached) return;
-        var data = JSON.parse(cached);
-        Object.keys(data).forEach(function(sym) {
-          if (!MARKET_DATA[sym]) return;
-          if (data[sym].price) MARKET_DATA[sym].price = data[sym].price;
-          if (data[sym].chg  != null) MARKET_DATA[sym].chg  = data[sym].chg;
-          if (data[sym].mcap) MARKET_DATA[sym].mcap  = data[sym].mcap;
-        });
-      } catch(e) {}
-    })();
-
-    /* Helper: persist current prices so next page-load restores them instantly */
-    function savePriceCache() {
-      try {
-        var out = {};
-        Object.keys(MARKET_DATA).forEach(function(sym) {
-          out[sym] = { price: MARKET_DATA[sym].price, chg: MARKET_DATA[sym].chg, mcap: MARKET_DATA[sym].mcap };
-        });
-        sessionStorage.setItem('aurum_price_cache', JSON.stringify(out));
-      } catch(e) {}
-    }
+    /* Symbols that are fetched live from CoinGecko — only these appear in the ticker */
+    var CG_SYMS = ['BTC','ETH','SOL','XRP','BNB','ADA','DOGE'];
 
     var CG_IDS = {BTC:'bitcoin',ETH:'ethereum',SOL:'solana',XRP:'ripple',BNB:'binancecoin',ADA:'cardano',DOGE:'dogecoin'};
     var CG_ID_TO_SYM = {};
     Object.keys(CG_IDS).forEach(function(sym){ CG_ID_TO_SYM[CG_IDS[sym]] = sym; });
 
-    /* ── FETCH LIVE PRICES ── */
+    /* ══════════════════════════════════════════
+       STEP 1 — RESTORE PERSISTED PRICES
+       Runs synchronously before anything renders.
+       This ensures the ticker shows real prices
+       instantly on every reload, not "—".
+    ══════════════════════════════════════════ */
+    (function restorePersistedPrices() {
+      try {
+        var raw = localStorage.getItem(LS_KEY);
+        if (!raw) return;
+        var stored = JSON.parse(raw);
+        CG_SYMS.forEach(function(sym) {
+          var entry = stored[sym];
+          if (!entry || !entry.price) return;
+          MARKET_DATA[sym].price = entry.price;
+          MARKET_DATA[sym].chg   = entry.chg  != null ? entry.chg  : 0;
+          if (entry.mcap) MARKET_DATA[sym].mcap = entry.mcap;
+          /* Seed global price maps so other scripts see them immediately */
+          window.PRICES[sym]  = entry.price;
+          window.CHANGES[sym] = entry.chg != null ? entry.chg : 0;
+          _prevPrices[sym]    = entry.price;
+        });
+      } catch(e) {
+        console.warn('[Aurum] Could not restore persisted prices:', e);
+      }
+    })();
+
+    /* ══════════════════════════════════════════
+       STEP 2 — PERSIST PRICES TO localStorage
+       Called after every successful CoinGecko fetch.
+    ══════════════════════════════════════════ */
+    function persistPrices() {
+      try {
+        var out = {};
+        CG_SYMS.forEach(function(sym) {
+          var d = MARKET_DATA[sym];
+          if (d.price == null) return; /* only persist real fetched prices */
+          out[sym] = {
+            price: d.price,
+            chg:   d.chg,
+            mcap:  d.mcap,
+            ts:    Date.now()
+          };
+        });
+        localStorage.setItem(LS_KEY, JSON.stringify(out));
+      } catch(e) {
+        console.warn('[Aurum] Could not persist prices:', e);
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       STEP 3 — FETCH LIVE PRICES FROM COINGECKO
+       Runs after page init. Updates MARKET_DATA,
+       re-renders all price displays, saves to
+       localStorage for the next page load.
+    ══════════════════════════════════════════ */
     function fetchCoinGeckoPrices() {
       var ids = Object.values(CG_IDS).join(',');
       var url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + ids +
                 '&vs_currencies=usd&include_24hr_change=true&include_market_cap=true';
       fetch(url)
-        .then(function(r){ return r.json(); })
+        .then(function(r) {
+          if (!r.ok) throw new Error('CoinGecko HTTP ' + r.status);
+          return r.json();
+        })
         .then(function(data) {
-          Object.keys(data).forEach(function(cgId) {
-            var sym = CG_ID_TO_SYM[cgId];
-            if (!sym) return;
-            var price = data[cgId].usd;
-            var chg   = data[cgId].usd_24h_change;
-            var mcap  = data[cgId].usd_market_cap;
-            if (price == null) return;
-            if (MARKET_DATA[sym]) {
-              MARKET_DATA[sym].price = price;
-              MARKET_DATA[sym].chg   = chg || 0;
-              if (mcap) MARKET_DATA[sym].mcap = fmtCompact(mcap);
-            }
-            if (window.onPriceUpdate) window.onPriceUpdate(sym, price, chg || 0);
+          CG_SYMS.forEach(function(sym) {
+            var cgId = CG_IDS[sym];
+            var row  = data[cgId];
+            if (!row || row.usd == null) return;
+
+            var price = row.usd;
+            var chg   = row.usd_24h_change || 0;
+            var mcap  = row.usd_market_cap;
+
+            MARKET_DATA[sym].price = price;
+            MARKET_DATA[sym].chg   = chg;
+            if (mcap) MARKET_DATA[sym].mcap = fmtCompact(mcap);
+
+            /* Trigger the full UI update hook */
+            if (window.onPriceUpdate) window.onPriceUpdate(sym, price, chg);
           });
-          /* Persist fresh prices for next load */
-          savePriceCache();
-          /* Refresh mobile coin strip in-place if open, else just update the DOM ids */
+
+          /* Save fresh prices so next reload shows them immediately */
+          persistPrices();
+
+          /* Refresh mobile menu coin strip */
           updateMenuCoinPrices();
         })
-        .catch(function(err){ console.warn('CoinGecko fetch error:', err); });
+        .catch(function(err) {
+          console.warn('[Aurum] CoinGecko fetch error:', err);
+        });
     }
+
+    /* Initial fetch + polling every 30s */
     fetchCoinGeckoPrices();
     setInterval(fetchCoinGeckoPrices, 30000);
 
-    /* ── TICKER ── */
+    /* ══════════════════════════════════════════
+       TICKER
+       
+       Only CG_SYMS (crypto with live prices) are
+       shown in the ticker. Stocks and commodities
+       are excluded.
+       
+       On first load before CoinGecko responds:
+         - If localStorage has a persisted price → shows it immediately
+         - If no persisted price at all → shows "loading…" dimly
+       
+       The ticker rebuilds after each CoinGecko update
+       only if prices were missing before (first ever load).
+       Otherwise onPriceUpdate patches text in-place.
+    ══════════════════════════════════════════ */
+    var _tickerRAF   = null;
+    var _tickerPos   = 0;
+    var _tickerSpeed = 0.5;
+    var _tickerHalf  = 0;
+    var _tickerBuilt = false;
+
+    function fmtTickerPrice(sym) {
+      var d = MARKET_DATA[sym];
+      if (d.price == null) return '···';   /* awaiting first fetch */
+      return fmtP(d.price);
+    }
+
+    function fmtTickerChg(sym) {
+      var d = MARKET_DATA[sym];
+      if (d.price == null) return '';
+      return fmtChg(d.chg);
+    }
+
     function buildTicker() {
-      var t = document.getElementById('tickerTrack');
-      if (!t) return;
+      var track = document.getElementById('tickerTrack');
+      if (!track) return;
+
       var html = '';
-      var syms = Object.keys(MARKET_DATA);
+      /* Build 2 identical sets for seamless infinite loop */
       for (var r = 0; r < 2; r++) {
-        syms.forEach(function(sym) {
-          var d = MARKET_DATA[sym];
+        CG_SYMS.forEach(function(sym) {
+          var d    = MARKET_DATA[sym];
           var isUp = d.chg >= 0;
-          var sfx = r === 0 ? '' : '-2';
-          html += '<div class="tick-item">' +
-            '<span class="tick-sym" style="color:' + d.color + ';opacity:.7;">' + d.icon + '</span>' +
-            '<span class="tick-sym">' + sym + '</span>' +
-            '<span class="tick-px" id="tick-px-' + sym + sfx + '">' + fmtP(d.price) + '</span>' +
-            '<span class="tick-chg ' + (isUp?'up':'dn') + '" id="tick-chg-' + sym + sfx + '">' + fmtChg(d.chg) + '</span>' +
-            '<span class="tick-sep">|</span>' +
+          var sfx  = r === 1 ? '-2' : '';
+          var hasPrice = d.price != null;
+          html +=
+            '<div class="tick-item">' +
+              '<span class="tick-sym" style="color:' + d.color + ';opacity:.7;">' + d.icon + '</span>' +
+              '<span class="tick-sym">' + sym + '</span>' +
+              '<span class="tick-px' + (hasPrice ? '' : ' loading') + '" id="tick-px-' + sym + sfx + '">' +
+                fmtTickerPrice(sym) +
+              '</span>' +
+              (hasPrice
+                ? '<span class="tick-chg ' + (isUp?'up':'dn') + '" id="tick-chg-' + sym + sfx + '">' + fmtTickerChg(sym) + '</span>'
+                : '<span class="tick-chg" id="tick-chg-' + sym + sfx + '" style="display:none;"></span>'
+              ) +
+              '<span class="tick-sep">|</span>' +
             '</div>';
         });
       }
-      t.innerHTML = html;
+      track.innerHTML = html;
+
+      requestAnimationFrame(function() {
+        var items = track.querySelectorAll('.tick-item');
+        var half  = 0;
+        var count = items.length / 2;
+        for (var i = 0; i < count; i++) {
+          half += items[i].getBoundingClientRect().width;
+        }
+        _tickerHalf = half;
+        _tickerPos  = 0;
+        _tickerBuilt = true;
+
+        if (_tickerRAF) cancelAnimationFrame(_tickerRAF);
+        tickerLoop();
+      });
     }
 
-    /* ────────────────────────────────────────────────
-       MOBILE MENU COIN STRIP
-       buildMenuCoins() — called once on DOMContentLoaded
-         Seeds from MARKET_DATA which already has either
-         cached or static seed prices → NO blank state.
-       updateMenuCoinPrices() — called after each live fetch
-         Updates the existing DOM elements in-place so
-         prices animate smoothly without a full rebuild.
-    ──────────────────────────────────────────────── */
+    function tickerLoop() {
+      _tickerPos -= _tickerSpeed;
+      if (_tickerHalf > 0 && _tickerPos <= -_tickerHalf) {
+        _tickerPos += _tickerHalf;
+      }
+      var track = document.getElementById('tickerTrack');
+      if (track) track.style.transform = 'translateX(' + _tickerPos + 'px)';
+      _tickerRAF = requestAnimationFrame(tickerLoop);
+    }
+
+    /* Pause on hover */
+    (function() {
+      var outer = document.getElementById('tickerOuter');
+      if (!outer) return;
+      outer.addEventListener('mouseenter', function() {
+        if (_tickerRAF) { cancelAnimationFrame(_tickerRAF); _tickerRAF = null; }
+      });
+      outer.addEventListener('mouseleave', function() {
+        if (!_tickerRAF) tickerLoop();
+      });
+    })();
+
+    /* ── MOBILE MENU COIN STRIP ── */
     var MM_COIN_SYMS = ['BTC','ETH','SOL','XRP','BNB','ADA','DOGE','AAPL','NVDA','TSLA'];
 
     function buildMenuCoins() {
       var coinsEl = document.getElementById('mmCoins');
       if (!coinsEl) return;
       coinsEl.innerHTML = MM_COIN_SYMS.map(function(sym) {
-        var d = MARKET_DATA[sym];
+        var d  = MARKET_DATA[sym];
         if (!d) return '';
         var up = d.chg >= 0;
+        var px = d.price != null ? fmtP(d.price) : '···';
         return '<div class="mm-coin">' +
           '<i class="' + d.faIcon + '" style="font-size:14px;color:' + d.color + '"></i>' +
           '<div>' +
             '<div class="mm-coin-sym">' + sym + '</div>' +
-            '<div class="mm-coin-price" id="mm-px-' + sym + '">' + fmtP(d.price) + '</div>' +
+            '<div class="mm-coin-price" id="mm-px-' + sym + '">' + px + '</div>' +
           '</div>' +
           '<span class="mm-coin-chg ' + (up?'chg-up':'chg-dn') + '" id="mm-chg-' + sym + '">' +
-            fmtChg(d.chg) +
+            (d.price != null ? fmtChg(d.chg) : '···') +
           '</span>' +
         '</div>';
       }).join('');
     }
 
-    /* Update existing coin strip elements without rebuilding the whole strip */
     function updateMenuCoinPrices() {
       MM_COIN_SYMS.forEach(function(sym) {
         var d = MARKET_DATA[sym];
         if (!d) return;
         var pxEl  = document.getElementById('mm-px-'  + sym);
         var chgEl = document.getElementById('mm-chg-' + sym);
-        if (pxEl)  pxEl.textContent  = fmtP(d.price);
+        if (pxEl)  pxEl.textContent  = d.price != null ? fmtP(d.price) : '···';
         if (chgEl) {
-          chgEl.textContent = fmtChg(d.chg);
+          chgEl.textContent = d.price != null ? fmtChg(d.chg) : '···';
           chgEl.className   = 'mm-coin-chg ' + (d.chg >= 0 ? 'chg-up' : 'chg-dn');
         }
       });
@@ -1248,9 +1355,9 @@
         var d = MARKET_DATA[sym];
         if (currentFilter !== 'all' && d.cat !== currentFilter) return;
         var isUp = d.chg >= 0;
-        var pct = Math.min(Math.max(50 + d.chg * 8, 15), 95);
+        var pct  = Math.min(Math.max(50 + d.chg * 8, 15), 95);
         var card = document.createElement('div');
-        card.className = 'market-card';
+        card.className  = 'market-card';
         card.dataset.sym = sym;
         card.innerHTML =
           '<div class="mc-top">' +
@@ -1261,7 +1368,7 @@
             '<span class="mc-chg ' + (isUp?'up':'dn') + '" id="mc-chg-' + sym + '">' + fmtChg(d.chg) + '</span>' +
           '</div>' +
           '<div class="mc-name">' + sym + '</div>' +
-          '<div class="mc-price" id="mc-px-' + sym + '">' + fmtP(d.price) + '</div>' +
+          '<div class="mc-price" id="mc-px-' + sym + '">' + (d.price != null ? fmtP(d.price) : '···') + '</div>' +
           '<div class="mc-mcap">MCap: ' + d.mcap + '</div>' +
           '<div class="mc-bar"><div class="mc-bar-fill" style="width:' + pct + '%;background:' + d.color + ';opacity:.7;"></div></div>' +
           '<div class="mc-hint">View Chart ↗</div>';
@@ -1282,13 +1389,13 @@
       var tb = document.getElementById('assetsTbody');
       if (!tb) return;
       TABLE_ASSETS.forEach(function(sym) {
-        var d = MARKET_DATA[sym];
+        var d    = MARKET_DATA[sym];
         var isUp = d.chg >= 0;
-        var pts = [];
+        var pts  = [];
         for (var j = 0; j < 8; j++) {
-          var x = j * (80/7);
+          var x     = j * (80/7);
           var noise = Math.sin(j * 1.7 + sym.charCodeAt(0) * 0.3) * 10 + Math.cos(j * 2.3) * 6;
-          var y = 16 - noise * (isUp ? 1 : -1);
+          var y     = 16 - noise * (isUp ? 1 : -1);
           pts.push(x + ',' + Math.max(2, Math.min(30, y)));
         }
         var sparkColor = isUp ? '#22c55e' : '#ef4444';
@@ -1300,7 +1407,7 @@
             '<div class="at-icon" style="background:' + d.bg + ';color:' + d.color + ';">' + d.icon + '</div>' +
             '<div><div class="at-sym">' + sym + '</div><div class="at-name">' + d.cat.toUpperCase() + '</div></div>' +
           '</div></td>' +
-          '<td><span class="at-price" id="at-px-' + sym + '">' + fmtP(d.price) + '</span></td>' +
+          '<td><span class="at-price" id="at-px-' + sym + '">' + (d.price != null ? fmtP(d.price) : '···') + '</span></td>' +
           '<td><span class="at-chg ' + (isUp?'up':'dn') + '" id="at-chg-' + sym + '">' + fmtChg(d.chg) + '</span></td>' +
           '<td><span class="at-mcap">' + d.mcap + '</span></td>' +
           '<td>' + spark + '</td>' +
@@ -1309,13 +1416,24 @@
       });
     }
 
-    /* ── PRICE UPDATE HOOK ── */
+    /* ══════════════════════════════════════════
+       PRICE UPDATE HOOK
+       Called by fetchCoinGeckoPrices after each
+       successful API response, and also by any
+       external price-sync scripts.
+       
+       Updates: hero card, market grid, assets table,
+       BOTH ticker copies, mobile menu coin strip.
+    ══════════════════════════════════════════ */
     window.onPriceUpdate = function(sym, price, chg) {
+      /* Only process symbols we track */
+      if (!MARKET_DATA[sym]) return;
+
       window.PRICES[sym]  = price;
       window.CHANGES[sym] = chg;
       var isUp = (_prevPrices[sym] != null) ? (price >= _prevPrices[sym]) : (chg >= 0);
 
-      /* Hero card */
+      /* ── Hero card ── */
       var prEl  = document.getElementById('pr-'  + sym);
       var chgEl = document.getElementById('chg-' + sym);
       if (prEl) {
@@ -1326,31 +1444,40 @@
         var newChg = fmtChg(chg);
         var oldChg = chgEl.textContent;
         chgEl.textContent = newChg;
-        chgEl.className = 'ac-chg ' + (chg >= 0 ? 'up' : 'dn');
+        chgEl.className   = 'ac-chg ' + (chg >= 0 ? 'up' : 'dn');
         if (oldChg !== newChg) flashChgEl(chgEl);
       }
 
-      /* Market grid */
+      /* ── Market grid ── */
       var mcPx  = document.getElementById('mc-px-'  + sym);
       var mcChg = document.getElementById('mc-chg-' + sym);
-      if (mcPx) mcPx.textContent = fmtP(price);
+      if (mcPx)  mcPx.textContent  = fmtP(price);
       if (mcChg) { mcChg.textContent = fmtChg(chg); mcChg.className = 'mc-chg ' + (chg >= 0 ? 'up' : 'dn'); }
 
-      /* Assets table */
+      /* ── Assets table ── */
       var atPx  = document.getElementById('at-px-'  + sym);
       var atChg = document.getElementById('at-chg-' + sym);
       if (atPx)  atPx.textContent  = fmtP(price);
       if (atChg) { atChg.textContent = fmtChg(chg); atChg.className = 'at-chg ' + (chg >= 0 ? 'up' : 'dn'); }
 
-      /* Ticker — both copies */
-      ['', '-2'].forEach(function(sfx) {
-        var tPx  = document.getElementById('tick-px-'  + sym + sfx);
-        var tChg = document.getElementById('tick-chg-' + sym + sfx);
-        if (tPx)  tPx.textContent = fmtP(price);
-        if (tChg) { tChg.textContent = fmtChg(chg); tChg.className = 'tick-chg ' + (chg >= 0 ? 'up' : 'dn'); }
-      });
+      /* ── Ticker — only for CG_SYMS (crypto) ── */
+      if (CG_SYMS.indexOf(sym) !== -1) {
+        ['', '-2'].forEach(function(sfx) {
+          var tPx  = document.getElementById('tick-px-'  + sym + sfx);
+          var tChg = document.getElementById('tick-chg-' + sym + sfx);
+          if (tPx) {
+            tPx.textContent = fmtP(price);
+            tPx.classList.remove('loading');   /* reveal if was showing "···" */
+          }
+          if (tChg) {
+            tChg.textContent = fmtChg(chg);
+            tChg.className   = 'tick-chg ' + (chg >= 0 ? 'up' : 'dn');
+            tChg.style.display = '';           /* show if was hidden */
+          }
+        });
+      }
 
-      /* Mobile menu coin strip — update in place */
+      /* ── Mobile menu coin strip ── */
       var mmPx  = document.getElementById('mm-px-'  + sym);
       var mmChg = document.getElementById('mm-chg-' + sym);
       if (mmPx)  mmPx.textContent  = fmtP(price);
@@ -1359,9 +1486,9 @@
       _prevPrices[sym] = price;
     };
 
-    /* localStorage price broadcast from price-sync.js */
+    /* Cross-tab price broadcast via localStorage */
     window.addEventListener('storage', function(e) {
-      if (e.key !== 'aurum_live_prices') return;
+      if (e.key !== 'aurum_live_prices') return; /* legacy key from price-sync.js */
       try {
         var data = JSON.parse(e.newValue);
         if (!data || typeof data !== 'object') return;
@@ -1371,6 +1498,10 @@
           if (p != null) {
             window.PRICES[sym]  = p;
             window.CHANGES[sym] = c != null ? c : 0;
+            if (MARKET_DATA[sym]) {
+              MARKET_DATA[sym].price = p;
+              MARKET_DATA[sym].chg   = c != null ? c : 0;
+            }
             if (window.onPriceUpdate) window.onPriceUpdate(sym, p, window.CHANGES[sym]);
           }
         });
@@ -1379,21 +1510,7 @@
 
     /* ════════════════════════════════════════
        AUTH SYSTEM
-       - Checks sessionStorage / localStorage for a session token
-       - Protected pages: dashboard.html, portfolio.html, invest.html,
-         settings.html, profile.html, watchlist.html
-       - requireAuth(url) — gate any action behind sign-in
-       - applyAuthState()  — update UI (menu links, CTA text)
     ════════════════════════════════════════ */
-
-    /* Pages that require authentication */
-    var PROTECTED_PAGES = [
-      'dashboard.html','portfolio.html','settings.html',
-      'profile.html','watchlist.html'
-      /* invest.html is intentionally left public — change to include if needed */
-    ];
-
-    /* Simple auth check: looks for a token in sessionStorage or localStorage */
     function isLoggedIn() {
       try {
         return !!(
@@ -1405,75 +1522,32 @@
       } catch(e) { return false; }
     }
 
-    /* Show auth gate modal; optionally redirect after sign-in */
-    var _pendingRedirect = null;
     window.requireAuth = function(targetUrl) {
       if (isLoggedIn()) {
         window.location.href = targetUrl;
-        return;
+      } else {
+        window.location.href = 'signup.html';
       }
-      _pendingRedirect = targetUrl || null;
-      document.getElementById('auth-gate').classList.add('show');
-      document.body.style.overflow = 'hidden';
     };
 
-    window.closeAuthGate = function() {
-      document.getElementById('auth-gate').classList.remove('show');
-      document.body.style.overflow = '';
-      _pendingRedirect = null;
-    };
-
-    /* Close on backdrop click */
-    document.getElementById('auth-gate').addEventListener('click', function(e) {
-      if (e.target === this) closeAuthGate();
-    });
-
-    /* Apply auth state to the mobile menu UI */
     function applyAuthState() {
       var loggedIn = isLoggedIn();
-      var authLinks = document.querySelectorAll('.mm-link[data-auth="true"]');
-      authLinks.forEach(function(link) {
-        if (loggedIn) {
-          link.classList.remove('auth-hidden');
-          /* Restore real href if it was cleared */
-          var target = link.getAttribute('data-target');
-          if (target) link.href = target;
-        } else {
-          /* Save real href, intercept click to show auth gate */
-          if (!link.getAttribute('data-target')) {
-            link.setAttribute('data-target', link.href || '#');
-          }
-          link.classList.add('auth-hidden');
-          link.addEventListener('click', function(e) {
-            if (!isLoggedIn()) {
-              e.preventDefault();
-              requireAuth(link.getAttribute('data-target'));
-            }
-          }, { once: false });
-        }
-      });
-
-      /* Update sign-in link in menu */
+      var dashLink   = document.getElementById('mm-dashboard-link');
       var signinLink = document.getElementById('mm-signin-link');
       var signinText = document.getElementById('mm-signin-text');
       var signinDesc = document.getElementById('mm-signin-desc');
       var ctaPrimary = document.getElementById('mm-cta-primary');
+      if (dashLink) dashLink.style.display = loggedIn ? '' : 'none';
       if (loggedIn) {
         if (signinLink) signinLink.href = 'dashboard.html';
         if (signinText) signinText.textContent = 'My Account';
         if (signinDesc) signinDesc.textContent = 'Dashboard & portfolio';
-        if (ctaPrimary) {
-          ctaPrimary.innerHTML = '<i class="fas fa-gauge-high" style="font-size:11px"></i> Go to Dashboard';
-          ctaPrimary.href = 'dashboard.html';
-        }
+        if (ctaPrimary) { ctaPrimary.innerHTML = '<i class="fas fa-gauge-high" style="font-size:11px"></i> Go to Dashboard'; ctaPrimary.href = 'dashboard.html'; }
       } else {
         if (signinLink) signinLink.href = 'signup.html';
         if (signinText) signinText.textContent = 'Sign In';
         if (signinDesc) signinDesc.textContent = 'Access your account';
-        if (ctaPrimary) {
-          ctaPrimary.innerHTML = '<i class="fas fa-rocket" style="font-size:11px"></i> Open Account — Free';
-          ctaPrimary.href = 'signup.html';
-        }
+        if (ctaPrimary) { ctaPrimary.innerHTML = '<i class="fas fa-rocket" style="font-size:11px"></i> Open Account — Free'; ctaPrimary.href = 'signup.html'; }
       }
     }
 
@@ -1484,26 +1558,13 @@
     var mobileMenu = document.getElementById('mobileMenu');
     var mmBackdrop = document.getElementById('mmBackdrop');
 
-    window.openMenu = function() {
-      mobileMenu.classList.add('open');
-      navToggle.classList.add('open');
-      navToggle.setAttribute('aria-expanded', 'true');
-      document.body.classList.add('menu-open');
-      /* Coin strip is already built; just refresh prices in-place */
-      updateMenuCoinPrices();
-    };
-    window.closeMenu = function() {
-      mobileMenu.classList.remove('open');
-      navToggle.classList.remove('open');
-      navToggle.setAttribute('aria-expanded', 'false');
-      document.body.classList.remove('menu-open');
-    };
+    window.openMenu  = function() { mobileMenu.classList.add('open'); navToggle.classList.add('open'); navToggle.setAttribute('aria-expanded','true'); document.body.classList.add('menu-open'); updateMenuCoinPrices(); };
+    window.closeMenu = function() { mobileMenu.classList.remove('open'); navToggle.classList.remove('open'); navToggle.setAttribute('aria-expanded','false'); document.body.classList.remove('menu-open'); };
 
     if (navToggle)  navToggle.addEventListener('click', function(){ mobileMenu.classList.contains('open') ? closeMenu() : openMenu(); });
     if (mmBackdrop) mmBackdrop.addEventListener('click', closeMenu);
-    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { closeMenu(); closeAuthGate(); } });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeMenu(); });
 
-    /* Ripple on mm-links */
     document.querySelectorAll('.mm-link').forEach(function(link) {
       link.addEventListener('click', function(e) {
         var rect = this.getBoundingClientRect();
@@ -1512,17 +1573,13 @@
         r.style.cssText = 'position:absolute;border-radius:50%;background:rgba(201,166,60,.16);transform:scale(0);animation:ripple .5s ease-out forwards;pointer-events:none;width:'+size+'px;height:'+size+'px;left:'+(e.clientX-rect.left-size/2)+'px;top:'+(e.clientY-rect.top-size/2)+'px';
         this.appendChild(r);
         setTimeout(function(){ r.remove(); }, 550);
-        if (this.tagName === 'A' && this.href && !this.href.includes('#') && !this.classList.contains('auth-hidden')) {
-          setTimeout(closeMenu, 80);
-        }
+        if (this.tagName === 'A' && this.href && !this.href.includes('#')) setTimeout(closeMenu, 80);
       });
     });
 
     /* ── HEADER SCROLL ── */
     var hdr = document.getElementById('mainHeader');
-    window.addEventListener('scroll', function(){
-      hdr.classList.toggle('scrolled', window.scrollY > 60);
-    }, {passive:true});
+    window.addEventListener('scroll', function(){ hdr.classList.toggle('scrolled', window.scrollY > 60); }, {passive:true});
 
     /* ── SCROLL REVEAL ── */
     var revealObserver = new IntersectionObserver(function(entries){
@@ -1560,14 +1617,24 @@
       initReveal();
     }, 2600);
 
-    /* ── INIT ── */
+    /* ══════════════════════════════════════════
+       INIT — runs on DOMContentLoaded
+       Order matters:
+         buildTicker()      → draws ticker with persisted/loading prices
+         buildMarketGrid()  → draws market cards
+         buildAssetsTable() → draws table rows
+         buildMenuCoins()   → draws mobile coin strip
+         applyAuthState()   → shows correct nav links
+         initReveal()       → starts scroll animations
+       
+       After CoinGecko responds (~1-3s), onPriceUpdate
+       patches all the live elements in-place.
+    ══════════════════════════════════════════ */
     document.addEventListener('DOMContentLoaded', function(){
       buildTicker();
       buildMarketGrid('all');
       buildAssetsTable();
-      /* Build coin strip immediately using seed/cached prices — no wait */
       buildMenuCoins();
-      /* Apply auth state to menu */
       applyAuthState();
       initReveal();
     });
