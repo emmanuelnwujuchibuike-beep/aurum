@@ -55,7 +55,8 @@ const STOCK_SYMBOLS: Record<string, string> = {
   // Commodities
   XAUUSD: "XAU/USD", // Gold
   XAGUSD: "XAG/USD", // Silver
-  USOIL: "WTI/USD",  // Oil
+  // WTI/USD is not served on the Basic plan; BRENT/USD is the available crude benchmark
+  USOIL: "BRENT/USD", // Brent Crude Oil
 };
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -158,8 +159,10 @@ async function fetchStockPrice(symbols: string[]): Promise<PriceResult[]> {
 
   if (!tdSymbols) return [];
 
+  // Do NOT use encodeURIComponent — commas and slashes in symbol names
+  // (e.g. XAU/USD, WTI/USD) must be passed literally to Twelve Data
   const url =
-    `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(tdSymbols)}` +
+    `https://api.twelvedata.com/quote?symbol=${tdSymbols}` +
     `&apikey=${TWELVE_DATA_KEY}`;
 
   const res = await fetch(url, { headers: { Accept: "application/json" } });
@@ -182,18 +185,22 @@ async function fetchStockPrice(symbols: string[]): Promise<PriceResult[]> {
   }
 
   return entries
-    .filter((e) => e && !e.code) // filter error objects
+    .filter((e) => e && !e.code) // filter Twelve Data error objects (have a `code` field)
     .map((e) => {
-      const price = parseFloat(e.close ?? e.price ?? "0");
-      const open = parseFloat(e.open ?? "0");
-      const change = price - open;
-      const changePct = open !== 0 ? (change / open) * 100 : 0;
+      const price     = parseFloat(e.close ?? e.price ?? "0");
+      // Prefer Twelve Data's own percent_change; compute from previous_close as fallback
+      const rawPct    = parseFloat(e.percent_change ?? "");
+      const prevClose = parseFloat(e.previous_close ?? "0");
+      const changePct = !isNaN(rawPct) ? rawPct
+        : (prevClose > 0 ? (price - prevClose) / prevClose * 100 : 0);
+      const rawChange = parseFloat(e.change ?? "");
+      const change    = !isNaN(rawChange) ? rawChange : (price - prevClose);
 
       return {
         symbol: reverseMap[e.symbol] ?? e.symbol,
         price,
         change24h: change,
-        changePct24h: changePct,
+        changePct24h: +changePct.toFixed(4),
         high24h: parseFloat(e.high ?? "0"),
         low24h: parseFloat(e.low ?? "0"),
         volume24h: parseFloat(e.volume ?? "0"),
@@ -255,9 +262,13 @@ serve(async (req: Request) => {
       }
     }
 
-    // Default: return the most common Aurum assets
+    // Default: all assets shown across dashboard, trade, and invest pages
     if (symbols.length === 0) {
-      symbols = ["BTC", "ETH", "BNB", "SOL", "XRP", "AAPL", "TSLA", "NVDA", "XAUUSD"];
+      symbols = [
+        "BTC","ETH","SOL","BNB","XRP","ADA","LTC",
+        "TSLA","AAPL","NVDA","MSFT","AMZN","GOOGL",
+        "XAUUSD","USOIL","XAGUSD",
+      ];
     }
 
     const cacheKey = symbols.sort().join(",");

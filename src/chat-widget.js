@@ -1,7 +1,6 @@
 /**
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- *   AURUM LIVE SUPPORT WIDGET  ·  Premium Edition
- *   Drop this script tag on any page:
+ *   AURUM LIVE SUPPORT WIDGET  ·  Luxury Light Edition
  *   <script src="chat-widget.js"></script>
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
@@ -9,21 +8,18 @@ const AURUM_CHAT_CONFIG = {
   supabaseUrl:    "https://ttwwthfeordsojmcjwxn.supabase.co",
   supabaseKey:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w",
   brandName:      "Aurum Support",
-  brandSubtitle:  "Premium Trading Assistance",
-  accentColor:    "#C9A84C",
-  darkBg:         "#080909",
+  brandSubtitle:  "Private Client Services",
+  accentColor:    "#B8922A",
   agentName:      "Support Team",
-  agentAvatar:    "https://api.dicebear.com/7.x/initials/svg?seed=AU&backgroundColor=c9a84c&fontColor=0b0c10",
-  welcomeMsg:     "Welcome to Aurum. How can we assist your trading experience today?",
-  offlineMsg:     "Our team is currently offline. Leave a message and we'll respond shortly.",
+  agentAvatar:    "https://api.dicebear.com/7.x/initials/svg?seed=AU&backgroundColor=c9a84c&fontColor=ffffff",
+  welcomeMsg:     "Welcome to Aurum. How may we assist your investment journey today?",
+  offlineMsg:     "Our advisors are currently offline. Leave a message and we will respond shortly.",
   placeholder:    "Write a message…",
   adminEmail:     "aurumcapitalinvest@gmail.com",
   notifyEndpoint: null,
-  /* Supabase storage bucket name for image uploads */
   storageBucket:  "chat-images",
 };
 
-/* ─── INJECT SUPABASE SDK ─── */
 (function () {
   if (document.getElementById("aurum-chat-root")) return;
 
@@ -32,10 +28,9 @@ const AURUM_CHAT_CONFIG = {
   sdkScript.onload = initAurumChat;
   document.head.appendChild(sdkScript);
 
-  /* Google Fonts */
   const fontLink = document.createElement("link");
   fontLink.rel  = "stylesheet";
-  fontLink.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap";
+  fontLink.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap";
   document.head.appendChild(fontLink);
 
   const style = document.createElement("style");
@@ -43,44 +38,67 @@ const AURUM_CHAT_CONFIG = {
     /* ─── RESET ─── */
     #aurum-chat-root *{box-sizing:border-box;margin:0;padding:0;}
 
-    /* ─── CSS VARS ─── */
+    /* ─── LIGHT MODE VARS ─── */
     #aurum-chat-root{
-      --gold:        #C9A84C;
-      --gold-lt:     #E8C96A;
-      --gold-dk:     #8A6820;
-      --gold-glow:   rgba(201,168,76,.35);
-      --gold-subtle: rgba(201,168,76,.06);
-      --bg-void:     #080909;
-      --bg-base:     #0D0E11;
-      --bg-surface:  #13141A;
-      --bg-raised:   #1A1C24;
-      --bg-input:    #0F1015;
-      --border:      rgba(201,168,76,.12);
-      --border-md:   rgba(201,168,76,.26);
-      --text-hi:     rgba(255,255,255,.92);
-      --text-mid:    rgba(255,255,255,.55);
-      --text-lo:     rgba(255,255,255,.28);
-      --online:      #3DD68C;
-      --radius-lg:   24px;
-      --radius-md:   16px;
-      --radius-sm:   11px;
-      --shadow-glow: 0 0 0 1px rgba(201,168,76,.1), 0 40px 90px rgba(0,0,0,.8), 0 10px 30px rgba(0,0,0,.5);
-      font-family: 'Outfit', sans-serif;
+      --gold:         #B8922A;
+      --gold-rich:    #C9A84C;
+      --gold-lt:      #D4A843;
+      --gold-xlt:     #F5E6B8;
+      --gold-glow:    rgba(184,146,42,.28);
+      --gold-subtle:  rgba(184,146,42,.07);
+      --gold-line:    rgba(184,146,42,.18);
+
+      /* surfaces — warm ivory light mode */
+      --bg:           #FAF8F3;
+      --surface:      #FFFFFF;
+      --panel:        #F4F0E6;
+      --panel-deep:   #EDE8DA;
+      --input-bg:     #F8F5EE;
+      --input-bg2:    #FFFFFF;
+
+      /* borders */
+      --border:       rgba(180,155,90,.18);
+      --border-md:    rgba(180,155,90,.32);
+      --border-hi:    rgba(180,155,90,.55);
+
+      /* text */
+      --text:         #1C1408;
+      --text-mid:     #6B5B3A;
+      --text-lo:      #9E8E6E;
+      --text-xlo:     #C4B89A;
+
+      /* status */
+      --online:       #1A9E5C;
+      --online-glow:  rgba(26,158,92,.5);
+
+      /* shadows */
+      --shadow-window: 0 0 0 1px rgba(180,155,90,.14),
+                       0 32px 80px rgba(100,80,20,.14),
+                       0 8px 24px rgba(100,80,20,.10);
+      --shadow-bubble: 0 1px 4px rgba(0,0,0,.07);
+
+      --radius-lg:    24px;
+      --radius-md:    16px;
+      --radius-sm:    12px;
+      font-family: 'DM Sans', sans-serif;
     }
 
     /* ─── TOGGLE BUTTON ─── */
     #aurum-toggle{
       position:fixed;bottom:30px;right:30px;z-index:99998;
-      width:66px;height:66px;border-radius:50%;border:none;cursor:pointer;
-      background:linear-gradient(145deg,#EDD068 0%,#C9A84C 45%,#8A6820 100%);
-      box-shadow:0 0 0 1px rgba(201,168,76,.25), 0 14px 44px rgba(201,168,76,.45), 0 4px 14px rgba(0,0,0,.55);
+      width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;
+      background:linear-gradient(145deg,#E8C95A 0%,#C9A84C 45%,#8A6820 100%);
+      box-shadow:
+        0 0 0 1px rgba(180,146,42,.3),
+        0 12px 40px rgba(184,146,42,.45),
+        0 4px 12px rgba(0,0,0,.2);
       display:flex;align-items:center;justify-content:center;
       transition:transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
       outline:none;
     }
     #aurum-toggle:hover{
       transform:scale(1.1) translateY(-2px);
-      box-shadow:0 0 0 1px rgba(201,168,76,.35), 0 20px 56px rgba(201,168,76,.6), 0 4px 18px rgba(0,0,0,.5);
+      box-shadow:0 0 0 1px rgba(180,146,42,.4), 0 18px 52px rgba(184,146,42,.6), 0 4px 16px rgba(0,0,0,.18);
     }
     #aurum-toggle:active{transform:scale(.95);}
     #aurum-toggle svg{position:absolute;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;}
@@ -88,123 +106,109 @@ const AURUM_CHAT_CONFIG = {
     #aurum-toggle.open .icon-close{transform:scale(1) rotate(0);opacity:1;}
     #aurum-toggle:not(.open) .icon-close{transform:scale(0) rotate(-60deg);opacity:0;}
     #aurum-toggle:not(.open) .icon-chat{transform:scale(1);opacity:1;}
-
-    /* outer ring pulse */
     #aurum-toggle::before{
-      content:'';position:absolute;inset:-7px;border-radius:50%;
-      border:1.5px solid rgba(201,168,76,.2);
+      content:'';position:absolute;inset:-8px;border-radius:50%;
+      border:1.5px solid rgba(184,146,42,.22);
       animation:aurumRing 3.2s ease-in-out infinite;
     }
-    /* inner shimmer ring */
     #aurum-toggle::after{
       content:'';position:absolute;inset:3px;border-radius:50%;
-      border:1px solid rgba(255,255,255,.12);
-      pointer-events:none;
+      border:1px solid rgba(255,255,255,.35);pointer-events:none;
     }
-    @keyframes aurumRing{
-      0%,100%{transform:scale(1);opacity:.7;}
-      55%{transform:scale(1.14);opacity:0;}
-    }
+    @keyframes aurumRing{0%,100%{transform:scale(1);opacity:.8;}55%{transform:scale(1.15);opacity:0;}}
 
     /* ─── BADGE ─── */
     #aurum-badge{
       position:absolute;top:-5px;right:-5px;
-      background:linear-gradient(135deg,#FF6B6B,#E74C3C);
+      background:linear-gradient(135deg,#E8534A,#C0392B);
       color:#fff;font-size:10px;font-weight:600;
-      width:22px;height:22px;border-radius:50%;
+      width:21px;height:21px;border-radius:50%;
       display:none;align-items:center;justify-content:center;
-      border:2.5px solid var(--bg-void);
+      border:2.5px solid #FAF8F3;
       animation:aurumPop .35s cubic-bezier(.34,1.56,.64,1);
-      font-family:'Outfit',sans-serif;
+      font-family:'DM Sans',sans-serif;
     }
     #aurum-badge.show{display:flex;}
     @keyframes aurumPop{from{transform:scale(0) rotate(-15deg);}to{transform:scale(1) rotate(0);}}
 
     /* ─── CHAT WINDOW ─── */
     #aurum-window{
-      position:fixed;bottom:116px;right:30px;z-index:99997;
-      width:408px;height:620px;
-      background:var(--bg-base);
-      border:1px solid rgba(201,168,76,.13);
+      position:fixed;bottom:114px;right:30px;z-index:99997;
+      width:406px;height:620px;
+      background:var(--bg);
+      border:1px solid var(--border);
       border-radius:var(--radius-lg);
-      box-shadow:var(--shadow-glow);
+      box-shadow:var(--shadow-window);
       display:flex;flex-direction:column;overflow:hidden;
       opacity:0;transform:translateY(28px) scale(.93);pointer-events:none;
       transition:opacity .38s ease, transform .42s cubic-bezier(.34,1.56,.64,1);
-      background-image:
-        radial-gradient(ellipse 90% 55% at 50% -8%, rgba(201,168,76,.06) 0%, transparent 68%),
-        radial-gradient(ellipse 40% 30% at 90% 95%, rgba(201,168,76,.04) 0%, transparent 60%);
     }
     #aurum-window.visible{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
 
     /* ─── HEADER ─── */
     #aurum-header{
       padding:18px 22px 16px;
-      background:linear-gradient(160deg,#121318 0%,#0D0E11 100%);
+      background:linear-gradient(160deg,#FFFDF8 0%,#F8F3E8 100%);
       border-bottom:1px solid var(--border);
       display:flex;align-items:center;gap:14px;
-      flex-shrink:0;
-      position:relative;
-      overflow:hidden;
+      flex-shrink:0;position:relative;overflow:hidden;
     }
-    /* decorative arc top right */
+    /* decorative corner arc */
     #aurum-header::before{
-      content:'';position:absolute;top:-30px;right:-30px;
-      width:120px;height:120px;border-radius:50%;
-      border:1px solid rgba(201,168,76,.08);
-      pointer-events:none;
+      content:'';position:absolute;top:-28px;right:-28px;
+      width:100px;height:100px;border-radius:50%;
+      border:1px solid rgba(184,146,42,.12);pointer-events:none;
     }
-    /* gold shimmer line across header bottom */
+    /* gold shimmer line */
     #aurum-header::after{
       content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent 0%,rgba(201,168,76,.5) 40%,rgba(201,168,76,.5) 60%,transparent 100%);
+      background:linear-gradient(90deg,transparent 0%,rgba(184,146,42,.45) 40%,rgba(184,146,42,.45) 60%,transparent 100%);
     }
     #aurum-header-avatar{
-      width:48px;height:48px;border-radius:50%;
-      border:1.5px solid rgba(201,168,76,.45);
+      width:46px;height:46px;border-radius:50%;
+      border:1.5px solid rgba(184,146,42,.4);
       overflow:hidden;flex-shrink:0;
-      background:var(--bg-raised);
-      box-shadow:0 0 0 4px rgba(201,168,76,.07), 0 4px 14px rgba(0,0,0,.5);
-      position:relative;
+      background:var(--panel);
+      box-shadow:0 0 0 3px rgba(184,146,42,.08), 0 3px 10px rgba(0,0,0,.1);
     }
     #aurum-header-avatar img{width:100%;height:100%;object-fit:cover;}
     #aurum-header-info{flex:1;min-width:0;}
     #aurum-header-name{
-      font-family:'Playfair Display',serif;
-      font-size:17px;font-weight:500;letter-spacing:.015em;
+      font-family:'Cormorant Garamond',serif;
+      font-size:18px;font-weight:600;letter-spacing:.02em;
       color:var(--gold);line-height:1.2;
     }
     #aurum-header-sub{
-      font-size:11px;color:var(--text-lo);
-      letter-spacing:.1em;text-transform:uppercase;margin-top:3px;
-      font-weight:400;
+      font-size:10.5px;color:var(--text-lo);
+      letter-spacing:.1em;text-transform:uppercase;margin-top:3px;font-weight:400;
     }
     #aurum-header-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
     #aurum-status-wrap{display:flex;align-items:center;gap:6px;}
     #aurum-status-dot{
       width:8px;height:8px;border-radius:50%;
       background:var(--online);
-      box-shadow:0 0 8px rgba(61,214,140,.7);
+      box-shadow:0 0 6px var(--online-glow);
       animation:aurumPulseGreen 2.5s ease-in-out infinite;
     }
-    #aurum-status-label{font-size:11px;color:var(--online);font-weight:500;letter-spacing:.04em;}
+    #aurum-status-label{font-size:11px;color:var(--online);font-weight:600;letter-spacing:.03em;}
     @keyframes aurumPulseGreen{
-      0%,100%{box-shadow:0 0 6px rgba(61,214,140,.6);}
-      50%{box-shadow:0 0 16px rgba(61,214,140,1),0 0 28px rgba(61,214,140,.3);}
+      0%,100%{box-shadow:0 0 5px rgba(26,158,92,.5);}
+      50%{box-shadow:0 0 14px rgba(26,158,92,.9),0 0 24px rgba(26,158,92,.25);}
     }
-    #aurum-status-dot.offline{background:#444;box-shadow:none;animation:none;}
+    #aurum-status-dot.offline{background:#C0B090;box-shadow:none;animation:none;}
     #aurum-status-label.offline{color:var(--text-lo);}
-    #aurum-response-time{font-size:10px;color:var(--text-lo);letter-spacing:.03em;}
+    #aurum-response-time{font-size:10px;color:var(--text-xlo);letter-spacing:.02em;}
 
     /* ─── MESSAGES ─── */
     #aurum-messages{
       flex:1;overflow-y:auto;padding:20px 16px 10px;
       display:flex;flex-direction:column;gap:5px;
       scroll-behavior:smooth;
+      background:var(--bg);
     }
     #aurum-messages::-webkit-scrollbar{width:3px;}
     #aurum-messages::-webkit-scrollbar-track{background:transparent;}
-    #aurum-messages::-webkit-scrollbar-thumb{background:rgba(201,168,76,.18);border-radius:2px;}
+    #aurum-messages::-webkit-scrollbar-thumb{background:rgba(184,146,42,.2);border-radius:2px;}
 
     /* ─── BUBBLE GROUPING ─── */
     .aurum-msg+.aurum-msg.agent.grouped,
@@ -216,255 +220,199 @@ const AURUM_CHAT_CONFIG = {
     /* ─── MESSAGE ROW ─── */
     .aurum-msg{
       display:flex;gap:10px;align-items:flex-end;
-      animation:aurumSlideIn .28s cubic-bezier(.25,.46,.45,.94) both;
+      animation:aurumSlideIn .26s cubic-bezier(.25,.46,.45,.94) both;
     }
-    @keyframes aurumSlideIn{
-      from{opacity:0;transform:translateY(10px);}
-      to{opacity:1;transform:translateY(0);}
-    }
+    @keyframes aurumSlideIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
     .aurum-msg.user{flex-direction:row-reverse;}
 
+    /* ─── AVATARS ─── */
     .aurum-msg-avatar{
-      width:34px;height:34px;border-radius:50%;
-      background:rgba(201,168,76,.1);
-      border:1.5px solid rgba(201,168,76,.22);
+      width:32px;height:32px;border-radius:50%;
+      background:var(--panel-deep);
+      border:1.5px solid var(--border-md);
       overflow:hidden;flex-shrink:0;
       display:flex;align-items:center;justify-content:center;
       font-size:12px;color:var(--gold);font-weight:600;
-      font-family:'Outfit',sans-serif;
+      font-family:'DM Sans',sans-serif;
     }
     .aurum-msg-avatar img{width:100%;height:100%;object-fit:cover;}
-
-    .aurum-msg-body{max-width:76%;display:flex;flex-direction:column;gap:4px;}
+    .aurum-msg-body{max-width:76%;display:flex;flex-direction:column;gap:3px;}
     .aurum-msg.user .aurum-msg-body{align-items:flex-end;}
 
-    /* ─── BUBBLES — ENHANCED PADDING ─── */
+    /* ─── BUBBLES ─── */
     .aurum-bubble{
-      padding:14px 20px;
-      border-radius:22px;
-      font-size:14px;line-height:1.68;
+      padding:13px 18px;
+      border-radius:20px;
+      font-size:14px;line-height:1.65;
       word-break:break-word;
-      position:relative;
-      letter-spacing:.012em;
+      position:relative;letter-spacing:.01em;
     }
 
-    /* Agent bubble */
+    /* Agent bubble — clean white card */
     .aurum-msg.agent .aurum-bubble{
-      background:var(--bg-surface);
-      color:var(--text-hi);
-      border:1px solid rgba(255,255,255,.065);
+      background:#FFFFFF;
+      color:var(--text);
+      border:1px solid rgba(0,0,0,.07);
       border-bottom-left-radius:5px;
       box-shadow:
-        0 2px 14px rgba(0,0,0,.35),
-        inset 0 1px 0 rgba(255,255,255,.045),
-        inset 0 -1px 0 rgba(0,0,0,.15);
+        0 1px 3px rgba(0,0,0,.06),
+        0 4px 14px rgba(0,0,0,.04),
+        inset 0 1px 0 rgba(255,255,255,.8);
     }
 
-    /* User bubble */
+    /* User bubble — warm gold */
     .aurum-msg.user .aurum-bubble{
-      background:linear-gradient(150deg, #E0BA5C 0%, #C9A84C 50%, #9A7832 100%);
-      color:#06070A;
+      background:linear-gradient(150deg,#D4A843 0%,#B8922A 55%,#8A6820 100%);
+      color:#FFFDF5;
       font-weight:500;
       border-bottom-right-radius:5px;
       box-shadow:
-        0 5px 20px rgba(201,168,76,.32),
-        0 2px 8px rgba(0,0,0,.3),
-        inset 0 1px 0 rgba(255,255,255,.25);
+        0 4px 18px rgba(184,146,42,.3),
+        0 1px 4px rgba(0,0,0,.14),
+        inset 0 1px 0 rgba(255,255,255,.2);
     }
 
-    /* ─── IMAGE MESSAGE ─── */
+    /* ─── IMAGE BUBBLES ─── */
     .aurum-img-bubble{
-      border-radius:18px;overflow:hidden;
-      max-width:220px;
-      border:1px solid rgba(201,168,76,.2);
-      cursor:pointer;
-      position:relative;
+      border-radius:16px;overflow:hidden;
+      max-width:220px;cursor:pointer;
+      border:1px solid var(--border);position:relative;
+      box-shadow:var(--shadow-bubble);
     }
-    .aurum-img-bubble img{
-      width:100%;height:auto;display:block;
-      transition:opacity .2s;
-    }
-    .aurum-img-bubble:hover img{opacity:.9;}
+    .aurum-img-bubble img{width:100%;height:auto;display:block;transition:opacity .2s;}
+    .aurum-img-bubble:hover img{opacity:.92;}
     .aurum-img-bubble .aurum-img-caption{
       font-size:11px;color:var(--text-lo);padding:6px 12px;
-      background:var(--bg-surface);
-      display:block;
+      background:var(--panel);display:block;
     }
-    /* user image bubble */
-    .aurum-msg.user .aurum-img-bubble{
-      border-bottom-right-radius:5px;
-      border-color:rgba(201,168,76,.35);
-      box-shadow:0 5px 20px rgba(201,168,76,.25);
-    }
-    .aurum-msg.agent .aurum-img-bubble{
-      border-bottom-left-radius:5px;
-    }
+    .aurum-msg.user .aurum-img-bubble{border-bottom-right-radius:5px;border-color:rgba(184,146,42,.3);box-shadow:0 4px 18px rgba(184,146,42,.2);}
+    .aurum-msg.agent .aurum-img-bubble{border-bottom-left-radius:5px;}
 
-    /* ─── IMAGE PREVIEW in input ─── */
-    #aurum-img-preview{
-      display:none;
-      padding:10px 16px 0;
-      background:var(--bg-input);
-    }
+    /* ─── IMAGE PREVIEW IN INPUT ─── */
+    #aurum-img-preview{display:none;padding:10px 16px 0;background:var(--input-bg);}
     #aurum-img-preview.has-image{display:flex;align-items:center;gap:10px;}
-    #aurum-img-thumb-wrap{
-      position:relative;width:54px;height:54px;flex-shrink:0;
-    }
+    #aurum-img-thumb-wrap{position:relative;width:52px;height:52px;flex-shrink:0;}
     #aurum-img-thumb{
-      width:54px;height:54px;border-radius:10px;object-fit:cover;
-      border:1.5px solid rgba(201,168,76,.3);
-      display:block;
+      width:52px;height:52px;border-radius:10px;object-fit:cover;
+      border:1.5px solid var(--border-md);display:block;
     }
     #aurum-img-remove{
       position:absolute;top:-7px;right:-7px;
-      width:20px;height:20px;border-radius:50%;
-      background:#E74C3C;border:2px solid var(--bg-input);
-      color:#fff;font-size:10px;font-weight:700;
+      width:19px;height:19px;border-radius:50%;
+      background:#E74C3C;border:2px solid var(--input-bg);
+      color:#fff;font-size:9px;font-weight:700;
       display:flex;align-items:center;justify-content:center;
-      cursor:pointer;line-height:1;padding:0;
-      transition:transform .2s, background .2s;
+      cursor:pointer;transition:transform .2s, background .2s;
     }
     #aurum-img-remove:hover{background:#C0392B;transform:scale(1.1);}
     #aurum-img-preview-label{
       font-size:12px;color:var(--text-mid);
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-      max-width:200px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;
     }
 
-    /* ─── META / TIMESTAMP ─── */
-    .aurum-msg-meta{
-      display:flex;align-items:center;gap:5px;
-      padding:0 5px;
-    }
-    .aurum-msg-time{font-size:10.5px;color:var(--text-lo);font-weight:400;}
-    .aurum-read-tick{display:flex;align-items:center;gap:1px;}
-    .aurum-read-tick svg{width:14px;height:14px;color:var(--gold);}
+    /* ─── TIMESTAMP & META ─── */
+    .aurum-msg-meta{display:flex;align-items:center;gap:5px;padding:0 4px;}
+    .aurum-msg-time{font-size:10px;color:var(--text-xlo);font-weight:400;}
+    .aurum-read-tick{display:flex;align-items:center;}
+    .aurum-read-tick svg{width:13px;height:13px;color:var(--gold);}
 
     /* ─── TYPING INDICATOR ─── */
     #aurum-typing{display:none;}
     #aurum-typing.show{display:flex;}
     .aurum-typing-bubble{
-      background:var(--bg-surface);
-      border:1px solid rgba(255,255,255,.065);
-      border-radius:22px;border-bottom-left-radius:5px;
-      padding:14px 20px;
+      background:#FFFFFF;
+      border:1px solid rgba(0,0,0,.07);
+      border-radius:20px;border-bottom-left-radius:5px;
+      padding:13px 18px;
       display:flex;align-items:center;gap:5px;
-      box-shadow:0 2px 14px rgba(0,0,0,.3);
+      box-shadow:0 2px 12px rgba(0,0,0,.06);
     }
     .aurum-typing-bubble span{
-      width:7px;height:7px;border-radius:50%;
-      background:rgba(201,168,76,.55);
-      animation:aurumDot 1.6s ease-in-out infinite;
-      display:inline-block;
+      width:6px;height:6px;border-radius:50%;
+      background:rgba(184,146,42,.5);
+      animation:aurumDot 1.6s ease-in-out infinite;display:inline-block;
     }
     .aurum-typing-bubble span:nth-child(2){animation-delay:.22s;}
     .aurum-typing-bubble span:nth-child(3){animation-delay:.44s;}
-    @keyframes aurumDot{
-      0%,60%,100%{transform:translateY(0);opacity:.4;}
-      30%{transform:translateY(-5px);opacity:1;}
-    }
+    @keyframes aurumDot{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-5px);opacity:1;}}
 
     /* ─── DIVIDER ─── */
     .aurum-divider{
-      text-align:center;font-size:10px;color:var(--text-lo);
+      text-align:center;font-size:10px;color:var(--text-xlo);
       letter-spacing:.12em;text-transform:uppercase;
       display:flex;align-items:center;gap:12px;
-      margin:4px 0 10px;font-weight:400;
+      margin:4px 0 10px;font-weight:500;
     }
     .aurum-divider::before,.aurum-divider::after{
       content:'';flex:1;height:1px;
-      background:linear-gradient(90deg,transparent,rgba(201,168,76,.15),transparent);
+      background:linear-gradient(90deg,transparent,rgba(184,146,42,.2),transparent);
     }
 
     /* ─── INPUT AREA ─── */
     #aurum-input-area{
       padding:10px 14px 18px;
-      border-top:1px solid rgba(255,255,255,.045);
-      background:var(--bg-input);
-      display:flex;flex-direction:column;gap:0;
-      flex-shrink:0;
-      position:relative;
+      border-top:1px solid var(--border);
+      background:var(--input-bg);
+      display:flex;flex-direction:column;gap:0;flex-shrink:0;position:relative;
     }
-    /* thin gold accent line top */
     #aurum-input-area::before{
       content:'';position:absolute;top:0;left:18px;right:18px;height:1px;
-      background:linear-gradient(90deg,transparent,rgba(201,168,76,.22),transparent);
+      background:linear-gradient(90deg,transparent,rgba(184,146,42,.25),transparent);
     }
-
-    /* row: attach + textarea + send */
-    #aurum-input-row{
-      display:flex;align-items:flex-end;gap:8px;
-      padding-top:10px;
-    }
+    #aurum-input-row{display:flex;align-items:flex-end;gap:8px;padding-top:10px;}
 
     /* ─── ATTACH BUTTON ─── */
     #aurum-attach{
       width:40px;height:40px;border-radius:12px;border:none;cursor:pointer;
-      background:var(--bg-surface);
-      border:1px solid rgba(201,168,76,.15);
+      background:var(--surface);
+      border:1px solid var(--border);
       display:flex;align-items:center;justify-content:center;
       flex-shrink:0;
-      transition:background .2s, border-color .2s, transform .2s;
-      outline:none;
+      transition:background .2s, border-color .2s, transform .2s;outline:none;
     }
-    #aurum-attach:hover{
-      background:rgba(201,168,76,.1);
-      border-color:rgba(201,168,76,.35);
-      transform:translateY(-1px);
-    }
+    #aurum-attach:hover{background:var(--gold-xlt);border-color:var(--border-md);transform:translateY(-1px);}
     #aurum-attach:active{transform:scale(.94);}
-    #aurum-attach svg{width:18px;height:18px;color:rgba(201,168,76,.65);transition:color .2s;}
+    #aurum-attach svg{width:17px;height:17px;color:rgba(184,146,42,.7);transition:color .2s;}
     #aurum-attach:hover svg{color:var(--gold);}
-    #aurum-attach.has-image{
-      background:rgba(201,168,76,.12);
-      border-color:rgba(201,168,76,.5);
-    }
+    #aurum-attach.has-image{background:var(--gold-xlt);border-color:var(--border-hi);}
     #aurum-attach.has-image svg{color:var(--gold);}
-
-    /* hidden file input */
     #aurum-file-input{display:none;}
 
+    /* ─── TEXT INPUT ─── */
     #aurum-input-wrap{
       flex:1;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.07);
+      background:var(--input-bg2);
+      border:1px solid var(--border);
       border-radius:14px;
       display:flex;align-items:flex-end;
-      transition:border-color .2s,box-shadow .2s;
-      overflow:hidden;
+      transition:border-color .2s,box-shadow .2s;overflow:hidden;
+      box-shadow:0 1px 3px rgba(0,0,0,.05);
     }
     #aurum-input-wrap:focus-within{
-      border-color:rgba(201,168,76,.4);
-      box-shadow:0 0 0 3px rgba(201,168,76,.07);
+      border-color:rgba(184,146,42,.45);
+      box-shadow:0 0 0 3px rgba(184,146,42,.08), 0 1px 3px rgba(0,0,0,.05);
     }
     #aurum-input{
-      flex:1;background:transparent;
-      border:none;outline:none;
-      color:var(--text-hi);font-size:14px;
+      flex:1;background:transparent;border:none;outline:none;
+      color:var(--text);font-size:14px;
       padding:11px 14px;resize:none;
       min-height:44px;max-height:120px;
-      font-family:'Outfit',sans-serif;line-height:1.55;
-      letter-spacing:.012em;
+      font-family:'DM Sans',sans-serif;line-height:1.55;letter-spacing:.01em;
     }
-    #aurum-input::placeholder{color:var(--text-lo);}
+    #aurum-input::placeholder{color:var(--text-xlo);}
 
+    /* ─── SEND BUTTON ─── */
     #aurum-send{
       width:42px;height:42px;border-radius:13px;border:none;cursor:pointer;
-      background:linear-gradient(150deg,#DDB94E,#C9A84C,#9A7832);
+      background:linear-gradient(150deg,#D4A843,#B8922A,#8A6820);
       display:flex;align-items:center;justify-content:center;
       flex-shrink:0;
       transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .2s,opacity .2s;
-      box-shadow:0 4px 18px rgba(201,168,76,.38);
-      outline:none;
+      box-shadow:0 4px 16px rgba(184,146,42,.4);outline:none;
     }
-    #aurum-send:hover{
-      transform:scale(1.08) translateY(-1px);
-      box-shadow:0 8px 26px rgba(201,168,76,.55);
-    }
+    #aurum-send:hover{transform:scale(1.08) translateY(-1px);box-shadow:0 8px 24px rgba(184,146,42,.55);}
     #aurum-send:active{transform:scale(.95);}
     #aurum-send:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none;}
-
-    /* uploading spinner */
     #aurum-send.uploading svg.send-icon{display:none;}
     #aurum-send.uploading .send-spinner{display:block;}
     #aurum-send .send-spinner{display:none;}
@@ -474,116 +422,113 @@ const AURUM_CHAT_CONFIG = {
     /* ─── UPLOAD PROGRESS ─── */
     #aurum-upload-progress{
       height:2px;border-radius:2px;margin-top:8px;
-      background:rgba(201,168,76,.15);
-      display:none;overflow:hidden;
+      background:rgba(184,146,42,.12);display:none;overflow:hidden;
     }
     #aurum-upload-progress.active{display:block;}
     #aurum-upload-bar{
       height:100%;border-radius:2px;
       background:linear-gradient(90deg,var(--gold),var(--gold-lt));
-      width:0%;
-      transition:width .3s ease;
+      width:0%;transition:width .3s ease;
     }
 
     /* ─── SESSION PROMPT ─── */
-    #aurum-session-prompt{
-      flex:1;display:flex;flex-direction:column;gap:0;
-      overflow-y:auto;
-    }
+    #aurum-session-prompt{flex:1;display:flex;flex-direction:column;gap:0;overflow-y:auto;}
+
     #aurum-prompt-hero{
       padding:30px 26px 24px;
-      background:linear-gradient(160deg,#121318 0%,#0D0E11 100%);
+      background:linear-gradient(160deg,#FFFDF8 0%,#F8F3E6 100%);
       border-bottom:1px solid var(--border);
       position:relative;overflow:hidden;
     }
     #aurum-prompt-hero::before{
-      content:'';position:absolute;top:-50px;right:-50px;
-      width:180px;height:180px;border-radius:50%;
-      background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 70%);
+      content:'';position:absolute;top:-40px;right:-40px;
+      width:160px;height:160px;border-radius:50%;
+      background:radial-gradient(circle,rgba(184,146,42,.08) 0%,transparent 70%);
       pointer-events:none;
     }
     #aurum-prompt-hero::after{
       content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent);
+      background:linear-gradient(90deg,transparent,rgba(184,146,42,.4),transparent);
     }
+
     #aurum-prompt-eyebrow{
-      font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-      color:var(--gold);font-weight:500;margin-bottom:10px;
-      display:flex;align-items:center;gap:7px;
+      font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--gold);font-weight:600;margin-bottom:10px;
+      display:flex;align-items:center;gap:8px;
     }
     #aurum-prompt-eyebrow::before{
-      content:'';display:inline-block;width:20px;height:1px;
-      background:var(--gold);opacity:.5;
+      content:'';display:inline-block;width:18px;height:1px;
+      background:var(--gold);opacity:.6;
     }
     #aurum-prompt-title{
-      font-family:'Playfair Display',serif;
-      color:var(--text-hi);font-size:23px;font-weight:500;
-      line-height:1.3;margin-bottom:9px;
+      font-family:'Cormorant Garamond',serif;
+      color:var(--text);font-size:24px;font-weight:500;
+      line-height:1.25;margin-bottom:9px;letter-spacing:.01em;
     }
-    #aurum-prompt-sub{
-      font-size:13px;color:var(--text-mid);line-height:1.7;font-weight:300;
-    }
+    #aurum-prompt-sub{font-size:13px;color:var(--text-mid);line-height:1.7;font-weight:400;}
+
+    /* ─── FORM ─── */
     #aurum-prompt-form{
       padding:22px 22px 18px;
-      display:flex;flex-direction:column;gap:13px;
-      flex:1;
+      display:flex;flex-direction:column;gap:12px;flex:1;
     }
-    .aurum-field-group{display:flex;flex-direction:column;gap:6px;}
+    .aurum-field-group{display:flex;flex-direction:column;gap:5px;}
     .aurum-field-label{
-      font-size:11px;color:var(--text-lo);
-      letter-spacing:.09em;text-transform:uppercase;font-weight:500;
+      font-size:10.5px;color:var(--text-lo);
+      letter-spacing:.08em;text-transform:uppercase;font-weight:600;
     }
     .aurum-field{
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
+      background:var(--surface);
+      border:1px solid var(--border);
       border-radius:var(--radius-sm);
-      color:var(--text-hi);font-size:14px;
+      color:var(--text);font-size:14px;
       padding:12px 16px;
-      font-family:'Outfit',sans-serif;outline:none;
+      font-family:'DM Sans',sans-serif;outline:none;
       transition:border-color .2s,box-shadow .2s;width:100%;
-      letter-spacing:.012em;
+      letter-spacing:.01em;
+      box-shadow:0 1px 3px rgba(0,0,0,.04);
     }
     .aurum-field:focus{
-      border-color:rgba(201,168,76,.42);
-      box-shadow:0 0 0 3px rgba(201,168,76,.07);
+      border-color:rgba(184,146,42,.45);
+      box-shadow:0 0 0 3px rgba(184,146,42,.08);
     }
-    .aurum-field::placeholder{color:var(--text-lo);}
-    .aurum-field.error{border-color:rgba(231,76,60,.6);box-shadow:0 0 0 3px rgba(231,76,60,.07);}
+    .aurum-field::placeholder{color:var(--text-xlo);}
+    .aurum-field.error{border-color:rgba(220,53,34,.5);box-shadow:0 0 0 3px rgba(220,53,34,.07);}
 
+    /* ─── START BUTTON ─── */
     #aurum-start-btn{
-      background:linear-gradient(150deg,#DDB94E 0%,#C9A84C 50%,#9A7832 100%);
-      color:#06070A;font-weight:600;font-size:14px;
+      background:linear-gradient(150deg,#D4A843 0%,#B8922A 55%,#8A6820 100%);
+      color:#FFFDF5;font-weight:600;font-size:14px;
       border:none;border-radius:var(--radius-sm);padding:14px;
-      cursor:pointer;letter-spacing:.07em;text-transform:uppercase;
+      cursor:pointer;letter-spacing:.06em;text-transform:uppercase;
       transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s,opacity .2s;
-      box-shadow:0 6px 24px rgba(201,168,76,.38);
-      font-family:'Outfit',sans-serif;margin-top:4px;
+      box-shadow:0 6px 22px rgba(184,146,42,.38);
+      font-family:'DM Sans',sans-serif;margin-top:4px;
       position:relative;overflow:hidden;
     }
     #aurum-start-btn::after{
       content:'';position:absolute;inset:0;
       background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.18) 50%,transparent 100%);
-      transform:translateX(-100%);
-      transition:transform .5s ease;
+      transform:translateX(-100%);transition:transform .5s ease;
     }
     #aurum-start-btn:hover::after{transform:translateX(100%);}
-    #aurum-start-btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(201,168,76,.55);}
+    #aurum-start-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(184,146,42,.52);}
     #aurum-start-btn:active{transform:translateY(0) scale(.98);}
 
-    /* trust badges row */
+    /* ─── TRUST BADGES ─── */
     #aurum-trust{
       display:flex;align-items:center;justify-content:center;gap:18px;
       padding:2px 22px 20px;
     }
     .aurum-trust-item{
       display:flex;align-items:center;gap:5px;
-      font-size:10.5px;color:var(--text-lo);letter-spacing:.04em;
+      font-size:10.5px;color:var(--text-xlo);letter-spacing:.04em;
     }
-    .aurum-trust-item svg{width:12px;height:12px;color:rgba(201,168,76,.45);}
+    .aurum-trust-item svg{width:11px;height:11px;color:rgba(184,146,42,.5);}
 
-    /* ─── RESPONSIVE ─── */
+    /* ─── MOBILE ─── */
     @media(max-width:480px){
-      #aurum-window{width:calc(100vw - 20px);right:10px;bottom:102px;height:80vh;max-height:620px;border-radius:20px;}
+      #aurum-window{width:calc(100vw - 20px);right:10px;bottom:100px;height:80vh;max-height:620px;border-radius:20px;}
       #aurum-toggle{bottom:22px;right:14px;}
     }
   `;
@@ -603,7 +548,7 @@ function initAurumChat() {
   let unread     = 0;
   let isOpen     = false;
   let lastSender = null;
-  let pendingFile= null; // { file, dataUrl, name }
+  let pendingFile= null;
 
   /* ── BUILD DOM ── */
   const root = document.createElement("div");
@@ -611,12 +556,12 @@ function initAurumChat() {
   root.innerHTML = `
     <button id="aurum-toggle" aria-label="Open Aurum support chat">
       <div id="aurum-badge"></div>
-      <svg class="icon-chat" width="26" height="26" viewBox="0 0 24 24" fill="none">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="#06070A"/>
-        <path d="M8 10h8M8 13h5" stroke="rgba(255,255,255,.55)" stroke-width="1.6" stroke-linecap="round"/>
+      <svg class="icon-chat" width="25" height="25" viewBox="0 0 24 24" fill="none">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/>
+        <path d="M8 10h8M8 13h5" stroke="rgba(255,255,255,.5)" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
-      <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M18 6L6 18M6 6l12 12" stroke="#06070A" stroke-width="2.5" stroke-linecap="round"/>
+      <svg class="icon-close" width="19" height="19" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6l12 12" stroke="rgba(255,255,255,.9)" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
     </button>
 
@@ -625,7 +570,7 @@ function initAurumChat() {
       <!-- HEADER -->
       <div id="aurum-header">
         <div id="aurum-header-avatar">
-          <img src="${AURUM_CHAT_CONFIG.agentAvatar}" alt="Support agent"/>
+          <img src="${AURUM_CHAT_CONFIG.agentAvatar}" alt="Support"/>
         </div>
         <div id="aurum-header-info">
           <div id="aurum-header-name">${AURUM_CHAT_CONFIG.brandName}</div>
@@ -633,7 +578,7 @@ function initAurumChat() {
         </div>
         <div id="aurum-header-right">
           <div id="aurum-status-wrap">
-            <div id="aurum-status-dot" title="Online"></div>
+            <div id="aurum-status-dot"></div>
             <span id="aurum-status-label">Online</span>
           </div>
           <div id="aurum-response-time">Replies instantly</div>
@@ -653,7 +598,7 @@ function initAurumChat() {
             <input class="aurum-field" id="aurum-user-name" type="text" placeholder="Full name" autocomplete="name"/>
           </div>
           <div class="aurum-field-group">
-            <label class="aurum-field-label" for="aurum-user-email">Email address <span style="opacity:.4;font-style:italic;text-transform:none;letter-spacing:0">(optional)</span></label>
+            <label class="aurum-field-label" for="aurum-user-email">Email <span style="opacity:.45;font-style:italic;text-transform:none;letter-spacing:0;font-weight:400">(optional)</span></label>
             <input class="aurum-field" id="aurum-user-email" type="email" placeholder="you@example.com" autocomplete="email"/>
           </div>
           <button id="aurum-start-btn">Start Conversation</button>
@@ -665,7 +610,7 @@ function initAurumChat() {
           </div>
           <div class="aurum-trust-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            24/7 Available
+            24 / 7 Support
           </div>
           <div class="aurum-trust-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -691,7 +636,6 @@ function initAurumChat() {
 
       <!-- INPUT AREA -->
       <div id="aurum-input-area" style="display:none;">
-        <!-- image preview strip -->
         <div id="aurum-img-preview">
           <div id="aurum-img-thumb-wrap">
             <img id="aurum-img-thumb" src="" alt=""/>
@@ -699,14 +643,10 @@ function initAurumChat() {
           </div>
           <span id="aurum-img-preview-label"></span>
         </div>
-        <!-- upload progress bar -->
         <div id="aurum-upload-progress"><div id="aurum-upload-bar"></div></div>
-        <!-- input row -->
         <div id="aurum-input-row">
-          <!-- hidden file picker -->
           <input type="file" id="aurum-file-input" accept="image/*,.pdf,.doc,.docx"/>
-          <!-- attach button -->
-          <button id="aurum-attach" aria-label="Attach image or file" title="Attach file">
+          <button id="aurum-attach" aria-label="Attach file" title="Attach file">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
             </svg>
@@ -715,14 +655,12 @@ function initAurumChat() {
             <textarea id="aurum-input" rows="1" placeholder="${AURUM_CHAT_CONFIG.placeholder}" aria-label="Message"></textarea>
           </div>
           <button id="aurum-send" aria-label="Send message">
-            <!-- send arrow -->
-            <svg class="send-icon" width="17" height="17" viewBox="0 0 24 24" fill="none">
-              <path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z" fill="#06070A"/>
+            <svg class="send-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z" fill="rgba(255,255,255,.92)"/>
             </svg>
-            <!-- spinner (shown while uploading) -->
-            <svg class="send-spinner" width="17" height="17" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="rgba(6,7,10,.3)" stroke-width="3"/>
-              <path d="M12 2a10 10 0 0 1 10 10" stroke="#06070A" stroke-width="3" stroke-linecap="round"/>
+            <svg class="send-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.25)" stroke-width="3"/>
+              <path d="M12 2a10 10 0 0 1 10 10" stroke="rgba(255,255,255,.85)" stroke-width="3" stroke-linecap="round"/>
             </svg>
           </button>
         </div>
@@ -796,7 +734,6 @@ function initAurumChat() {
 
   nameField.addEventListener("keydown", e => { if (e.key === "Enter") startBtn.click(); });
 
-  /* ── AUTO RESIZE TEXTAREA ── */
   input.addEventListener("input", () => {
     input.style.height = "auto";
     input.style.height = Math.min(input.scrollHeight, 120) + "px";
@@ -806,23 +743,17 @@ function initAurumChat() {
   });
   sendBtn.addEventListener("click", sendMessage);
 
-  /* ── FILE ATTACH ── */
   attachBtn.addEventListener("click", () => fileInput.click());
 
   fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
     if (!file) return;
-
-    /* validate size (10 MB cap) */
     if (file.size > 10 * 1024 * 1024) {
-      alert("File is too large. Please choose a file under 10 MB.");
+      alert("File is too large. Maximum 10 MB.");
       fileInput.value = "";
       return;
     }
-
     pendingFile = { file, name: file.name };
-
-    /* show preview for images */
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = e => {
@@ -834,7 +765,6 @@ function initAurumChat() {
     } else {
       imgThumb.style.display = "none";
     }
-
     imgLabel.textContent = file.name;
     imgPreview.classList.add("has-image");
     attachBtn.classList.add("has-image");
@@ -851,297 +781,179 @@ function initAurumChat() {
     imgLabel.textContent = "";
   }
 
-  /* ── CREATE SESSION ── */
   async function createSession() {
     await sb.from("chat_sessions").insert({
-      id:         sessionId,
-      user_name:  userInfo.name,
+      id: sessionId, user_name: userInfo.name,
       user_email: userInfo.email || null,
-      page_url:   window.location.href,
-      status:     "open",
+      page_url: window.location.href, status: "open",
     });
   }
 
-  /* ── SEND ── */
   async function sendMessage() {
     const text = input.value.trim();
     if ((!text && !pendingFile) || !sessionId) return;
-
     input.value = "";
     input.style.height = "auto";
     sendBtn.disabled = true;
 
-    /* ─ handle file upload ─ */
     let imageUrl = null;
     if (pendingFile) {
       const file = pendingFile.file;
       const isImg = file.type.startsWith("image/");
-
       sendBtn.classList.add("uploading");
       uploadProgress.classList.add("active");
       uploadBar.style.width = "20%";
-
       try {
-        /* Simulate progress while XHR runs */
         let prog = 20;
-        const ticker = setInterval(() => {
-          prog = Math.min(prog + 12, 88);
-          uploadBar.style.width = prog + "%";
-        }, 200);
-
+        const ticker = setInterval(() => { prog = Math.min(prog + 12, 88); uploadBar.style.width = prog + "%"; }, 200);
         const fileName = `${sessionId}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
         const { data: upData, error: upErr } = await sb.storage
           .from(AURUM_CHAT_CONFIG.storageBucket)
           .upload(fileName, file, { cacheControl: "3600", upsert: false });
-
         clearInterval(ticker);
-
         if (upErr) throw upErr;
-
-        /* get public URL */
-        const { data: urlData } = sb.storage
-          .from(AURUM_CHAT_CONFIG.storageBucket)
-          .getPublicUrl(fileName);
+        const { data: urlData } = sb.storage.from(AURUM_CHAT_CONFIG.storageBucket).getPublicUrl(fileName);
         imageUrl = urlData?.publicUrl || null;
-
         uploadBar.style.width = "100%";
-
-        /* show optimistic image bubble */
-        if (isImg) {
-          appendImageMessage({ role: "user", src: pendingFile.dataUrl || imageUrl, fileName: file.name, time: nowTime() });
-        } else {
-          appendFileLinkMessage({ role: "user", url: imageUrl, fileName: file.name, time: nowTime() });
-        }
-
+        if (isImg) appendImageMessage({ role: "user", src: pendingFile.dataUrl || imageUrl, fileName: file.name, time: nowTime() });
+        else appendFileLinkMessage({ role: "user", url: imageUrl, fileName: file.name, time: nowTime() });
       } catch (err) {
         console.warn("[Aurum] Upload failed:", err.message);
-        /* fallback: show local preview if we have it, or note the failure */
-        if (pendingFile.dataUrl) {
-          appendImageMessage({ role: "user", src: pendingFile.dataUrl, fileName: file.name, time: nowTime(), failed: true });
-        } else {
-          appendMessage({ role: "user", text: `📎 ${file.name} (upload failed)`, time: nowTime() });
-        }
+        if (pendingFile.dataUrl) appendImageMessage({ role: "user", src: pendingFile.dataUrl, fileName: file.name, time: nowTime(), failed: true });
+        else appendMessage({ role: "user", text: `📎 ${file.name} (upload failed)`, time: nowTime() });
       } finally {
         sendBtn.classList.remove("uploading");
-        setTimeout(() => {
-          uploadProgress.classList.remove("active");
-          uploadBar.style.width = "0%";
-        }, 600);
+        setTimeout(() => { uploadProgress.classList.remove("active"); uploadBar.style.width = "0%"; }, 600);
         clearPendingFile();
       }
     }
 
-    /* ─ text message ─ */
-    if (text) {
-      appendMessage({ role: "user", text, time: nowTime() });
-    }
+    if (text) appendMessage({ role: "user", text, time: nowTime() });
 
-    /* ─ persist to DB ─ */
-    const msgPayload = {
-      session_id:  sessionId,
-      sender_role: "user",
-      sender_name: userInfo.name,
-      message:     text || (pendingFile?.name ? `[Attachment: ${pendingFile?.name || "file"}]` : ""),
-      image_url:   imageUrl || null,
-    };
-    await sb.from("chat_messages").insert(msgPayload);
+    await sb.from("chat_messages").insert({
+      session_id: sessionId, sender_role: "user", sender_name: userInfo.name,
+      message: text || (pendingFile?.name ? `[Attachment: ${pendingFile?.name || "file"}]` : ""),
+      image_url: imageUrl || null,
+    });
 
-    /* ─ notify admin ─ */
     notifyAdmin({
       subject:   `[Aurum Chat] Message from ${userInfo.name}`,
       userName:  userInfo.name,
       userEmail: userInfo.email || "Not provided",
       message:   text || `[Image/File attached]${imageUrl ? `: ${imageUrl}` : ""}`,
-      sessionId,
-      pageUrl:   window.location.href,
+      sessionId, pageUrl: window.location.href,
     });
 
     sendBtn.disabled = false;
     input.focus();
   }
 
-  /* ── NOTIFY ADMIN ── */
   async function notifyAdmin({ subject, userName, userEmail, message, sessionId, pageUrl }) {
     try {
       await fetch(NOTIFY_URL, {
         method: "POST",
-        headers: {
-          "Content-Type":  "application/json",
-          "Authorization": `Bearer ${AURUM_CHAT_CONFIG.supabaseKey}`,
-        },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${AURUM_CHAT_CONFIG.supabaseKey}` },
         body: JSON.stringify({
-          formType:   "live_chat_message",
-          adminEmail: AURUM_CHAT_CONFIG.adminEmail,
+          formType: "live_chat_message", adminEmail: AURUM_CHAT_CONFIG.adminEmail,
           subject, name: userName, email: userEmail,
-          message, sessionId,
-          pageUrl: pageUrl || window.location.href,
+          message, sessionId, pageUrl: pageUrl || window.location.href,
         }),
       });
-    } catch (e) {
-      console.warn("[Aurum] Notification failed:", e.message);
-    }
+    } catch (e) { console.warn("[Aurum] Notification failed:", e.message); }
   }
 
-  /* ── REALTIME ── */
   function subscribeRealtime() {
     channel = sb.channel(`chat_${sessionId}`)
       .on("postgres_changes", {
-        event:  "INSERT",
-        schema: "public",
-        table:  "chat_messages",
+        event: "INSERT", schema: "public", table: "chat_messages",
         filter: `session_id=eq.${sessionId}`,
       }, (payload) => {
         const row = payload.new;
         if (row.sender_role === "agent") {
           hideTyping();
-          if (row.image_url) {
-            appendImageMessage({ role: "agent", src: row.image_url, fileName: "Attachment", time: formatTime(row.created_at) });
-          } else {
-            appendMessage({ role: "agent", text: row.message, time: formatTime(row.created_at) });
-          }
+          if (row.image_url) appendImageMessage({ role: "agent", src: row.image_url, fileName: "Attachment", time: formatTime(row.created_at) });
+          else appendMessage({ role: "agent", text: row.message, time: formatTime(row.created_at) });
           if (!isOpen) showUnread();
         }
       })
       .subscribe();
   }
 
-  /* ── APPEND TEXT MESSAGE ── */
   function appendMessage({ role, text, time }) {
     const isUser  = role === "user";
     const grouped = (lastSender === role);
     lastSender    = role;
-
     const div = document.createElement("div");
     div.className = `aurum-msg ${isUser ? "user" : "agent"}${grouped ? " grouped" : ""}`;
-
     const initials   = userInfo.name ? userInfo.name[0].toUpperCase() : "U";
-    const avatarHtml = isUser
-      ? `<span>${initials}</span>`
-      : `<img src="${AURUM_CHAT_CONFIG.agentAvatar}" alt=""/>`;
-
+    const avatarHtml = isUser ? `<span>${initials}</span>` : `<img src="${AURUM_CHAT_CONFIG.agentAvatar}" alt=""/>`;
     const readTickHtml = isUser ? `
       <div class="aurum-read-tick">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-          <polyline points="16 6 9 13"/>
+          <polyline points="20 6 9 17 4 12"/><polyline points="16 6 9 13"/>
         </svg>
       </div>` : "";
-
     div.innerHTML = `
       <div class="aurum-msg-avatar">${avatarHtml}</div>
       <div class="aurum-msg-body">
         <div class="aurum-bubble">${escHtml(text)}</div>
         <div class="aurum-msg-meta">
-          <span class="aurum-msg-time">${time}</span>
-          ${readTickHtml}
+          <span class="aurum-msg-time">${time}</span>${readTickHtml}
         </div>
-      </div>
-    `;
+      </div>`;
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  /* ── APPEND IMAGE MESSAGE ── */
   function appendImageMessage({ role, src, fileName, time, failed }) {
     const isUser  = role === "user";
     const grouped = (lastSender === role);
     lastSender    = role;
-
     const div = document.createElement("div");
     div.className = `aurum-msg ${isUser ? "user" : "agent"}${grouped ? " grouped" : ""}`;
-
     const initials   = userInfo.name ? userInfo.name[0].toUpperCase() : "U";
-    const avatarHtml = isUser
-      ? `<span>${initials}</span>`
-      : `<img src="${AURUM_CHAT_CONFIG.agentAvatar}" alt=""/>`;
-
-    const readTickHtml = isUser ? `
-      <div class="aurum-read-tick">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-          <polyline points="16 6 9 13"/>
-        </svg>
-      </div>` : "";
-
-    const failedNote = failed ? `<span class="aurum-img-caption" style="color:rgba(231,76,60,.7);">Upload may have failed</span>` : "";
-
+    const avatarHtml = isUser ? `<span>${initials}</span>` : `<img src="${AURUM_CHAT_CONFIG.agentAvatar}" alt=""/>`;
+    const readTickHtml = isUser ? `<div class="aurum-read-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><polyline points="16 6 9 13"/></svg></div>` : "";
+    const failedNote = failed ? `<span class="aurum-img-caption" style="color:rgba(200,50,34,.7)">Upload may have failed</span>` : "";
     div.innerHTML = `
       <div class="aurum-msg-avatar">${avatarHtml}</div>
       <div class="aurum-msg-body">
         <div class="aurum-img-bubble" onclick="window.open('${escHtml(src)}','_blank')">
-          <img src="${escHtml(src)}" alt="${escHtml(fileName)}" loading="lazy"/>
-          ${failedNote}
+          <img src="${escHtml(src)}" alt="${escHtml(fileName)}" loading="lazy"/>${failedNote}
         </div>
-        <div class="aurum-msg-meta">
-          <span class="aurum-msg-time">${time}</span>
-          ${readTickHtml}
-        </div>
-      </div>
-    `;
+        <div class="aurum-msg-meta"><span class="aurum-msg-time">${time}</span>${readTickHtml}</div>
+      </div>`;
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  /* ── APPEND FILE LINK MESSAGE ── */
   function appendFileLinkMessage({ role, url, fileName, time }) {
-    const isUser = role === "user";
-    /* show as a text bubble with a link */
+    const isUser  = role === "user";
     const grouped = (lastSender === role);
-    lastSender = role;
-
+    lastSender    = role;
     const div = document.createElement("div");
     div.className = `aurum-msg ${isUser ? "user" : "agent"}${grouped ? " grouped" : ""}`;
-
     const initials   = userInfo.name ? userInfo.name[0].toUpperCase() : "U";
-    const avatarHtml = isUser
-      ? `<span>${initials}</span>`
-      : `<img src="${AURUM_CHAT_CONFIG.agentAvatar}" alt=""/>`;
-
+    const avatarHtml = isUser ? `<span>${initials}</span>` : `<img src="${AURUM_CHAT_CONFIG.agentAvatar}" alt=""/>`;
     div.innerHTML = `
       <div class="aurum-msg-avatar">${avatarHtml}</div>
       <div class="aurum-msg-body">
         <div class="aurum-bubble" style="display:flex;align-items:center;gap:10px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:.7">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-          </svg>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           <a href="${escHtml(url)}" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:3px;opacity:.8;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;">${escHtml(fileName)}</a>
         </div>
-        <div class="aurum-msg-meta">
-          <span class="aurum-msg-time">${time}</span>
-        </div>
-      </div>
-    `;
+        <div class="aurum-msg-meta"><span class="aurum-msg-time">${time}</span></div>
+      </div>`;
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  /* ── HELPERS ── */
-  function hideTyping() {
-    typingEl.classList.remove("show");
-    typingEl.style.display = "none";
-  }
-
-  function showUnread() {
-    unread++;
-    badge.textContent = unread > 9 ? "9+" : unread;
-    badge.classList.add("show");
-  }
+  function hideTyping() { typingEl.classList.remove("show"); typingEl.style.display = "none"; }
+  function showUnread() { unread++; badge.textContent = unread > 9 ? "9+" : unread; badge.classList.add("show"); }
   function clearUnread() { unread = 0; badge.classList.remove("show"); }
-
-  function nowTime() {
-    return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
-  function formatTime(ts) {
-    if (!ts) return nowTime();
-    return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
+  function nowTime() { return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
+  function formatTime(ts) { if (!ts) return nowTime(); return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
   function escHtml(s) {
-    return String(s)
-      .replace(/&/g,"&amp;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;")
-      .replace(/"/g,"&quot;")
-      .replace(/\n/g,"<br>");
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/\n/g,"<br>");
   }
 }

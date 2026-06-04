@@ -1,361 +1,706 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurum Capital — Sign Up / Sign In</title>
+<title>Aurum Capital — Join</title>
 <script>(function(){var t=localStorage.getItem('aurum_theme');if(!t)t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;})();</script>
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" type="image/png" href="./image/logo.jpeg">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script>
-tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']},
-colors:{void:'#040608',deep:'#080c12',base:'#0c1118',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',cloud:'#c4d0e0',snow:'#edf2f8',
-gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
-</script>
 <style>
-  body{font-family:'DM Sans',sans-serif;background:#040608;color:#edf2f8;}
-  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
-    background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");}
-  .inp{width:100%;padding:13px 18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:13px;color:#edf2f8;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:all .2s;}
-  .inp::placeholder{color:rgba(255,255,255,.22);}
-  .inp:focus{border-color:#c9a84c;background:rgba(201,168,76,.05);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
-  .inp.err{border-color:#ef4444 !important;background:rgba(239,68,68,.05);}
-  .inp-icon{position:relative;}
-  .inp-icon i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#5a6880;font-size:.82rem;pointer-events:none;transition:color .2s;}
-  .inp-icon input{padding-left:42px;}
-  .inp-icon input:focus~i,.inp-icon:focus-within i{color:#c9a84c;}
-  .auth-tab{flex:1;text-align:center;padding:12px;font-weight:600;font-size:.88rem;cursor:pointer;background:none;border:none;color:#5a6880;transition:color .2s;position:relative;}
-  .auth-tab.on{color:#edf2f8;}
-  .auth-tab::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:2px;border-radius:2px;background:#c9a84c;transform:scaleX(0);transition:transform .25s ease;}
-  .auth-tab.on::after{transform:scaleX(1);}
-  .btn-gold{width:100%;padding:14px;border:none;border-radius:13px;font-weight:600;font-size:.95rem;color:#040608;cursor:pointer;background:linear-gradient(135deg,#c9a84c,#a87c28);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-  .btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(201,168,76,.3);}
-  .btn-gold:disabled{opacity:.55;transform:none;cursor:not-allowed;}
-  .social-btn{width:100%;padding:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:13px;color:#c4d0e0;font-size:.86rem;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:9px;}
-  .social-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18);}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .spin{animation:spin .7s linear infinite;display:inline-block;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-  .au{animation:fadeUp .6s ease forwards;opacity:0;}
-  .au1{animation-delay:.08s}.au2{animation-delay:.16s}.au3{animation-delay:.24s}.au4{animation-delay:.32s}.au5{animation-delay:.4s}
-  .pw-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5a6880;cursor:pointer;padding:4px;transition:color .2s;}
-  .pw-toggle:hover{color:#edf2f8;}
-  .str{height:3px;border-radius:2px;width:0%;transition:width .35s ease,background .35s ease;}
+/* ── TOKENS ── */
+:root {
+  --void:#040608; --deep:#080c12; --surface:#111820; --lift:#172030;
+  --steel:#5a6880; --mist:#8c9db5; --cloud:#c4d0e0; --snow:#edf2f8;
+  --gold:#c9a84c; --gold2:#e8c96a; --gold3:#a87c28;
+  --gold-dim:rgba(201,168,76,.08); --gold-rim:rgba(201,168,76,.25);
+  --gain:#22c55e; --loss:#ef4444;
+  --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.12);
+  --r:14px; --r-lg:20px;
+}
+html[data-theme="light"] {
+  --void:#faf8f4; --deep:#f0ece2; --surface:#ffffff; --lift:#f5f1e8;
+  --steel:#7a6448; --mist:#5a4430; --cloud:#3a2818; --snow:#1a1008;
+  --gold:#9f7a1e; --gold2:#c9a84c; --gold3:#7a5e15;
+  --gold-dim:rgba(159,122,30,.08); --gold-rim:rgba(159,122,30,.25);
+  --border:rgba(0,0,0,.09); --border2:rgba(0,0,0,.14);
+}
 
-  /* ── Checkbox ── */
-  .chk-wrap{
-    display:flex;align-items:flex-start;gap:10px;
-    cursor:pointer;user-select:none;
-  }
-  .chk-box{
-    width:20px;height:20px;flex-shrink:0;
-    border-radius:6px;
-    border:2px solid rgba(255,255,255,.2);
-    background:rgba(255,255,255,.04);
-    display:flex;align-items:center;justify-content:center;
-    transition:background .2s,border-color .2s,box-shadow .2s;
-    margin-top:1px;
-  }
-  .chk-box.on{
-    background:linear-gradient(135deg,#c9a84c,#a87c28);
-    border-color:#c9a84c;
-    box-shadow:0 0 0 3px rgba(201,168,76,.18);
-  }
-  .chk-box:not(.on):hover{border-color:rgba(201,168,76,.5);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+.hidden{display:none!important;}
 
-  @keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  .stat-item{animation:countUp .7s ease forwards;opacity:0;}
-  .stat-item:nth-child(1){animation-delay:.5s}.stat-item:nth-child(2){animation-delay:.65s}
-  .stat-item:nth-child(3){animation-delay:.8s}.stat-item:nth-child(4){animation-delay:.95s}
-  @keyframes scaleIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-  #successBox{animation:scaleIn .5s cubic-bezier(.16,1,.3,1) forwards;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--void); color:var(--snow);
+  min-height:100vh; overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  opacity:.5;
+}
+html[data-theme="light"] body::before{opacity:.012;}
 
-  /* ── LIGHT MODE ── */
-  html[data-theme="light"] body { background:#faf8f4 !important; color:#0a0806 !important; }
-  html[data-theme="light"] body::before { opacity:.012 !important; }
+/* ── LAYOUT ── */
+.auth-wrap{display:flex;min-height:100vh;position:relative;z-index:1;}
 
-  /* Left panel */
-  html[data-theme="light"] .auth-left-panel {
-    background: linear-gradient(155deg,#f5f0e8 0%,#ece8de 50%,#f0ece2 100%) !important;
-    border-right: 1px solid rgba(0,0,0,0.09);
-  }
-  html[data-theme="light"] .auth-left-panel .left-orb-1 { background: radial-gradient(circle,rgba(159,122,30,0.18),transparent 70%) !important; }
-  html[data-theme="light"] .auth-left-panel .left-orb-2 { background: radial-gradient(circle,rgba(52,72,160,0.1),transparent 70%) !important; }
-  html[data-theme="light"] .auth-left-panel .left-grid { background-image: linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.04) 1px,transparent 1px) !important; }
-  html[data-theme="light"] .stat-item { background: rgba(255,255,255,0.7) !important; border-color: rgba(0,0,0,0.09) !important; }
-  html[data-theme="light"] .stat-item p:first-child { color:#0a0806 !important; }
-  html[data-theme="light"] .stat-item p:last-child { color:#5a4635 !important; }
-  html[data-theme="light"] .left-logo-name { color:#0a0806 !important; }
-  html[data-theme="light"] .left-headline { color:#0a0806 !important; }
-  html[data-theme="light"] .left-sub { color:#2e2218 !important; }
-  html[data-theme="light"] .left-label { color:#9f7a1e !important; }
+/* ── LEFT PANEL ── */
+.auth-left{
+  width:44%;min-height:100vh;
+  display:flex;flex-direction:column;
+  background:linear-gradient(155deg,#0c1a2e 0%,#080c14 50%,#0e1828 100%);
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+@media(max-width:1024px){.auth-left{display:none;}}
 
-  /* Right panel */
-  html[data-theme="light"] .auth-right-panel { background:#faf8f4 !important; }
-  html[data-theme="light"] .inp {
-    background: rgba(0,0,0,0.04) !important;
-    border-color: rgba(0,0,0,0.14) !important;
-    color:#0a0806 !important;
-  }
-  html[data-theme="light"] .inp::placeholder { color:rgba(0,0,0,0.32) !important; }
-  html[data-theme="light"] .inp:focus {
-    border-color:#9f7a1e !important;
-    background: rgba(159,122,30,0.06) !important;
-    box-shadow: 0 0 0 3px rgba(159,122,30,0.12) !important;
-  }
-  html[data-theme="light"] .inp-icon i { color:#5a4635 !important; }
-  html[data-theme="light"] .inp-icon input:focus~i,
-  html[data-theme="light"] .inp-icon:focus-within i { color:#9f7a1e !important; }
-  html[data-theme="light"] .auth-tab { color:#5a4635 !important; }
-  html[data-theme="light"] .auth-tab.on { color:#0a0806 !important; }
-  html[data-theme="light"] .auth-tab::after { background:#9f7a1e !important; }
-  html[data-theme="light"] .auth-panel-title { color:#0a0806 !important; }
-  html[data-theme="light"] .auth-panel-sub { color:#2e2218 !important; }
-  html[data-theme="light"] .auth-divider-text { color:#5a4635 !important; }
-  html[data-theme="light"] .auth-link { color:#9f7a1e !important; }
-  html[data-theme="light"] .auth-link:hover { color:#7a5e15 !important; }
-  html[data-theme="light"] .pw-toggle { color:#5a4635 !important; }
-  html[data-theme="light"] .pw-toggle:hover { color:#0a0806 !important; }
-  html[data-theme="light"] .social-btn {
-    background: rgba(0,0,0,0.05) !important;
-    border-color: rgba(0,0,0,0.12) !important;
-    color:#2e2218 !important;
-  }
-  html[data-theme="light"] .social-btn:hover { background: rgba(0,0,0,0.09) !important; border-color:rgba(0,0,0,0.18) !important; }
-  html[data-theme="light"] .chk-box { background:rgba(0,0,0,0.05) !important; border-color:rgba(0,0,0,0.18) !important; }
-  html[data-theme="light"] .chk-label { color:#2e2218 !important; }
-  html[data-theme="light"] .auth-terms { color:#5a4635 !important; }
-  html[data-theme="light"] #successBox { background: rgba(255,255,255,0.95) !important; border-color:rgba(0,0,0,0.09) !important; }
-  html[data-theme="light"] #successBox p, html[data-theme="light"] #successBox h2 { color:#0a0806 !important; }
-  html[data-theme="light"] #successBox .text-mist { color:#2e2218 !important; }
-  html[data-theme="light"] .success-check-item { background:rgba(0,0,0,0.04) !important; border-color:rgba(0,0,0,0.08) !important; color:#2e2218 !important; }
+.auth-left::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;width:1px;
+  background:linear-gradient(180deg,transparent,rgba(201,168,76,.22) 30%,rgba(201,168,76,.22) 70%,transparent);
+  pointer-events:none;
+}
+.l-orb{position:absolute;border-radius:50%;pointer-events:none;}
+.l-orb-1{top:-80px;left:-80px;width:380px;height:380px;
+  background:radial-gradient(circle,rgba(201,168,76,.18),transparent 70%);
+  animation:floatOrb 9s ease-in-out infinite;}
+.l-orb-2{bottom:-120px;right:-80px;width:440px;height:440px;
+  background:radial-gradient(circle,rgba(59,130,246,.12),transparent 70%);
+  animation:floatOrb 11s ease-in-out infinite reverse;}
+.l-orb-3{top:45%;left:25%;width:180px;height:180px;
+  background:radial-gradient(circle,rgba(201,168,76,.07),transparent 70%);
+  animation:floatOrb 13s ease-in-out infinite 3s;}
+.l-grid{
+  position:absolute;inset:0;opacity:.024;
+  background-image:linear-gradient(rgba(255,255,255,.9) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.9) 1px,transparent 1px);
+  background-size:50px 50px;
+}
+.l-inner{position:relative;z-index:10;padding:48px;display:flex;flex-direction:column;height:100%;}
+.l-logo{display:flex;align-items:center;gap:13px;margin-bottom:56px;text-decoration:none;}
+.l-logo-mark{
+  width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(135deg,var(--gold),var(--gold3));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:17px;
+  box-shadow:0 4px 20px rgba(201,168,76,.32);flex-shrink:0;
+}
+.l-logo-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:#edf2f8;letter-spacing:.12em;}
+.l-body{flex:1;display:flex;flex-direction:column;justify-content:center;}
+.l-eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.l-eyebrow::before{content:'';width:22px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);}
+.l-headline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,3.4vw,3.4rem);font-weight:300;line-height:1.08;
+  color:#edf2f8;margin-bottom:18px;
+}
+.l-headline em{font-style:italic;color:var(--gold);}
+.l-sub{font-size:13.5px;line-height:1.65;color:#8c9db5;max-width:310px;margin-bottom:44px;}
+.l-stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:36px;}
+.l-stat{
+  padding:16px 18px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;transition:border-color .25s;
+}
+.l-stat:hover{border-color:rgba(201,168,76,.28);}
+.l-stat-val{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:#edf2f8;line-height:1;}
+.l-stat-val span{color:var(--gold);}
+.l-stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#5a6880;text-transform:uppercase;margin-top:5px;}
+.l-trust{
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  padding-top:28px;border-top:1px solid rgba(255,255,255,.07);
+}
+.l-trust-item{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6880;letter-spacing:.04em;}
+.l-trust-item i{color:var(--gold);font-size:10px;}
 
-  /* Tailwind override for light mode */
-  html[data-theme="light"] .text-mist { color:#2e2218 !important; }
-  html[data-theme="light"] .text-steel { color:#5a4635 !important; }
-  html[data-theme="light"] .text-snow { color:#0a0806 !important; }
-  html[data-theme="light"] .text-cloud { color:#2e2218 !important; }
-  html[data-theme="light"] .border-white\/\[\.07\] { border-color:rgba(0,0,0,0.09) !important; }
-  html[data-theme="light"] .border-white\/10 { border-color:rgba(0,0,0,0.12) !important; }
-  html[data-theme="light"] [class*="bg-white\/"] { background-color:rgba(0,0,0,0.04) !important; }
-  html[data-theme="light"] [class*="border-white\/"] { border-color:rgba(0,0,0,0.1) !important; }
+/* left panel LIGHT */
+html[data-theme="light"] .auth-left{background:linear-gradient(155deg,#f5f0e8 0%,#ece8de 50%,#f0ece2 100%);}
+html[data-theme="light"] .auth-left::after{background:linear-gradient(180deg,transparent,rgba(159,122,30,.18) 30%,rgba(159,122,30,.18) 70%,transparent);}
+html[data-theme="light"] .l-orb-1{background:radial-gradient(circle,rgba(159,122,30,.2),transparent 70%);}
+html[data-theme="light"] .l-orb-2{background:radial-gradient(circle,rgba(52,72,160,.1),transparent 70%);}
+html[data-theme="light"] .l-orb-3{background:radial-gradient(circle,rgba(159,122,30,.08),transparent 70%);}
+html[data-theme="light"] .l-grid{background-image:linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px);}
+html[data-theme="light"] .l-logo-name{color:#1a1008;}
+html[data-theme="light"] .l-headline{color:#1a1008;}
+html[data-theme="light"] .l-sub{color:#5a4430;}
+html[data-theme="light"] .l-stat{background:rgba(255,255,255,.7);border-color:rgba(0,0,0,.09);}
+html[data-theme="light"] .l-stat:hover{border-color:rgba(159,122,30,.3);}
+html[data-theme="light"] .l-stat-val{color:#1a1008;}
+html[data-theme="light"] .l-stat-lbl{color:#7a6448;}
+html[data-theme="light"] .l-trust{border-top-color:rgba(0,0,0,.09);}
+html[data-theme="light"] .l-trust-item{color:#7a6448;}
 
-  /* Theme toggle for signup (positioned fixed top-right) */
-  .auth-theme-btn {
-    position:fixed; top:20px; right:20px; z-index:1000;
-    width:38px; height:38px; border-radius:11px;
-    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:16px; color:#8c9db5;
-    transition:all .3s; line-height:1;
-  }
-  html[data-theme="light"] .auth-theme-btn {
-    background:rgba(0,0,0,0.06); border-color:rgba(0,0,0,0.14); color:#5a4635;
-  }
-  .auth-theme-btn:hover { color:#c9a84c; border-color:rgba(201,168,76,0.4); }
+/* ── RIGHT PANEL ── */
+.auth-right{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:48px 24px;position:relative;
+  min-height:100vh;
+}
+.auth-right::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 60% 50%,rgba(201,168,76,.04),transparent 70%);
+}
+html[data-theme="light"] .auth-right::before{background:radial-gradient(ellipse 70% 60% at 60% 50%,rgba(159,122,30,.05),transparent 70%);}
+
+/* ── FORM CARD ── */
+.auth-card{
+  width:100%;max-width:464px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--r-lg);
+  padding:40px;
+  box-shadow:0 28px 80px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.28);
+  position:relative;z-index:10;
+  animation:cardUp .7s cubic-bezier(.16,1,.3,1) .06s both;
+}
+.auth-card::before{
+  content:'';position:absolute;top:0;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent);
+}
+@media(max-width:1024px){.auth-card{padding:28px 22px;}}
+@media(max-width:480px){.auth-card{border-radius:16px;padding:24px 18px;}}
+
+html[data-theme="light"] .auth-card{
+  background:#ffffff;border-color:rgba(0,0,0,.1);
+  box-shadow:0 28px 80px rgba(0,0,0,.1),0 4px 20px rgba(0,0,0,.07);
+}
+html[data-theme="light"] .auth-card::before{background:linear-gradient(90deg,transparent,rgba(159,122,30,.32),transparent);}
+
+/* mobile logo */
+.mob-logo{display:none;align-items:center;gap:10px;margin-bottom:28px;justify-content:center;text-decoration:none;}
+@media(max-width:1024px){.mob-logo{display:flex;}}
+.mob-logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold3));display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#040608;font-size:14px;}
+.mob-logo-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--snow);letter-spacing:.12em;}
+
+/* ── TABS ── */
+.tab-row{display:flex;border-bottom:1px solid var(--border);margin-bottom:28px;}
+html[data-theme="light"] .tab-row{border-bottom-color:rgba(0,0,0,.1);}
+.auth-tab{
+  flex:1;text-align:center;padding:11px;
+  font-family:'DM Sans',sans-serif;font-weight:600;font-size:13.5px;
+  cursor:pointer;background:none;border:none;color:var(--steel);
+  border-radius:8px 8px 0 0;transition:color .2s;position:relative;
+}
+.auth-tab::after{
+  content:'';position:absolute;bottom:-1px;left:10%;right:10%;
+  height:2px;border-radius:2px;background:var(--gold);
+  transform:scaleX(0);transition:transform .25s ease;
+}
+.auth-tab.on{color:var(--snow);}
+.auth-tab.on::after{transform:scaleX(1);}
+
+/* ── PANEL HEADING ── */
+.panel-hd{margin-bottom:22px;}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--snow);margin-bottom:4px;line-height:1.1;}
+.panel-title em{font-style:italic;color:var(--gold);}
+.panel-sub{font-size:13px;color:var(--steel);}
+
+/* ── FIELD ── */
+.field{display:flex;flex-direction:column;gap:7px;}
+.field-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:var(--steel);text-transform:uppercase;}
+html[data-theme="light"] .field-label{color:var(--steel);}
+.field-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:400px){.field-2{grid-template-columns:1fr;}}
+
+/* ── INPUT ── */
+.inp-wrap{position:relative;}
+.inp{
+  width:100%;padding:13px 18px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--r);
+  color:var(--snow);font-family:'DM Sans',sans-serif;font-size:14px;
+  outline:none;transition:border-color .2s,background .2s,box-shadow .2s;
+}
+.inp::placeholder{color:rgba(255,255,255,.22);}
+.inp:focus{border-color:var(--gold);background:rgba(201,168,76,.06);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
+.inp.err{border-color:var(--loss)!important;background:rgba(239,68,68,.05)!important;}
+.has-icon .inp{padding-left:40px;}
+.has-icon .inp-i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--steel);font-size:12px;pointer-events:none;transition:color .2s;}
+.has-icon:focus-within .inp-i{color:var(--gold);}
+.has-pw .inp{padding-left:40px;padding-right:44px;}
+.pw-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--steel);cursor:pointer;padding:4px;font-size:12px;transition:color .2s;}
+.pw-btn:hover{color:var(--snow);}
+
+html[data-theme="light"] .inp{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.13);color:var(--snow);}
+html[data-theme="light"] .inp::placeholder{color:rgba(0,0,0,.3);}
+html[data-theme="light"] .inp:focus{border-color:var(--gold);background:rgba(159,122,30,.06);box-shadow:0 0 0 3px rgba(159,122,30,.1);}
+html[data-theme="light"] .has-icon .inp-i{color:var(--steel);}
+html[data-theme="light"] .has-icon:focus-within .inp-i{color:var(--gold);}
+html[data-theme="light"] .pw-btn{color:var(--steel);}
+html[data-theme="light"] .pw-btn:hover{color:var(--snow);}
+
+/* strength meter */
+.str-bars{display:flex;gap:4px;margin-top:8px;}
+.str-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+html[data-theme="light"] .str-bar{background:rgba(0,0,0,.07);}
+.str-fill{height:100%;width:0%;border-radius:2px;transition:width .35s ease,background .35s ease;}
+.str-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--steel);margin-top:4px;}
+
+/* ── CHECKBOX ── */
+.chk-wrap{display:flex;align-items:flex-start;gap:12px;cursor:pointer;user-select:none;}
+.chk-box{
+  width:20px;height:20px;flex-shrink:0;border-radius:6px;
+  border:2px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,border-color .2s,box-shadow .2s,transform .15s;
+  margin-top:2px;
+}
+.chk-box.on{
+  background:linear-gradient(135deg,var(--gold),var(--gold3));
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(201,168,76,.18);
+  animation:chkPop .28s cubic-bezier(.36,.07,.19,.97);
+}
+.chk-box:not(.on):hover{border-color:rgba(201,168,76,.5);}
+.chk-check{opacity:0;transform:scale(.4);transition:opacity .18s,transform .18s;}
+.chk-box.on .chk-check{opacity:1;transform:scale(1);}
+.chk-label{font-size:13px;color:var(--steel);line-height:1.5;}
+.chk-label .terms-link{
+  background:none;border:none;cursor:pointer;font-size:inherit;
+  color:var(--gold);font-weight:500;text-decoration:underline;text-underline-offset:2px;
+  transition:color .2s;padding:0;
+}
+.chk-label .terms-link:hover{color:var(--gold2);}
+html[data-theme="light"] .chk-box{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.18);}
+html[data-theme="light"] .chk-label{color:var(--steel);}
+html[data-theme="light"] .chk-label .terms-link{color:var(--gold);}
+html[data-theme="light"] .chk-label .terms-link:hover{color:var(--gold3);}
+
+/* ── ERROR BOX ── */
+.err-box{padding:13px 15px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);border-radius:12px;}
+.err-box p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--loss);display:flex;align-items:center;gap:8px;}
+
+/* ── BUTTON ── */
+.btn-gold{
+  width:100%;padding:14px;border:none;border-radius:var(--r);
+  font-family:'DM Sans',sans-serif;font-weight:600;font-size:15px;color:#040608;
+  cursor:pointer;background:linear-gradient(135deg,#c9a84c,#a87c28);
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;
+}
+.btn-gold::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);opacity:0;transition:opacity .2s;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(201,168,76,.3);}
+.btn-gold:hover::after{opacity:1;}
+.btn-gold:active{transform:translateY(0);}
+.btn-gold:disabled{opacity:.55;transform:none;cursor:not-allowed;}
+
+/* ── FORM FOOTER ── */
+.form-foot{text-align:center;font-size:13px;color:var(--steel);margin-top:18px;}
+.form-foot button{background:none;border:none;cursor:pointer;font-size:inherit;color:var(--gold);font-weight:500;transition:color .2s;}
+.form-foot button:hover{color:var(--gold2);}
+html[data-theme="light"] .form-foot button:hover{color:var(--gold3);}
+
+/* ── FORGOT LINK ── */
+.forgot-link{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold);text-decoration:none;transition:color .2s;letter-spacing:.04em;}
+.forgot-link:hover{color:var(--gold2);}
+html[data-theme="light"] .forgot-link:hover{color:var(--gold3);}
+
+/* ── THEME TOGGLE ── */
+.auth-theme-btn{
+  position:fixed;top:20px;right:20px;z-index:1000;
+  width:38px;height:38px;border-radius:11px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;color:var(--mist);transition:all .3s;
+}
+.auth-theme-btn:hover{color:var(--gold);border-color:rgba(201,168,76,.4);}
+html[data-theme="light"] .auth-theme-btn{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.14);color:var(--steel);}
+
+/* ── SUCCESS OVERLAY ── */
+.succ-overlay{
+  position:fixed;inset:0;z-index:600;
+  display:none;align-items:center;justify-content:center;padding:24px;
+}
+.succ-overlay.show{display:flex;}
+.succ-bg{position:absolute;inset:0;background:rgba(4,6,8,.97);backdrop-filter:blur(24px);}
+html[data-theme="light"] .succ-bg{background:rgba(250,248,244,.97);}
+.succ-card{
+  position:relative;z-index:10;text-align:center;max-width:400px;width:100%;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(201,168,76,.18);
+  border-radius:24px;padding:48px 36px;
+  box-shadow:0 40px 100px rgba(0,0,0,.6);
+  animation:succPop .6s cubic-bezier(.16,1,.3,1) both;
+}
+html[data-theme="light"] .succ-card{background:#ffffff;box-shadow:0 40px 100px rgba(0,0,0,.12);}
+.succ-icon{
+  width:80px;height:80px;border-radius:22px;
+  background:linear-gradient(135deg,#c9a84c,#a87c28);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;color:#040608;
+  margin:0 auto 24px;
+  box-shadow:0 0 60px rgba(201,168,76,.4);
+  animation:iconPulse 2.5s ease-in-out infinite;
+}
+.succ-check{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:13px;color:var(--cloud);text-align:left;
+  margin-bottom:8px;
+}
+html[data-theme="light"] .succ-check{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:var(--mist);}
+
+/* ── ANIMATIONS ── */
+@keyframes floatOrb{
+  0%,100%{transform:translate(0,0) scale(1);}
+  33%{transform:translate(20px,-28px) scale(1.04);}
+  66%{transform:translate(-14px,18px) scale(.97);}
+}
+@keyframes cardUp{
+  from{opacity:0;transform:translateY(22px) scale(.98);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes chkPop{0%,100%{transform:scale(1);}40%{transform:scale(.86);}70%{transform:scale(1.18);}90%{transform:scale(.96);}}
+@keyframes succPop{from{opacity:0;transform:scale(.88);}to{opacity:1;transform:scale(1);}}
+@keyframes iconPulse{0%,100%{box-shadow:0 0 40px rgba(201,168,76,.35);}50%{box-shadow:0 0 70px rgba(201,168,76,.6);}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .7s linear infinite;display:inline-block;}
+
+.au{animation:fadeUp .5s ease both;opacity:0;}
+.au1{animation-delay:.06s}.au2{animation-delay:.13s}.au3{animation-delay:.20s}
+.au4{animation-delay:.27s}.au5{animation-delay:.34s}.au6{animation-delay:.41s}
+
+.l-stat{animation:fadeUp .6s ease both;opacity:0;}
+.l-stat:nth-child(1){animation-delay:.52s}.l-stat:nth-child(2){animation-delay:.64s}
+.l-stat:nth-child(3){animation-delay:.76s}.l-stat:nth-child(4){animation-delay:.88s}
+
+/* ── CONFIRM PANEL ── */
+.conf-icon-wrap{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(135deg,#c9a84c,#a87c28);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;color:#040608;
+  margin:0 auto 20px;
+  box-shadow:0 0 48px rgba(201,168,76,.38);
+  animation:iconPulse 2.5s ease-in-out infinite;
+}
+.conf-email-chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 16px;
+  background:linear-gradient(135deg,#c9a84c,#a87c28);
+  border:1px solid rgba(159,122,30,.4);
+  border-radius:30px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:#ffffff;margin:10px 0 18px;
+  word-break:break-all;
+  box-shadow:0 2px 12px rgba(201,168,76,.28);
+}
+.conf-dots{display:flex;align-items:center;justify-content:center;gap:6px;margin:16px 0;}
+.conf-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold);opacity:.3;
+  animation:dotPulse 1.4s ease-in-out infinite;
+}
+.conf-dot:nth-child(2){animation-delay:.2s;}
+.conf-dot:nth-child(3){animation-delay:.4s;}
+@keyframes dotPulse{0%,80%,100%{opacity:.25;transform:scale(.85);}40%{opacity:1;transform:scale(1.15);}}
+.conf-note{
+  font-size:11px;color:var(--steel);text-align:center;line-height:1.5;
+  padding:10px 14px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:10px;margin-top:16px;
+}
+html[data-theme="light"] .conf-note{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.08);}
+.conf-actions{display:flex;gap:10px;margin-top:16px;}
+.btn-ghost-sm{
+  flex:1;padding:11px;border-radius:var(--r);
+  border:1px solid var(--border2);background:rgba(255,255,255,.04);
+  color:var(--mist);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .2s;
+}
+.btn-ghost-sm:hover{background:rgba(255,255,255,.08);color:var(--snow);border-color:rgba(255,255,255,.2);}
+html[data-theme="light"] .btn-ghost-sm{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.13);color:var(--mist);}
+html[data-theme="light"] .btn-ghost-sm:hover{background:rgba(0,0,0,.08);color:var(--snow);}
+.btn-gold-sm{
+  flex:1;padding:11px;border-radius:var(--r);border:none;
+  background:linear-gradient(135deg,#c9a84c,#a87c28);
+  color:#040608;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.btn-gold-sm:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.28);}
+
+/* ── VERIFY PANEL ── */
+.verify-spinner{
+  width:56px;height:56px;border-radius:50%;
+  border:3px solid rgba(201,168,76,.2);
+  border-top-color:#c9a84c;
+  animation:spin .9s linear infinite;
+  margin:0 auto 20px;
+}
+
+/* ── ERROR PANEL (expired / invalid link) ── */
+.link-err-icon{
+  width:64px;height:64px;border-radius:18px;
+  background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(239,68,68,.08));
+  border:1px solid rgba(239,68,68,.28);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;color:#ef4444;margin:0 auto 18px;
+}
+.link-err-msg{
+  font-size:12px;color:var(--steel);
+  background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);
+  border-radius:10px;padding:10px 14px;margin:12px 0 18px;
+  font-family:'JetBrains Mono',monospace;line-height:1.5;
+}
+html[data-theme="light"] .link-err-msg{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);}
+
+/* ── HIDE TERMS PILL (links already inline in form) ── */
+#ac-terms-pill{display:none!important;}
 </style>
 <link rel="stylesheet" href="premium-base.css">
 </head>
-<body class="min-h-screen overflow-x-hidden">
+<body>
 <div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
+
 <button class="auth-theme-btn theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
   <span class="theme-icon">☀</span>
 </button>
-<div class="relative z-10 min-h-screen flex overflow-x-hidden">
 
-  <!-- LEFT PANEL -->
-  <div class="hidden lg:flex flex-col w-[44%] xl:w-[40%] min-h-screen relative overflow-hidden"
-       style="background:linear-gradient(155deg,#0c1a2e 0%,#080c14 50%,#0e1828 100%)">
-    <div class="absolute top-[-80px] left-[-80px] w-[380px] h-[380px] rounded-full opacity-15" style="background:radial-gradient(circle,#c9a84c,transparent 70%)"></div>
-    <div class="absolute bottom-[-120px] right-[-80px] w-[440px] h-[440px] rounded-full opacity-10" style="background:radial-gradient(circle,#3b82f6,transparent 70%)"></div>
-    <div class="absolute inset-0 opacity-[.03]" style="background-image:linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px);background-size:50px 50px"></div>
-    <div class="relative z-10 p-12 flex flex-col h-full">
-      <a href="index.html" class="flex items-center gap-3 mb-14">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-void font-bold font-mono text-base" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
-        <span class="font-display text-2xl tracking-[.12em] text-snow">Aurum Capital</span>
+<div class="auth-wrap">
+
+  <!-- ═══ LEFT ═══ -->
+  <div class="auth-left">
+    <div class="l-orb l-orb-1"></div>
+    <div class="l-orb l-orb-2"></div>
+    <div class="l-orb l-orb-3"></div>
+    <div class="l-grid"></div>
+    <div class="l-inner">
+      <a href="index.html" class="l-logo">
+        <div class="l-logo-mark">A</div>
+        <span class="l-logo-name">Aurum Capital</span>
       </a>
-      <div class="flex-1 flex flex-col justify-center">
-        <p class="font-mono text-[10px] tracking-[.2em] text-gold uppercase mb-4">Institutional-Grade Platform</p>
-        <h2 class="font-display text-[clamp(2.2rem,3.6vw,3.6rem)] font-light leading-[1.06] text-snow mb-5">
-          Build wealth<br>across every<br><em class="italic text-gold">major market</em>
-        </h2>
-        <p class="text-mist text-sm leading-relaxed max-w-xs mb-12">Crypto, global equities, and tokenized real estate in one precision platform. Join 180,000+ investors.</p>
-        <div class="grid grid-cols-2 gap-3">
-          <div class="stat-item p-4 rounded-2xl border border-white/[.07]" style="background:rgba(255,255,255,.03)">
-            <p class="font-display text-3xl text-snow font-light">$4.2B<span class="text-gold">+</span></p>
-            <p class="font-mono text-[9px] text-steel tracking-[.1em] uppercase mt-1">Assets Managed</p>
-          </div>
-          <div class="stat-item p-4 rounded-2xl border border-white/[.07]" style="background:rgba(255,255,255,.03)">
-            <p class="font-display text-3xl text-snow font-light">180K<span class="text-gold">+</span></p>
-            <p class="font-mono text-[9px] text-steel tracking-[.1em] uppercase mt-1">Active Investors</p>
-          </div>
-          <div class="stat-item p-4 rounded-2xl border border-white/[.07]" style="background:rgba(255,255,255,.03)">
-            <p class="font-display text-3xl text-snow font-light">99<span class="text-gold">%</span></p>
-            <p class="font-mono text-[9px] text-steel tracking-[.1em] uppercase mt-1">Uptime SLA</p>
-          </div>
-          <div class="stat-item p-4 rounded-2xl border border-white/[.07]" style="background:rgba(255,255,255,.03)">
-            <p class="font-display text-3xl text-snow font-light">0.1<span class="text-gold">%</span></p>
-            <p class="font-mono text-[9px] text-steel tracking-[.1em] uppercase mt-1">Trading Fee</p>
-          </div>
+      <div class="l-body">
+        <p class="l-eyebrow">Institutional-Grade Platform</p>
+        <h2 class="l-headline">Build wealth<br>across every<br><em>major market</em></h2>
+        <p class="l-sub">Crypto, global equities, and tokenized real estate in one precision platform. Join 180,000+ investors worldwide.</p>
+        <div class="l-stats">
+          <div class="l-stat"><div class="l-stat-val">$4.2B<span>+</span></div><div class="l-stat-lbl">Assets Managed</div></div>
+          <div class="l-stat"><div class="l-stat-val">180K<span>+</span></div><div class="l-stat-lbl">Active Investors</div></div>
+          <div class="l-stat"><div class="l-stat-val">99<span>%</span></div><div class="l-stat-lbl">Uptime SLA</div></div>
+          <div class="l-stat"><div class="l-stat-val">0.1<span>%</span></div><div class="l-stat-lbl">Trading Fee</div></div>
         </div>
       </div>
-      <div class="flex items-center gap-6 pt-7 border-t border-white/[.07] mt-8">
-        <span class="flex items-center gap-2 text-xs text-steel"><i class="fas fa-shield-halved text-gold"></i>256-bit Encrypted</span>
-        <span class="flex items-center gap-2 text-xs text-steel"><i class="fas fa-lock text-gold"></i>Cold Storage</span>
-        <span class="flex items-center gap-2 text-xs text-steel"><i class="fas fa-check-circle text-gold"></i>Regulated</span>
+      <div class="l-trust">
+        <div class="l-trust-item"><i class="fas fa-shield-halved"></i>256-bit Encrypted</div>
+        <div class="l-trust-item"><i class="fas fa-lock"></i>Cold Storage</div>
+        <div class="l-trust-item"><i class="fas fa-check-circle"></i>Regulated</div>
       </div>
     </div>
   </div>
 
-  <!-- RIGHT: FORM -->
-  <div class="flex-1 flex flex-col items-center justify-center px-6 py-12 md:px-10 xl:px-16 relative">
-    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse at 60% 50%,rgba(201,168,76,.04),transparent 65%)"></div>
-    <div class="w-full max-w-[440px] relative z-10">
+  <!-- ═══ RIGHT ═══ -->
+  <div class="auth-right">
+    <div class="auth-card">
 
-      <!-- Mobile logo -->
-      <a href="index.html" class="flex lg:hidden items-center gap-3 mb-10 justify-center">
-        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-void font-bold font-mono" style="background:linear-gradient(135deg,#c9a84c,#a87c28)">A</div>
-        <span class="font-display text-2xl tracking-[.12em] text-snow">Aurum Capital</span>
+      <!-- mobile logo -->
+      <a href="index.html" class="mob-logo">
+        <div class="mob-logo-mark">A</div>
+        <span class="mob-logo-name">Aurum Capital</span>
       </a>
 
       <!-- Tabs -->
-      <div class="flex border-b border-white/[.08] mb-7 au au1">
+      <div class="tab-row au au1">
         <button class="auth-tab on" id="tabSu" onclick="showTab('su')">Create Account</button>
         <button class="auth-tab"    id="tabLi" onclick="showTab('li')">Sign In</button>
       </div>
 
       <!-- ══ SIGN UP ══ -->
       <div id="suPanel">
-        <div class="mb-6 au au1">
-          <h1 class="font-display text-[2rem] font-light text-snow mb-1">Start investing <em class="italic text-gold">today</em></h1>
-          <p class="text-steel text-sm">Create your free account in under 2 minutes.</p>
+        <div class="panel-hd au au2">
+          <h1 class="panel-title">Start investing <em>today</em></h1>
+          <p class="panel-sub">Create your free account in under 2 minutes.</p>
         </div>
 
-        <form id="signup-form" novalidate class="space-y-4 au au3">
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">First Name</label>
+        <form id="signup-form" novalidate style="display:flex;flex-direction:column;gap:15px;">
+
+          <div class="field-2 au au3">
+            <div class="field">
+              <label class="field-label" for="first-name-input">First Name</label>
               <input type="text" id="first-name-input" class="inp" placeholder="James" autocomplete="given-name">
             </div>
-            <div>
-              <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Last Name</label>
+            <div class="field">
+              <label class="field-label" for="last-name-input">Last Name</label>
               <input type="text" id="last-name-input" class="inp" placeholder="Riley" autocomplete="family-name">
             </div>
           </div>
-          <div>
-            <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Email Address</label>
-            <div class="inp-icon">
+
+          <div class="field au au3">
+            <label class="field-label" for="email-input">Email Address</label>
+            <div class="inp-wrap has-icon">
+              <i class="fas fa-envelope inp-i"></i>
               <input id="email-input" type="email" class="inp" placeholder="you@example.com" autocomplete="email">
-              <i class="fas fa-envelope"></i>
-            </div>
-          </div>
-          <div>
-            <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Phone (optional)</label>
-            <div class="inp-icon">
-              <input id="phone-input" type="tel" class="inp" placeholder="555 000 0000" autocomplete="tel">
-              <i class="fas fa-phone"></i>
-            </div>
-          </div>
-          <div>
-            <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Password</label>
-            <div class="inp-icon relative">
-              <input id="password-input" type="password" class="inp pr-10" placeholder="Min. 8 characters" autocomplete="new-password" oninput="chkStr(this.value)">
-              <i class="fas fa-lock"></i>
-              <button type="button" class="pw-toggle" onclick="togPw('password-input',this)"><i class="fas fa-eye text-xs"></i></button>
-            </div>
-            <div class="flex gap-1 mt-2">
-              <div class="flex-1 h-[3px] bg-white/[.06] rounded-full overflow-hidden"><div id="sb1" class="str"></div></div>
-              <div class="flex-1 h-[3px] bg-white/[.06] rounded-full overflow-hidden"><div id="sb2" class="str"></div></div>
-              <div class="flex-1 h-[3px] bg-white/[.06] rounded-full overflow-hidden"><div id="sb3" class="str"></div></div>
-              <div class="flex-1 h-[3px] bg-white/[.06] rounded-full overflow-hidden"><div id="sb4" class="str"></div></div>
-            </div>
-            <p id="strLbl" class="font-mono text-[9px] mt-1 text-steel"></p>
-          </div>
-          <div>
-            <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Confirm Password</label>
-            <div class="inp-icon relative">
-              <input id="confirm-password-input" type="password" class="inp pr-10" placeholder="Repeat password" autocomplete="new-password">
-              <i class="fas fa-lock"></i>
-              <button type="button" class="pw-toggle" onclick="togPw('confirm-password-input',this)"><i class="fas fa-eye text-xs"></i></button>
             </div>
           </div>
 
-          <!-- ── Terms Checkbox ── -->
-          <div class="chk-wrap" onclick="togChk()" role="checkbox" aria-checked="false" id="chkWrap" tabindex="0"
-               onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togChk();}">
-            <div class="chk-box" id="chkBox"></div>
-            <input type="checkbox" id="suTerms" class="sr-only" tabindex="-1">
-            <span class="text-sm text-steel leading-relaxed">
-              I have read and agree to the
-              <button type="button"
-                onclick="event.stopPropagation(); window.AurumTerms && window.AurumTerms.open('tos')"
-                class="text-gold underline underline-offset-2 hover:text-yellow-300 transition-colors font-medium">
-                Terms of Service
-              </button>
-              and
-              <button type="button"
-                onclick="event.stopPropagation(); window.AurumTerms && window.AurumTerms.open('privacy')"
-                class="text-gold underline underline-offset-2 hover:text-yellow-300 transition-colors font-medium">
-                Privacy Policy
-              </button>
-            </span>
+          <div class="field au au3">
+            <label class="field-label" for="phone-input">Phone <span style="opacity:.55;font-size:8px;text-transform:none;letter-spacing:0;">(optional)</span></label>
+            <div class="inp-wrap has-icon">
+              <i class="fas fa-phone inp-i"></i>
+              <input id="phone-input" type="tel" class="inp" placeholder="+1 555 000 0000" autocomplete="tel">
+            </div>
+          </div>
+
+          <div class="field au au4">
+            <label class="field-label" for="password-input">Password</label>
+            <div class="inp-wrap has-icon has-pw">
+              <i class="fas fa-lock inp-i"></i>
+              <input id="password-input" type="password" class="inp" placeholder="Min. 8 characters" autocomplete="new-password" oninput="chkStr(this.value)">
+              <button type="button" class="pw-btn" onclick="togPw('password-input',this)"><i class="fas fa-eye"></i></button>
+            </div>
+            <div class="str-bars">
+              <div class="str-bar"><div id="sb1" class="str-fill"></div></div>
+              <div class="str-bar"><div id="sb2" class="str-fill"></div></div>
+              <div class="str-bar"><div id="sb3" class="str-fill"></div></div>
+              <div class="str-bar"><div id="sb4" class="str-fill"></div></div>
+            </div>
+            <p id="strLbl" class="str-lbl"></p>
+          </div>
+
+          <div class="field au au4">
+            <label class="field-label" for="confirm-password-input">Confirm Password</label>
+            <div class="inp-wrap has-icon has-pw">
+              <i class="fas fa-lock inp-i"></i>
+              <input id="confirm-password-input" type="password" class="inp" placeholder="Repeat password" autocomplete="new-password">
+              <button type="button" class="pw-btn" onclick="togPw('confirm-password-input',this)"><i class="fas fa-eye"></i></button>
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <div class="au au5">
+            <div class="chk-wrap" onclick="togChk()" role="checkbox" aria-checked="false" id="chkWrap" tabindex="0"
+                 onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togChk();}">
+              <div class="chk-box" id="chkBox">
+                <svg class="chk-check" width="11" height="9" viewBox="0 0 11 9" fill="none">
+                  <path d="M1 4.5L4 7.5L10 1" stroke="#040608" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <input type="checkbox" id="suTerms" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;" tabindex="-1">
+              <span class="chk-label">
+                I agree to the
+                <button type="button" class="terms-link" onclick="event.stopPropagation();window.AurumTerms&&window.AurumTerms.open('tos')">Terms of Service</button>
+                and
+                <button type="button" class="terms-link" onclick="event.stopPropagation();window.AurumTerms&&window.AurumTerms.open('privacy')">Privacy Policy</button>
+              </span>
+            </div>
           </div>
 
           <!-- Error -->
-          <div id="suErr" class="hidden p-4 bg-loss/10 border border-loss/25 rounded-xl">
-            <p class="font-mono text-[11px] text-loss flex items-center gap-2"><i class="fas fa-circle-exclamation"></i><span id="suErrMsg"></span></p>
+          <div id="suErr" class="err-box hidden">
+            <p><i class="fas fa-circle-exclamation"></i><span id="suErrMsg"></span></p>
           </div>
 
-          <button type="submit" id="suBtn" class="btn-gold mt-1">
-            <i class="fas fa-user-plus text-sm"></i><span id="suBtnLbl">Create My Account</span>
-            <span id="suSpin" class="hidden spin"><i class="fas fa-spinner text-sm"></i></span>
+          <button type="submit" id="suBtn" class="btn-gold au au6">
+            <i class="fas fa-user-plus" style="font-size:14px;"></i>
+            <span id="suBtnLbl">Create My Account</span>
+            <span id="suSpin" class="hidden spin"><i class="fas fa-spinner" style="font-size:14px;"></i></span>
           </button>
-        </form>
 
-        <p class="text-center text-sm text-steel mt-5 au au4">Already have an account? <button class="text-gold hover:text-gold-bright font-medium transition-colors" onclick="showTab('li')">Sign in →</button></p>
+        </form>
+        <p class="form-foot au au6">Already have an account? <button onclick="showTab('li')">Sign in →</button></p>
       </div>
 
       <!-- ══ SIGN IN ══ -->
       <div id="liPanel" class="hidden">
-        <div class="mb-6 au au1">
-          <h1 class="font-display text-[2rem] font-light text-snow mb-1">Welcome <em class="italic text-gold">back</em></h1>
-          <p class="text-steel text-sm">Sign in to access your portfolio.</p>
+        <div class="panel-hd au au2">
+          <h1 class="panel-title">Welcome <em>back</em></h1>
+          <p class="panel-sub">Sign in to access your portfolio.</p>
         </div>
 
-        <form id="liForm" onsubmit="doLogin(event)" novalidate class="space-y-4 au au3">
-          <div>
-            <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase block mb-2">Email Address</label>
-            <div class="inp-icon">
+        <form id="liForm" onsubmit="doLogin(event)" novalidate style="display:flex;flex-direction:column;gap:15px;">
+          <div class="field au au3">
+            <label class="field-label" for="li-em">Email Address</label>
+            <div class="inp-wrap has-icon">
+              <i class="fas fa-envelope inp-i"></i>
               <input id="li-em" type="email" class="inp" placeholder="you@example.com" autocomplete="email">
-              <i class="fas fa-envelope"></i>
             </div>
           </div>
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <label class="font-mono text-[9px] tracking-[.12em] text-steel uppercase">Password</label>
-              <a href="#" class="font-mono text-[9px] text-gold hover:text-gold-bright transition-colors">Forgot password?</a>
+          <div class="field au au4">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <label class="field-label" for="li-pw">Password</label>
+              <a href="#" class="forgot-link">Forgot password?</a>
             </div>
-            <div class="inp-icon relative">
-              <input id="li-pw" type="password" class="inp pr-10" placeholder="Your password" autocomplete="current-password">
-              <i class="fas fa-lock"></i>
-              <button type="button" class="pw-toggle" onclick="togPw('li-pw',this)"><i class="fas fa-eye text-xs"></i></button>
+            <div class="inp-wrap has-icon has-pw">
+              <i class="fas fa-lock inp-i"></i>
+              <input id="li-pw" type="password" class="inp" placeholder="Your password" autocomplete="current-password">
+              <button type="button" class="pw-btn" onclick="togPw('li-pw',this)"><i class="fas fa-eye"></i></button>
             </div>
           </div>
-          <!-- Error -->
-          <div id="liErr" class="hidden p-4 bg-loss/10 border border-loss/25 rounded-xl">
-            <p class="font-mono text-[11px] text-loss flex items-center gap-2"><i class="fas fa-circle-exclamation"></i><span id="liErrMsg"></span></p>
+          <div id="liErr" class="err-box hidden">
+            <p><i class="fas fa-circle-exclamation"></i><span id="liErrMsg"></span></p>
           </div>
-          <button type="submit" id="liBtn" class="btn-gold mt-1">
-            <i class="fas fa-right-to-bracket text-sm"></i><span id="liBtnLbl">Sign In to Dashboard</span>
-            <span id="liSpin" class="hidden spin"><i class="fas fa-spinner text-sm"></i></span>
+          <button type="submit" id="liBtn" class="btn-gold au au5">
+            <i class="fas fa-right-to-bracket" style="font-size:14px;"></i>
+            <span id="liBtnLbl">Sign In to Dashboard</span>
+            <span id="liSpin" class="hidden spin"><i class="fas fa-spinner" style="font-size:14px;"></i></span>
           </button>
         </form>
-        <p class="text-center text-sm text-steel mt-5 au au4">No account? <button class="text-gold hover:text-gold-bright font-medium transition-colors" onclick="showTab('su')">Create one free →</button></p>
+        <p class="form-foot au au5">No account? <button onclick="showTab('su')">Create one free →</button></p>
+      </div>
+
+      <!-- ══ CONFIRM EMAIL PANEL ══ -->
+      <div id="confirmPanel" class="hidden" style="text-align:center;padding:12px 0 4px;">
+        <div class="conf-icon-wrap"><i class="fas fa-envelope-open-text"></i></div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Check Your Inbox</p>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:var(--snow);line-height:1.1;margin-bottom:6px;">Confirm your<br><em style="font-style:italic;color:var(--gold);">email address</em></h2>
+        <p style="font-size:13px;color:var(--steel);margin-bottom:2px;">We sent a secure confirmation link to</p>
+        <div class="conf-email-chip"><i class="fas fa-envelope" style="font-size:11px;opacity:.7;"></i><span id="confirmEmailAddr">your email</span></div>
+        <div class="conf-dots">
+          <div class="conf-dot"></div>
+          <div class="conf-dot"></div>
+          <div class="conf-dot"></div>
+        </div>
+        <p style="font-size:12px;color:var(--steel);">Waiting for confirmation…</p>
+        <div class="conf-note">
+          <i class="fas fa-info-circle" style="color:var(--gold);margin-right:5px;"></i>
+          Click the link in the email — this page will automatically sign you in once confirmed.
+        </div>
+        <div class="conf-actions">
+          <button class="btn-ghost-sm" onclick="window.showTab('su')"><i class="fas fa-arrow-left" style="font-size:11px;"></i> Change email</button>
+          <button class="btn-gold-sm" id="resendBtn" onclick="window.resendConf()"><i class="fas fa-paper-plane" style="font-size:11px;"></i> Resend email</button>
+        </div>
+      </div>
+
+      <!-- ══ VERIFY PANEL (auto-shown when returning from email link) ══ -->
+      <div id="verifyPanel" class="hidden" style="text-align:center;padding:32px 0 20px;">
+        <div class="verify-spinner"></div>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--snow);margin-bottom:8px;">Verifying your account</p>
+        <p style="font-size:13px;color:var(--steel);">Please wait a moment…</p>
+      </div>
+
+      <!-- ══ LINK ERROR PANEL (expired / invalid OTP redirect) ══ -->
+      <div id="linkErrPanel" class="hidden" style="text-align:center;padding:12px 0 4px;">
+        <div class="link-err-icon"><i class="fas fa-link-slash"></i></div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:#ef4444;text-transform:uppercase;margin-bottom:8px;">Link Invalid</p>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:var(--snow);line-height:1.1;margin-bottom:6px;">This link has <em style="font-style:italic;color:#ef4444;">expired</em></h2>
+        <p style="font-size:13px;color:var(--steel);">Confirmation links expire after 24 hours or when a new one is sent.</p>
+        <div class="link-err-msg" id="linkErrDetail">Email link is invalid or has expired.</div>
+        <p style="font-size:12px;color:var(--steel);margin-bottom:10px;">Enter your email to receive a new confirmation link:</p>
+        <div class="inp-wrap has-icon" style="margin-bottom:14px;">
+          <i class="fas fa-envelope inp-i"></i>
+          <input id="resendEmailInp" type="email" class="inp" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <button class="btn-gold" id="requestLinkBtn" onclick="window.requestNewLink()">
+          <i class="fas fa-paper-plane" style="font-size:13px;"></i>
+          <span id="requestLinkLbl">Request New Link</span>
+          <span id="requestLinkSpin" class="hidden spin"><i class="fas fa-spinner" style="font-size:13px;"></i></span>
+        </button>
+        <p class="form-foot" style="margin-top:14px;">
+          <button onclick="window.showTab('su')">← Back to sign up</button>
+          &nbsp;·&nbsp;
+          <button onclick="window.showTab('li')">Sign in instead</button>
+        </p>
       </div>
 
     </div>
@@ -363,40 +708,34 @@ gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}
 </div>
 
 <!-- SUCCESS OVERLAY -->
-<div id="successOverlay" class="fixed inset-0 z-[600] hidden items-center justify-center p-6">
-  <div class="absolute inset-0 bg-void/96 backdrop-blur-2xl"></div>
-  <div class="relative z-10 text-center max-w-sm w-full" id="successBox">
-    <div class="w-20 h-20 rounded-[22px] flex items-center justify-center text-3xl text-void mx-auto mb-6"
-         style="background:linear-gradient(135deg,#c9a84c,#a87c28);box-shadow:0 0 60px rgba(201,168,76,.4)">
-      <i class="fas fa-check"></i>
+<div id="successOverlay" class="succ-overlay">
+  <div class="succ-bg"></div>
+  <div class="succ-card" id="successBox">
+    <div class="succ-icon"><i class="fas fa-check"></i></div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;">Account Created</p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--snow);margin-bottom:10px;line-height:1.1;">Welcome to<br><em style="font-style:italic;color:var(--gold);">Aurum Capital</em></h2>
+    <p style="font-size:13px;color:var(--mist);margin-bottom:6px;">Your account is ready. We've added a</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--snow);margin-bottom:26px;">$20 <span style="color:var(--gold);">welcome balance</span></p>
+    <div style="margin-bottom:22px;">
+      <div class="succ-check"><i class="fas fa-check-circle" style="color:#22c55e;font-size:13px;flex-shrink:0;"></i><span>$20 cash balance available for trading</span></div>
+      <div class="succ-check"><i class="fas fa-check-circle" style="color:#22c55e;font-size:13px;flex-shrink:0;"></i><span>Full access: crypto, stocks &amp; property</span></div>
     </div>
-    <p class="font-mono text-[10px] tracking-[.22em] text-gold uppercase mb-3">Account Created</p>
-    <h2 class="font-display text-4xl font-light text-snow mb-3">Welcome to<br><em class="italic text-gold">Aurum Capital</em></h2>
-    <p class="text-mist text-sm mb-2">Your account is ready. We've added a</p>
-    <p class="font-display text-3xl text-snow mb-8">$20 <span class="text-gold">welcome balance</span></p>
-    <div class="space-y-2 text-left mb-6">
-      <div class="flex items-center gap-3 p-3 bg-white/3 border border-white/6 rounded-xl">
-        <i class="fas fa-check-circle text-gain text-sm w-4"></i>
-        <span class="text-sm text-cloud">$20 cash balance available for trading</span>
-      </div>
-      <div class="flex items-center gap-3 p-3 bg-white/3 border border-white/6 rounded-xl">
-        <i class="fas fa-check-circle text-gain text-sm w-4"></i>
-        <span class="text-sm text-cloud">Full access: crypto, stocks &amp; property</span>
-      </div>
-    </div>
-    <a href="dashboard.html" class="btn-gold text-base py-4" style="box-shadow:0 8px 40px rgba(201,168,76,.3)">
-      <i class="fas fa-gauge-high"></i> Open My Dashboard
+    <a href="dashboard.html" class="btn-gold" style="text-decoration:none;box-shadow:0 8px 40px rgba(201,168,76,.3);">
+      <i class="fas fa-gauge-high" style="font-size:14px;"></i> Open My Dashboard
     </a>
   </div>
 </div>
 
-<!--
-  terms-widget.js:  Drop this ONE line on EVERY page where you want the Terms pill.
-  It self-initialises — no extra setup needed.
--->
 <script src="terms-widget.js"></script>
 
-<!-- signup logic (ES module) -->
+<!-- Wire terms modal "Accept" to auto-check the box -->
+<script>
+document.addEventListener('aurumTermsAccepted', function() {
+  var tc = document.getElementById('suTerms');
+  if (tc && !tc.checked && typeof window.togChk === 'function') window.togChk();
+});
+</script>
+
 <script type="module" src="signup.js"></script>
 <script src="premium.js"></script>
 </body>

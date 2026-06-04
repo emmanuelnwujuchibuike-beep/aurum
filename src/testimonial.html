@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="coingecko-sync.js"></script>
+  <script src="coingecko-sync.js?v=4"></script>
   <script src="chat-widget.js"></script>
 
   <style>
@@ -1033,6 +1033,118 @@
     [data-theme="light"] .vm-info { border-top-color: rgba(0,0,0,0.06); }
     [data-theme="light"] .section-label { color: #9f7a1e; }
     [data-theme="light"] .section-label::before, [data-theme="light"] .section-label::after { background: #9f7a1e; }
+
+    /* ── THEME TOGGLE — desktop head-right ── */
+    .head-right .theme-toggle {
+      background: rgba(201,168,76,.08);
+      border: 1px solid rgba(201,168,76,.22);
+      color: #c9a84c;
+    }
+    .head-right .theme-toggle:hover {
+      background: rgba(201,168,76,.16);
+      border-color: rgba(201,168,76,.45);
+      box-shadow: 0 0 16px rgba(201,168,76,.2);
+    }
+    [data-theme="light"] .head-right .theme-toggle {
+      background: rgba(159,122,30,.1);
+      border-color: rgba(159,122,30,.32);
+      color: #9f7a1e;
+      box-shadow: 0 0 8px rgba(159,122,30,.15);
+    }
+    [data-theme="light"] .head-right .theme-toggle:hover {
+      background: rgba(159,122,30,.2);
+      border-color: rgba(159,122,30,.5);
+      box-shadow: 0 0 16px rgba(159,122,30,.25);
+    }
+
+    /* ── THEME TOGGLE — mobile topbar (shown only on mobile) ── */
+    .theme-toggle-mob {
+      display: none;
+      width: 42px; height: 42px; border-radius: 13px;
+      background: rgba(201,168,76,.08);
+      border: 1px solid rgba(201,168,76,.24);
+      align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #c9a84c;
+      flex-shrink: 0; position: relative; overflow: hidden;
+      transition: background .3s, border-color .3s, box-shadow .25s, transform .2s;
+    }
+    .theme-toggle-mob:hover {
+      background: rgba(201,168,76,.16);
+      border-color: rgba(201,168,76,.48);
+      box-shadow: 0 0 16px rgba(201,168,76,.22);
+      transform: scale(1.06);
+    }
+    .theme-toggle-mob:active { transform: scale(.94); }
+    .theme-toggle-mob::before {
+      content: ''; position: absolute; inset: 0; border-radius: 13px;
+      background: radial-gradient(circle at 50% 50%, rgba(201,168,76,.18), transparent 70%);
+      opacity: 0; transition: opacity .3s;
+    }
+    .theme-toggle-mob:hover::before { opacity: 1; }
+    @media(max-width:1024px) { .theme-toggle-mob { display: flex !important; } }
+    [data-theme="light"] .theme-toggle-mob {
+      background: rgba(159,122,30,.12);
+      border-color: rgba(159,122,30,.35);
+      color: #9f7a1e;
+      box-shadow: 0 0 10px rgba(159,122,30,.18);
+    }
+    [data-theme="light"] .theme-toggle-mob:hover {
+      background: rgba(159,122,30,.22);
+      border-color: rgba(159,122,30,.55);
+      box-shadow: 0 0 20px rgba(159,122,30,.28);
+    }
+
+    /* ── THEME ROW — inside mobile menu panel ── */
+    .lp-theme-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 14px 16px; border-radius: 16px;
+      background: rgba(201,168,76,.06); border: 1px solid rgba(201,168,76,.14);
+      cursor: pointer; transition: background .25s, border-color .25s;
+      user-select: none; -webkit-tap-highlight-color: transparent;
+    }
+    .lp-theme-row:hover { background: rgba(201,168,76,.10); border-color: rgba(201,168,76,.28); }
+    .lp-theme-row-left { display: flex; align-items: center; gap: 13px; pointer-events: none; }
+    .lp-theme-icon-wrap {
+      width: 42px; height: 42px; border-radius: 13px;
+      background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.22);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: #c9a84c; flex-shrink: 0;
+      transition: background .25s, box-shadow .25s;
+    }
+    .lp-theme-row:hover .lp-theme-icon-wrap { background: rgba(201,168,76,.18); box-shadow: 0 0 12px rgba(201,168,76,.2); }
+    .lp-theme-label { font-size: 14px; font-weight: 500; color: #edf2f8; font-family: 'DM Sans', sans-serif; line-height: 1.2; }
+    .lp-theme-sub { font-size: 10px; color: #5a6880; font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; margin-top: 2px; }
+    /* Toggle pill */
+    .lp-theme-pill {
+      position: relative; width: 50px; height: 28px; flex-shrink: 0; pointer-events: none;
+    }
+    .lp-theme-pill-track {
+      position: absolute; inset: 0; border-radius: 14px;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14);
+      transition: background .35s, border-color .35s;
+    }
+    .lp-theme-pill-knob {
+      position: absolute; top: 4px; left: 4px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(255,255,255,.45);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), background .35s, box-shadow .35s;
+      box-shadow: 0 1px 6px rgba(0,0,0,.25);
+    }
+    [data-theme="light"] .lp-theme-pill-track {
+      background: rgba(159,122,30,.22);
+      border-color: rgba(159,122,30,.42);
+    }
+    [data-theme="light"] .lp-theme-pill-knob {
+      transform: translateX(22px);
+      background: #9f7a1e;
+      box-shadow: 0 1px 8px rgba(159,122,30,.45);
+    }
+    /* Light mode panel row */
+    [data-theme="light"] .lp-theme-row { background: rgba(159,122,30,.08); border-color: rgba(159,122,30,.2); }
+    [data-theme="light"] .lp-theme-row:hover { background: rgba(159,122,30,.14); border-color: rgba(159,122,30,.35); }
+    [data-theme="light"] .lp-theme-icon-wrap { background: rgba(159,122,30,.12); border-color: rgba(159,122,30,.28); color: #9f7a1e; }
+    [data-theme="light"] .lp-theme-label { color: #0a0806; }
+    [data-theme="light"] .lp-theme-sub { color: #8a7060; }
   </style>
   <link rel="stylesheet" href="premium-base.css">
 </head>
@@ -1065,6 +1177,9 @@
     <a href="signup.html" class="btn-outline-sm">Sign In</a>
     <a href="signup.html" class="btn-gold">Open Account</a>
   </div>
+  <button class="theme-toggle-mob" onclick="toggleTheme()" aria-label="Toggle theme">
+    <span class="theme-icon">☀</span>
+  </button>
   <button class="lp-nav-toggle" id="lpNavToggle" aria-label="Open navigation" aria-expanded="false">
     <span class="bar"></span><span class="bar"></span><span class="bar"></span>
   </button>
@@ -1122,6 +1237,20 @@
         <div class="lp-nav-link-inner"><div class="lp-nav-link-icon"><i class="fas fa-user-circle"></i></div><div class="lp-nav-link-text"><div class="lp-nav-link-name">Sign In</div><div class="lp-nav-link-sub">Access your account</div></div></div>
         <i class="fas fa-chevron-right lp-nav-link-arrow"></i>
       </a>
+      <div class="lp-nav-section-label">// Preferences</div>
+      <div class="lp-theme-row" onclick="toggleTheme()" role="button" aria-label="Toggle light/dark mode">
+        <div class="lp-theme-row-left">
+          <div class="lp-theme-icon-wrap"><span class="theme-icon">☀</span></div>
+          <div>
+            <div class="lp-theme-label">Appearance</div>
+            <div class="lp-theme-sub" id="lpThemeSub">Dark mode active</div>
+          </div>
+        </div>
+        <div class="lp-theme-pill" aria-hidden="true">
+          <div class="lp-theme-pill-track"></div>
+          <div class="lp-theme-pill-knob"></div>
+        </div>
+      </div>
     </nav>
     <div class="lp-panel-cta">
       <a href="signup.html" class="lp-cta-primary"><i class="fas fa-rocket" style="font-size:13px;"></i>Open Account — Free</a>
@@ -2071,6 +2200,17 @@ if (chartsSection) chartObserver.observe(chartsSection);
   backdrop.addEventListener('click',closeLpMenu);
   document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeLpMenu(); });
   window.closeLpMenu=closeLpMenu;
+})();
+
+/* ══════ THEME SUB-LABEL SYNC ══════ */
+(function(){
+  function syncThemeSub(){
+    var el=document.getElementById('lpThemeSub');
+    if(el) el.textContent=document.documentElement.dataset.theme==='light'?'Light mode active':'Dark mode active';
+  }
+  syncThemeSub();
+  new MutationObserver(function(m){m.forEach(function(r){if(r.attributeName==='data-theme')syncThemeSub();});})
+    .observe(document.documentElement,{attributes:true});
 })();
 
 /* ══════ CARD HOVER TILT ══════ */

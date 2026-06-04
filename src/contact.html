@@ -700,6 +700,7 @@
   .reveal.visible { opacity:1; transform:translateY(0); }
   .gold-line { width:60px; height:1px; background:linear-gradient(90deg,var(--gold),transparent); margin:12px 0 20px; }
 
+  /* ── Tablet (≤ 1024px) ── */
   @media (max-width:1024px) {
     .contact-hero { grid-template-columns:1fr; gap:40px; }
     .main-grid { grid-template-columns:1fr; }
@@ -708,16 +709,77 @@
     .faq-section { grid-template-columns:1fr; gap:40px; }
     .faq-cta-card { position:static; }
   }
+
+  /* ── Phablet (≤ 768px) ── */
+  @media (max-width:768px) {
+    nav { padding:0 20px; }
+    .contact-hero { padding:60px 24px 40px; gap:32px; }
+    .main-grid { padding:0 24px 60px; gap:24px; }
+    .form-header { padding:24px 24px 20px; }
+    .form-body { padding:24px 24px 28px; }
+    .form-tabs .form-tab { padding:12px 14px; font-size:12px; }
+    .advisors-section,.offices-section,.faq-section { padding:0 24px 60px; }
+    .faq-cta-card { padding:28px 24px; }
+    .advisor-grid { grid-template-columns:1fr 1fr; gap:14px; }
+    footer { padding:24px; }
+  }
+
+  /* ── Mobile (≤ 640px) ── */
   @media (max-width:640px) {
-    .contact-hero { padding:40px 20px 30px; }
-    .main-grid { padding:0 20px 60px; }
+    .contact-hero { padding:40px 16px 28px; }
+    .main-grid { padding:0 16px 48px; gap:20px; }
+    .form-header { padding:20px 20px 16px; }
+    .form-body { padding:20px 20px 24px; }
+    .form-tabs .form-tab { padding:11px 10px; font-size:11px; gap:5px; }
     .advisor-grid { grid-template-columns:1fr; }
     .offices-grid { grid-template-columns:1fr 1fr; }
-    .offices-section,.advisors-section,.faq-section { padding:0 20px 60px; }
+    .offices-section,.advisors-section,.faq-section { padding:0 16px 48px; }
     .social-cards { grid-template-columns:1fr; }
-    footer { padding:20px; }
+    footer { padding:16px; }
     .field-group { grid-template-columns:1fr; }
     .qa-grid { grid-template-columns:1fr; }
+    .faq-cta-card { padding:24px 20px; }
+    .faq-section { gap:32px; }
+    .contact-hero-title { margin-bottom:14px; }
+    .hero-social-block { gap:12px; }
+    .social-cards { gap:8px; }
+    .meta-row { padding:11px 14px; gap:10px; }
+    .section-title { font-size:clamp(24px,6vw,36px); }
+  }
+
+  /* ── Small phones (≤ 480px) ── */
+  @media (max-width:480px) {
+    nav { padding:0 14px; height:60px; }
+    .page-wrap { padding-top:60px; }
+    .contact-hero { padding:32px 14px 24px; }
+    .main-grid { padding:0 14px 40px; }
+    .form-header { padding:18px 16px 14px; }
+    .form-body { padding:16px 16px 20px; }
+    .form-tabs .form-tab { padding:10px 8px; font-size:10px; }
+    .offices-grid { grid-template-columns:1fr; }
+    .offices-section,.advisors-section,.faq-section { padding:0 14px 40px; }
+    .advisor-actions { flex-direction:column; }
+    footer p { font-size:8px; }
+    .faq-cta-card { padding:20px 16px; }
+    .contact-hero-title { margin-bottom:12px; }
+    .meta-icon { width:30px; height:30px; font-size:11px; }
+    .meta-row { padding:10px 12px; }
+    .qa-btn { padding:12px 12px; gap:8px; }
+    .chat-messages { min-height:200px; max-height:260px; }
+    .form-title { font-size:22px; }
+    .section-title { font-size:clamp(22px,7vw,32px); }
+    .faq-q { font-size:13px; }
+    footer { flex-direction:column; align-items:flex-start; gap:8px; }
+  }
+
+  /* ── Very small (≤ 360px) ── */
+  @media (max-width:360px) {
+    .contact-hero { padding:28px 12px 20px; }
+    .main-grid { padding:0 12px 36px; }
+    .form-body,.form-header { padding-left:14px; padding-right:14px; }
+    .offices-section,.advisors-section,.faq-section { padding:0 12px 36px; }
+    .form-tabs .form-tab i { display:none; }
+    .social-card { padding:11px 12px; gap:9px; }
   }
 
   /* ═══════════════════════ ADMIN OVERLAY ═══════════════════════ */
@@ -854,38 +916,177 @@
     .admin-hdr-btn { padding:4px 8px; font-size:9px; }
   }
 
-  /* ══ LIGHT MODE — CONTACT PAGE ══ */
-  html[data-theme="light"] body { background:#faf8f4 !important; color:#0a0806 !important; }
-  html[data-theme="light"] body::before { opacity:.012 !important; }
-  html[data-theme="light"] nav { background:rgba(250,248,244,0.94) !important; border-bottom-color:rgba(0,0,0,0.09) !important; }
-  html[data-theme="light"] .nav-wordmark { color:#0a0806 !important; }
-  html[data-theme="light"] .nav-links a { color:#2e2218 !important; }
-  html[data-theme="light"] .nav-links a:hover { color:#0a0806 !important; background:rgba(0,0,0,0.05) !important; }
-  html[data-theme="light"] .nav-links a.active { color:#9f7a1e !important; }
-  html[data-theme="light"] .nav-logo-mark { color:#0a0806 !important; }
-  html[data-theme="light"] .contact-hero { background:linear-gradient(160deg,#faf8f4,#f0ece2) !important; }
-  html[data-theme="light"] .contact-hero-title { color:#0a0806 !important; }
-  html[data-theme="light"] .contact-hero-sub { color:#2e2218 !important; }
-  html[data-theme="light"] .hero-eyebrow { color:#9f7a1e !important; }
-  html[data-theme="light"] .contact-meta-item { color:#2e2218 !important; }
-  html[data-theme="light"] .contact-meta-label { color:#5a4635 !important; }
-  html[data-theme="light"] .form-card { background:rgba(255,255,255,0.9) !important; border-color:rgba(0,0,0,0.1) !important; box-shadow:0 32px 80px rgba(0,0,0,0.1) !important; }
-  html[data-theme="light"] .form-title { color:#0a0806 !important; }
-  html[data-theme="light"] .form-sub { color:#2e2218 !important; }
-  html[data-theme="light"] .form-tab { color:#5a4635 !important; background:transparent !important; border-color:rgba(0,0,0,0.1) !important; }
-  html[data-theme="light"] .form-tab.active { color:#9f7a1e !important; background:rgba(159,122,30,0.1) !important; border-color:rgba(159,122,30,0.3) !important; }
-  html[data-theme="light"] .form-label { color:#2e2218 !important; }
-  html[data-theme="light"] .form-input, html[data-theme="light"] .form-textarea, html[data-theme="light"] .form-select { background:rgba(0,0,0,0.04) !important; border-color:rgba(0,0,0,0.14) !important; color:#0a0806 !important; }
-  html[data-theme="light"] .form-input::placeholder, html[data-theme="light"] .form-textarea::placeholder { color:rgba(0,0,0,0.32) !important; }
-  html[data-theme="light"] .form-input:focus, html[data-theme="light"] .form-textarea:focus { border-color:#9f7a1e !important; box-shadow:0 0 0 3px rgba(159,122,30,0.12) !important; }
-  html[data-theme="light"] .contact-info-card, html[data-theme="light"] .info-card { background:rgba(255,255,255,0.8) !important; border-color:rgba(0,0,0,0.1) !important; }
-  html[data-theme="light"] .info-card-title, html[data-theme="light"] .contact-info-title { color:#0a0806 !important; }
-  html[data-theme="light"] .info-card-text, html[data-theme="light"] .contact-info-text { color:#2e2218 !important; }
-  html[data-theme="light"] .section-title { color:#0a0806 !important; }
-  html[data-theme="light"] .section-sub { color:#2e2218 !important; }
-  html[data-theme="light"] footer { background:#f0ece2 !important; border-top-color:rgba(0,0,0,0.09) !important; }
-  html[data-theme="light"] .footer-desc, html[data-theme="light"] .footer-col a, html[data-theme="light"] .footer-copy { color:#2e2218 !important; }
-  html[data-theme="light"] .footer-col-title { color:#5a4635 !important; }
+  /* ══════════════════════════════════════════════════════════
+     ULTRA-PREMIUM LIGHT MODE — CONTACT PAGE
+     Warm ivory canvas · Dark readable text · Gold accents
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── Design token overrides — auto-fixes every var() ── */
+  html[data-theme="light"] {
+    --void:       #faf8f4;
+    --deep:       #f0ece2;
+    --surface:    #ffffff;
+    --lift:       #f5f1e8;
+    --steel:      #7a6448;
+    --mist:       #4a3820;
+    --snow:       #1a1008;
+    --gold:       #9a7c2e;
+    --gold-bright:#c9a84c;
+    --gold-dim:   #7a5e15;
+    --gain:       #15803d;
+    --loss:       #b91c1c;
+    --accent:     #3448a0;
+  }
+
+  /* ── Body ── */
+  html[data-theme="light"] body{background:#faf8f4!important;color:#1a1008!important}
+  html[data-theme="light"] body::before{opacity:.008!important}
+  html[data-theme="light"] body::after{background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(154,124,46,.07) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 10% 60%,rgba(52,72,160,.03) 0%,transparent 50%)!important}
+
+  /* ── Nav ── */
+  html[data-theme="light"] nav{background:rgba(250,248,244,.97)!important;border-bottom-color:rgba(0,0,0,.09)!important;box-shadow:0 1px 16px rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .nav-wordmark{color:#1a1008!important}
+  html[data-theme="light"] .nav-links a{color:#5a4430!important}
+  html[data-theme="light"] .nav-links a:hover{color:#1a1008!important;background:rgba(0,0,0,.04)!important}
+  html[data-theme="light"] .nav-links a.active{color:#9a7c2e!important;background:rgba(154,124,46,.1)!important;border-color:rgba(154,124,46,.22)!important}
+  html[data-theme="light"] .nav-toggle{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important;color:#5a4430!important}
+
+  /* ── Theme toggle ── */
+  html[data-theme="light"] .theme-toggle{background:rgba(154,124,46,.12)!important;border-color:rgba(154,124,46,.32)!important;color:#9a7c2e!important;box-shadow:0 0 8px rgba(154,124,46,.15)!important}
+  html[data-theme="light"] .theme-toggle:hover{background:rgba(154,124,46,.22)!important;border-color:rgba(154,124,46,.5)!important}
+
+  /* ── Mobile menu panel ── */
+  html[data-theme="light"] .mobile-menu-panel{background:linear-gradient(160deg,#f5f0e8 0%,#ede8dc 50%,#e8e0d0 100%)!important;border-left-color:rgba(154,124,46,.2)!important}
+  html[data-theme="light"] .panel-head{border-bottom-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .panel-wordmark{color:#1a1008!important}
+  html[data-theme="light"] .panel-link{color:#5a4430!important}
+  html[data-theme="light"] .panel-link:hover{color:#1a1008!important;background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .panel-link.active{color:#9a7c2e!important;background:rgba(154,124,46,.09)!important;border-color:rgba(154,124,46,.22)!important}
+  html[data-theme="light"] .panel-link-icon{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.08)!important;color:#7a6448!important}
+  html[data-theme="light"] .panel-link:hover .panel-link-icon{background:rgba(154,124,46,.1)!important;border-color:rgba(154,124,46,.25)!important;color:#9a7c2e!important}
+  html[data-theme="light"] .panel-link-desc{color:#7a6448!important}
+  html[data-theme="light"] .panel-label{color:#7a6448!important}
+  html[data-theme="light"] .panel-divider{background:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .panel-cta-secondary{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important;color:#5a4430!important}
+  html[data-theme="light"] .panel-status-text{color:#7a6448!important}
+  html[data-theme="light"] .panel-cta-wrap{background:linear-gradient(to top,#e8e2d4 55%,transparent)!important}
+
+  /* ── Hero ── */
+  html[data-theme="light"] .contact-hero-title{color:#1a1008!important}
+  html[data-theme="light"] .contact-hero-sub{color:#3a2818!important}
+  html[data-theme="light"] .hero-eyebrow{background:rgba(154,124,46,.09)!important;border-color:rgba(154,124,46,.22)!important;color:#9a7c2e!important}
+
+  /* ── Contact meta rows ── */
+  html[data-theme="light"] .meta-row{background:rgba(255,255,255,.88)!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 10px rgba(0,0,0,.04)!important}
+  html[data-theme="light"] .meta-row:hover{border-color:rgba(154,124,46,.28)!important}
+  html[data-theme="light"] .meta-label{color:#7a6448!important}
+  html[data-theme="light"] .meta-val{color:#1a1008!important}
+
+  /* ── Social cards ── */
+  html[data-theme="light"] .social-strip-title{color:#7a6448!important}
+  html[data-theme="light"] .social-card{border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .social-card-name{color:#1a1008!important}
+  html[data-theme="light"] .social-card-handle{color:#7a6448!important}
+  html[data-theme="light"] .social-card-arr{color:#7a6448!important}
+  html[data-theme="light"] .social-card.x-card{background:rgba(0,0,0,.04)!important}
+  html[data-theme="light"] .social-card.x-card:hover{border-color:rgba(0,0,0,.18)!important}
+  html[data-theme="light"] .social-card.linkedin-card{background:rgba(10,102,194,.06)!important}
+  html[data-theme="light"] .social-card.instagram-card{background:rgba(225,48,108,.04)!important}
+  html[data-theme="light"] .social-card.telegram-card{background:rgba(0,136,204,.05)!important}
+  html[data-theme="light"] .social-card.youtube-card{background:rgba(255,0,0,.04)!important}
+  html[data-theme="light"] .social-card.facebook-card{background:rgba(24,119,242,.04)!important}
+
+  /* ── Availability row ── */
+  html[data-theme="light"] .avail-sub{color:#7a6448!important}
+  html[data-theme="light"] .availability-row{background:rgba(21,128,61,.05)!important;border-color:rgba(21,128,61,.22)!important}
+
+  /* ── Form card ── */
+  html[data-theme="light"] .form-card{background:#ffffff!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 4px 40px rgba(0,0,0,.08),0 1px 4px rgba(0,0,0,.04)!important}
+  html[data-theme="light"] .form-header{border-bottom-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .form-title{color:#1a1008!important}
+  html[data-theme="light"] .form-sub{color:#5a4430!important}
+  html[data-theme="light"] .form-tabs{border-bottom-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .form-tab{color:#7a6448!important;background:transparent!important}
+  html[data-theme="light"] .form-tab:hover{color:#1a1008!important;background:rgba(0,0,0,.03)!important}
+  html[data-theme="light"] .form-tab.active{color:#9a7c2e!important;background:rgba(154,124,46,.08)!important;border-bottom-color:#9a7c2e!important}
+  html[data-theme="light"] .field label{color:#7a6448!important}
+  html[data-theme="light"] .field input,
+  html[data-theme="light"] .field select,
+  html[data-theme="light"] .field textarea{background:#f5f1e8!important;border-color:rgba(0,0,0,.12)!important;color:#1a1008!important}
+  html[data-theme="light"] .field input::placeholder,
+  html[data-theme="light"] .field textarea::placeholder{color:#a09080!important}
+  html[data-theme="light"] .field input:focus,
+  html[data-theme="light"] .field select:focus,
+  html[data-theme="light"] .field textarea:focus{border-color:rgba(154,124,46,.5)!important;box-shadow:0 0 0 3px rgba(154,124,46,.09)!important;background:#ffffff!important}
+  html[data-theme="light"] .field select option{background:#ffffff;color:#1a1008}
+  html[data-theme="light"] .form-privacy{color:#7a6448!important}
+  html[data-theme="light"] .success-title{color:#1a1008!important}
+  html[data-theme="light"] .success-sub{color:#5a4430!important}
+
+  /* ── Chat card ── */
+  html[data-theme="light"] .chat-card{background:#ffffff!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 4px 32px rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .chat-header{background:#f5f1e8!important;border-bottom-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .chat-agent-avatar{background:rgba(154,124,46,.1)!important;border-color:rgba(154,124,46,.28)!important}
+  html[data-theme="light"] .chat-online-dot{border-color:#f5f1e8!important}
+  html[data-theme="light"] .chat-agent-name{color:#1a1008!important}
+  html[data-theme="light"] .chat-agent-role{color:#7a6448!important}
+  html[data-theme="light"] .chat-messages::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12)!important}
+  html[data-theme="light"] .chat-msg.agent .msg-bubble{background:#f5f1e8!important;border-color:rgba(0,0,0,.08)!important;color:#1a1008!important}
+  html[data-theme="light"] .chat-msg.user .msg-bubble{background:rgba(154,124,46,.1)!important;border-color:rgba(154,124,46,.22)!important;color:#1a1008!important}
+  html[data-theme="light"] .msg-time{color:#7a6448!important}
+  html[data-theme="light"] .typing-dots span{background:rgba(0,0,0,.25)!important}
+  html[data-theme="light"] .chat-input-row{border-top-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .chat-input{background:#f5f1e8!important;border-color:rgba(0,0,0,.1)!important;color:#1a1008!important}
+  html[data-theme="light"] .chat-input::placeholder{color:#a09080!important}
+  html[data-theme="light"] .chat-input:focus{border-color:rgba(154,124,46,.4)!important}
+
+  /* ── Quick actions ── */
+  html[data-theme="light"] .quick-actions{background:#ffffff!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 16px rgba(0,0,0,.05)!important}
+  html[data-theme="light"] .qa-title{color:#7a6448!important}
+  html[data-theme="light"] .qa-btn{background:#f5f1e8!important;border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .qa-btn:hover{border-color:rgba(154,124,46,.28)!important;background:rgba(154,124,46,.07)!important}
+  html[data-theme="light"] .qa-text-label{color:#1a1008!important}
+  html[data-theme="light"] .qa-text-sub{color:#7a6448!important}
+
+  /* ── Advisors ── */
+  html[data-theme="light"] .section-eyebrow{color:#9a7c2e!important}
+  html[data-theme="light"] .section-title{color:#1a1008!important}
+  html[data-theme="light"] .advisor-card{background:#ffffff!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 20px rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .advisor-card:hover{border-color:rgba(154,124,46,.3)!important;box-shadow:0 8px 40px rgba(0,0,0,.1)!important}
+  html[data-theme="light"] .advisor-card:nth-child(1) .advisor-avatar{background:linear-gradient(135deg,rgba(154,124,46,.12),rgba(154,124,46,.06))!important}
+  html[data-theme="light"] .advisor-card:nth-child(2) .advisor-avatar{background:linear-gradient(135deg,rgba(109,62,200,.1),rgba(109,62,200,.05))!important}
+  html[data-theme="light"] .advisor-card:nth-child(3) .advisor-avatar{background:linear-gradient(135deg,rgba(52,72,160,.1),rgba(52,72,160,.05))!important}
+  html[data-theme="light"] .advisor-status{border-color:#ffffff!important}
+  html[data-theme="light"] .advisor-name{color:#1a1008!important}
+  html[data-theme="light"] .advisor-spec{color:#7a6448!important}
+  html[data-theme="light"] .advisor-bio{color:#4a3820!important}
+  html[data-theme="light"] .adv-btn-primary{background:rgba(154,124,46,.1)!important;border-color:rgba(154,124,46,.28)!important;color:#9a7c2e!important}
+  html[data-theme="light"] .adv-btn-primary:hover{background:rgba(154,124,46,.18)!important}
+  html[data-theme="light"] .adv-btn-secondary{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important;color:#5a4430!important}
+  html[data-theme="light"] .adv-btn-secondary:hover{color:#1a1008!important;border-color:rgba(0,0,0,.18)!important;background:rgba(0,0,0,.07)!important}
+
+  /* ── Offices ── */
+  html[data-theme="light"] .office-card{background:#ffffff!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 16px rgba(0,0,0,.05)!important}
+  html[data-theme="light"] .office-card:hover{border-color:rgba(154,124,46,.28)!important;box-shadow:0 6px 28px rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .office-city{color:#1a1008!important}
+  html[data-theme="light"] .office-addr{color:#7a6448!important}
+  html[data-theme="light"] .office-detail{color:#7a6448!important}
+
+  /* ── FAQ ── */
+  html[data-theme="light"] .faq-item{border-bottom-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .faq-q{color:#1a1008!important}
+  html[data-theme="light"] .faq-a{color:#4a3820!important}
+  html[data-theme="light"] .faq-cta-card{background:linear-gradient(135deg,#ede8dc,#f5f0e8)!important;border-color:rgba(154,124,46,.22)!important;box-shadow:0 4px 32px rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .faq-cta-title{color:#1a1008!important}
+  html[data-theme="light"] .faq-cta-body{color:#4a3820!important}
+
+  /* ── Footer ── */
+  html[data-theme="light"] footer{background:#f0ece2!important;border-top-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] footer p{color:#7a6448!important}
+
+  /* ── Scrollbar ── */
+  html[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.13)!important}
+  html[data-theme="light"] ::-webkit-scrollbar-track{background:transparent!important}
 </style>
 <link rel="stylesheet" href="premium-base.css">
 </head>
@@ -1112,7 +1313,7 @@
       <h1 class="contact-hero-title">Let's build<br>something <em>together</em></h1>
       <p class="contact-hero-sub">Whether you're ready to invest, need guidance on your portfolio, or simply want to learn more — our team of dedicated advisors is standing by to help you at every step.</p>
       <div class="contact-meta">
-        <div class="meta-row"><div class="meta-icon"><i class="fas fa-envelope"></i></div><div><div class="meta-label">General Enquiries</div><div class="meta-val">hello@aurumcapital.com</div></div></div>
+        <div class="meta-row"><div class="meta-icon"><i class="fas fa-envelope"></i></div><div><div class="meta-label">General Enquiries</div><div class="meta-val">hello@aurumcapitalinvest.com</div></div></div>
         <div class="meta-row"><div class="meta-icon"><i class="fas fa-phone"></i></div><div><div class="meta-label">Client Services</div><div class="meta-val">+971 4 000 0000</div></div></div>
         <div class="meta-row"><div class="meta-icon"><i class="fas fa-clock"></i></div><div><div class="meta-label">Support Hours</div><div class="meta-val">Monday – Sunday · 24 Hours</div></div></div>
         <div class="availability-row"><div class="avail-text"><div class="avail-dot"></div>Advisors online now</div><div class="avail-sub">Avg. response: 2 minutes</div></div>
@@ -1122,10 +1323,10 @@
       <div class="hero-social-block">
         <div class="social-strip-title">// Connect with us</div>
         <div class="social-cards">
-          <a href="#" class="social-card x-card"><div class="social-icon-wrap" style="background:rgba(255,255,255,.08)"><i class="fab fa-x-twitter" style="color:#fff"></i></div><div class="social-card-text"><div class="social-card-name">X (Twitter)</div><div class="social-card-handle">@AurumCapital</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
-          <a href="#" class="social-card linkedin-card"><div class="social-icon-wrap" style="background:rgba(10,102,194,.15)"><i class="fab fa-linkedin-in" style="color:#0a66c2"></i></div><div class="social-card-text"><div class="social-card-name">LinkedIn</div><div class="social-card-handle">Aurum Capital</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
-          <a href="#" class="social-card instagram-card"><div class="social-icon-wrap" style="background:rgba(225,48,108,.1)"><i class="fab fa-instagram" style="color:#e1306c"></i></div><div class="social-card-text"><div class="social-card-name">Instagram</div><div class="social-card-handle">@aurum.capital</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
-          <a href="#" class="social-card telegram-card"><div class="social-icon-wrap" style="background:rgba(0,136,204,.12)"><i class="fab fa-telegram" style="color:#0088cc"></i></div><div class="social-card-text"><div class="social-card-name">Telegram</div><div class="social-card-handle">t.me/AurumCapital</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="#" class="social-card x-card"><div class="social-icon-wrap" style="background:rgba(255,255,255,.08)"><i class="fab fa-x-twitter" style="color:#fff"></i></div><div class="social-card-text"><div class="social-card-name">X (Twitter)</div><div class="social-card-handle">@AurumCapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="#" class="social-card linkedin-card"><div class="social-icon-wrap" style="background:rgba(10,102,194,.15)"><i class="fab fa-linkedin-in" style="color:#0a66c2"></i></div><div class="social-card-text"><div class="social-card-name">LinkedIn</div><div class="social-card-handle">Aurum Capitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="#" class="social-card instagram-card"><div class="social-icon-wrap" style="background:rgba(225,48,108,.1)"><i class="fab fa-instagram" style="color:#e1306c"></i></div><div class="social-card-text"><div class="social-card-name">Instagram</div><div class="social-card-handle">@aurum.capitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="#" class="social-card telegram-card"><div class="social-icon-wrap" style="background:rgba(0,136,204,.12)"><i class="fab fa-telegram" style="color:#0088cc"></i></div><div class="social-card-text"><div class="social-card-name">Telegram</div><div class="social-card-handle">t.me/AurumCapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
           <a href="#" class="social-card youtube-card"><div class="social-icon-wrap" style="background:rgba(255,0,0,.08)"><i class="fab fa-youtube" style="color:#ff0000"></i></div><div class="social-card-text"><div class="social-card-name">YouTube</div><div class="social-card-handle">Aurum Capital TV</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
           <a href="#" class="social-card facebook-card"><div class="social-icon-wrap" style="background:rgba(24,119,242,.1)"><i class="fab fa-facebook-f" style="color:#1877f2"></i></div><div class="social-card-text"><div class="social-card-name">Facebook</div><div class="social-card-handle">AurumCapitalHQ</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
         </div>
@@ -1261,7 +1462,7 @@
       <div class="faq-cta-body">Our advisors are available 24/7. Whether it's a quick question or a complex investment strategy — we're just a message away.</div>
       <button class="btn-gold" onclick="document.getElementById('chatInput').focus();document.getElementById('chatInput').scrollIntoView({behavior:'smooth'})"><i class="fas fa-message" style="font-size:12px"></i> Start a Conversation</button>
       <div style="margin:14px 0;display:flex;align-items:center;gap:10px"><div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--steel)">OR</span><div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div></div>
-      <a href="mailto:hello@aurumcapital.com" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:var(--mist);font-size:13px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(255,255,255,.16)'" onmouseout="this.style.borderColor='rgba(255,255,255,.08)'"><i class="fas fa-envelope" style="font-size:12px;color:var(--gold)"></i> hello@aurumcapital.com</a>
+      <a href="mailto:hello@aurumcapital.com" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:var(--mist);font-size:13px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(255,255,255,.16)'" onmouseout="this.style.borderColor='rgba(255,255,255,.08)'"><i class="fas fa-envelope" style="font-size:12px;color:var(--gold)"></i> hello@aurumcapitalinvest.com</a>
     </div>
   </div>
 </div>

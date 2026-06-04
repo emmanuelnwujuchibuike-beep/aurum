@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="coingecko-sync.js"></script>
+  <script src="coingecko-sync.js?v=4"></script>
   <style>
     /* ══════════════════════════════════════════
        DESIGN TOKENS
@@ -792,44 +792,282 @@
     .back-top:hover { background: rgba(201,168,76,.18); }
 
     /* ══════════════════════════════════════════
-       RESPONSIVE
+       RESPONSIVE — FULL DEVICE COVERAGE
     ══════════════════════════════════════════ */
+
+    /* ── Tablet & below (≤ 1024px) ── */
     @media (max-width: 1024px) {
-      .legal-body { grid-template-columns: 1fr; }
-      .sidebar    { position: static; }
       header { padding: 0 24px; }
+      .legal-body { grid-template-columns: 1fr; gap: 36px; }
+      .sidebar    { position: static; top: auto; }
+      /* Sidebar nav turns into a compact 2-col grid */
+      .sidebar-nav { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .sb-link     { font-size: 12px; }
+      .compliance-card { margin-top: 16px; }
+      /* Reduce hero padding on tablets */
+      .legal-hero { padding: 130px 0 64px; }
+      /* Tighten doc section spacing */
+      .doc-section { margin-bottom: 52px; }
     }
+
+    /* ── Phablet (≤ 768px) ── */
     @media (max-width: 768px) {
-      .legal-hero-inner { padding: 0 24px; }
-      .doc-tabs-inner   { padding: 0 24px; }
-      .legal-body       { padding: 40px 24px 80px; }
-      .cta-band         { padding: 60px 24px; }
-      .footer-inner     { padding: 48px 24px 24px; }
-      .footer-grid      { grid-template-columns: 1fr 1fr; gap: 32px; }
-      .disclaimer       { padding: 16px 24px 24px; }
+      .legal-hero         { padding: 108px 0 48px; }
+      .legal-hero-inner   { padding: 0 24px; }
+      .legal-meta         { gap: 14px; flex-wrap: wrap; justify-content: center; }
+      .legal-meta-sep     { display: none; }
+
+      .doc-tabs-inner     { padding: 0 20px; }
+      .doc-tab            { padding: 14px 14px; font-size: 9px; letter-spacing: .08em; }
+      .doc-tab i          { display: none; }
+
+      .legal-body         { padding: 36px 24px 72px; gap: 28px; }
+
+      /* Sidebar compact */
+      .sidebar-nav        { grid-template-columns: repeat(2, 1fr); gap: 5px; }
+      .sb-link            { font-size: 11px; padding: 8px 10px; }
+      .sb-num             { display: none; }
+
+      /* Section headers stack vertically */
+      .doc-section        { margin-bottom: 44px; }
+      .doc-section-header { flex-direction: column; gap: 10px;
+                            margin-bottom: 20px; padding-bottom: 16px; }
+      .doc-sec-title      { font-size: 1.65rem; }
+      .doc-sub-head       { font-size: 1.2rem; margin: 24px 0 10px; }
+
+      /* Content boxes */
+      .doc-highlight,
+      .doc-info-box,
+      .doc-warn-box       { padding: 14px 16px; margin: 18px 0; }
+      .doc-highlight      { border-radius: 0 12px 12px 0; }
+
+      /* Tables */
+      .doc-table th       { padding: 10px 12px; }
+      .doc-table td       { padding: 10px 12px; font-size: 12px; }
+
+      /* CTA band */
+      .cta-band           { padding: 56px 24px; }
+      .cta-inner          { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .cta-title          { font-size: 1.9rem; }
+      .cta-sub            { max-width: 100%; }
+
+      /* Footer */
+      .footer-inner       { padding: 48px 24px 24px; }
+      .footer-grid        { grid-template-columns: 1fr 1fr; gap: 28px; }
+      .footer-bottom      { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .disclaimer         { padding: 14px 24px 24px; }
+
+      /* Back to top */
+      .back-top           { bottom: 20px; right: 20px; }
+    }
+
+    /* ── Small phones (≤ 480px) ── */
+    @media (max-width: 480px) {
+      /* Shrink header height so hero has more room */
+      header              { height: 60px; padding: 0 16px; }
+      .doc-tabs           { top: 60px; }
+
+      /* Hero */
+      .legal-hero         { padding: 86px 0 36px; }
+      .legal-hero-inner   { padding: 0 16px; }
+      .legal-hero h1      { font-size: clamp(1.9rem, 7vw, 2.6rem); }
+      .legal-hero-sub     { font-size: 13.5px; }
+      .hero-badge         { font-size: 8px; padding: 5px 12px; margin-bottom: 16px; }
+      .legal-meta         { flex-direction: column; gap: 8px; align-items: center; }
+      .legal-meta-item    { font-size: 9px; }
+
+      /* Tabs */
+      .doc-tabs-inner     { padding: 0 12px; }
+      .doc-tab            { padding: 12px 8px; font-size: 8px; letter-spacing: .04em; gap: 4px; }
+
+      /* Body */
+      .legal-body         { padding: 24px 16px 56px; gap: 20px; }
+
+      /* Sidebar single-column on tiny screens */
+      .sidebar-nav        { grid-template-columns: 1fr; }
+      .sb-link            { font-size: 12px; padding: 10px 12px; }
+      .compliance-card    { padding: 14px; }
+      .cc-header          { gap: 8px; margin-bottom: 10px; }
+      .cc-icon            { width: 30px; height: 30px; font-size: 11px; }
+
+      /* Sections */
+      .doc-section        { margin-bottom: 36px; }
+      .doc-section-header { gap: 8px; margin-bottom: 14px; padding-bottom: 12px; }
+      .doc-sec-num        { width: 34px; height: 34px; border-radius: 10px; font-size: 10px; }
+      .doc-sec-tag        { font-size: 7px; letter-spacing: .12em; }
+      .doc-sec-title      { font-size: 1.45rem; }
+      .doc-body p         { font-size: 13.5px; }
+      .doc-sub-head       { font-size: 1.15rem; margin: 20px 0 8px; }
+      .last-updated       { margin-bottom: 22px; }
+
+      /* Boxes */
+      .doc-highlight,
+      .doc-info-box,
+      .doc-warn-box       { padding: 12px 13px; margin: 14px 0; }
+      .doc-info-box,
+      .doc-warn-box       { flex-direction: column; gap: 8px; }
+      .doc-info-box i,
+      .doc-warn-box i     { margin-top: 0; }
+
+      /* Tables */
+      .doc-table th       { padding: 8px 8px; font-size: 7px; letter-spacing: .06em; }
+      .doc-table td       { padding: 8px 8px; font-size: 11.5px; }
+      .doc-table .tag     { padding: 2px 6px; font-size: 8px; }
+
+      /* CTA */
+      .cta-band           { padding: 44px 16px; }
+      .cta-title          { font-size: 1.65rem; }
+
+      /* Footer */
+      .footer-inner       { padding: 36px 16px 18px; }
+      .footer-grid        { grid-template-columns: 1fr; gap: 24px; }
+      .disclaimer         { padding: 12px 16px 20px; font-size: 10px; }
+
+      /* Back to top */
+      .back-top           { bottom: 16px; right: 16px; width: 40px; height: 40px; border-radius: 12px; font-size: 12px; }
+
+      /* Mobile menu asset cards → 2 columns */
+      .lp-asset-cards     { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── Very small phones (≤ 360px) ── */
+    @media (max-width: 360px) {
+      header              { padding: 0 12px; }
+      .legal-hero-inner   { padding: 0 12px; }
+      .doc-tabs-inner     { padding: 0 8px; }
+      .doc-tab            { padding: 11px 6px; font-size: 7.5px; }
+      .legal-body         { padding: 20px 12px 48px; }
+      .legal-hero h1      { font-size: 1.75rem; }
+      .doc-sec-title      { font-size: 1.3rem; }
+      .cta-title          { font-size: 1.5rem; }
+      .footer-inner       { padding: 28px 12px 16px; }
+      .disclaimer         { padding: 10px 12px 16px; }
     }
   
-  /* LIGHT — PRIVACY */
-  html[data-theme="light"] body{background:#faf8f4!important;color:#0a0806!important}
-  html[data-theme="light"] header,html[data-theme="light"] .lp-nav{background:rgba(250,248,244,.94)!important;border-bottom-color:rgba(0,0,0,.09)!important}
-  html[data-theme="light"] .lp-nav a,html[data-theme="light"] .nav-link,html[data-theme="light"] .lp-logo-text{color:#0a0806!important}
-  html[data-theme="light"] h1,html[data-theme="light"] h2,html[data-theme="light"] h3{color:#0a0806!important}
-  html[data-theme="light"] p,html[data-theme="light"] li{color:#2e2218!important}
-  html[data-theme="light"] .content-card,.policy-section,.lp-card{background:rgba(255,255,255,.88)!important;border-color:rgba(0,0,0,.1)!important}
-  html[data-theme="light"] .policy-title,.content-title{color:#0a0806!important}
-  html[data-theme="light"] .policy-text,.content-text{color:#2e2218!important}
-  html[data-theme="light"] a{color:#9f7a1e!important}
-  html[data-theme="light"] .toc-item{color:#2e2218!important}html[data-theme="light"] .toc-item.active{color:#9f7a1e!important}
-  html[data-theme="light"] .sidebar,.toc-sidebar{background:rgba(255,255,255,.7)!important;border-color:rgba(0,0,0,.1)!important}
-  html[data-theme="light"] table{background:rgba(255,255,255,.92)!important}
-  html[data-theme="light"] th{color:#5a4635!important;background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.08)!important}
-  html[data-theme="light"] td{color:#0a0806!important;border-color:rgba(0,0,0,.05)!important}
+  /* ══════════════════════════════════════════════════
+     LIGHT MODE — PRIVACY POLICY (full rewrite)
+     Warm ivory · Dark readable text · Gold accents
+  ══════════════════════════════════════════════════ */
+
+  /* ── CSS variable overrides — fixes everything using var() ── */
+  html[data-theme="light"]{
+    --gold:#9f7a1e;
+    --gold-dim:#7a5e15;
+    --gold-glow:rgba(159,122,30,.15);
+    --bg-deep:#faf8f4;
+    --bg-panel:#f0ece2;
+    --bg-card:#ffffff;
+    --border:rgba(0,0,0,.08);
+    --border-gold:rgba(159,122,30,.25);
+    --text-prime:#1a1410;
+    --text-sec:#3d2e1e;
+    --text-muted:#7a6050;
+    --green:#15803d;
+    --red:#b91c1c;
+  }
+
+  /* ── Body ── */
+  html[data-theme="light"] body{background:#faf8f4!important;color:#1a1410!important}
+  html[data-theme="light"] body::before{opacity:.01!important}
+
+  /* ── Header ── */
+  html[data-theme="light"] header{background:rgba(250,248,244,.95)!important;border-bottom-color:rgba(0,0,0,.09)!important;box-shadow:0 1px 16px rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .logo{color:#1a1410!important}
+  html[data-theme="light"] .btn-outline-sm{color:#5a4830!important;border-color:rgba(0,0,0,.14)!important}
+  html[data-theme="light"] .btn-outline-sm:hover{color:#9f7a1e!important;border-color:rgba(159,122,30,.35)!important;background:rgba(159,122,30,.05)!important}
+
+  /* ── Scroll progress ── */
+  html[data-theme="light"] .scroll-progress-bar{background:linear-gradient(90deg,#7a5e15,#9f7a1e,#c9a84c)!important}
+
+  /* ── Hero ── */
+  html[data-theme="light"] .legal-hero::after{background-image:linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px)!important}
+  html[data-theme="light"] .legal-meta-sep{background:rgba(0,0,0,.1)!important}
+
+  /* ── Tab nav ── */
+  html[data-theme="light"] .doc-tabs{background:rgba(250,248,244,.96)!important;border-bottom-color:rgba(0,0,0,.08)!important}
+
+  /* ── Sidebar ── */
+  html[data-theme="light"] .sidebar-divider{background:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .sb-link:hover{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .sb-link.active{background:rgba(159,122,30,.08)!important;border-color:rgba(159,122,30,.22)!important}
+  html[data-theme="light"] .sb-num{background:rgba(0,0,0,.06)!important;color:#7a6050!important}
+  html[data-theme="light"] .sb-link.active .sb-num{background:rgba(159,122,30,.14)!important}
+
+  /* ── Compliance card ── */
+  html[data-theme="light"] .compliance-card{background:linear-gradient(155deg,rgba(159,122,30,.06),rgba(159,122,30,.02))!important;border-color:rgba(159,122,30,.22)!important}
+
+  /* ── Doc section ── */
+  html[data-theme="light"] .doc-section-header{border-bottom-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .doc-sec-num{background:rgba(159,122,30,.08)!important;border-color:rgba(159,122,30,.22)!important}
+
+  /* ── Last-updated badge ── */
+  html[data-theme="light"] .last-updated{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important;color:#7a6050!important}
+
+  /* ── Highlight / info / warn boxes ── */
+  html[data-theme="light"] .doc-highlight{background:rgba(159,122,30,.05)!important;border-color:rgba(159,122,30,.25)!important;border-left-color:#9f7a1e!important}
+  html[data-theme="light"] .doc-highlight p{color:#3d2e1e!important}
+  html[data-theme="light"] .doc-info-box{background:rgba(21,128,61,.04)!important;border-color:rgba(21,128,61,.2)!important}
+  html[data-theme="light"] .doc-info-box i{color:#15803d!important}
+  html[data-theme="light"] .doc-info-box p{color:#3d2e1e!important}
+  html[data-theme="light"] .doc-warn-box{background:rgba(185,28,28,.04)!important;border-color:rgba(185,28,28,.18)!important}
+  html[data-theme="light"] .doc-warn-box i{color:#b91c1c!important}
+  html[data-theme="light"] .doc-warn-box p{color:#3d2e1e!important}
+
+  /* ── Tables ── */
+  html[data-theme="light"] .doc-table-wrap{border-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] .doc-table thead tr{background:rgba(0,0,0,.04)!important;border-bottom-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .doc-table td{border-bottom-color:rgba(0,0,0,.04)!important}
+  html[data-theme="light"] .doc-table tbody tr:hover{background:rgba(0,0,0,.025)!important}
+  html[data-theme="light"] .tag-blue{color:#3448a0!important;background:rgba(52,72,160,.1)!important}
+
+  /* ── CTA band ── */
+  html[data-theme="light"] .cta-band{background:linear-gradient(135deg,rgba(159,122,30,.07),rgba(240,236,226,.9))!important;border-top-color:rgba(159,122,30,.22)!important;border-bottom-color:rgba(0,0,0,.07)!important}
+
+  /* ── Footer ── */
   html[data-theme="light"] footer{background:#f0ece2!important;border-top-color:rgba(0,0,0,.09)!important}
-  html[data-theme="light"] .footer-desc,html[data-theme="light"] .footer-col a,html[data-theme="light"] .footer-link{color:#2e2218!important}
-  html[data-theme="light"] .footer-col-title,.footer-heading{color:#5a4635!important}
-  html[data-theme="light"] .lp-menu-panel{background:#f5f0e8!important}
-  html[data-theme="light"] .lp-panel-link{color:#2e2218!important}html[data-theme="light"] .lp-panel-link-name{color:#0a0806!important}
-  html[data-theme="light"] .lp-panel-link-desc{color:#5a4635!important}
+  html[data-theme="light"] .footer-brand-desc{color:#7a6050!important}
+  html[data-theme="light"] .footer-col-title{color:#9f7a1e!important}
+  html[data-theme="light"] .footer-col ul a{color:#5a4830!important}
+  html[data-theme="light"] .footer-col ul a:hover{color:#9f7a1e!important}
+  html[data-theme="light"] .footer-bottom{border-top-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .footer-legal{color:#7a6050!important}
+  html[data-theme="light"] .social-btn{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important;color:#7a6050!important}
+  html[data-theme="light"] .social-btn:hover{color:#9f7a1e!important;border-color:rgba(159,122,30,.3)!important}
+  html[data-theme="light"] .disclaimer{color:#7a6050!important;border-top-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .disclaimer strong{color:#9f7a1e!important}
+
+  /* ── Back to top ── */
+  html[data-theme="light"] .back-top{background:rgba(159,122,30,.1)!important;border-color:rgba(159,122,30,.25)!important}
+
+  /* ── Mobile menu panel ── */
+  html[data-theme="light"] .lp-mobile-menu.open .lp-menu-backdrop{background:rgba(180,165,145,.65)!important}
+  html[data-theme="light"] .lp-menu-panel{background:linear-gradient(168deg,#f5f0e8 0%,#ede8dc 55%,#e8e2d4 100%)!important;border-left-color:rgba(159,122,30,.15)!important}
+  html[data-theme="light"] .lp-panel-head{border-bottom-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .lp-panel-wordmark{color:#1a1410!important}
+  html[data-theme="light"] .lp-panel-close{color:#7a6050!important;background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .lp-panel-close:hover{color:#9f7a1e!important;border-color:rgba(159,122,30,.3)!important;background:rgba(159,122,30,.07)!important}
+  html[data-theme="light"] .lp-market-strip{border-bottom-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .lp-market-item{border-right-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .lp-market-item:hover{background:rgba(0,0,0,.03)!important}
+  html[data-theme="light"] .lp-market-sym{color:#7a6050!important}
+  html[data-theme="light"] .lp-market-price{color:#1a1410!important}
+  html[data-theme="light"] .lp-nav-section-label{color:#7a6050!important}
+  html[data-theme="light"] .lp-nav-section-label::after{background:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .lp-nav-link{color:#5a4830!important}
+  html[data-theme="light"] .lp-nav-link:hover{color:#1a1410!important;background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .lp-nav-link.lp-active{color:#9f7a1e!important;background:rgba(159,122,30,.08)!important;border-color:rgba(159,122,30,.2)!important}
+  html[data-theme="light"] .lp-nav-link-icon{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.07)!important;color:#7a6050!important}
+  html[data-theme="light"] .lp-nav-link:hover .lp-nav-link-icon,html[data-theme="light"] .lp-nav-link.lp-active .lp-nav-link-icon{background:rgba(159,122,30,.1)!important;border-color:rgba(159,122,30,.25)!important;color:#9f7a1e!important}
+  html[data-theme="light"] .lp-nav-link-sub{color:#7a6050!important}
+  html[data-theme="light"] .lp-asset-card-price{color:#5a4830!important}
+  html[data-theme="light"] .lp-asset-card-chg{color:#1a1410!important}
+  html[data-theme="light"] .lp-trust-strip{border-top-color:rgba(0,0,0,.07)!important;border-bottom-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .lp-trust-cell{border-right-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .lp-trust-lbl{color:#7a6050!important}
+  html[data-theme="light"] .lp-panel-cta{background:linear-gradient(to top,#e8e2d4 55%,transparent)!important}
+  html[data-theme="light"] .lp-cta-secondary{color:#5a4830!important;border-color:rgba(0,0,0,.12)!important;background:rgba(0,0,0,.04)!important}
+  html[data-theme="light"] .lp-cta-secondary:hover{color:#1a1410!important;background:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .lp-status-text{color:#7a6050!important}
 </style>
 <link rel="stylesheet" href="premium-base.css">
 </head>

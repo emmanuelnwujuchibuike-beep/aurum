@@ -1266,7 +1266,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 <div id="kHint" style="position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:8px;color:rgba(201,166,60,0);letter-spacing:.14em;pointer-events:none;transition:color .6s;white-space:nowrap">↑ ↑ ↓ ↓ ← → ← → B A · ADMIN</div>
 
-<script src="coingecko-sync.js"></script>
+<script src="coingecko-sync.js?v=4"></script>
 <script src="price-sync.js"></script>
 <script>
 // ══════════════════════════════════════════════════
@@ -2341,6 +2341,11 @@ function txt(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function fmtP(p){return p>=1000?p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):p>=1?p.toFixed(2):p.toFixed(4);}
 function fmtU(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtLarge(n){if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+fmtU(n);}
+
+/* Wire coingecko-sync.js individual price broadcasts to this page */
+window.onPriceUpdate = function(sym, price, chg) {
+  applyPriceUpdate(sym, price, chg != null ? chg : 0);
+};
 </script>
 <script src="portfolio-sync.js"></script>
 <script src="price-sync.js"></script>
