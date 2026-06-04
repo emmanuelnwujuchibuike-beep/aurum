@@ -1,6 +1,7 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+﻿<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
 <head>
+<script>(function(){var t=localStorage.getItem("aurum_theme");if(!t)t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Legal & Privacy — Aurum Capital</title>
@@ -807,9 +808,34 @@
       .footer-grid      { grid-template-columns: 1fr 1fr; gap: 32px; }
       .disclaimer       { padding: 16px 24px 24px; }
     }
-  </style>
+  
+  /* LIGHT — PRIVACY */
+  html[data-theme="light"] body{background:#faf8f4!important;color:#0a0806!important}
+  html[data-theme="light"] header,html[data-theme="light"] .lp-nav{background:rgba(250,248,244,.94)!important;border-bottom-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .lp-nav a,html[data-theme="light"] .nav-link,html[data-theme="light"] .lp-logo-text{color:#0a0806!important}
+  html[data-theme="light"] h1,html[data-theme="light"] h2,html[data-theme="light"] h3{color:#0a0806!important}
+  html[data-theme="light"] p,html[data-theme="light"] li{color:#2e2218!important}
+  html[data-theme="light"] .content-card,.policy-section,.lp-card{background:rgba(255,255,255,.88)!important;border-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] .policy-title,.content-title{color:#0a0806!important}
+  html[data-theme="light"] .policy-text,.content-text{color:#2e2218!important}
+  html[data-theme="light"] a{color:#9f7a1e!important}
+  html[data-theme="light"] .toc-item{color:#2e2218!important}html[data-theme="light"] .toc-item.active{color:#9f7a1e!important}
+  html[data-theme="light"] .sidebar,.toc-sidebar{background:rgba(255,255,255,.7)!important;border-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] table{background:rgba(255,255,255,.92)!important}
+  html[data-theme="light"] th{color:#5a4635!important;background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] td{color:#0a0806!important;border-color:rgba(0,0,0,.05)!important}
+  html[data-theme="light"] footer{background:#f0ece2!important;border-top-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .footer-desc,html[data-theme="light"] .footer-col a,html[data-theme="light"] .footer-link{color:#2e2218!important}
+  html[data-theme="light"] .footer-col-title,.footer-heading{color:#5a4635!important}
+  html[data-theme="light"] .lp-menu-panel{background:#f5f0e8!important}
+  html[data-theme="light"] .lp-panel-link{color:#2e2218!important}html[data-theme="light"] .lp-panel-link-name{color:#0a0806!important}
+  html[data-theme="light"] .lp-panel-link-desc{color:#5a4635!important}
+</style>
+<link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
+<div id="cursorGlow" class="cursor-glow"></div>
+<div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 
   <!-- Scroll progress bar -->
   <div class="scroll-progress"><div class="scroll-progress-bar" id="scrollBar"></div></div>
@@ -820,7 +846,7 @@
       <div class="logo-mark">A</div>
       Aurum Capital
     </a>
-    <div class="head-right">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="margin-right:4px"><span class="theme-icon">☀</span></button><div class="head-right">
       <a href="signup.html" class="btn-outline-sm">Sign In</a>
       <a href="signup.html" class="btn-gold">Open Account</a>
     </div>
@@ -1822,5 +1848,6 @@
       setInterval(updateMarketStrip, 30000);
     })();
   </script>
+<script src="premium.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth" data-theme="dark">
 <head>
+<script>(function(){var t=localStorage.getItem("aurum_theme");if(!t)t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aurum Capital — Contact</title>
@@ -852,9 +853,45 @@
     #admin-reply-input { font-size:12px; }
     .admin-hdr-btn { padding:4px 8px; font-size:9px; }
   }
+
+  /* ══ LIGHT MODE — CONTACT PAGE ══ */
+  html[data-theme="light"] body { background:#faf8f4 !important; color:#0a0806 !important; }
+  html[data-theme="light"] body::before { opacity:.012 !important; }
+  html[data-theme="light"] nav { background:rgba(250,248,244,0.94) !important; border-bottom-color:rgba(0,0,0,0.09) !important; }
+  html[data-theme="light"] .nav-wordmark { color:#0a0806 !important; }
+  html[data-theme="light"] .nav-links a { color:#2e2218 !important; }
+  html[data-theme="light"] .nav-links a:hover { color:#0a0806 !important; background:rgba(0,0,0,0.05) !important; }
+  html[data-theme="light"] .nav-links a.active { color:#9f7a1e !important; }
+  html[data-theme="light"] .nav-logo-mark { color:#0a0806 !important; }
+  html[data-theme="light"] .contact-hero { background:linear-gradient(160deg,#faf8f4,#f0ece2) !important; }
+  html[data-theme="light"] .contact-hero-title { color:#0a0806 !important; }
+  html[data-theme="light"] .contact-hero-sub { color:#2e2218 !important; }
+  html[data-theme="light"] .hero-eyebrow { color:#9f7a1e !important; }
+  html[data-theme="light"] .contact-meta-item { color:#2e2218 !important; }
+  html[data-theme="light"] .contact-meta-label { color:#5a4635 !important; }
+  html[data-theme="light"] .form-card { background:rgba(255,255,255,0.9) !important; border-color:rgba(0,0,0,0.1) !important; box-shadow:0 32px 80px rgba(0,0,0,0.1) !important; }
+  html[data-theme="light"] .form-title { color:#0a0806 !important; }
+  html[data-theme="light"] .form-sub { color:#2e2218 !important; }
+  html[data-theme="light"] .form-tab { color:#5a4635 !important; background:transparent !important; border-color:rgba(0,0,0,0.1) !important; }
+  html[data-theme="light"] .form-tab.active { color:#9f7a1e !important; background:rgba(159,122,30,0.1) !important; border-color:rgba(159,122,30,0.3) !important; }
+  html[data-theme="light"] .form-label { color:#2e2218 !important; }
+  html[data-theme="light"] .form-input, html[data-theme="light"] .form-textarea, html[data-theme="light"] .form-select { background:rgba(0,0,0,0.04) !important; border-color:rgba(0,0,0,0.14) !important; color:#0a0806 !important; }
+  html[data-theme="light"] .form-input::placeholder, html[data-theme="light"] .form-textarea::placeholder { color:rgba(0,0,0,0.32) !important; }
+  html[data-theme="light"] .form-input:focus, html[data-theme="light"] .form-textarea:focus { border-color:#9f7a1e !important; box-shadow:0 0 0 3px rgba(159,122,30,0.12) !important; }
+  html[data-theme="light"] .contact-info-card, html[data-theme="light"] .info-card { background:rgba(255,255,255,0.8) !important; border-color:rgba(0,0,0,0.1) !important; }
+  html[data-theme="light"] .info-card-title, html[data-theme="light"] .contact-info-title { color:#0a0806 !important; }
+  html[data-theme="light"] .info-card-text, html[data-theme="light"] .contact-info-text { color:#2e2218 !important; }
+  html[data-theme="light"] .section-title { color:#0a0806 !important; }
+  html[data-theme="light"] .section-sub { color:#2e2218 !important; }
+  html[data-theme="light"] footer { background:#f0ece2 !important; border-top-color:rgba(0,0,0,0.09) !important; }
+  html[data-theme="light"] .footer-desc, html[data-theme="light"] .footer-col a, html[data-theme="light"] .footer-copy { color:#2e2218 !important; }
+  html[data-theme="light"] .footer-col-title { color:#5a4635 !important; }
 </style>
+<link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
+<div id="cursorGlow" class="cursor-glow"></div>
+<div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 
 <!-- ADMIN OVERLAY -->
 <div id="admin-overlay">
@@ -946,7 +983,7 @@
     </a>
 
     <!-- Hamburger toggle (mobile) -->
-    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="margin-right:6px"><span class="theme-icon">☀</span></button><button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
       <span class="bar"></span>
       <span class="bar"></span>
       <span class="bar"></span>
@@ -1599,5 +1636,6 @@ const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isInt
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 </script>
 <script src="chat-widget.js"></script>
+<script src="premium.js"></script>
 </body>
 </html>

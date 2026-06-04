@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){var t=localStorage.getItem("aurum_theme");if(!t)t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Aurum — Support Dashboard</title>
@@ -34,6 +35,9 @@
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
       overflow: hidden;
+      height: 100vh;
+      position: relative;
+      z-index: 100;
     }
 
     #sidebar-header {
@@ -208,8 +212,12 @@
     /* ─ Login screen ─ */
     #login-screen {
       position: fixed; inset: 0; background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 999;
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 10;
+    }
+    #login-screen.active {
+      display: flex;
     }
     #login-box {
       background: var(--panel); border: 1px solid var(--border);
@@ -258,9 +266,31 @@
       #app { grid-template-columns: 1fr; }
       #sidebar { display: none; }
     }
-  </style>
+  
+  /* LIGHT — ADMIN SUPPORT */
+  html[data-theme="light"] body{background:#faf8f4!important;color:#0a0806!important}
+  html[data-theme="light"] #sidebar{background:#f0ece2!important;border-right-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] #sidebar-logo{color:#0a0806!important}html[data-theme="light"] #sidebar-logo span{color:#5a4635!important}
+  html[data-theme="light"] #sidebar-status{color:#2e2218!important;background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .session-item{background:rgba(255,255,255,.8)!important;border-color:rgba(0,0,0,.1)!important;color:#0a0806!important}
+  html[data-theme="light"] .session-item:hover{background:rgba(255,255,255,.95)!important}html[data-theme="light"] .session-item.active{background:rgba(159,122,30,.08)!important;border-color:rgba(159,122,30,.25)!important}
+  html[data-theme="light"] .session-name{color:#0a0806!important}html[data-theme="light"] .session-preview,.session-time{color:#5a4635!important}
+  html[data-theme="light"] #main-content,.admin-chat-area{background:#faf8f4!important}
+  html[data-theme="light"] #admin-topbar{background:rgba(245,240,232,.95)!important;border-bottom-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] #admin-user-name{color:#0a0806!important}
+  html[data-theme="light"] .admin-bubble{background:rgba(255,255,255,.92)!important;border-color:rgba(0,0,0,.1)!important;color:#0a0806!important}
+  html[data-theme="light"] .admin-bubble-time{color:#5a4635!important}
+  html[data-theme="light"] #admin-reply-area{background:rgba(245,240,232,.95)!important;border-top-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] #admin-reply-input{background:rgba(255,255,255,.9)!important;border-color:rgba(0,0,0,.12)!important;color:#0a0806!important}
+  html[data-theme="light"] #admin-reply-input::placeholder{color:rgba(0,0,0,.35)!important}
+  html[data-theme="light"] #no-sessions h4{color:#0a0806!important}html[data-theme="light"] #no-sessions{color:#5a4635!important}
+  html[data-theme="light"] .admin-hdr-btn{color:#2e2218!important;border-color:rgba(0,0,0,.12)!important;background:rgba(0,0,0,.05)!important}
+</style>
+<link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
+<div id="cursorGlow" class="cursor-glow"></div>
+<div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 
 <!-- ══════════════ LOGIN SCREEN ══════════════ -->
 <div id="login-screen">
@@ -292,7 +322,7 @@
       </div>
       <div id="sidebar-status">
         <div id="status-indicator"></div>
-        Live &amp; Listening
+        Live &amp; Listening <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="width:30px;height:30px;border-radius:8px;font-size:13px;margin-left:auto"><span class="theme-icon">☀</span></button>
         <div id="session-count">0</div>
       </div>
     </div>
@@ -408,7 +438,7 @@ async function doLogin() {
     return;
   }
   agentUser = data.user;
-  loginScreen.style.display = "none";
+  loginScreen.classList.remove("active");
   startDashboard();
 }
 
@@ -417,8 +447,10 @@ async function doLogin() {
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
     agentUser = session.user;
-    loginScreen.style.display = "none";
+    loginScreen.classList.remove("active");
     startDashboard();
+  } else {
+    loginScreen.classList.add("active");
   }
 })();
 
@@ -659,5 +691,6 @@ function escHtml(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");
 }
 </script>
+<script src="premium.js"></script>
 </body>
 </html>

@@ -397,7 +397,7 @@ window.onPriceUpdate = function (sym, newPrice, newChg) {
   const mgC = document.getElementById('mg-c-' + sym);
   if (mgC) {
     mgC.textContent  = cStr;
-    mgC.style.color  = up ? '#22c55e' : '#ef4444';
+    mgC.style.color  = up ? 'var(--green)' : 'var(--red)';
     mgC.style.background = up ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
   }
 
@@ -407,7 +407,7 @@ window.onPriceUpdate = function (sym, newPrice, newChg) {
   const tbC = document.getElementById('tb-c-' + sym);
   if (tbC) {
     tbC.textContent  = cStr;
-    tbC.style.color  = up ? '#22c55e' : '#ef4444';
+    tbC.style.color  = up ? 'var(--green)' : 'var(--red)';
     tbC.style.background = up ? 'rgba(34,197,94,.08)' : 'rgba(239,68,68,.08)';
   }
 
@@ -672,9 +672,9 @@ function buildTicker() {
     const m = IDX_META[sym], p = IDX_P[sym] || 0, c = IDX_C[sym] || 0, up = c >= 0;
     return `<div class="ticker-item">
       <i class="${m.icon}" style="color:${m.color};font-size:12px;"></i>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#edf2f8;font-weight:500;">${sym}</span>
-      <span class="tk-p-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#edf2f8;">$${fmtP(p)}</span>
-      <span class="tk-c-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${up?'#22c55e':'#ef4444'}">${up?'+':''}${c.toFixed(2)}%</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-1);font-weight:500;">${sym}</span>
+      <span class="tk-p-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-1);">$${fmtP(p)}</span>
+      <span class="tk-c-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${up?'var(--green)':'var(--red)'}">${up?'+':''}${c.toFixed(2)}%</span>
     </div>`;
   }).join('');
 }
@@ -714,7 +714,7 @@ function buildMarketGrid(filter) {
   if (!grid) return;
   const syms = Object.keys(IDX_META).filter(s => filter === 'all' || IDX_META[s].cat === filter);
   if (!syms.length) {
-    grid.innerHTML = '<p style="color:#5a6880;text-align:center;padding:40px;font-family:\'JetBrains Mono\',monospace;font-size:11px;">No assets in this category.</p>';
+    grid.innerHTML = '<p style="color:var(--text-3);text-align:center;padding:40px;font-family:\'JetBrains Mono\',monospace;font-size:11px;">No assets in this category.</p>';
     return;
   }
   grid.innerHTML = syms.map(sym => {
@@ -723,17 +723,17 @@ function buildMarketGrid(filter) {
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
         <div style="width:40px;height:40px;border-radius:13px;background:${m.color}18;color:${m.color};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;"><i class="${m.icon}"></i></div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:14px;font-weight:600;color:#edf2f8;">${sym}</div>
-          <div style="font-size:11px;color:#5a6880;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.name}</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-1);">${sym}</div>
+          <div style="font-size:11px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.name}</div>
         </div>
         <div style="text-align:right;">
-          <div id="mg-p-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#edf2f8;font-weight:600;">$${fmtP(p)}</div>
-          <div id="mg-c-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${up?'#22c55e':'#ef4444'};background:${up?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};padding:2px 7px;border-radius:6px;margin-top:2px;display:inline-block;">${up?'+':''}${c.toFixed(2)}%</div>
+          <div id="mg-p-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-1);font-weight:600;">$${fmtP(p)}</div>
+          <div id="mg-c-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${up?'var(--green)':'var(--red)'};background:${up?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};padding:2px 7px;border-radius:6px;margin-top:2px;display:inline-block;">${up?'+':''}${c.toFixed(2)}%</div>
         </div>
       </div>
       <div style="margin-bottom:7px;">${miniSparkline(sym, up)}</div>
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a6880;text-transform:uppercase;letter-spacing:.08em;">${m.cat}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;">${m.cat}</span>
         <span class="mc-hint"><i class="fas fa-chart-candlestick" style="font-size:8px;margin-right:3px;"></i>VIEW CHART</span>
       </div>
     </div>`;
@@ -751,12 +751,12 @@ function buildAssetsTable() {
     return `<tr style="cursor:pointer;" onclick="openAssetChart('${sym}')" title="View ${sym} chart">
       <td><div style="display:flex;align-items:center;gap:10px;">
         <div style="width:34px;height:34px;border-radius:11px;background:${m.color}18;color:${m.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;"><i class="${m.icon}"></i></div>
-        <div><div style="font-weight:600;color:#edf2f8;font-size:13px;">${sym}</div>
-        <div style="font-size:11px;color:#5a6880;">${m.name}</div></div>
+        <div><div style="font-weight:600;color:var(--text-1);font-size:13px;">${sym}</div>
+        <div style="font-size:11px;color:var(--text-3);">${m.name}</div></div>
       </div></td>
-      <td><span id="tb-p-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#edf2f8;">$${fmtP(p)}</span></td>
-      <td><span id="tb-c-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${up?'#22c55e':'#ef4444'};background:${up?'rgba(34,197,94,.08)':'rgba(239,68,68,.08)'};padding:3px 8px;border-radius:6px;">${up?'+':''}${c.toFixed(2)}%</span></td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6880;">${fmtB(m.mcap)}</td>
+      <td><span id="tb-p-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-1);">$${fmtP(p)}</span></td>
+      <td><span id="tb-c-${sym}" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${up?'var(--green)':'var(--red)'};background:${up?'rgba(34,197,94,.08)':'rgba(239,68,68,.08)'};padding:3px 8px;border-radius:6px;">${up?'+':''}${c.toFixed(2)}%</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);">${fmtB(m.mcap)}</td>
       <td>${miniSparkline(sym, up)}</td>
       <td><button class="tbl-btn" onclick="event.stopPropagation();window.location.href='invest.html'">Invest</button></td>
     </tr>`;
@@ -907,7 +907,7 @@ function showOHLCV(bar, type, fo) {
   if (fo && bar.close) {
     const pct = (bar.close - fo) / fo * 100, up = pct >= 0;
     setT('ov-chg', (up ? '+' : '') + pct.toFixed(2) + '%');
-    const el = document.getElementById('ov-chg'); if (el) el.style.color = up ? '#22c55e' : '#ef4444';
+    const el = document.getElementById('ov-chg'); if (el) el.style.color = up ? 'var(--green)' : 'var(--red)';
     const w  = document.getElementById('ov-chg-wrap'); if (w) w.style.display = 'inline-flex';
   }
 }

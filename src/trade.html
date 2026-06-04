@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){var t=localStorage.getItem("aurum_theme");if(!t)t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Aurum — Trading Terminal</title>
@@ -1038,9 +1039,30 @@ body.fullscreen-chart #chart-toolbar{height:36px}
   .ct-period-btn{padding:3px 5px;font-size:7px}
   .mob-top-sym{font-size:12px}
 }
+
+  /* LIGHT — TRADE */
+  html[data-theme="light"] body{background:#f0ece2!important;color:#0a0806!important}
+  html[data-theme="light"] #topbar{background:rgba(245,240,232,.97)!important;border-bottom-color:rgba(0,0,0,.12)!important}
+  html[data-theme="light"] .tb-logo{color:#0a0806!important}html[data-theme="light"] .tb-navlink{color:#5a4635!important}html[data-theme="light"] .tb-navlink.active{color:#0a0806!important}
+  html[data-theme="light"] .tb-cash{color:#2e2218!important}html[data-theme="light"] .tb-price{color:#0a0806!important}
+  html[data-theme="light"] #sidebar,.instrument-panel,.order-panel{background:#f5f0e8!important;border-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] .panel-title,.panel-label{color:#0a0806!important}html[data-theme="light"] .panel-sub,.panel-meta,.text-muted{color:#5a4635!important}
+  html[data-theme="light"] input,html[data-theme="light"] select{background:rgba(0,0,0,.06)!important;border-color:rgba(0,0,0,.14)!important;color:#0a0806!important}
+  html[data-theme="light"] input::placeholder{color:rgba(0,0,0,.35)!important}
+  html[data-theme="light"] .instrument-row,.watchlist-item{color:#2e2218!important;border-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .instrument-name,.asset-name{color:#0a0806!important}html[data-theme="light"] .instrument-sym,.asset-sym,.instrument-cat{color:#5a4635!important}
+  html[data-theme="light"] .price-val{color:#0a0806!important}html[data-theme="light"] .trade-label{color:#5a4635!important}html[data-theme="light"] .trade-val{color:#0a0806!important}
+  html[data-theme="light"] .chart-area{background:#ffffff!important;border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .tab{color:#5a4635!important}html[data-theme="light"] .tab.active{color:#0a0806!important}
+  html[data-theme="light"] th{color:#5a4635!important;background:rgba(0,0,0,.04)!important}html[data-theme="light"] td{color:#0a0806!important;border-color:rgba(0,0,0,.05)!important}
+  html[data-theme="light"] .modal-box,.confirm-modal{background:#faf8f4!important;border-color:rgba(0,0,0,.12)!important}
+  html[data-theme="light"] .modal-title{color:#0a0806!important}html[data-theme="light"] .modal-text,.modal-sub{color:#2e2218!important}
 </style>
+<link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
+<div id="cursorGlow" class="cursor-glow"></div>
+<div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 
 <!-- LOADER -->
 <div id="loader">
@@ -1074,7 +1096,7 @@ body.fullscreen-chart #chart-toolbar{height:36px}
     <div class="tb-spacer"></div>
     <div class="tb-cash">Cash: <span id="topbar-cash">—</span></div>
     <div class="tb-sep"></div>
-    <div class="tb-avatar" id="tb-avatar">?</div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="width:34px;height:34px;border-radius:9px;font-size:14px"><span class="theme-icon">☀</span></button><div class="tb-avatar" id="tb-avatar">?</div>
   </div>
 
   <!-- MOBILE TOPBAR -->
@@ -2575,5 +2597,6 @@ window.addEventListener('resize',()=>{
   if(cjChart)cjChart.resize();
 });
 </script>
+<script src="premium.js"></script>
 </body>
 </html>

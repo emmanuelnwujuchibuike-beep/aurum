@@ -346,7 +346,7 @@ serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Aurum Capital <onboarding@resend.dev>",
+        from: 'noreply@aurumcapitalinvest.com',
         to: [userEmail],          // ✅ send to user
         bcc: [adminEmail],        // ✅ silently CC admin (user won't see it)
         subject,

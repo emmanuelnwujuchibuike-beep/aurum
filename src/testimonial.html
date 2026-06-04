@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Testimonials — Aurum Capital</title>
+  <script>
+    (function(){
+      var t = localStorage.getItem('aurum_theme');
+      if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
   <link rel="icon" type="image/png" href="./image/logo.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -887,10 +894,152 @@
 
     @keyframes tickFlash { 0%{ opacity:1 } 30%{ opacity:.4 } 100%{ opacity:1 } }
     .t-flash { animation: tickFlash 0.5s ease; }
+
+    /* ══ HERO ENTRANCE ANIMATIONS ══ */
+    @keyframes heroTitleReveal {
+      from { opacity:0; transform: translateY(40px) scale(0.97); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+    @keyframes heroSubReveal {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    @keyframes heroBadgeReveal {
+      from { opacity:0; transform: scaleX(0.7); }
+      to   { opacity:1; transform: scaleX(1); }
+    }
+    @keyframes statsReveal {
+      from { opacity:0; transform: translateY(32px) scale(0.95); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+    .hero-entrance-title  { animation: heroTitleReveal  0.9s cubic-bezier(.16,1,.3,1) 0.2s both; }
+    .hero-entrance-badge  { animation: heroBadgeReveal  0.7s cubic-bezier(.16,1,.3,1) 0s both; }
+    .hero-entrance-sub    { animation: heroSubReveal    0.8s cubic-bezier(.16,1,.3,1) 0.35s both; }
+    .hero-entrance-stats  { animation: statsReveal      0.9s cubic-bezier(.16,1,.3,1) 0.5s both; }
+
+    /* ══ LIGHT MODE OVERRIDES — TESTIMONIAL ══ */
+    [data-theme="light"] body { background: #faf8f4; color: #0a0806; }
+    [data-theme="light"] body::before { opacity: 0.015; }
+    [data-theme="light"] #mainHeader { background: rgba(250,248,244,0.88); border-bottom-color: rgba(0,0,0,0.1); }
+    [data-theme="light"] #mainHeader.scrolled { background: rgba(250,248,244,0.97); box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    [data-theme="light"] .logo { color: #0a0806; }
+    [data-theme="light"] nav.desk a { color: #5a4635; }
+    [data-theme="light"] nav.desk a:hover, [data-theme="light"] nav.desk a.on { color: #0a0806; background: rgba(0,0,0,0.04); }
+    [data-theme="light"] nav.desk a.on { color: #9f7a1e; }
+    [data-theme="light"] .btn-outline-sm { color: #5a4635; border-color: rgba(0,0,0,0.15); }
+    [data-theme="light"] .btn-outline-sm:hover { color: #0a0806; border-color: rgba(0,0,0,0.25); background: rgba(0,0,0,0.04); }
+    [data-theme="light"] .ticker-bar { background: rgba(240,236,226,0.92); border-bottom-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .ticker-item { border-right-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .t-sym { color: #5a4635; }
+    [data-theme="light"] .t-price { color: #2e2218; }
+    [data-theme="light"] .testi-hero { background: transparent; }
+    [data-theme="light"] .testi-hero-grid { background-image: linear-gradient(rgba(159,122,30,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(159,122,30,0.06) 1px, transparent 1px); }
+    [data-theme="light"] .testi-hero-title { color: #0a0806; }
+    [data-theme="light"] .testi-hero-title em { color: #9f7a1e; }
+    [data-theme="light"] .testi-hero-sub { color: #5a4635; }
+    [data-theme="light"] .agg-stats { background: rgba(240,236,226,0.8); border-color: rgba(159,122,30,0.3); }
+    [data-theme="light"] .agg-stat { border-right-color: rgba(159,122,30,0.2); }
+    [data-theme="light"] .agg-stat-val { color: #9f7a1e; }
+    [data-theme="light"] .agg-stat-lbl { color: #8a7060; }
+    [data-theme="light"] .featured-card { background: linear-gradient(145deg, rgba(159,122,30,0.06), rgba(250,248,244,0.98)); border-color: rgba(159,122,30,0.3); }
+    [data-theme="light"] .featured-card::before { background: radial-gradient(ellipse 60% 80% at 0% 50%, rgba(159,122,30,0.06), transparent 70%); }
+    [data-theme="light"] .featured-quote { color: #2e2218; }
+    [data-theme="light"] .featured-name { color: #0a0806; }
+    [data-theme="light"] .featured-title-text { color: #8a7060; }
+    [data-theme="light"] .featured-location { color: #5a4635; }
+    [data-theme="light"] .featured-avatar { background: linear-gradient(#faf8f4, #faf8f4) padding-box, linear-gradient(135deg, #c9a84c, #a87c28) border-box; }
+    [data-theme="light"] .live-strip-inner { background: linear-gradient(145deg, rgba(159,122,30,0.06), rgba(240,236,226,0.95)); border-color: rgba(159,122,30,0.3); }
+    [data-theme="light"] .ls-cell { border-right-color: rgba(159,122,30,0.2); }
+    [data-theme="light"] .ls-val { color: #9f7a1e; }
+    [data-theme="light"] .ls-lbl { color: #8a7060; }
+    [data-theme="light"] .ls-live-text { color: #8a7060; }
+    [data-theme="light"] .charts-section-title { color: #0a0806; }
+    [data-theme="light"] .charts-section-sub { color: #5a4635; }
+    [data-theme="light"] .chart-card { background: linear-gradient(145deg, rgba(159,122,30,0.04), rgba(240,236,226,0.98)); border-color: rgba(159,122,30,0.25); }
+    [data-theme="light"] .chart-card::before { background: linear-gradient(90deg, transparent, rgba(159,122,30,0.4), transparent); }
+    [data-theme="light"] .chart-card-title { color: #0a0806; }
+    [data-theme="light"] .chart-card-label { color: #8a7060; }
+    [data-theme="light"] .chart-card-stat-val { color: #9f7a1e; }
+    [data-theme="light"] .chart-card-stat-lbl { color: #8a7060; }
+    [data-theme="light"] .chart-tab { color: #8a7060; border-color: rgba(0,0,0,0.1); }
+    [data-theme="light"] .chart-tab:hover { color: #2e2218; }
+    [data-theme="light"] .chart-tab.active { border-color: rgba(159,122,30,0.4); background: rgba(159,122,30,0.1); color: #9f7a1e; }
+    [data-theme="light"] .chart-divider { background: rgba(0,0,0,0.06); }
+    [data-theme="light"] .chart-footer-note { color: #8a7060; }
+    [data-theme="light"] .cf-text { color: #8a7060; }
+    [data-theme="light"] .testi-section-title { color: #0a0806; }
+    [data-theme="light"] .testi-section-title em { color: #9f7a1e; }
+    [data-theme="light"] .testi-section-sub { color: #5a4635; }
+    [data-theme="light"] .testi-tab { color: #8a7060; border-color: rgba(0,0,0,0.1); }
+    [data-theme="light"] .testi-tab:hover { color: #2e2218; background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.15); }
+    [data-theme="light"] .testi-tab.on { border-color: rgba(159,122,30,0.4); background: rgba(159,122,30,0.1); color: #9f7a1e; }
+    [data-theme="light"] .testi-card { background: #ffffff; border-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .testi-card:hover { border-color: rgba(159,122,30,0.35); box-shadow: 0 16px 48px rgba(0,0,0,0.1), 0 0 32px rgba(159,122,30,0.06); }
+    [data-theme="light"] .testi-card.highlight { background: linear-gradient(145deg, rgba(159,122,30,0.04), #ffffff); border-color: rgba(159,122,30,0.2); }
+    [data-theme="light"] .tc-name { color: #0a0806; }
+    [data-theme="light"] .tc-role { color: #8a7060; }
+    [data-theme="light"] .tc-quote { color: #2e2218; }
+    [data-theme="light"] .tc-quote-mark { color: #9f7a1e; opacity: 0.15; }
+    [data-theme="light"] .tc-star { color: #9f7a1e; }
+    [data-theme="light"] .tc-location { color: #8a7060; }
+    [data-theme="light"] .tc-date { color: #8a7060; }
+    [data-theme="light"] .tc-footer { border-top-color: rgba(0,0,0,0.06); }
+    [data-theme="light"] .tc-avatar { border-color: rgba(159,122,30,0.25); }
+    [data-theme="light"] .tc-verified { background: #9f7a1e; border-color: #ffffff; }
+    [data-theme="light"] .video-section .testi-section-title { color: #0a0806; }
+    [data-theme="light"] .video-card { background: #ffffff; border-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .video-card:hover { border-color: rgba(159,122,30,0.35); }
+    [data-theme="light"] .video-info { background: #ffffff; }
+    [data-theme="light"] .video-name { color: #0a0806; }
+    [data-theme="light"] .video-role { color: #8a7060; }
+    [data-theme="light"] .video-quote-preview { color: #5a4635; }
+    [data-theme="light"] .video-star { color: #9f7a1e; }
+    [data-theme="light"] .cta-band { background: linear-gradient(135deg, rgba(159,122,30,0.07), rgba(240,236,226,0.9)); border-top-color: rgba(159,122,30,0.25); border-bottom-color: rgba(0,0,0,0.06); }
+    [data-theme="light"] .cta-title { color: #0a0806; }
+    [data-theme="light"] .cta-title em { color: #9f7a1e; }
+    [data-theme="light"] .cta-sub { color: #5a4635; }
+    [data-theme="light"] .btn-secondary { color: #5a4635; border-color: rgba(0,0,0,0.15); }
+    [data-theme="light"] .btn-secondary:hover { color: #0a0806; border-color: rgba(0,0,0,0.25); background: rgba(0,0,0,0.04); }
+    [data-theme="light"] footer { background: #f0ece2; border-top-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .footer-brand-desc { color: #8a7060; }
+    [data-theme="light"] .footer-col-title { color: #9f7a1e; }
+    [data-theme="light"] .footer-col ul li a { color: #5a4635; }
+    [data-theme="light"] .footer-col ul li a:hover { color: #0a0806; }
+    [data-theme="light"] .footer-bottom { border-top-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .footer-legal { color: #8a7060; }
+    [data-theme="light"] .social-btn { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); color: #8a7060; }
+    [data-theme="light"] .social-btn:hover { color: #9f7a1e; border-color: rgba(159,122,30,0.35); }
+    [data-theme="light"] .disclaimer { color: #8a7060; border-top-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] #scrollProgress { background: linear-gradient(90deg, #9f7a1e, #c9a84c, #9f7a1e); }
+    [data-theme="light"] .ambient-canvas { opacity: 0.25; }
+    [data-theme="light"] .lp-menu-panel { background: linear-gradient(168deg, #f5f0e8 0%, #ede8dc 55%, #e8e2d4 100%); }
+    [data-theme="light"] .lp-nav-link { color: #5a4635; }
+    [data-theme="light"] .lp-nav-link:hover, [data-theme="light"] .lp-nav-link.lp-active { color: #0a0806; background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .lp-nav-link.lp-active { color: #9f7a1e; background: rgba(159,122,30,0.08); border-color: rgba(159,122,30,0.2); }
+    [data-theme="light"] .lp-nav-link-icon { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.07); color: #8a7060; }
+    [data-theme="light"] .lp-nav-link-sub { color: #8a7060; }
+    [data-theme="light"] .lp-panel-wordmark { color: #0a0806; }
+    [data-theme="light"] .lp-panel-close { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.08); color: #8a7060; }
+    [data-theme="light"] .lp-panel-head { border-bottom-color: rgba(0,0,0,0.06); }
+    [data-theme="light"] .lp-nav-section-label { color: #8a7060; }
+    [data-theme="light"] .lp-cta-secondary { border-color: rgba(0,0,0,0.1); background: rgba(0,0,0,0.04); color: #5a4635; }
+    [data-theme="light"] .lp-cta-secondary:hover { color: #0a0806; background: rgba(0,0,0,0.07); }
+    [data-theme="light"] .lp-status-text { color: #8a7060; }
+    [data-theme="light"] .lp-panel-cta { background: linear-gradient(to top, #e8e2d4 55%, transparent); }
+    [data-theme="light"] .vm-box { background: #ffffff; border-color: rgba(159,122,30,0.3); }
+    [data-theme="light"] .vm-name { color: #0a0806; }
+    [data-theme="light"] .vm-role { color: #8a7060; }
+    [data-theme="light"] .vm-close { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1); color: #5a4635; }
+    [data-theme="light"] .vm-info { border-top-color: rgba(0,0,0,0.06); }
+    [data-theme="light"] .section-label { color: #9f7a1e; }
+    [data-theme="light"] .section-label::before, [data-theme="light"] .section-label::after { background: #9f7a1e; }
   </style>
+  <link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
 
+<div id="cursorGlow" class="cursor-glow"></div>
+<div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 <div id="scrollProgress"></div>
 <canvas class="ambient-canvas" id="ambientCanvas"></canvas>
 
@@ -910,6 +1059,9 @@
     <a href="contact.html">Contact</a>
   </nav>
   <div class="head-right">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <span class="theme-icon">☀</span>
+    </button>
     <a href="signup.html" class="btn-outline-sm">Sign In</a>
     <a href="signup.html" class="btn-gold">Open Account</a>
   </div>
@@ -1928,5 +2080,6 @@ document.querySelectorAll('.testi-card').forEach(card=>{
 });
 </script>
 <script src="price-sync.js"></script>
+<script src="premium.js"></script>
 </body>
 </html>

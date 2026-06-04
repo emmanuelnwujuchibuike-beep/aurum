@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){var t=localStorage.getItem("aurum_theme");if(!t)t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Aurum Capital — Invest</title>
@@ -563,9 +564,201 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 @media(max-width:768px){.hero{padding:32px 18px 28px}main{padding:0 18px 56px}.kpi-strip{grid-template-columns:repeat(2,1fr);gap:10px}.asset-grid{grid-template-columns:1fr}.prop-grid{grid-template-columns:1fr}.chips{gap:5px}.chip{padding:6px 14px;font-size:9px}.modal-box{border-radius:18px}.modal-body{padding:16px;gap:14px}.presets{gap:4px}.preset{font-size:8.5px;padding:6px 0}#toast{left:12px;right:12px;min-width:unset;bottom:12px}}
 @media(max-width:480px){.kpi-strip{grid-template-columns:1fr 1fr}.hero h1{font-size:38px}.nav-btn span.btn-text{display:none}}
 @media(max-height:620px){.mm-strip{display:none}.mm-link{padding:10px 12px}.mm-link-icon{width:30px;height:30px;font-size:10px}.mm-cta{padding:10px 14px 16px}}
+
+  /* ═══════════════════════════════════════════════════════════════
+     LIGHT MODE — INVEST.HTML  (comprehensive premium overhaul)
+  ═══════════════════════════════════════════════════════════════ */
+
+  /* ── 1. CSS variable re-map ── */
+  html[data-theme="light"] {
+    --void:#faf8f4; --abyss:#f4f0e8; --surface:#ffffff; --lift:#ede8de;
+    --rim:rgba(0,0,0,.08); --rim-gold:rgba(159,122,30,.30);
+    --fog:#7a5c38; --ash:#3d2c1a; --pearl:#0f0d0a;
+    --gold:#9f7a1e; --gold-hi:#b8902d; --gold-lo:#7a5e18;
+    --gold-fog:rgba(159,122,30,.10);
+    --gain-bg:rgba(22,163,74,.10); --loss-bg:rgba(220,38,38,.08);
+  }
+
+  /* ── 2. Page & ambient ── */
+  html[data-theme="light"] body{background:#faf8f4!important;color:#0f0d0a!important}
+  html[data-theme="light"] .ambient{background:radial-gradient(ellipse 80% 50% at 30% -10%,rgba(159,122,30,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(29,100,200,.03) 0%,transparent 55%)!important}
+  html[data-theme="light"] .grain{opacity:.018!important}
+
+  /* ── 3. Loader ── */
+  html[data-theme="light"] #loader{background:#faf8f4!important}
+  html[data-theme="light"] .ld-name{color:#0f0d0a!important}
+  html[data-theme="light"] .ld-name span{color:#0f0d0a!important}
+  html[data-theme="light"] .ld-track{background:rgba(0,0,0,.07)!important}
+
+  /* ── 4. Ticker ── */
+  html[data-theme="light"] .ticker-wrap{background:rgba(240,236,226,.98)!important;border-top-color:rgba(0,0,0,.08)!important;border-bottom-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .ticker-item{border-right-color:rgba(0,0,0,.06)!important}
+
+  /* ── 5. Nav ── */
+  html[data-theme="light"] nav{background:rgba(250,248,244,.97)!important;border-bottom-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] nav::after{background:linear-gradient(90deg,transparent,rgba(159,122,30,.14),rgba(159,122,30,.14),transparent)!important}
+  html[data-theme="light"] .nav-wordmark{color:#0f0d0a!important}
+  html[data-theme="light"] .nav-links a{color:#3d2c1a!important}
+  html[data-theme="light"] .nav-links a:hover{color:#0f0d0a!important;background:rgba(0,0,0,.04)!important}
+  html[data-theme="light"] .nav-links a.on{color:#9f7a1e!important;background:rgba(159,122,30,.1)!important}
+  html[data-theme="light"] .nav-cash-label{color:#7a5c38!important}
+  html[data-theme="light"] .nav-cash-val{color:#0f0d0a!important}
+  html[data-theme="light"] .nav-cash{border-right-color:rgba(0,0,0,.1)!important}
+
+  /* ── 6. Mobile menu ── */
+  html[data-theme="light"] .mm-panel{background:linear-gradient(160deg,#f5f0e8 0%,#f0ebe0 50%,#ede7d8 100%)!important;border-left-color:rgba(159,122,30,.15)!important}
+  html[data-theme="light"] .mm-head{border-bottom-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .mm-logo-word{color:#0f0d0a!important}
+  html[data-theme="light"] .mm-close{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.09)!important;color:#7a5c38!important}
+  html[data-theme="light"] .mm-strip{background:rgba(0,0,0,.04)!important;border-bottom-color:rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .mm-strip-label{color:#7a5c38!important}
+  html[data-theme="light"] .mm-coin{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .mm-coin:hover{border-color:rgba(159,122,30,.3)!important;background:rgba(159,122,30,.07)!important}
+  html[data-theme="light"] .mm-coin-sym{color:#0f0d0a!important}
+  html[data-theme="light"] .mm-coin-price{color:#3d2c1a!important}
+  html[data-theme="light"] .mm-sec-label{color:#7a5c38!important}
+  html[data-theme="light"] .mm-link{color:#3d2c1a!important;border-color:transparent!important}
+  html[data-theme="light"] .mm-link:hover{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.06)!important;color:#0f0d0a!important}
+  html[data-theme="light"] .mm-link.active{color:#9f7a1e!important;background:rgba(159,122,30,.1)!important;border-color:rgba(159,122,30,.25)!important}
+  html[data-theme="light"] .mm-link-icon{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.09)!important;color:#7a5c38!important}
+  html[data-theme="light"] .mm-link:hover .mm-link-icon,html[data-theme="light"] .mm-link.active .mm-link-icon{background:rgba(159,122,30,.1)!important;border-color:rgba(159,122,30,.25)!important;color:#9f7a1e!important}
+  html[data-theme="light"] .mm-link-name{color:#0f0d0a!important}
+  html[data-theme="light"] .mm-link-desc{color:#7a5c38!important}
+  html[data-theme="light"] .mm-divider{background:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .mm-cta{background:linear-gradient(to top,#ede7d8 60%,transparent)!important;border-top-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .mm-cta-secondary{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important;color:#3d2c1a!important}
+  html[data-theme="light"] .mm-status-text{color:#7a5c38!important}
+
+  /* ── 7. Hero ── */
+  html[data-theme="light"] .hero h1{color:#0f0d0a!important}
+  html[data-theme="light"] .hero-sub{color:#3d2c1a!important}
+  html[data-theme="light"] .hero-eyebrow{background:rgba(159,122,30,.1)!important;border-color:rgba(159,122,30,.28)!important}
+  html[data-theme="light"] .hero-rule{background:linear-gradient(90deg,#9f7a1e,transparent)!important}
+
+  /* ── 8. KPI strip ── */
+  html[data-theme="light"] .kpi-card{background:linear-gradient(150deg,rgba(255,255,255,.97),rgba(248,244,236,.95))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 14px rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .kpi-card:hover{border-color:rgba(159,122,30,.35)!important;box-shadow:0 10px 40px rgba(0,0,0,.13)!important}
+  html[data-theme="light"] .kpi-label{color:#7a5c38!important}
+  html[data-theme="light"] .kpi-val{color:#0f0d0a!important}
+  html[data-theme="light"] .kpi-sub{color:#7a5c38!important}
+
+  /* ── 9. Filter bar ── */
+  html[data-theme="light"] .chip{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important;color:#3d2c1a!important}
+  html[data-theme="light"] .chip:hover{color:#0f0d0a!important;border-color:rgba(0,0,0,.18)!important;background:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .chip.on{background:rgba(159,122,30,.12)!important;color:#9f7a1e!important;border-color:rgba(159,122,30,.3)!important}
+  html[data-theme="light"] .search-box{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] .search-box:focus-within{border-color:rgba(159,122,30,.4)!important}
+  html[data-theme="light"] .search-box svg{stroke:#7a5c38!important}
+  html[data-theme="light"] .search-box input{color:#0f0d0a!important}
+  html[data-theme="light"] .search-box input::placeholder{color:rgba(0,0,0,.3)!important}
+
+  /* ── 10. Section headers ── */
+  html[data-theme="light"] .sec-title{color:#0f0d0a!important}
+  html[data-theme="light"] .sec-eyebrow{color:#9f7a1e!important}
+  html[data-theme="light"] .sec-line{background:linear-gradient(90deg,#9f7a1e,transparent)!important}
+  html[data-theme="light"] .live-pill{background:rgba(22,163,74,.1)!important;color:#16a34a!important;border-color:rgba(22,163,74,.22)!important}
+  html[data-theme="light"] .gold-sep{background:linear-gradient(90deg,transparent,rgba(159,122,30,.2),transparent)!important}
+  html[data-theme="light"] .gold-sep::after{background:#faf8f4!important;color:#9f7a1e!important}
+
+  /* ── 11. Asset cards ── */
+  html[data-theme="light"] .asset-card{background:linear-gradient(170deg,rgba(255,255,255,.98),rgba(250,246,240,.97))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 18px rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .asset-card:hover{border-color:rgba(159,122,30,.45)!important;box-shadow:0 24px 70px rgba(0,0,0,.14)!important}
+  html[data-theme="light"] .card-icon-inner{background:rgba(255,255,255,.92)!important}
+  html[data-theme="light"] .card-sym-new{color:#0f0d0a!important}
+  html[data-theme="light"] .card-name-new{color:#7a5c38!important}
+  html[data-theme="light"] .card-price-new{color:#0f0d0a!important}
+  html[data-theme="light"] .card-chart-zone{background:rgba(0,0,0,.025)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .chart-type-bar{border-bottom-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .ctt-btn{color:#7a5c38!important;background:transparent!important}
+  html[data-theme="light"] .ctt-btn:hover{color:#0f0d0a!important;background:rgba(0,0,0,.05)!important}
+  html[data-theme="light"] .ctt-btn.on{background:rgba(159,122,30,.12)!important;border-color:rgba(159,122,30,.3)!important;color:#9f7a1e!important}
+  html[data-theme="light"] .cpt-btn{color:#7a5c38!important}
+  html[data-theme="light"] .cpt-btn:hover{color:#0f0d0a!important}
+  html[data-theme="light"] .cpt-btn.on{color:#0f0d0a!important;background:rgba(0,0,0,.07)!important;border-color:rgba(0,0,0,.12)!important}
+  html[data-theme="light"] .card-stats-row{border-top-color:rgba(0,0,0,.07)!important;border-bottom-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .card-stat{border-right-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .card-stat-label{color:#7a5c38!important}
+  html[data-theme="light"] .card-stat-val{color:#0f0d0a!important}
+  html[data-theme="light"] .icon-btn{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important;color:#7a5c38!important}
+  html[data-theme="light"] .icon-btn:hover{border-color:rgba(159,122,30,.3)!important;color:#9f7a1e!important;background:rgba(159,122,30,.08)!important}
+
+  /* ── 12. Property cards ── */
+  html[data-theme="light"] .prop-card-new{background:linear-gradient(170deg,rgba(255,255,255,.98),rgba(250,246,240,.97))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 18px rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .prop-card-new:hover{border-color:rgba(159,122,30,.45)!important;box-shadow:0 24px 70px rgba(0,0,0,.14)!important}
+  html[data-theme="light"] .prop-title-new{color:#0f0d0a!important}
+  html[data-theme="light"] .prop-loc{color:#7a5c38!important}
+  html[data-theme="light"] .prop-stats-row{background:rgba(0,0,0,.03)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .prop-stat-cell{border-right-color:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .prop-stat-l{color:#7a5c38!important}
+  html[data-theme="light"] .prop-chart-zone{background:rgba(0,0,0,.025)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .type-pill{background:rgba(255,255,255,.88)!important;border-color:rgba(0,0,0,.12)!important;color:#3d2c1a!important;backdrop-filter:blur(8px)}
+
+  /* ── 13. Side panel ── */
+  html[data-theme="light"] .side-panel{background:linear-gradient(180deg,#f8f4ee 0%,#f2ece2 100%)!important;border-left-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .panel-backdrop{background:rgba(200,190,175,.5)!important;backdrop-filter:blur(6px)}
+  html[data-theme="light"] .ptab{color:#7a5c38!important}
+  html[data-theme="light"] .ptab.on{background:rgba(159,122,30,.12)!important;color:#9f7a1e!important}
+  html[data-theme="light"] .holding-row:hover{background:rgba(0,0,0,.04)!important}
+  html[data-theme="light"] .tx-row{border-bottom-color:rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .tx-row:hover{background:rgba(0,0,0,.04)!important}
+
+  /* ── 14. Modals ── */
+  html[data-theme="light"] .modal-veil{background:rgba(220,210,195,.72)!important;backdrop-filter:blur(20px)}
+  html[data-theme="light"] .modal-box{background:linear-gradient(150deg,#ffffff,#f8f4ee)!important;border-color:rgba(0,0,0,.1)!important;box-shadow:0 40px 100px rgba(0,0,0,.18)!important}
+  html[data-theme="light"] .modal-head{border-bottom-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .modal-close{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.09)!important;color:#7a5c38!important}
+  html[data-theme="light"] .modal-close:hover{color:#c0392b!important;border-color:rgba(192,57,43,.3)!important}
+  html[data-theme="light"] .modal-chart-section{background:rgba(0,0,0,.025)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .sum-box{background:rgba(0,0,0,.03)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .sum-divider{background:rgba(0,0,0,.07)!important}
+  html[data-theme="light"] .amt-input-wrap{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] .amt-input-wrap:focus-within{border-color:rgba(159,122,30,.45)!important}
+  html[data-theme="light"] .amt-prefix{color:#7a5c38!important;border-right-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .amt-input{color:#0f0d0a!important}
+  html[data-theme="light"] .preset{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important;color:#7a5c38!important}
+  html[data-theme="light"] .preset:hover{background:rgba(159,122,30,.1)!important;color:#9f7a1e!important;border-color:rgba(159,122,30,.28)!important}
+  html[data-theme="light"] .period-btn{color:#7a5c38!important;border-color:rgba(0,0,0,.09)!important;background:transparent!important}
+  html[data-theme="light"] .period-btn:hover{color:#0f0d0a!important;border-color:rgba(0,0,0,.16)!important}
+  html[data-theme="light"] .period-btn.on{background:rgba(159,122,30,.12)!important;border-color:rgba(159,122,30,.3)!important;color:#9f7a1e!important;box-shadow:none!important}
+  html[data-theme="light"] .swap-box{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .swap-box:focus-within{border-color:rgba(159,122,30,.4)!important}
+  html[data-theme="light"] .swap-arrow{background:rgba(159,122,30,.1)!important;border-color:rgba(159,122,30,.28)!important}
+  html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.12)!important;color:#0f0d0a!important}
+  html[data-theme="light"] input::placeholder,html[data-theme="light"] textarea::placeholder{color:rgba(0,0,0,.3)!important}
+  html[data-theme="light"] #sw-from,html[data-theme="light"] #sw-to{background:#f5f0e8!important;color:#0f0d0a!important;border-color:rgba(0,0,0,.12)!important}
+
+  /* ── 15. Receipt ── */
+  html[data-theme="light"] .receipt-veil{background:rgba(220,210,195,.78)!important;backdrop-filter:blur(24px)}
+  html[data-theme="light"] .receipt-box{background:linear-gradient(150deg,#ffffff,#f8f4ee)!important;border-color:rgba(159,122,30,.35)!important;box-shadow:0 40px 100px rgba(0,0,0,.16)!important}
+  html[data-theme="light"] .receipt-row{border-bottom-color:rgba(0,0,0,.06)!important}
+
+  /* ── 16. Toast ── */
+  html[data-theme="light"] #toast{background:linear-gradient(145deg,#ffffff,#f5f0e8)!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 20px 60px rgba(0,0,0,.16)!important}
+
+  /* ── 17. Footer ── */
+  html[data-theme="light"] main>footer{border-top-color:rgba(0,0,0,.09)!important}
+
+  /* ── 18. Scrollbars ── */
+  html[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(159,122,30,.2)!important}
+
+  /* ── 19. Deposit modal extras ── */
+  html[data-theme="light"] .dep-coin-btn{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important}
+  html[data-theme="light"] .dep-coin-btn:hover{border-color:rgba(159,122,30,.3)!important;background:rgba(159,122,30,.07)!important}
+  html[data-theme="light"] .dep-coin-btn.selected{background:rgba(159,122,30,.12)!important;border-color:rgba(159,122,30,.45)!important}
+  html[data-theme="light"] .dep-step-num.idle{background:rgba(0,0,0,.07)!important;color:#7a5c38!important;border-color:rgba(0,0,0,.12)!important}
+  html[data-theme="light"] .amt-preset{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important;color:#7a5c38!important}
+  html[data-theme="light"] .amt-preset:hover,.amt-preset.sel{background:rgba(159,122,30,.1)!important;color:#9f7a1e!important;border-color:rgba(159,122,30,.28)!important}
+  html[data-theme="light"] .prop-yield-box{background:linear-gradient(135deg,rgba(22,163,74,.07),rgba(159,122,30,.05))!important;border-color:rgba(22,163,74,.18)!important}
+  html[data-theme="light"] .prop-yield-label{color:#7a5c38!important}
+
+  /* ── 20. Admin overlay ── */
+  html[data-theme="light"] .admin-overlay{background:rgba(250,248,244,.98)!important;backdrop-filter:blur(24px)}
 </style>
+<link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
+<div id="cursorGlow" class="cursor-glow"></div>
+<div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 <canvas id="particleCanvas"></canvas>
 <div class="ambient"></div>
 <div class="grain"></div>
@@ -587,7 +780,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <!-- NAV -->
 <nav>
   <div style="display:flex;align-items:center;gap:10px">
-    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="margin-right:6px"><span class="theme-icon">☀</span></button><button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
       <span class="bar"></span><span class="bar"></span><span class="bar"></span>
     </button>
     <a href="index.html" class="nav-brand">
@@ -1366,6 +1559,9 @@ function switchCardChart(sym, chartType, period, ctBtn, cpBtn) {
 //  INIT / AUTH
 // ══════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', async () => {
+  // Build ticker immediately with default prices so it's visible during load
+  buildTicker();
+
   const loaderDone = new Promise(r => setTimeout(r, 1900));
   const { data: { session } } = await sb.auth.getSession();
   await loaderDone;
@@ -1379,7 +1575,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await loadPortfolioStats();
   await loadTransactions();
 
-  buildTicker();
+  buildTicker(); // rebuild with live DB prices
   renderAll();
   buildSwapSelects();
   buildDepositCoinGrid();
@@ -1504,6 +1700,7 @@ function applyPriceUpdate(sym, newPrice, newChg) {
   const chgEl = document.getElementById('card-chg-'+sym);
   if(chgEl){ const up=newChg>=0; chgEl.textContent=(up?'+':'')+newChg.toFixed(2)+'%'; chgEl.className='card-chg-badge '+(up?'card-chg-up':'card-chg-dn'); }
   const tEl = document.getElementById('tick-pr-'+sym); if(tEl) tEl.textContent='$'+fmtP(newPrice);
+  const tChgEl = document.getElementById('tick-chg-'+sym); if(tChgEl){ const up=newChg>=0; tChgEl.textContent=(up?'+':'')+Math.abs(newChg).toFixed(2)+'%'; tChgEl.style.color=up?'#1dbd6c':'#e84848'; }
   if(modalAsset?.sym===sym){
     const pe=document.getElementById('mi-price');
     if(pe){ pe.textContent='$'+fmtP(newPrice); pe.classList.remove('flash-up','flash-dn'); void pe.offsetWidth; pe.classList.add(newPrice>=oldPrice?'flash-up':'flash-dn'); setTimeout(()=>pe.classList.remove('flash-up','flash-dn'),1300); }
@@ -1741,14 +1938,15 @@ function setFilter(f, btn) {
 // ══════════════════════════════════════════════════
 function buildTicker() {
   const all = [...CRYPTO, ...STOCKS];
-  const items = [...all, ...all];
-  document.getElementById('liveTicker').innerHTML = items.map(a => {
+  // Duplicate for seamless CSS loop; only first set gets IDs to avoid duplicates
+  document.getElementById('liveTicker').innerHTML = [...all, ...all].map((a, idx) => {
     const up = a.chg >= 0;
+    const first = idx < all.length;
     return `<div class="ticker-item">
       <i class="${a.icon}" style="font-size:12px;color:${a.color}"></i>
       <span style="font-family:'DM Mono',monospace;font-size:10.5px;color:var(--pearl);font-weight:500">${a.sym}</span>
-      <span id="tick-pr-${a.sym}" style="font-family:'DM Mono',monospace;font-size:10.5px;color:var(--pearl)">$${fmtP(a.price)}</span>
-      <span style="font-family:'DM Mono',monospace;font-size:9.5px;color:${up?'#1dbd6c':'#e84848'}">${up?'+':''}${Math.abs(a.chg).toFixed(2)}%</span>
+      <span ${first?`id="tick-pr-${a.sym}"`:''}style="font-family:'DM Mono',monospace;font-size:10.5px;color:var(--pearl)">$${fmtP(a.price)}</span>
+      <span ${first?`id="tick-chg-${a.sym}"`:''}style="font-family:'DM Mono',monospace;font-size:9.5px;color:${up?'#1dbd6c':'#e84848'}">${up?'+':''}${Math.abs(a.chg).toFixed(2)}%</span>
     </div>`;
   }).join('');
 }
@@ -2146,5 +2344,6 @@ function fmtLarge(n){if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';if(n>=1e9)retu
 </script>
 <script src="portfolio-sync.js"></script>
 <script src="price-sync.js"></script>
+<script src="premium.js"></script>
 </body>
 </html>
