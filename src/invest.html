@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root {
@@ -157,7 +158,7 @@ body.menu-open{overflow:hidden}
 .search-box input{background:transparent;border:none;outline:none;color:var(--pearl);font-family:'Instrument Sans',sans-serif;font-size:12.5px;width:160px;min-width:0}
 
 /* MAIN */
-main{padding:0 64px 80px;max-width:1600px;width:100%;margin:0 auto;position:relative;z-index:2}
+main{padding:0 64px 0;max-width:1600px;width:100%;margin:0 auto;position:relative;z-index:2}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:30px;gap:14px;flex-wrap:wrap}
 .sec-eyebrow{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.26em;color:var(--gold);text-transform:uppercase;margin-bottom:6px}
 .sec-title{font-family:'Playfair Display',serif;font-size:clamp(24px,2.5vw,38px);font-weight:400;color:var(--pearl);line-height:1.05}
@@ -322,9 +323,14 @@ main{padding:0 64px 80px;max-width:1600px;width:100%;margin:0 auto;position:rela
 
 .card-chart-canvas-wrap {
   position:relative; height:120px;
-  padding: 6px 4px 4px;
+  overflow: hidden;
+  background: #07090d;
 }
+html[data-theme="light"] .card-chart-canvas-wrap { background: #faf8f4; }
 .card-chart-canvas-wrap canvas { display:block; width:100%!important; height:100%!important; }
+.card-chart-canvas-wrap > .card-lwc-wrap { position:absolute; inset:0; }
+.chart-lwc-outer { background: #07090d; }
+html[data-theme="light"] .chart-lwc-outer { background: #faf8f4; }
 
 /* ---- STATS ROW ---- */
 .card-stats-row {
@@ -433,8 +439,8 @@ main{padding:0 64px 80px;max-width:1600px;width:100%;margin:0 auto;position:rela
   overflow: hidden;
 }
 .prop-chart-zone .chart-type-bar { padding:7px 12px 6px; }
-.prop-chart-canvas-wrap { height:100px; padding:4px; }
-.prop-chart-canvas-wrap canvas { display:block;width:100%!important;height:100%!important; }
+.prop-chart-canvas-wrap { position:relative; height:130px; overflow:hidden; background:#07090d; }
+html[data-theme="light"] .prop-chart-canvas-wrap { background:#faf8f4; }
 
 .prop-footer { padding:12px 14px 14px; }
 .prop-invest-btn { width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:13px;font-size:13px;font-weight:600;color:var(--void);background:linear-gradient(135deg,var(--gold-hi),var(--gold),var(--gold-lo));background-size:200% 100%;background-position:100% 0;border:none;cursor:pointer;transition:all .4s;box-shadow:0 4px 20px rgba(201,166,60,.22); }
@@ -545,8 +551,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 /* RESPONSIVE */
 @media(min-width:1025px){.nav-toggle{display:none!important}.mobile-menu{display:none!important}.nav-links{display:flex}}
-@media(max-width:1024px){.nav-links{display:none!important}.nav-cash{display:none}.nav-toggle{display:flex!important}.mobile-menu{display:block!important}.hero{padding:40px 28px 36px}main{padding:0 28px 64px}.kpi-strip{grid-template-columns:repeat(2,1fr)}.filter-bar{flex-direction:column;align-items:flex-start}.filter-right{width:100%}.search-box{flex:1}.search-box input{width:100%;min-width:80px}}
-@media(max-width:768px){.hero{padding:32px 18px 28px}main{padding:0 18px 56px}.kpi-strip{grid-template-columns:repeat(2,1fr);gap:10px}.asset-grid{grid-template-columns:1fr}.prop-grid{grid-template-columns:1fr}.chips{gap:5px}.chip{padding:6px 14px;font-size:9px}.modal-box{border-radius:18px}.modal-body{padding:16px;gap:14px}.presets{gap:4px}.preset{font-size:8.5px;padding:6px 0}#toast{left:12px;right:12px;min-width:unset;bottom:12px}}
+@media(max-width:1024px){.nav-links{display:none!important}.nav-cash{display:none}.nav-toggle{display:flex!important}.mobile-menu{display:block!important}.hero{padding:40px 28px 36px}main{padding:0 28px 0}.kpi-strip{grid-template-columns:repeat(2,1fr)}.filter-bar{flex-direction:column;align-items:flex-start}.filter-right{width:100%}.search-box{flex:1}.search-box input{width:100%;min-width:80px}}
+@media(max-width:768px){.hero{padding:32px 18px 28px}main{padding:0 18px 0}.kpi-strip{grid-template-columns:repeat(2,1fr);gap:10px}.asset-grid{grid-template-columns:1fr}.prop-grid{grid-template-columns:1fr}.chips{gap:5px}.chip{padding:6px 14px;font-size:9px}.modal-box{border-radius:18px}.modal-body{padding:16px;gap:14px}.presets{gap:4px}.preset{font-size:8.5px;padding:6px 0}#toast{left:12px;right:12px;min-width:unset;bottom:12px}}
 @media(max-width:480px){.kpi-strip{grid-template-columns:1fr 1fr}.hero h1{font-size:38px}.nav-btn span.btn-text{display:none}}
 @media(max-height:620px){.mm-strip{display:none}.mm-link{padding:10px 12px}.mm-link-icon{width:30px;height:30px;font-size:10px}.mm-cta{padding:10px 14px 16px}}
 
@@ -875,7 +881,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="skeleton" style="height:520px"></div><div class="skeleton" style="height:520px"></div><div class="skeleton" style="height:520px"></div>
     </div>
   </section>
-  <footer style="padding:24px 0;border-top:1px solid var(--rim);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+  <footer style="padding:24px 0 40px;border-top:1px solid var(--rim);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
     <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);letter-spacing:.12em;text-transform:uppercase">©2026 Aurum Capital · All Rights Reserved</p>
     <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog)">Dubai · London · New York · Singapore</p>
     <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog)">Regulated · Secure · Trusted</p>
@@ -943,9 +949,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div style="text-align:right"><p id="mi-chg" style="font-family:'DM Mono',monospace;font-size:11.5px;padding:4px 11px;border-radius:8px">—</p><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);margin-top:3px">24h change</p></div>
       </div>
       <div id="mi-chart-wrap" class="modal-chart-section" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-          <span style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.14em">Price Chart</span>
-          <div style="display:flex;gap:4px" id="mi-periods">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <div style="display:flex;gap:3px" id="mi-chart-types">
+            <button class="period-btn on" onclick="setModalChartType('area',this)">Area</button>
+            <button class="period-btn" onclick="setModalChartType('line',this)">Line</button>
+            <button class="period-btn" onclick="setModalChartType('candle',this)">Candles</button>
+          </div>
+          <div style="display:flex;gap:3px;flex-wrap:wrap" id="mi-periods">
+            <button class="period-btn" onclick="setInvestPeriod('5M',this)">5M</button>
+            <button class="period-btn" onclick="setInvestPeriod('1H',this)">1H</button>
+            <button class="period-btn" onclick="setInvestPeriod('4H',this)">4H</button>
             <button class="period-btn on" onclick="setInvestPeriod('1D',this)">1D</button>
             <button class="period-btn" onclick="setInvestPeriod('1W',this)">1W</button>
             <button class="period-btn" onclick="setInvestPeriod('1M',this)">1M</button>
@@ -959,7 +972,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
           <div style="padding:8px 12px;border-right:1px solid var(--rim)"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Mkt Cap</div><p id="mi-stat-mcap" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">—</p></div>
           <div style="padding:8px 12px"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Volume 24H</div><p id="mi-stat-vol" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">—</p></div>
         </div>
-        <div style="height:180px;position:relative"><canvas id="modalChartCanvas"></canvas></div>
+        <div class="chart-lwc-outer" style="height:260px;position:relative;border-radius:10px;overflow:hidden">
+          <div id="modalChartLwc" style="height:100%;width:100%"></div>
+          <div id="mi-chart-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,6,8,.75);pointer-events:none">
+            <div style="width:22px;height:22px;border:2px solid rgba(201,166,60,.3);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite"></div>
+          </div>
+        </div>
       </div>
       <div id="mi-type-info" style="display:none;padding:16px;background:var(--gold-fog);border:1px solid var(--rim-gold);border-radius:16px">
         <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:6px">Property Investment</p>
@@ -1320,6 +1338,7 @@ let authUser = null, profile = null, myHoldings = [], modalAsset = null;
 let liveFilter = 'all', allTransactions = [], txFilter = 'all', adminUsers = [];
 let activePanelTab = 'portfolio', adminPriceTab = 'crypto';
 let investChartInstance = null, investChartPeriod = '1D';
+let modalLwcChart = null, modalLwcSeries = null, modalChartType = 'area';
 const DAILY_PROFIT_RATE = 0.20; // 20% per day base
 const DURATION_RATES = {
   '1D': { days: 1,   label: '1 Day'   },
@@ -1449,6 +1468,169 @@ function genPropertyHistory(baseVal, period) {
 }
 
 // ══════════════════════════════════════════════════
+//  OHLCV FETCH + FALLBACK
+// ══════════════════════════════════════════════════
+function getChartTheme() {
+  const light = document.documentElement.dataset.theme === 'light';
+  return {
+    bg:      light ? '#faf8f4' : '#07090d',
+    text:    light ? '#7a5c38' : '#4a6070',
+    gridV:   light ? 'rgba(0,0,0,.04)'   : 'rgba(255,255,255,.03)',
+    gridH:   light ? 'rgba(0,0,0,.05)'   : 'rgba(255,255,255,.04)',
+    border:  light ? 'rgba(0,0,0,.09)'   : 'rgba(255,255,255,.06)',
+    lblBg:   light ? '#ede8de'            : '#131a22',
+  };
+}
+
+function downsample(bars, maxPts) {
+  if (bars.length <= maxPts) return bars;
+  const step = (bars.length - 1) / (maxPts - 1);
+  const out = [];
+  for (let i = 0; i < maxPts - 1; i++) out.push(bars[Math.round(i * step)]);
+  out.push(bars[bars.length - 1]);
+  return out;
+}
+
+function applyChartTheme() {
+  const th = getChartTheme();
+  const base = {
+    layout: { background: { type: 'solid', color: th.bg }, textColor: th.text },
+    grid: { vertLines: { color: th.gridV }, horzLines: { color: th.gridH } },
+  };
+  Object.values(cardCharts).forEach(({ chart }) => {
+    if (chart) try { chart.applyOptions(base); } catch(e) {}
+  });
+  if (modalLwcChart) {
+    try {
+      modalLwcChart.applyOptions({
+        ...base,
+        crosshair: { vertLine: { labelBackgroundColor: th.lblBg }, horzLine: { labelBackgroundColor: th.lblBg } },
+        rightPriceScale: { borderColor: th.border },
+        timeScale: { borderColor: th.border },
+      });
+    } catch(e) {}
+  }
+}
+
+new MutationObserver(applyChartTheme)
+  .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+const _ohlcvCache = {};
+async function fetchInvestOHLCV(sym, tf) {
+  const key = sym + '_' + tf;
+  const cached = _ohlcvCache[key];
+  if (cached && Date.now() - cached.ts < 90000) return cached.bars;
+  const url = `${SUPABASE_URL}/functions/v1/get-ohlcv?symbol=${encodeURIComponent(sym)}&tf=${tf}`;
+  const res = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${SUPABASE_ANON}`, 'apikey': SUPABASE_ANON }
+  });
+  const json = await res.json();
+  if (!json.success || !Array.isArray(json.values) || !json.values.length) throw new Error(json.error || 'No data');
+  const seen = new Set();
+  const bars = json.values
+    .map(v => ({
+      time: Math.floor(new Date(v.datetime.replace(' ', 'T')).getTime() / 1000),
+      open: parseFloat(v.open), high: parseFloat(v.high),
+      low: parseFloat(v.low),   close: parseFloat(v.close),
+    }))
+    .filter(b => b.time > 0 && b.open > 0)
+    .sort((a, b) => a.time - b.time)
+    .filter(b => { if (seen.has(b.time)) return false; seen.add(b.time); return true; });
+  _ohlcvCache[key] = { bars, ts: Date.now() };
+  return bars;
+}
+
+function genFallbackOHLCV(price, chg, tf) {
+  const cfgs = {
+    '5M': { n: 200, stepMs: 5*60000,        vol: 0.0008 },
+    '1H': { n: 72,  stepMs: 60*60000,       vol: 0.002  },
+    '4H': { n: 90,  stepMs: 4*60*60000,     vol: 0.004  },
+    '1D': { n: 90,  stepMs: 24*60*60000,    vol: 0.012  },
+    '1W': { n: 52,  stepMs: 7*24*60*60000,  vol: 0.04   },
+    '1M': { n: 24,  stepMs: 30*24*60*60000, vol: 0.08   },
+    '3M': { n: 36,  stepMs: 30*24*60*60000, vol: 0.10   },
+    '6M': { n: 52,  stepMs: 7*24*60*60000,  vol: 0.07   },
+    '1Y': { n: 52,  stepMs: 7*24*60*60000,  vol: 0.06   },
+  };
+  const cfg = cfgs[tf] || cfgs['1D'];
+  const drift = (chg / 100) / cfg.n;
+  let p = price * (1 - (chg / 100) * 0.9);
+  const startMs = Date.now() - cfg.n * cfg.stepMs;
+  const bars = [];
+  for (let i = 0; i < cfg.n; i++) {
+    const rand = (Math.random() + Math.random() + Math.random() - 1.5) * cfg.vol;
+    const o = p;
+    p = Math.max(p * (1 + rand + drift), price * 0.3);
+    const hi = Math.max(o, p) * (1 + Math.random() * cfg.vol * 0.4);
+    const lo = Math.min(o, p) * (1 - Math.random() * cfg.vol * 0.4);
+    bars.push({ time: Math.floor((startMs + i * cfg.stepMs) / 1000), open: o, high: hi, low: lo, close: p });
+  }
+  if (bars.length) {
+    const last = bars[bars.length - 1];
+    last.close = price; last.high = Math.max(last.high, price); last.low = Math.min(last.low, price);
+  }
+  return bars;
+}
+
+function genPropertyOHLCV(price, yieldPct, tf) {
+  const cfgs = {
+    '1M': { n: 30, stepMs: 24*60*60000   },
+    '3M': { n: 90, stepMs: 24*60*60000   },
+    '6M': { n: 52, stepMs: 7*24*3600000  },
+    '1Y': { n: 52, stepMs: 7*24*3600000  },
+  };
+  const cfg = cfgs[tf] || cfgs['1M'];
+  const n = cfg.n;
+  const startMs = Date.now() - n * cfg.stepMs;
+
+  // Fixed visual rise so shape looks good at any period length
+  const baseRise  = 0.17;   // 17% climb over full period
+  const lateBoost = 0.09;   // extra 9% acceleration in last 35%
+  const startPrice = price / (1 + baseRise + lateBoost * 0.6);
+
+  // 3 complete zig-zag waves + small random noise on top
+  const waveCount = 2.8 + Math.random() * 0.5;  // ~3 waves, varies per render
+  const waveAmp   = 0.024;                        // ±2.4% swing
+  const noiseAmp  = 0.005;                        // ±0.5% random micro-noise
+
+  const bars = [];
+
+  for (let i = 0; i < n; i++) {
+    const t = i / Math.max(n - 1, 1);  // 0 → 1
+
+    // Curved exponential trend: slow early, fast finish
+    const trendCurve = Math.pow(t, 0.6);
+    const lateSurge  = t > 0.65 ? Math.pow((t - 0.65) / 0.35, 1.4) * lateBoost : 0;
+    const trendVal   = startPrice * (1 + (baseRise + lateSurge) * trendCurve);
+
+    // Zig-zag sine wave — amplitude widens in late phase
+    const ampScale = 1 + (t > 0.65 ? (t - 0.65) * 2.2 : 0);
+    const osc   = Math.sin(t * waveCount * 2 * Math.PI) * waveAmp * ampScale * trendVal;
+    const noise = (Math.random() - 0.5) * noiseAmp * trendVal;
+
+    const closeVal = Math.max(trendVal + osc + noise, startPrice * 0.88);
+    const openVal  = i === 0 ? closeVal * (1 - 0.003) : bars[i - 1].close;
+
+    const wick = trendVal * (0.005 + ampScale * 0.003);
+    bars.push({
+      time:  Math.floor((startMs + i * cfg.stepMs) / 1000),
+      open:  openVal,
+      high:  Math.max(openVal, closeVal) + Math.random() * wick,
+      low:   Math.min(openVal, closeVal) - Math.random() * wick * 0.65,
+      close: closeVal,
+    });
+  }
+
+  if (bars.length) {
+    const last = bars[bars.length - 1];
+    last.close = price;
+    last.high  = Math.max(last.high, price);
+    last.low   = Math.min(last.low,  price * 0.998);
+  }
+  return bars;
+}
+
+// ══════════════════════════════════════════════════
 //  CARD CHART RENDERING
 // ══════════════════════════════════════════════════
 const CHART_DEFAULTS = {
@@ -1480,100 +1662,98 @@ const CHART_DEFAULTS = {
   }
 };
 
-function buildCardChart(canvasEl, asset, chartType, period) {
-  // Destroy existing
+async function buildCardChart(divEl, asset, chartType, period) {
   const existing = cardCharts[asset.sym];
-  if (existing?.instance) { try { existing.instance.destroy(); } catch(e){} }
+  if (existing?.chart) { try { existing.chart.remove(); } catch(e){} }
 
-  const ctx = canvasEl.getContext('2d');
+  const loader = document.getElementById('card-chart-loading-' + asset.sym);
+  if (loader) loader.style.display = 'flex';
+
   const isProp = asset.cat === 'property';
-  const { prices, labels } = isProp
-    ? genPropertyHistory(asset.price, period)
-    : genHistory(asset.price, period, asset.chg);
+  const GAIN = '#1dbd6c', LOSS = '#e84848', GOLD = '#c9a63c';
+  const baseColor = isProp ? GOLD : (asset.chg >= 0 ? GAIN : LOSS);
+  const th = getChartTheme();
 
-  const isUp = prices[prices.length-1] >= prices[0];
-  const lineColor = isProp ? '#c9a63c' : (isUp ? '#1dbd6c' : '#e84848');
-  const lineColorRgb = isProp ? '201,166,60' : (isUp ? '29,189,108' : '232,72,72');
-
-  const grad = ctx.createLinearGradient(0, 0, 0, canvasEl.offsetHeight || 120);
-  grad.addColorStop(0, `rgba(${lineColorRgb},.28)`);
-  grad.addColorStop(0.6, `rgba(${lineColorRgb},.06)`);
-  grad.addColorStop(1, 'rgba(0,0,0,0)');
-
-  let dataset, type;
-
-  if (chartType === 'bar') {
-    type = 'bar';
-    dataset = {
-      data: prices,
-      backgroundColor: prices.map((p,i) => i===0 ? `rgba(${lineColorRgb},.5)` : p >= prices[i-1] ? `rgba(29,189,108,.6)` : `rgba(232,72,72,.6)`),
-      borderColor: prices.map((p,i) => i===0 ? lineColor : p >= prices[i-1] ? '#1dbd6c' : '#e84848'),
-      borderWidth: 1,
-      borderRadius: 2,
-      borderSkipped: false,
-    };
-  } else {
-    type = 'line';
-    dataset = {
-      data: prices,
-      borderColor: lineColor,
-      borderWidth: chartType === 'area' ? 2 : 1.8,
-      fill: chartType === 'area',
-      backgroundColor: chartType === 'area' ? grad : 'transparent',
-      tension: 0.38,
-      pointRadius: 0,
-      pointHoverRadius: 4,
-      pointHoverBackgroundColor: '#e2eaf3',
-      pointHoverBorderColor: lineColor,
-      pointHoverBorderWidth: 2,
-    };
-  }
-
-  const instance = new Chart(ctx, {
-    type,
-    data: { labels, datasets: [dataset] },
-    options: {
-      ...CHART_DEFAULTS,
-      animation: { duration: 500, easing: 'easeInOutQuart' },
-      plugins: {
-        ...CHART_DEFAULTS.plugins,
-        tooltip: {
-          ...CHART_DEFAULTS.plugins.tooltip,
-          callbacks: {
-            label: i => '$' + fmtP(i.raw),
-            afterLabel: i => {
-              const pct = ((i.raw - prices[0]) / prices[0] * 100);
-              return (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
-            }
-          }
-        }
-      },
-      scales: {
-        x: { display: false },
-        y: { display: false }
-      }
-    }
+  const chart = LightweightCharts.createChart(divEl, {
+    width: divEl.clientWidth || 280,
+    height: divEl.clientHeight || 120,
+    layout: { background: { type: 'solid', color: th.bg }, textColor: 'transparent' },
+    grid: { vertLines: { visible: false }, horzLines: { visible: false } },
+    crosshair: { vertLine: { visible: false, labelVisible: false }, horzLine: { visible: false, labelVisible: false } },
+    rightPriceScale: { visible: false },
+    leftPriceScale: { visible: false },
+    timeScale: { visible: false },
+    handleScroll: false,
+    handleScale: false,
   });
 
-  cardCharts[asset.sym] = { instance, type: chartType, period };
+  let series;
+  if (chartType === 'candle') {
+    const upC = isProp ? '#c9a63c' : '#1dbd6c';
+    const dnC = isProp ? '#7a5e18' : '#e84848';
+    series = chart.addCandlestickSeries({
+      upColor: upC, downColor: dnC,
+      borderUpColor: upC, borderDownColor: dnC,
+      wickUpColor: upC, wickDownColor: dnC,
+      priceLineVisible: false, lastValueVisible: false,
+    });
+  } else if (chartType === 'line') {
+    series = chart.addLineSeries({ color: baseColor, lineWidth: 1.5, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
+  } else {
+    series = chart.addAreaSeries({
+      lineColor: baseColor,
+      topColor: isProp ? 'rgba(201,166,60,.28)' : (asset.chg >= 0 ? 'rgba(29,189,108,.25)' : 'rgba(232,72,72,.25)'),
+      bottomColor: 'rgba(0,0,0,0)',
+      lineWidth: 2, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+    });
+  }
+
+  let bars = [];
+  if (isProp) {
+    bars = genPropertyOHLCV(asset.price, asset.yield_ || 8, period);
+  } else {
+    try { bars = await fetchInvestOHLCV(asset.sym, period); } catch(e) {}
+    if (!bars.length) bars = genFallbackOHLCV(asset.price, asset.chg, period);
+  }
+
+  // Recolor area/line based on actual data direction
+  if (bars.length > 1 && chartType !== 'candle') {
+    const actualUp = bars[bars.length-1].close >= bars[0].close;
+    const actualColor = isProp ? GOLD : (actualUp ? GAIN : LOSS);
+    if (chartType === 'area') {
+      series.applyOptions({ lineColor: actualColor, topColor: isProp ? 'rgba(201,166,60,.25)' : (actualUp ? 'rgba(29,189,108,.25)' : 'rgba(232,72,72,.25)') });
+    } else if (chartType === 'line') {
+      series.applyOptions({ color: actualColor });
+    }
+  }
+
+  // Candles: 40 bars (readable at card width); area/line: 60 bars (smooth curve)
+  const maxPts = chartType === 'candle' ? 40 : 60;
+  const plotBars = downsample(bars, maxPts);
+
+  if (chartType === 'candle') {
+    series.setData(plotBars.map(b => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close })));
+  } else {
+    series.setData(plotBars.map(b => ({ time: b.time, value: b.close })));
+  }
+
+  chart.timeScale().fitContent();
+  if (loader) loader.style.display = 'none';
+  cardCharts[asset.sym] = { chart, series, type: chartType, period };
 }
 
 function switchCardChart(sym, chartType, period, ctBtn, cpBtn) {
   const asset = ALL_ASSETS.find(a => a.sym === sym);
   if (!asset) return;
-  const canvasId = 'card-canvas-' + sym;
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
+  const divEl = document.getElementById('card-chart-' + sym);
+  if (!divEl) return;
 
-  // Update active buttons
   if (ctBtn) {
-    const bar = ctBtn.closest('.chart-type-tabs');
-    bar?.querySelectorAll('.ctt-btn').forEach(b => b.classList.remove('on'));
+    ctBtn.closest('.chart-type-tabs')?.querySelectorAll('.ctt-btn').forEach(b => b.classList.remove('on'));
     ctBtn.classList.add('on');
   }
   if (cpBtn) {
-    const bar = cpBtn.closest('.chart-period-tabs');
-    bar?.querySelectorAll('.cpt-btn').forEach(b => b.classList.remove('on'));
+    cpBtn.closest('.chart-period-tabs')?.querySelectorAll('.cpt-btn').forEach(b => b.classList.remove('on'));
     cpBtn.classList.add('on');
   }
 
@@ -1581,7 +1761,7 @@ function switchCardChart(sym, chartType, period, ctBtn, cpBtn) {
   const resolvedType = chartType || current?.type || 'area';
   const resolvedPeriod = period || current?.period || '1D';
 
-  buildCardChart(canvas, asset, resolvedType, resolvedPeriod);
+  buildCardChart(divEl, asset, resolvedType, resolvedPeriod);
 }
 
 // ══════════════════════════════════════════════════
@@ -1668,9 +1848,10 @@ if (typeof AurumPrices !== 'undefined') {
     ALL_ASSETS.forEach(a => {
       if (overrides[a.sym]?.price) return;
       const d = livePrices[a.sym];
-      if (d?.price) { a.price = d.price; a.chg = d.changePct24h ?? a.chg; }
+      if (d?.price) {
+        applyPriceUpdate(a.sym, d.price, d.changePct24h ?? a.chg);
+      }
     });
-    renderAll();
     if (modalAsset) calcModal();
   });
 }
@@ -1732,7 +1913,7 @@ function applyPriceUpdate(sym, newPrice, newChg) {
     if(pe){ pe.textContent='$'+fmtP(newPrice); pe.classList.remove('flash-up','flash-dn'); void pe.offsetWidth; pe.classList.add(newPrice>=oldPrice?'flash-up':'flash-dn'); setTimeout(()=>pe.classList.remove('flash-up','flash-dn'),1300); }
     const ce=document.getElementById('mi-chg');
     if(ce){ ce.textContent=(newChg>=0?'+':'')+newChg.toFixed(2)+'%'; ce.style.color=newChg>=0?'var(--gain)':'var(--loss)'; ce.style.background=newChg>=0?'var(--gain-bg)':'var(--loss-bg)'; }
-    calcModal(); renderModalChart(sym, investChartPeriod);
+    calcModal(); tickModalChart(newPrice);
     txt('mi-stat-high','$'+fmtP(newPrice*1.032)); txt('mi-stat-low','$'+fmtP(newPrice*0.971));
   }
   renderPortfolioPanel();
@@ -1742,28 +1923,94 @@ function applyPriceUpdate(sym, newPrice, newChg) {
 }
 
 // ══════════════════════════════════════════════════
-//  MODAL CHART (unchanged logic)
+//  MODAL CHART — Lightweight Charts + real OHLCV
 // ══════════════════════════════════════════════════
-function renderModalChart(sym, period) {
-  const asset = ALL_ASSETS.find(a => a.sym===sym); if(!asset) return;
-  if(investChartInstance){ investChartInstance.destroy(); investChartInstance=null; }
-  const canvas = document.getElementById('modalChartCanvas'); if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const { prices, labels } = genHistory(asset.price, period, asset.chg);
-  const isUp = prices[prices.length-1] >= prices[0];
-  const lineColor = isUp ? '#1dbd6c' : '#e84848';
-  const grad = ctx.createLinearGradient(0,0,0,canvas.offsetHeight||180);
-  grad.addColorStop(0, isUp?'rgba(29,189,108,.22)':'rgba(232,72,72,.2)');
-  grad.addColorStop(0.65, isUp?'rgba(29,189,108,.04)':'rgba(232,72,72,.04)');
-  grad.addColorStop(1,'rgba(0,0,0,0)');
-  investChartInstance = new Chart(ctx, {
-    type:'line',
-    data:{labels,datasets:[{data:prices,borderColor:lineColor,borderWidth:1.8,fill:true,backgroundColor:grad,tension:0.36,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#e2eaf3',pointHoverBorderColor:lineColor}]},
-    options:{responsive:true,maintainAspectRatio:false,animation:{duration:600,easing:'easeInOutQuart'},interaction:{intersect:false,mode:'index'},
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(7,9,13,.97)',borderColor:'rgba(201,166,60,.25)',borderWidth:1,titleFont:{family:'DM Mono',size:9},bodyFont:{family:'DM Mono',size:13},titleColor:'#3d5060',bodyColor:'#e2eaf3',padding:12,cornerRadius:10,displayColors:false,callbacks:{title:i=>i[0].label||'',label:i=>'$'+fmtP(i.raw),afterLabel:i=>{const pct=((i.raw-prices[0])/prices[0]*100);return(pct>=0?'+':'')+pct.toFixed(2)+'% from open';}}}},
-      scales:{x:{grid:{color:'rgba(255,255,255,.03)',drawBorder:false},ticks:{color:'#3d5060',font:{family:'DM Mono',size:8},maxRotation:0,maxTicksLimit:8},border:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)',drawBorder:false},ticks:{color:'#3d5060',font:{family:'DM Mono',size:8},callback:v=>'$'+fmtP(v),maxTicksLimit:5},position:'right',border:{display:false}}}
-    }
+function destroyModalLwcChart() {
+  if (modalLwcChart) { try { modalLwcChart.remove(); } catch(e){} modalLwcChart = null; modalLwcSeries = null; }
+}
+
+async function renderModalChart(sym, tf) {
+  const asset = ALL_ASSETS.find(a => a.sym === sym); if (!asset) return;
+  destroyModalLwcChart();
+
+  const container = document.getElementById('modalChartLwc');
+  const loader = document.getElementById('mi-chart-loading');
+  if (!container) return;
+  if (loader) loader.style.display = 'flex';
+
+  const GAIN = '#1dbd6c', LOSS = '#e84848';
+  const isInitiallyUp = asset.chg >= 0;
+  const th = getChartTheme();
+
+  modalLwcChart = LightweightCharts.createChart(container, {
+    width: container.clientWidth,
+    height: container.clientHeight || 260,
+    layout: { background: { type: 'solid', color: th.bg }, textColor: th.text },
+    grid: { vertLines: { color: th.gridV }, horzLines: { color: th.gridH } },
+    crosshair: { mode: 1, vertLine: { labelBackgroundColor: th.lblBg }, horzLine: { labelBackgroundColor: th.lblBg } },
+    rightPriceScale: { borderColor: th.border, scaleMargins: { top: 0.08, bottom: 0.08 } },
+    timeScale: { borderColor: th.border, timeVisible: true, secondsVisible: false, rightOffset: 2 },
+    handleScroll: false,
+    handleScale: false,
   });
+
+  const seriesColor = isInitiallyUp ? GAIN : LOSS;
+  if (modalChartType === 'candle') {
+    modalLwcSeries = modalLwcChart.addCandlestickSeries({
+      upColor: GAIN, downColor: LOSS, borderUpColor: GAIN, borderDownColor: LOSS,
+      wickUpColor: GAIN, wickDownColor: LOSS,
+    });
+  } else if (modalChartType === 'line') {
+    modalLwcSeries = modalLwcChart.addLineSeries({
+      color: seriesColor, lineWidth: 2,
+      crosshairMarkerVisible: true, crosshairMarkerRadius: 5,
+    });
+  } else {
+    modalLwcSeries = modalLwcChart.addAreaSeries({
+      lineColor: seriesColor,
+      topColor: isInitiallyUp ? 'rgba(29,189,108,.28)' : 'rgba(232,72,72,.28)',
+      bottomColor: 'rgba(0,0,0,0)',
+      lineWidth: 2,
+    });
+  }
+
+  let bars = [];
+  try { bars = await fetchInvestOHLCV(sym, tf); }
+  catch(e) { bars = genFallbackOHLCV(asset.price, asset.chg, tf); }
+
+  if (!bars.length) { bars = genFallbackOHLCV(asset.price, asset.chg, tf); }
+
+  // Recolor based on actual data direction
+  if (bars.length > 1) {
+    const firstVal = bars[0].close;
+    const lastVal  = bars[bars.length - 1].close;
+    const actualUp = lastVal >= firstVal;
+    const actualColor = actualUp ? GAIN : LOSS;
+    if (modalChartType === 'area') {
+      modalLwcSeries.applyOptions({ lineColor: actualColor, topColor: actualUp ? 'rgba(29,189,108,.28)' : 'rgba(232,72,72,.28)' });
+    } else if (modalChartType === 'line') {
+      modalLwcSeries.applyOptions({ color: actualColor });
+    }
+  }
+
+  // For line/area: convert OHLCV bars to { time, value }
+  const plotData = (modalChartType === 'candle') ? bars : bars.map(b => ({ time: b.time, value: b.close }));
+  modalLwcSeries.setData(plotData);
+  modalLwcChart.timeScale().fitContent();
+  if (loader) loader.style.display = 'none';
+}
+
+function tickModalChart(price) {
+  if (!modalLwcSeries || modalChartType === 'candle') return;
+  const t = Math.floor(Date.now() / 1000);
+  try { modalLwcSeries.update({ time: t, value: price }); } catch(e) {}
+}
+
+function setModalChartType(type, btn) {
+  modalChartType = type;
+  document.querySelectorAll('#mi-chart-types .period-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  if (modalAsset) renderModalChart(modalAsset.sym, investChartPeriod);
 }
 
 // ══════════════════════════════════════════════════
@@ -1809,9 +2056,10 @@ function assetCard(a) {
         <div class="chart-type-tabs">
           <button class="ctt-btn" onclick="switchCardChart('${a.sym}','line',null,this,null)">Line</button>
           <button class="ctt-btn on" onclick="switchCardChart('${a.sym}','area',null,this,null)">Area</button>
-          <button class="ctt-btn" onclick="switchCardChart('${a.sym}','bar',null,this,null)">Bars</button>
+          <button class="ctt-btn" onclick="switchCardChart('${a.sym}','candle',null,this,null)">Candles</button>
         </div>
         <div class="chart-period-tabs">
+          <button class="cpt-btn" onclick="switchCardChart('${a.sym}',null,'1H',null,this)">1H</button>
           <button class="cpt-btn on" onclick="switchCardChart('${a.sym}',null,'1D',null,this)">1D</button>
           <button class="cpt-btn" onclick="switchCardChart('${a.sym}',null,'1W',null,this)">1W</button>
           <button class="cpt-btn" onclick="switchCardChart('${a.sym}',null,'1M',null,this)">1M</button>
@@ -1820,7 +2068,12 @@ function assetCard(a) {
         </div>
       </div>
       <div class="card-chart-canvas-wrap">
-        <canvas id="card-canvas-${a.sym}"></canvas>
+        <div class="card-lwc-wrap">
+          <div id="card-chart-${a.sym}" style="height:100%;width:100%"></div>
+          <div id="card-chart-loading-${a.sym}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,9,13,.7);pointer-events:none">
+            <div style="width:12px;height:12px;border:1.5px solid rgba(201,166,60,.25);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1889,25 +2142,33 @@ function propCard(p) {
     <!-- PROPERTY CHART -->
     <div class="prop-chart-zone" onclick="event.stopPropagation()">
       <div class="chart-type-bar">
-        <div style="display:flex;align-items:center;gap:6px">
-          <i class="fas fa-chart-line" style="color:var(--gold);font-size:8px"></i>
-          <span style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.1em">PROJECTED YIELD GROWTH</span>
+        <div class="chart-type-tabs">
+          <button class="ctt-btn on" onclick="switchCardChart('${p.sym}','area',null,this,null)">Area</button>
+          <button class="ctt-btn" onclick="switchCardChart('${p.sym}','line',null,this,null)">Line</button>
+          <button class="ctt-btn" onclick="switchCardChart('${p.sym}','candle',null,this,null)">Bars</button>
         </div>
         <div class="chart-period-tabs">
           <button class="cpt-btn on" onclick="switchCardChart('${p.sym}',null,'1M',null,this)">1M</button>
           <button class="cpt-btn" onclick="switchCardChart('${p.sym}',null,'3M',null,this)">3M</button>
+          <button class="cpt-btn" onclick="switchCardChart('${p.sym}',null,'6M',null,this)">6M</button>
           <button class="cpt-btn" onclick="switchCardChart('${p.sym}',null,'1Y',null,this)">1Y</button>
         </div>
       </div>
       <div class="prop-chart-canvas-wrap">
-        <canvas id="card-canvas-${p.sym}"></canvas>
+        <div class="card-lwc-wrap">
+          <div id="card-chart-${p.sym}" style="height:100%;width:100%"></div>
+          <div id="card-chart-loading-${p.sym}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,9,13,.7);pointer-events:none">
+            <div style="width:12px;height:12px;border:1.5px solid rgba(201,166,60,.25);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="prop-footer">
-      <button class="prop-invest-btn" onclick="event.stopPropagation();openInvestModal('${p.sym}')">
+    <div class="prop-footer" style="display:flex;gap:8px">
+      <button class="prop-invest-btn" style="flex:1" onclick="event.stopPropagation();openInvestModal('${p.sym}')">
         🏛 Invest in Property
       </button>
+      ${owned ? `<button onclick="event.stopPropagation();openPropertyWithdraw('${p.sym}')" style="padding:10px 16px;border-radius:12px;background:rgba(232,72,72,.1);border:1px solid rgba(232,72,72,.2);color:#e84848;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s" onmouseover="this.style.background='rgba(232,72,72,.2)'" onmouseout="this.style.background='rgba(232,72,72,.1)'">Withdraw</button>` : ''}
     </div>
   </div>`;
 }
@@ -1940,8 +2201,8 @@ function renderAll() {
 
     // Init charts after slight delay for DOM settle
     const initChart = (a, defaultType, defaultPeriod) => {
-      const canvas = document.getElementById('card-canvas-' + a.sym);
-      if (canvas) buildCardChart(canvas, a, defaultType, defaultPeriod);
+      const divEl = document.getElementById('card-chart-' + a.sym);
+      if (divEl) buildCardChart(divEl, a, defaultType, defaultPeriod);
     };
 
     cf.forEach((a, i) => setTimeout(() => initChart(a, 'area', '1D'), i * 50 + 100));
@@ -2034,7 +2295,7 @@ function renderPortfolioPanel() {
   const segs=[];if(cryptoV>0)segs.push({label:'Crypto',val:cryptoV,color:'#f7931a'});if(stocksV>0)segs.push({label:'Stocks',val:stocksV,color:'#4285f4'});if(propV>0)segs.push({label:'Real Estate',val:propV,color:'#c9a63c'});
   document.getElementById('alloc-bar').innerHTML=segs.map(s=>`<div style="flex:${s.val};background:${s.color};border-radius:4px;min-width:4px"></div>`).join('')||'<div style="flex:1;background:rgba(255,255,255,.06);border-radius:6px"></div>';
   document.getElementById('alloc-legend').innerHTML=segs.map(s=>`<span style="display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)"><span style="width:8px;height:8px;border-radius:2px;background:${s.color};flex-shrink:0"></span>${s.label} ${total>0?((s.val/total)*100).toFixed(1):0}%</span>`).join('');
-  document.getElementById('holdings-list').innerHTML=myHoldings.map(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);const chg=cost>0?((val-cost)/cost*100):0;const up=chg>=0;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};return`<div class="holding-row" onclick="openInvestModal('${h.symbol}')"><div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0"><div style="width:36px;height:36px;border-radius:12px;background:${asset.color}16;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${asset.icon}"></i></div><div style="min-width:0"><p style="font-weight:600;color:var(--pearl);font-size:13px">${h.symbol}</p><p style="color:var(--fog);font-size:11px;font-family:'DM Mono',monospace">${Number(h.quantity)<1?Number(h.quantity).toFixed(6):Number(h.quantity).toFixed(4)} units</p></div></div><div style="text-align:right"><p style="font-family:'DM Mono',monospace;font-size:13px;color:var(--pearl)">$${fmtU(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${up?'var(--gain)':'var(--loss)'}">${up?'+':''}${chg.toFixed(2)}%</p></div></div>`;}).join('');
+  document.getElementById('holdings-list').innerHTML=myHoldings.map(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);const chg=cost>0?((val-cost)/cost*100):0;const up=chg>=0;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};const isProp=asset.cat==='property';const withdrawBtn=isProp?`<button onclick="event.stopPropagation();openPropertyWithdraw('${h.symbol}')" style="margin-top:6px;width:100%;padding:6px;border-radius:8px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.18);color:#e84848;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;cursor:pointer">Withdraw Investment</button>`:'';return`<div class="holding-row" onclick="${isProp?'':'openInvestModal(\''+h.symbol+'\')'}"><div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0"><div style="width:36px;height:36px;border-radius:12px;background:${asset.color}16;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${asset.icon}"></i></div><div style="min-width:0"><p style="font-weight:600;color:var(--pearl);font-size:13px">${h.symbol}</p><p style="color:var(--fog);font-size:11px;font-family:'DM Mono',monospace">${Number(h.quantity)<1?Number(h.quantity).toFixed(6):Number(h.quantity).toFixed(4)} units</p></div></div><div style="text-align:right"><p style="font-family:'DM Mono',monospace;font-size:13px;color:var(--pearl)">$${fmtU(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${up?'var(--gain)':'var(--loss)'}">${up?'+':''}${chg.toFixed(2)}%</p></div></div>${withdrawBtn}`;}).join('');
 }
 
 function filterTx(f) {
@@ -2065,16 +2326,19 @@ function openInvestModal(sym) {
   txt('mi-bal', '$'+fmtU(Number(profile.cash)));
   document.getElementById('mi-type-info').style.display = isProp?'block':'none';
   if(isProp) txt('mi-type-desc', `Earn ${a.yield_}% annual yield paid monthly. Minimum entry: $${a.minEntry.toLocaleString()}. Asset value: ${a.valuation}.`);
+  destroyModalLwcChart();
   const chartWrap = document.getElementById('mi-chart-wrap');
   if(!isProp){
     chartWrap.style.display = 'block';
     investChartPeriod = '1D';
+    modalChartType = 'area';
     document.querySelectorAll('#mi-periods .period-btn').forEach(b=>{b.classList.remove('on'); if(b.textContent==='1D')b.classList.add('on');});
+    document.querySelectorAll('#mi-chart-types .period-btn').forEach(b=>{b.classList.remove('on'); if(b.textContent==='Area')b.classList.add('on');});
     investDuration = '1D';
     document.querySelectorAll('#mi-durations .period-btn').forEach(b=>{b.classList.remove('on'); if(b.querySelector('div')?.textContent==='Day')b.classList.add('on');});
     txt('mi-stat-high','$'+fmtP(a.price*1.032)); txt('mi-stat-low','$'+fmtP(a.price*0.971));
     const mcap = MCAP[sym]||5e9; txt('mi-stat-mcap',fmtLarge(mcap)); txt('mi-stat-vol',fmtLarge(mcap*0.028));
-    setTimeout(()=>renderModalChart(sym,'1D'), 80);
+    setTimeout(()=>renderModalChart(sym,'1D'), 120);
   } else {
     chartWrap.style.display = 'none';
     if(investChartInstance){investChartInstance.destroy();investChartInstance=null;}
@@ -2089,6 +2353,7 @@ function openInvestModal(sym) {
 }
 function closeInvestModal() {
   document.getElementById('investModal').classList.remove('open');
+  destroyModalLwcChart();
   if(investChartInstance){investChartInstance.destroy();investChartInstance=null;}
   modalAsset = null;
 }
@@ -2170,12 +2435,33 @@ async function confirmInvest() {
   if(amt<minAmt){ showToast(`Minimum investment is $${minAmt}`,'','error'); return; }
   txt('mi-lbl',''); document.getElementById('mi-spin').style.display='block'; document.getElementById('mi-confirm').disabled=true;
   const qty = amt/a.price, execTime = new Date();
+  // Compute property lock-in maturity date before insert
+  let lockUntil = null;
+  if(a.cat==='property'){
+    const dur = DURATION_RATES[investDuration] || DURATION_RATES['1D'];
+    lockUntil = new Date(Date.now() + dur.days * 86400000).toISOString();
+  }
+  const txNote = a.cat==='property'
+    ? `Buy ${a.sym} @ $${fmtP(a.price)} | Lock: ${investDuration} | Unlock: ${lockUntil} | Fee: $${fee} | Slip: $${slip}`
+    : `Buy ${a.sym} @ $${fmtP(a.price)} | Fee: $${fee} | Slip: $${slip}`;
   try {
-    const { data:txData, error:txErr } = await sb.from('transactions').insert({user_id:authUser.id,type:'buy',symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,price_at_tx:a.price,usd_amount:-total,status:'approved',note:`Buy ${a.sym} @ $${fmtP(a.price)} | Fee: $${fee} | Slip: $${slip}`}).select().single();
+    const { data:txData, error:txErr } = await sb.from('transactions').insert({user_id:authUser.id,type:'buy',symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,price_at_tx:a.price,usd_amount:-total,status:'approved',note:txNote}).select().single();
     if(txErr) throw txErr;
     const existing = myHoldings.find(h=>h.symbol===a.sym);
     if(existing){ const nq=Number(existing.quantity)+qty,na=(Number(existing.avg_buy_price)*Number(existing.quantity)+a.price*qty)/nq; const{error:hErr}=await sb.from('holdings').update({quantity:nq,avg_buy_price:+na.toFixed(6),updated_at:new Date().toISOString()}).eq('id',existing.id); if(hErr) throw hErr; }
     else { const{error:hErr}=await sb.from('holdings').insert({user_id:authUser.id,symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,avg_buy_price:a.price}); if(hErr) throw hErr; }
+    // Persist property lock-in to localStorage
+    if(a.cat==='property' && lockUntil){
+      try {
+        const locks = JSON.parse(localStorage.getItem('aurum_property_locks')||'{}');
+        const key = `${authUser.id}_${a.sym}`;
+        // Only set/extend if the new maturity is later than an existing one
+        if(!locks[key] || new Date(lockUntil) > new Date(locks[key].lockedUntil)){
+          locks[key] = { lockedUntil: lockUntil, duration: investDuration, investedAt: execTime.toISOString() };
+          localStorage.setItem('aurum_property_locks', JSON.stringify(locks));
+        }
+      } catch(e){}
+    }
     const newCash = +(cash-total).toFixed(2);
     const{error:cashErr}=await sb.from('profiles').update({cash:newCash}).eq('id',authUser.id); if(cashErr) throw cashErr;
     await loadProfile(); await loadPortfolioStats(); await loadTransactions();
@@ -2195,6 +2481,160 @@ async function confirmInvest() {
   }
 }
 function closeReceipt(){ document.getElementById('receiptModal').classList.remove('open'); }
+
+// ══════════════════════════════════════════════════
+//  PROPERTY EARLY WITHDRAWAL
+// ══════════════════════════════════════════════════
+const PROPERTY_EARLY_PENALTY = 0.30; // 30% deducted if withdrawn before maturity
+
+function getPropLock(sym) {
+  try {
+    const locks = JSON.parse(localStorage.getItem('aurum_property_locks')||'{}');
+    return locks[`${authUser.id}_${sym}`] || null;
+  } catch(e){ return null; }
+}
+
+function openPropertyWithdraw(sym) {
+  const holding = myHoldings.find(h => h.symbol === sym);
+  const asset   = ALL_ASSETS.find(a => a.sym === sym);
+  if(!holding || !asset || !profile) return;
+
+  const lock     = getPropLock(sym);
+  const now      = Date.now();
+  const maturity = lock ? new Date(lock.lockedUntil).getTime() : null;
+  const isPremature = maturity && now < maturity;
+
+  const currentVal = Number(holding.quantity) * Number(holding.avg_buy_price);
+  const penalty    = isPremature ? +(currentVal * PROPERTY_EARLY_PENALTY).toFixed(2) : 0;
+  const netPayout  = +(currentVal - penalty).toFixed(2);
+
+  let timeMsg = '';
+  if(isPremature && maturity){
+    const msLeft = maturity - now;
+    const daysLeft = Math.ceil(msLeft / 86400000);
+    timeMsg = daysLeft > 1 ? `${daysLeft} days` : `${Math.ceil(msLeft/3600000)} hours`;
+  }
+
+  // Remove existing modal if any
+  document.getElementById('propWithdrawModal')?.remove();
+
+  const accentColor = isPremature ? '#e84848' : 'var(--gain)';
+  const accentBg    = isPremature ? 'rgba(232,72,72,.08)' : 'rgba(29,189,108,.08)';
+  const accentBd    = isPremature ? 'rgba(232,72,72,.22)' : 'rgba(29,189,108,.2)';
+
+  const html = `
+  <div class="modal-veil open" id="propWithdrawModal" onclick="if(event.target===this)this.remove()">
+    <div class="modal-box" style="max-width:460px">
+
+      <div class="modal-head">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:40px;height:40px;border-radius:12px;background:${accentBg};border:1px solid ${accentBd};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="fas fa-building-columns" style="color:${accentColor};font-size:16px"></i>
+          </div>
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--pearl);font-weight:300;line-height:1.1">Withdraw <em style="color:var(--gold);font-style:italic">${asset.name}</em></h3>
+            <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);margin-top:2px;letter-spacing:.14em;text-transform:uppercase">Property Investment</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="document.getElementById('propWithdrawModal').remove()">✕</button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Status banner -->
+        <div style="padding:14px 16px;background:${accentBg};border:1px solid ${accentBd};border-radius:14px;display:flex;align-items:flex-start;gap:12px">
+          <i class="fas ${isPremature?'fa-triangle-exclamation':'fa-circle-check'}" style="color:${accentColor};font-size:15px;margin-top:1px;flex-shrink:0"></i>
+          <div>
+            ${isPremature
+              ? `<p style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:#e84848;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Early Withdrawal Penalty</p>
+                 <p style="font-size:12px;color:var(--ash);line-height:1.55">Lock-in ends in <strong style="color:var(--pearl)">${timeMsg}</strong>. A <strong style="color:#e84848">30% penalty</strong> applies if you withdraw now.</p>`
+              : `<p style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--gain);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Matured — No Penalty</p>
+                 <p style="font-size:12px;color:var(--ash);line-height:1.55">Your lock-in period has <strong style="color:var(--gain)">matured</strong>. Withdraw the full amount with no deductions.</p>`
+            }
+          </div>
+        </div>
+
+        <!-- Breakdown rows -->
+        <div style="background:var(--lift);border:1px solid var(--rim);border-radius:14px;overflow:hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--rim)">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog);letter-spacing:.06em">Invested Value</span>
+            <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--pearl);font-weight:600">$${fmtU(currentVal)}</span>
+          </div>
+          ${isPremature ? `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(232,72,72,.12);background:rgba(232,72,72,.04)">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:#e84848;letter-spacing:.06em">Early Penalty (30%)</span>
+            <span style="font-family:'DM Mono',monospace;font-size:13px;color:#e84848;font-weight:600">−$${fmtU(penalty)}</span>
+          </div>` : ''}
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 16px;background:${accentBg}">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:${accentColor};letter-spacing:.06em;font-weight:700;text-transform:uppercase">You Receive</span>
+            <span style="font-family:'Playfair Display',serif;font-size:26px;color:${accentColor};font-weight:300;line-height:1">$${fmtU(netPayout)}</span>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;gap:10px">
+          <button onclick="document.getElementById('propWithdrawModal').remove()"
+            style="flex:1;padding:13px;border-radius:12px;background:var(--lift);border:1px solid var(--rim);color:var(--ash);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:background .2s"
+            onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='var(--lift)'">
+            Cancel
+          </button>
+          <button id="propWithdrawConfirmBtn" onclick="confirmPropertyWithdraw('${sym}',${currentVal},${penalty},${netPayout})"
+            style="flex:2;padding:13px;border-radius:12px;background:${isPremature?'linear-gradient(135deg,#b91c1c,#e84848)':'linear-gradient(135deg,#15994e,#1dbd6c)'};border:none;color:#fff;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .2s">
+            <i class="fas ${isPremature?'fa-triangle-exclamation':'fa-check'}"></i>
+            ${isPremature ? 'Withdraw with Penalty' : 'Withdraw Full Amount'}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function confirmPropertyWithdraw(sym, currentVal, penalty, netPayout) {
+  const holding = myHoldings.find(h => h.symbol === sym);
+  const asset   = ALL_ASSETS.find(a => a.sym === sym);
+  if(!holding || !asset || !profile) return;
+
+  const btn = document.getElementById('propWithdrawConfirmBtn');
+  if(btn){ btn.disabled = true; btn.style.opacity='.6'; btn.innerHTML='<i class="fas fa-spinner" style="animation:spin .7s linear infinite;display:inline-block"></i> Processing…'; }
+
+  try {
+    const isPremature = penalty > 0;
+    const note = isPremature
+      ? `Early withdrawal ${sym} | Invested: $${fmtU(currentVal)} | Penalty: -$${fmtU(penalty)} (30%) | Net: $${fmtU(netPayout)}`
+      : `Property withdrawal ${sym} | Amount: $${fmtU(netPayout)}`;
+
+    await sb.from('transactions').insert({
+      user_id: authUser.id, type: 'sell', symbol: sym, name: asset.name,
+      icon: asset.icon, color: asset.color, quantity: Number(holding.quantity),
+      price_at_tx: Number(holding.avg_buy_price), usd_amount: netPayout,
+      status: 'approved', note
+    });
+
+    // Remove holding
+    await sb.from('holdings').delete().eq('id', holding.id);
+
+    // Credit net payout to cash
+    const newCash = +(Number(profile.cash) + netPayout).toFixed(2);
+    await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
+
+    // Clear the lock from localStorage
+    try {
+      const locks = JSON.parse(localStorage.getItem('aurum_property_locks')||'{}');
+      delete locks[`${authUser.id}_${sym}`];
+      localStorage.setItem('aurum_property_locks', JSON.stringify(locks));
+    } catch(e){}
+
+    await loadProfile(); await loadPortfolioStats(); await loadTransactions();
+    document.getElementById('propWithdrawModal')?.remove();
+    showToast(isPremature ? 'Withdrawn with penalty' : 'Withdrawal complete',
+      `$${fmtU(netPayout)} credited to your balance`, isPremature ? 'error' : 'success');
+  } catch(err) {
+    showToast('Withdrawal failed', err.message || 'Please try again', 'error');
+    if(btn){ btn.disabled = false; btn.style.opacity='1'; btn.innerHTML='<i class="fas fa-rotate-right"></i> Retry'; }
+  }
+}
 
 // ══════════════════════════════════════════════════
 //  DEPOSIT MODAL

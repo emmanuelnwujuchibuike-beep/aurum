@@ -775,7 +775,7 @@ html[data-theme="light"] .conf-note{background:rgba(0,0,0,.03);border-color:rgba
           <div class="field au au4">
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <label class="field-label" for="li-pw">Password</label>
-              <a href="#" class="forgot-link">Forgot password?</a>
+              <a href="#" class="forgot-link" onclick="window.showForgotPanel();return false;">Forgot password?</a>
             </div>
             <div class="inp-wrap has-icon has-pw">
               <i class="fas fa-lock inp-i"></i>
@@ -847,6 +847,56 @@ html[data-theme="light"] .conf-note{background:rgba(0,0,0,.03);border-color:rgba
           &nbsp;·&nbsp;
           <button onclick="window.showTab('li')">Sign in instead</button>
         </p>
+      </div>
+
+      <!-- ══ FORGOT PASSWORD PANEL ══ -->
+      <div id="forgotPanel" class="hidden" style="text-align:center;padding:12px 0 4px;">
+        <div class="conf-icon-wrap"><i class="fas fa-key"></i></div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">Password Reset</p>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:var(--snow);line-height:1.1;margin-bottom:6px;">Reset your<br><em style="font-style:italic;color:var(--gold);">password</em></h2>
+        <div id="resetForm">
+          <p style="font-size:13px;color:var(--steel);margin-bottom:14px;">Enter your email and we'll send a secure reset link.</p>
+          <div class="inp-wrap has-icon" style="margin-bottom:10px;text-align:left;">
+            <i class="fas fa-envelope inp-i"></i>
+            <input id="resetEmailInp" type="email" class="inp" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div id="resetErrMsg" style="display:none;font-size:12px;color:#ef4444;margin-bottom:10px;text-align:left;padding:8px 12px;background:rgba(239,68,68,.07);border-radius:8px;border:1px solid rgba(239,68,68,.15);"></div>
+          <button class="btn-gold" id="resetLinkBtn" onclick="window.sendResetLink()" style="width:100%;">
+            <i class="fas fa-paper-plane" style="font-size:13px;"></i>
+            <span id="resetLinkLbl">Send Reset Link</span>
+            <span id="resetLinkSpin" class="hidden spin"><i class="fas fa-spinner" style="font-size:13px;"></i></span>
+          </button>
+        </div>
+        <div id="resetSentMsg" style="display:none;">
+          <div class="conf-note" style="margin:14px 0 18px;"><i class="fas fa-check-circle" style="color:#22c55e;margin-right:6px;"></i>Reset link sent! Check your inbox and click the link to choose a new password.</div>
+        </div>
+        <p class="form-foot" style="margin-top:14px;"><button onclick="window.showTab('li')">← Back to sign in</button></p>
+      </div>
+
+      <!-- ══ RESET PASSWORD PANEL (returned from email link) ══ -->
+      <div id="resetPwPanel" class="hidden" style="text-align:center;padding:12px 0 4px;">
+        <div class="conf-icon-wrap"><i class="fas fa-lock"></i></div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;">New Password</p>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:var(--snow);line-height:1.1;margin-bottom:14px;">Choose a new<br><em style="font-style:italic;color:var(--gold);">password</em></h2>
+        <div id="resetPwForm" style="text-align:left;">
+          <div class="inp-wrap has-icon has-pw" style="margin-bottom:10px;">
+            <i class="fas fa-lock inp-i"></i>
+            <input id="newPwInp" type="password" class="inp" placeholder="New password (min. 8 chars)" autocomplete="new-password">
+            <button type="button" class="pw-btn" onclick="togPw('newPwInp',this)"><i class="fas fa-eye"></i></button>
+          </div>
+          <div class="inp-wrap has-icon has-pw" style="margin-bottom:10px;">
+            <i class="fas fa-lock inp-i"></i>
+            <input id="newPw2Inp" type="password" class="inp" placeholder="Confirm new password" autocomplete="new-password">
+            <button type="button" class="pw-btn" onclick="togPw('newPw2Inp',this)"><i class="fas fa-eye"></i></button>
+          </div>
+          <div id="resetPwErr" style="display:none;font-size:12px;color:#ef4444;margin-bottom:10px;padding:8px 12px;background:rgba(239,68,68,.07);border-radius:8px;border:1px solid rgba(239,68,68,.15);"></div>
+          <button class="btn-gold" id="updatePwBtn" onclick="window.updatePassword()" style="width:100%;">
+            <i class="fas fa-check" style="font-size:13px;"></i> Set New Password
+          </button>
+        </div>
+        <div id="resetPwOk" style="display:none;">
+          <div class="conf-note" style="margin:14px 0 18px;"><i class="fas fa-check-circle" style="color:#22c55e;margin-right:6px;"></i>Password updated! Redirecting to your dashboard…</div>
+        </div>
       </div>
 
     </div><!-- /auth-card -->

@@ -48,7 +48,6 @@ const aut= {
   
   // ADD THIS NEW METHOD
   async syncToContentful(user) {
-    console.log("Syncing to Contentful:", user.email);
     // We will use a fetch call here once your middleware is ready
     // For now, we simulate the logic
     return { ok: true }; 

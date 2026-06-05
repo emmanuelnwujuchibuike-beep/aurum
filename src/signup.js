@@ -8,18 +8,21 @@ const EDGE_FUNCTION_URL = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1
    with params in the hash, either for success or
    for errors (expired OTP, etc.).
 ─────────────────────────────────────────────── */
-const hashParams      = new URLSearchParams(window.location.hash.slice(1));
-const isConfirmOk     = hashParams.get('type') === 'signup' && !!hashParams.get('access_token');
-const isConfirmError  = !!hashParams.get('error');
-const isConfirmRedirect = isConfirmOk || isConfirmError;
+const hashParams        = new URLSearchParams(window.location.hash.slice(1));
+const isConfirmOk       = hashParams.get('type') === 'signup'    && !!hashParams.get('access_token');
+const isRecovery        = hashParams.get('type') === 'recovery'  && !!hashParams.get('access_token');
+const isConfirmError    = !!hashParams.get('error');
+const isConfirmRedirect = isConfirmOk || isConfirmError || isRecovery;
 
 // Clean the hash from the address bar without a page reload
 if (isConfirmRedirect) history.replaceState(null, '', window.location.pathname);
 
 // Handle on DOM ready so panel functions are available
 document.addEventListener('DOMContentLoaded', () => {
-  if (isConfirmError) {
-    // Decode the error description (Supabase URL-encodes with + for spaces)
+  if (isRecovery) {
+    showPanel('resetPwPanel');
+    hideTabRow();
+  } else if (isConfirmError) {
     const desc = (hashParams.get('error_description') || 'Email link is invalid or has expired.')
       .replace(/\+/g, ' ');
     const detail = document.getElementById('linkErrDetail');
@@ -137,8 +140,7 @@ if (signupForm) {
 
     setLoad('su', true);
 
-    // Always redirect confirmation emails to the production domain
-    const redirectTo = 'https://aurumcapitalinvest.com/signup.html';
+    const redirectTo = window.location.origin + '/signup.html';
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -268,9 +270,89 @@ window.doLogin = async function(e) {
 };
 
 /* ───────────────────────────────────────────────
+   FORGOT PASSWORD — send reset email
+─────────────────────────────────────────────── */
+window.showForgotPanel = function() {
+  const liEmail = document.getElementById('li-em');
+  const inp = document.getElementById('resetEmailInp');
+  if (inp && liEmail && liEmail.value) inp.value = liEmail.value;
+  showPanel('forgotPanel');
+  hideTabRow();
+};
+
+window.sendResetLink = async function() {
+  const email = (document.getElementById('resetEmailInp')?.value || '').trim();
+  if (!email) {
+    const inp = document.getElementById('resetEmailInp');
+    if (inp) inp.classList.add('err');
+    return;
+  }
+
+  const btn = document.getElementById('resetLinkBtn');
+  const lbl = document.getElementById('resetLinkLbl');
+  const spn = document.getElementById('resetLinkSpin');
+  if (btn) btn.disabled = true;
+  if (lbl) lbl.classList.add('hidden');
+  if (spn) spn.classList.remove('hidden');
+
+  const redirectTo = window.location.origin + '/signup.html';
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+
+  if (lbl) lbl.classList.remove('hidden');
+  if (spn) spn.classList.add('hidden');
+  if (btn) btn.disabled = false;
+
+  if (error) {
+    const detail = document.getElementById('resetErrMsg');
+    if (detail) { detail.textContent = error.message; detail.style.display = 'block'; }
+  } else {
+    const form = document.getElementById('resetForm');
+    const sent = document.getElementById('resetSentMsg');
+    if (form) form.style.display = 'none';
+    if (sent) sent.style.display = 'block';
+  }
+};
+
+/* ───────────────────────────────────────────────
+   RESET PASSWORD — set new password after clicking
+   the recovery link in email (type=recovery hash)
+─────────────────────────────────────────────── */
+window.updatePassword = async function() {
+  const pw  = (document.getElementById('newPwInp')?.value  || '');
+  const pw2 = (document.getElementById('newPw2Inp')?.value || '');
+  const err = document.getElementById('resetPwErr');
+
+  if (pw.length < 8) {
+    if (err) { err.textContent = 'Password must be at least 8 characters.'; err.style.display = 'block'; }
+    return;
+  }
+  if (pw !== pw2) {
+    if (err) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; }
+    return;
+  }
+  if (err) err.style.display = 'none';
+
+  const btn = document.getElementById('updatePwBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Updating…'; }
+
+  const { error } = await supabase.auth.updateUser({ password: pw });
+
+  if (error) {
+    if (err) { err.textContent = error.message; err.style.display = 'block'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Set New Password'; }
+  } else {
+    const form = document.getElementById('resetPwForm');
+    const ok   = document.getElementById('resetPwOk');
+    if (form) form.style.display = 'none';
+    if (ok)   ok.style.display = 'block';
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 2500);
+  }
+};
+
+/* ───────────────────────────────────────────────
    PANEL MANAGEMENT
 ─────────────────────────────────────────────── */
-const PANELS = ['suPanel', 'liPanel', 'confirmPanel', 'verifyPanel', 'linkErrPanel'];
+const PANELS = ['suPanel', 'liPanel', 'confirmPanel', 'verifyPanel', 'linkErrPanel', 'forgotPanel', 'resetPwPanel'];
 
 function showPanel(id) {
   PANELS.forEach(p => {

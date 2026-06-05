@@ -136,10 +136,6 @@
       }
     }
 
-    console.log(
-      `[AurumPrices] Updated ${rawList.length} prices at`,
-      new Date().toLocaleTimeString()
-    );
   }
 
   // ── Poll loop ─────────────────────────────────────────────────────────────

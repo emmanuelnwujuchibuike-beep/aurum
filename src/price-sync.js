@@ -33,7 +33,6 @@
           dispatchPriceUpdate(row.sym, Number(row.price), Number(row.chg || 0));
         }
       });
-      console.log('[price-sync] Loaded', data.length, 'prices from DB');
     });
 
     // ── 2. Subscribe to real-time INSERT / UPDATE on asset_prices ────
@@ -44,13 +43,10 @@
         { event: '*', schema: 'public', table: 'asset_prices' },
         ({ new: row, eventType }) => {
           if (!row || !row.sym) return;
-          console.log('[price-sync] realtime', eventType, row.sym, row.price);
           dispatchPriceUpdate(row.sym, Number(row.price), Number(row.chg || 0));
         }
       )
-      .subscribe((status) => {
-        console.log('[price-sync] channel status:', status);
-      });
+      .subscribe();
   });
 
   // ── Dispatcher ────────────────────────────────────────────────────

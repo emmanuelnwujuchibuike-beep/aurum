@@ -44,14 +44,14 @@ const TF_INTERVAL: Record<string, string> = {
 
 /* Number of bars to request per timeframe */
 const TF_SIZE: Record<string, number> = {
-  "5M":  200,  // ~16 hours of 5m bars
-  "1H":  72,   // 3 days of 1h bars
-  "4H":  90,   // ~15 days of 4h bars
-  "1D":  90,   // 3 months of daily bars
-  "1W":  52,   // 1 year of weekly bars
-  "1M":  24,   // 2 years of monthly bars
-  "3M":  36,   // 3 years of monthly bars
-  "1Y":  52,   // 1 year of weekly bars
+  "5M":  288,  // ~24 hours of 5m bars
+  "1H":  168,  // 7 days of 1h bars
+  "4H":  180,  // ~30 days of 4h bars
+  "1D":  365,  // ~1 year of daily bars
+  "1W":  156,  // 3 years of weekly bars
+  "1M":  60,   // 5 years of monthly bars
+  "3M":  60,   // 5 years of monthly bars (used as 1month interval)
+  "1Y":  156,  // 3 years of weekly bars
 };
 
 serve(async (req) => {

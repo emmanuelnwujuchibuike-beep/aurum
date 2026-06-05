@@ -839,6 +839,8 @@ body.menu-open{overflow:hidden}
 /* Quick cash modal */
 .modal-sm-box{background:linear-gradient(150deg,#0c1521,#080d18);border:1px solid rgba(255,255,255,.07);border-radius:22px;width:100%;max-width:420px;box-shadow:0 40px 100px rgba(0,0,0,.8)}
 .port-summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-bottom:1px solid rgba(255,255,255,.07)}
+.holding-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tx-stats-strip{display:grid;grid-template-columns:repeat(4,1fr)}
 
 /* ── RESPONSIVE ── */
 @media(min-width:1025px){
@@ -893,6 +895,9 @@ body.menu-open{overflow:hidden}
   #toast{left:16px;right:16px;min-width:unset;bottom:16px}
   .promo-hero > .hero-grid > div:last-child{display:none}
   .action-tiles-grid{grid-template-columns:repeat(3,1fr)!important}
+  .tx-modal-filters{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap;max-width:calc(100% - 50px)}
+  .tx-modal-filters::-webkit-scrollbar{display:none}
+  .modal-hdr{padding:16px 18px}
 }
 @media(max-width:480px){
   .modal-overlay{padding:8px}
@@ -900,6 +905,10 @@ body.menu-open{overflow:hidden}
   .adm-topbar-actions span{display:none}
   .nw-stat-row{gap:14px!important}
   .action-tiles-grid{grid-template-columns:repeat(2,1fr)!important}
+  .port-summary-strip{grid-template-columns:1fr!important}
+  .holding-stats-grid{grid-template-columns:repeat(2,1fr)!important}
+  .tx-stats-strip{grid-template-columns:repeat(2,1fr)!important}
+  #portHoldingsContainer{padding:12px 14px!important}
 }
 @media(max-height:620px){
   .mm-port-strip{display:none}
@@ -1734,7 +1743,7 @@ body.menu-open{overflow:hidden}
         <button onclick="closeTransactionsModal()" class="modal-close-btn">✕</button>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid rgba(255,255,255,.07)">
+    <div class="tx-stats-strip" style="border-bottom:1px solid rgba(255,255,255,.07)">
       <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Total Trades</p><p id="txm-total" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--pearl);font-weight:300">0</p></div>
       <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Invested</p><p id="txm-invested" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--loss);font-weight:300">$0</p></div>
       <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Received</p><p id="txm-received" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gain);font-weight:300">$0</p></div>
@@ -2168,7 +2177,21 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.re
     {sym:'AAPL',name:'Apple',icon:'fab fa-apple',color:'#a2aaad',price:PRICES.AAPL,chg:CHANGES.AAPL??0,cat:'stocks'},
     {sym:'NVDA',name:'NVIDIA',icon:'fas fa-microchip',color:'#76b900',price:PRICES.NVDA,chg:CHANGES.NVDA??0,cat:'stocks'},
     {sym:'MSFT',name:'Microsoft',icon:'fab fa-windows',color:'#00a4ef',price:PRICES.MSFT,chg:CHANGES.MSFT??0,cat:'stocks'},
+    // Real estate — prices are fixed (avg_buy_price used at sell time)
+    {sym:'LOND',name:'The Shard Tower Suite',icon:'fas fa-building',color:'#c9a63c',price:500,chg:0,cat:'property'},
+    {sym:'DXB',name:'Burj Khalifa Residences',icon:'fas fa-city',color:'#e8c96a',price:1000,chg:0,cat:'property'},
+    {sym:'NYC',name:'One Manhattan West',icon:'fas fa-building-columns',color:'#a0c0e8',price:500,chg:0,cat:'property'},
+    {sym:'DXB2',name:'Palm Jumeirah Villa',icon:'fas fa-umbrella-beach',color:'#f3ba2f',price:2000,chg:0,cat:'property'},
+    {sym:'SGP',name:'Marina Bay Tower',icon:'fas fa-water',color:'#3cc8c8',price:500,chg:0,cat:'property'},
+    {sym:'PAR',name:'Champs-Élysées Office',icon:'fas fa-tower-broadcast',color:'#627eea',price:1000,chg:0,cat:'property'},
   ];
+  const PROPERTY_EARLY_PENALTY = 0.30;
+  function getPropLock(sym) {
+    try {
+      const locks = JSON.parse(localStorage.getItem('aurum_property_locks')||'{}');
+      return locks[`${authUser.id}_${sym}`] || null;
+    } catch(e){ return null; }
+  }
 
   const DEPOSIT_COINS = [
     {sym:'BTC',name:'Bitcoin',icon:'fab fa-bitcoin',color:'#f7931a',network:'BTC Network',min:'0.0001 BTC'},
@@ -2581,6 +2604,10 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.re
     type = type || 'buy';
     const asset = ASSETS_LIST.find(a => a.sym === sym);
     if (!asset || !profile) return;
+    // Property sells go through the penalty-aware withdrawal flow
+    if (asset.cat === 'property' && type === 'sell') {
+      openDashPropertyWithdraw(sym, asset); return;
+    }
     tradeModalAsset = { ...asset };
     tradeModalType  = type;
     const iconEl = document.getElementById('trade-icon');
@@ -2723,6 +2750,101 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.re
     document.getElementById('tradeReceiptModal').style.display = 'none';
   }
 
+  function openDashPropertyWithdraw(sym, asset) {
+    const holding = myHoldings.find(h => h.symbol === sym);
+    if (!holding) { showToast('No holding found', '', 'error'); return; }
+
+    const lock     = getPropLock(sym);
+    const now      = Date.now();
+    const maturity = lock ? new Date(lock.lockedUntil).getTime() : null;
+    const isPremature = maturity && now < maturity;
+
+    const currentVal = Number(holding.quantity) * Number(holding.avg_buy_price);
+    const penalty    = isPremature ? +(currentVal * PROPERTY_EARLY_PENALTY).toFixed(2) : 0;
+    const netPayout  = +(currentVal - penalty).toFixed(2);
+
+    let timeMsg = '';
+    if (isPremature && maturity) {
+      const msLeft = maturity - now;
+      const daysLeft = Math.ceil(msLeft / 86400000);
+      timeMsg = daysLeft > 1 ? `${daysLeft} days` : `${Math.ceil(msLeft / 3600000)} hours`;
+    }
+
+    document.getElementById('dashPropWithdrawModal')?.remove();
+    document.body.insertAdjacentHTML('beforeend', `
+    <div class="modal-overlay open" id="dashPropWithdrawModal">
+      <div class="modal-box-base" style="width:100%;max-width:440px;max-height:92vh;overflow-y:auto">
+        <div class="modal-hdr">
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--pearl);font-weight:300">Withdraw <em style="color:var(--gold);font-style:italic">${asset.name}</em></h3>
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:3px;letter-spacing:.1em">PROPERTY INVESTMENT</p>
+          </div>
+          <button onclick="document.getElementById('dashPropWithdrawModal').remove()" class="modal-close-btn">✕</button>
+        </div>
+        <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px">
+          ${isPremature ? `
+          <div style="padding:14px 16px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.25);border-radius:14px;display:flex;align-items:flex-start;gap:12px">
+            <i class="fas fa-triangle-exclamation" style="color:#e84848;font-size:16px;margin-top:2px;flex-shrink:0"></i>
+            <div>
+              <p style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#e84848;margin-bottom:4px">EARLY WITHDRAWAL — 30% PENALTY</p>
+              <p style="font-size:12px;color:var(--ash);line-height:1.6">Lock-in ends in <strong style="color:var(--pearl)">${timeMsg}</strong>. Withdrawing now deducts 30% of your invested amount.</p>
+            </div>
+          </div>` : `
+          <div style="padding:14px 16px;background:rgba(29,189,108,.08);border:1px solid rgba(29,189,108,.2);border-radius:14px;display:flex;align-items:center;gap:12px">
+            <i class="fas fa-circle-check" style="color:var(--gain);font-size:16px;flex-shrink:0"></i>
+            <p style="font-size:12px;color:var(--ash)">Lock-in period <strong style="color:var(--gain)">matured</strong> — full withdrawal, no penalty.</p>
+          </div>`}
+          <div style="display:flex;justify-content:space-between;padding:11px 14px;background:var(--lift);border:1px solid var(--rim);border-radius:11px">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">Invested Value</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">$${fmtUSD(currentVal)}</span>
+          </div>
+          ${isPremature ? `
+          <div style="display:flex;justify-content:space-between;padding:11px 14px;background:rgba(232,72,72,.06);border:1px solid rgba(232,72,72,.15);border-radius:11px">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:#e84848">Early Withdrawal Penalty (30%)</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;color:#e84848">−$${fmtUSD(penalty)}</span>
+          </div>` : ''}
+          <div style="display:flex;justify-content:space-between;padding:13px 14px;background:${isPremature ? 'rgba(232,72,72,.08)' : 'rgba(29,189,108,.08)'};border:1px solid ${isPremature ? 'rgba(232,72,72,.2)' : 'rgba(29,189,108,.2)'};border-radius:11px">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:${isPremature ? '#e84848' : 'var(--gain)'};font-weight:700">You Receive</span>
+            <span style="font-family:'Playfair Display',serif;font-size:22px;color:${isPremature ? '#e84848' : 'var(--gain)'};font-weight:300">$${fmtUSD(netPayout)}</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button onclick="document.getElementById('dashPropWithdrawModal').remove()" style="flex:1;padding:13px;border-radius:12px;background:var(--lift);border:1px solid var(--rim);color:var(--ash);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">Cancel</button>
+            <button id="dashPropConfirmBtn" onclick="confirmDashPropertyWithdraw('${sym}',${currentVal},${penalty},${netPayout})" style="flex:2;padding:13px;border-radius:12px;background:${isPremature ? 'linear-gradient(135deg,#c0392b,#e84848)' : 'linear-gradient(135deg,#1dbd6c,#15994e)'};border:none;color:#fff;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer">
+              ${isPremature ? '⚠ Withdraw with Penalty' : '✓ Withdraw Full Amount'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`);
+  }
+
+  async function confirmDashPropertyWithdraw(sym, currentVal, penalty, netPayout) {
+    const holding = myHoldings.find(h => h.symbol === sym);
+    const asset   = ASSETS_LIST.find(a => a.sym === sym);
+    if (!holding || !asset) return;
+    const btn = document.getElementById('dashPropConfirmBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
+    try {
+      const isPremature = penalty > 0;
+      const note = isPremature
+        ? `Early withdrawal ${sym} | Invested: $${fmtUSD(currentVal)} | Penalty: -$${fmtUSD(penalty)} (30%) | Net: $${fmtUSD(netPayout)}`
+        : `Property withdrawal ${sym} | Amount: $${fmtUSD(netPayout)}`;
+      await sb.from('transactions').insert({ user_id: authUser.id, type: 'sell', symbol: sym, name: asset.name, icon: asset.icon, color: asset.color, quantity: Number(holding.quantity), price_at_tx: Number(holding.avg_buy_price), usd_amount: netPayout, status: 'approved', note });
+      await sb.from('holdings').delete().eq('id', holding.id);
+      const newCash = +(Number(profile.cash) + netPayout).toFixed(2);
+      await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
+      try {
+        const locks = JSON.parse(localStorage.getItem('aurum_property_locks') || '{}');
+        delete locks[`${authUser.id}_${sym}`];
+        localStorage.setItem('aurum_property_locks', JSON.stringify(locks));
+      } catch(e) {}
+      await loadProfile(); await loadPortfolioStats(); await loadTransactions();
+      document.getElementById('dashPropWithdrawModal')?.remove();
+      closePortfolioModal();
+      showToast(isPremature ? 'Withdrawn with penalty' : 'Withdrawal complete', `$${fmtUSD(netPayout)} credited to balance`, isPremature ? 'error' : 'success');
+    } catch(err) { showToast('Withdrawal failed', err.message || 'Please try again', 'error'); if(btn){ btn.disabled=false; btn.textContent='Retry'; } }
+  }
+
   window.openTradeModal    = openTradeModal;
   window.closeTradeModal   = closeTradeModal;
   window.setTradeType      = setTradeType;
@@ -2730,6 +2852,7 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.re
   window.updateTradeModalCalc = updateTradeModalCalc;
   window.confirmTrade      = confirmTrade;
   window.closeTradeReceipt = closeTradeReceipt;
+  window.confirmDashPropertyWithdraw = confirmDashPropertyWithdraw;
 
   // ═══════════════════════════════════════════════════════════════════════════════
   //  PORTFOLIO MODAL
@@ -2768,7 +2891,7 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.re
           <div style="width:46px;height:46px;border-radius:15px;background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0"><i class="${meta.icon||'fas fa-coins'}"></i></div>
           <div style="flex:1"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><p style="font-family:'Playfair Display',serif;font-size:18px;color:var(--pearl);font-weight:400">${h.symbol}</p><p style="font-size:12px;color:var(--fog)">${meta.name||h.symbol}</p></div><div style="text-align:right"><p style="font-family:'Playfair Display',serif;font-size:22px;color:var(--pearl);font-weight:300">$${fmtUSD(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${itemPnl>=0?'#1dbd6c':'#e84848'}">${itemPnl>=0?'+':''}$${fmtUSD(itemPnl)} (${pct>=0?'+':''}${pct.toFixed(2)}%)</p></div></div></div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+        <div class="holding-stats-grid" style="margin-bottom:16px">
           <div style="background:var(--lift);border:1px solid var(--rim);border-radius:11px;padding:10px;text-align:center"><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Qty</p><p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">${Number(h.quantity).toFixed(4)}</p></div>
           <div style="background:var(--lift);border:1px solid var(--rim);border-radius:11px;padding:10px;text-align:center"><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Avg Buy</p><p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">$${fmtPrice(Number(h.avg_buy_price))}</p></div>
           <div style="background:var(--lift);border:1px solid var(--rim);border-radius:11px;padding:10px;text-align:center"><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Live Price</p><p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold)">$${fmtPrice(live)}</p></div>

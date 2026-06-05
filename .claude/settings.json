@@ -12,7 +12,9 @@
       "Bash(curl -s -X POST \"https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/new-user-handler\" -H \"Content-Type: application/json\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w\" -d \"{\\\\\"record\\\\\":{\\\\\"email\\\\\":\\\\\"emilywakeforrd@gmail.com\\\\\",\\\\\"id\\\\\":\\\\\"test-id-002\\\\\",\\\\\"created_at\\\\\":\\\\\"2026-06-05T00:00:00Z\\\\\",\\\\\"raw_user_meta_data\\\\\":{\\\\\"first_name\\\\\":\\\\\"Emily\\\\\",\\\\\"last_name\\\\\":\\\\\"Wakeford\\\\\"}}}\")",
       "Bash(curl -s -X POST \"https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/new-user-handler\" -H \"Content-Type: application/json\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w\" -d \"{\\\\\"record\\\\\":{\\\\\"email\\\\\":\\\\\"test-client@example.com\\\\\",\\\\\"id\\\\\":\\\\\"a1b2c3d4-e5f6-7890-abcd-ef1234567890\\\\\",\\\\\"created_at\\\\\":\\\\\"2026-06-05T14:32:00Z\\\\\",\\\\\"raw_user_meta_data\\\\\":{\\\\\"first_name\\\\\":\\\\\"James\\\\\",\\\\\"last_name\\\\\":\\\\\"Anderson\\\\\"}}}\")",
       "Bash(python3 -)",
-      "Bash(py --version)"
+      "Bash(py --version)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\u\\\\OneDrive\\\\Documents\\\\Aurum capital\\\\src\\\\\" -Recurse -File | Select-Object -ExpandProperty Extension | Sort-Object | Get-Unique)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\u\\\\OneDrive\\\\Documents\\\\Aurum capital\\\\\" -Directory | Select-Object Name)"
     ]
   }
 }

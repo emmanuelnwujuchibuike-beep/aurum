@@ -944,7 +944,7 @@
 
   <!-- HEADER -->
   <header id="mainHeader">
-    <a href="#" class="logo-link">
+    <a href="index.html" class="logo-link">
       <div class="logo-mark">A</div>
       <span class="logo-name">Aurum Capital</span>
     </a>
@@ -1324,19 +1324,19 @@
     <div class="footer-inner">
       <div class="footer-grid">
         <div>
-          <a href="#" class="logo-link"><div class="logo-mark">A</div><span class="logo-name">Aurum Capital</span></a>
+          <a href="index.html" class="logo-link"><div class="logo-mark">A</div><span class="logo-name">Aurum Capital</span></a>
           <p class="footer-desc">Aurum Capital empowers investors with a modern, secure platform for crypto, stocks, and real estate investing at institutional scale.</p>
         </div>
-        <div class="footer-col"><div class="footer-col-title">Company</div><ul><li><a href="about.html">About</a></li><li><a href="career.html">Careers</a></li><li><a href="#">Press</a></li></ul></div>
+        <div class="footer-col"><div class="footer-col-title">Company</div><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Careers</a></li><li><a href="contact.html">Press</a></li></ul></div>
         <div class="footer-col"><div class="footer-col-title">Explore</div><ul><li><a href="#markets">Markets</a></li><li><a href="invest.html">Invest</a></li><li><a href="#assets">Assets</a></li></ul></div>
-        <div class="footer-col"><div class="footer-col-title">Support</div><ul><li><a href="#">Help Center</a></li><li><a href="#">Terms</a></li><li><a href="privacy-policy.html">Privacy</a></li></ul></div>
+        <div class="footer-col"><div class="footer-col-title">Support</div><ul><li><a href="contact.html">Help Center</a></li><li><a href="privacy-policy.html">Terms</a></li><li><a href="privacy-policy.html">Privacy</a></li></ul></div>
       </div>
       <div class="footer-bottom">
         <div class="footer-legal">© 2026 Aurum Capital. All rights reserved.</div>
         <div class="footer-social">
-          <a class="social-btn" href="#"><i class="fab fa-twitter"></i></a>
-          <a class="social-btn" href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a class="social-btn" href="#"><i class="fab fa-telegram"></i></a>
+          <a class="social-btn" href="https://x.com/AurumCapitalinvest" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+          <a class="social-btn" href="https://linkedin.com/company/aurumcapitalinvest" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
+          <a class="social-btn" href="https://t.me/AurumCapitalinvest" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i></a>
         </div>
       </div>
       <p class="disclaimer"><strong>Risk Disclaimer:</strong> Investing involves substantial risk of loss. Past performance is not indicative of future results. Real estate investments are illiquid and subject to market fluctuations. Aurum Capital is a registered investment platform regulated under applicable financial services law.</p>
@@ -1838,11 +1838,21 @@
     /* ── AUTH ── */
     function isLoggedIn() {
       try {
+        /* Supabase v2 stores the session under sb-<project-ref>-auth-token */
+        var sbToken = localStorage.getItem('sb-ttwwthfeordsojmcjwxn-auth-token');
+        if (sbToken) {
+          try {
+            var parsed = JSON.parse(sbToken);
+            /* Treat as logged-in only if the access_token is present and not expired */
+            if (parsed && parsed.access_token) {
+              var exp = parsed.expires_at || (parsed.user && parsed.user.exp);
+              if (!exp || (Date.now() / 1000) < exp) return true;
+            }
+          } catch(e) { /* malformed JSON – fall through */ }
+        }
         return !!(
           sessionStorage.getItem('aurum_session') ||
-          localStorage.getItem('aurum_session')   ||
-          sessionStorage.getItem('sb-access-token') ||
-          localStorage.getItem('sb-access-token')
+          localStorage.getItem('aurum_session')
         );
       } catch(e) { return false; }
     }
