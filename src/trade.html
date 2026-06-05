@@ -84,24 +84,6 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(200,164,90,.15);border-radius:4px}
 
-/* LOADER */
-#loader{position:fixed;inset:0;z-index:9999;background:var(--bg0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .8s cubic-bezier(.4,0,.2,1);}
-#loader.out{opacity:0;pointer-events:none}
-.ld-emblem{position:relative;width:72px;height:72px;}
-.ld-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(200,164,90,.2);animation:ldRingPulse 2.4s ease-in-out infinite;}
-.ld-ring:nth-child(2){inset:6px;border-color:rgba(200,164,90,.35);animation-delay:.3s;animation-duration:2.1s;}
-.ld-ring:nth-child(3){inset:12px;border-color:rgba(200,164,90,.5);animation-delay:.6s;animation-duration:1.8s;}
-@keyframes ldRingPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
-.ld-core{position:absolute;inset:20px;border-radius:50%;background:linear-gradient(135deg,rgba(200,164,90,.9),rgba(160,120,53,.9));display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-weight:700;color:#020408;font-size:18px;box-shadow:0 0 30px rgba(200,164,90,.4),0 0 60px rgba(200,164,90,.15);}
-.ld-wordmark{font-family:var(--font-serif);font-size:32px;letter-spacing:.3em;color:transparent;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold));-webkit-background-clip:text;background-clip:text;font-weight:400;}
-.ld-wordmark span{opacity:0;transform:translateY(12px) skewX(-4deg);display:inline-block;animation:ldReveal .6s cubic-bezier(.2,0,.0,1) forwards}
-.ld-wordmark span:nth-child(1){animation-delay:.1s}.ld-wordmark span:nth-child(2){animation-delay:.18s}.ld-wordmark span:nth-child(3){animation-delay:.26s}.ld-wordmark span:nth-child(4){animation-delay:.34s}.ld-wordmark span:nth-child(5){animation-delay:.42s}
-@keyframes ldReveal{to{opacity:1;transform:none}}
-.ld-sub{font-family:var(--font-mono);font-size:9px;letter-spacing:.35em;color:var(--text3);text-transform:uppercase}
-.ld-progress{width:200px;height:1px;background:rgba(255,255,255,.06);position:relative;overflow:visible;}
-.ld-progress-fill{height:100%;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);animation:ldProgress 1.8s ease-in-out forwards;position:relative;}
-.ld-progress-fill::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:var(--gold2);box-shadow:0 0 8px var(--gold),0 0 20px var(--gold-glow);}
-@keyframes ldProgress{0%{width:0}60%{width:78%}100%{width:100%}}
 
 /* SHELL */
 #shell{display:none;height:100dvh;flex-direction:column;overflow:hidden;position:relative;z-index:2}
@@ -1092,10 +1074,6 @@ body.fullscreen-chart #chart-toolbar{height:36px}
   html[data-theme="light"] body::before{opacity:.12!important}
   html[data-theme="light"] body::after{opacity:.008!important}
 
-  /* ── Loader ── */
-  html[data-theme="light"] #loader{background:#f0ece2!important}
-  html[data-theme="light"] .ld-sub{color:#8a7060!important}
-
   /* ── Desktop Topbar ── */
   html[data-theme="light"] #topbar{background:linear-gradient(180deg,rgba(250,246,240,.99),rgba(244,239,229,.97))!important;border-bottom-color:rgba(0,0,0,.09)!important;box-shadow:0 1px 18px rgba(0,0,0,.06)!important}
   html[data-theme="light"] #topbar::after{background:linear-gradient(90deg,transparent,rgba(159,122,30,.28),transparent)!important}
@@ -1321,20 +1299,9 @@ body.fullscreen-chart #chart-toolbar{height:36px}
 <link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
+<script src="intro-loader.js"></script>
 <div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
-
-<!-- LOADER -->
-<div id="loader">
-  <div class="ld-emblem">
-    <div class="ld-ring"></div><div class="ld-ring"></div><div class="ld-ring"></div>
-    <div class="ld-core">A</div>
-  </div>
-  <div class="ld-wordmark"><span>A</span><span>U</span><span>R</span><span>U</span><span>M</span></div>
-  <div class="ld-sub">Trading Terminal</div>
-  <div class="ld-progress"><div class="ld-progress-fill"></div></div>
-</div>
-
 <div id="shell">
 
   <!-- DESKTOP TOPBAR -->
@@ -1356,7 +1323,7 @@ body.fullscreen-chart #chart-toolbar{height:36px}
     <div class="tb-spacer"></div>
     <div class="tb-cash">Cash: <span id="topbar-cash">—</span></div>
     <div class="tb-sep"></div>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="width:34px;height:34px;border-radius:9px;font-size:14px"><span class="theme-icon">☀</span></button><div class="tb-avatar" id="tb-avatar">?</div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><span class="theme-icon">☀</span></button><div class="tb-avatar" id="tb-avatar">?</div>
   </div>
 
   <!-- MOBILE TOPBAR -->
@@ -1369,7 +1336,7 @@ body.fullscreen-chart #chart-toolbar{height:36px}
       <span class="mob-top-chg" id="mob-chg">—</span>
     </div>
     <div style="display:flex;gap:6px">
-      <button class="theme-toggle mob-icon-btn" onclick="toggleTheme()" aria-label="Toggle theme" style="font-size:14px"><span class="theme-icon">☀</span></button>
+      <button class="theme-toggle mob-icon-btn" onclick="toggleTheme()" aria-label="Toggle theme"><span class="theme-icon">☀</span></button>
       <button class="mob-icon-btn" id="mob-trade-quick-btn" style="background:var(--gold-dim);border-color:rgba(200,164,90,.3);color:var(--gold)"><i class="fas fa-bolt"></i></button>
     </div>
   </div>
@@ -2227,7 +2194,6 @@ window.addEventListener('DOMContentLoaded',async()=>{
   const loaded=new Promise(r=>setTimeout(r,1800));
   const {data:{session}}=await sb.auth.getSession();
   await loaded;
-  $('loader').classList.add('out');
   if(!session){window.location.href='signup.html';return;}
   authUser=session.user;
   await loadPricesFromDB();

@@ -136,6 +136,23 @@ table, thead, tbody, td, th {
 }
 .theme-toggle.spin .theme-icon { transform: rotate(360deg) scale(0.3); opacity: 0; }
 
+@media (max-width: 768px) {
+  .theme-toggle {
+    width: 44px !important; height: 44px !important;
+    border-radius: 13px !important; font-size: 19px !important;
+    background: rgba(201,168,76,.13) !important;
+    border: 1.5px solid rgba(201,168,76,.38) !important;
+    color: #c9a84c !important;
+    box-shadow: 0 0 0 3px rgba(201,168,76,.08) !important;
+  }
+  html[data-theme="light"] .theme-toggle {
+    background: rgba(159,122,30,.14) !important;
+    border-color: rgba(159,122,30,.45) !important;
+    color: #9f7a1e !important;
+    box-shadow: 0 0 0 3px rgba(159,122,30,.08) !important;
+  }
+}
+
 /* ── CURSOR GLOW ── */
 .cursor-glow {
   position: fixed; pointer-events: none; z-index: 9001;

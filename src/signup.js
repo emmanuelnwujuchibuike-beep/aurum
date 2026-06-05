@@ -174,8 +174,10 @@ if (signupForm) {
               email:      data.user.email,
               id:         data.user.id,
               created_at: data.user.created_at,
-              first_name: firstName,
-              last_name:  lastName,
+              raw_user_meta_data: {
+                first_name: firstName,
+                last_name:  lastName,
+              },
             },
           }),
         });
@@ -297,12 +299,21 @@ function showSuccess() {
 ─────────────────────────────────────────────── */
 window.showTab = function(t) {
   const su = t === 'su';
-  showPanel(su ? 'suPanel' : 'liPanel');
+  const panelId = su ? 'suPanel' : 'liPanel';
+  showPanel(panelId);
   document.getElementById('tabSu').classList.toggle('on', su);
   document.getElementById('tabLi').classList.toggle('on', !su);
-  // Restore tab row visibility if it was hidden for the verify state
   const tabRow = document.querySelector('.tab-row');
   if (tabRow) tabRow.style.display = '';
+  // Cancel any pending load animations so panel content appears instantly
+  const panel = document.getElementById(panelId);
+  if (panel) {
+    panel.querySelectorAll('.au').forEach(el => {
+      el.style.animation = 'none';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }
   clearErrors();
 };
 

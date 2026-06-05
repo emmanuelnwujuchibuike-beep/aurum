@@ -29,21 +29,6 @@ body{font-family:'Instrument Sans',sans-serif;background:var(--void);color:var(-
 .grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");background-size:220px}
 #particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4}
 
-/* LOADER */ 
-#loader{position:fixed;inset:0;z-index:9000;background:var(--void);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .9s cubic-bezier(.4,0,.2,1),visibility .9s}
-#loader.out{opacity:0;visibility:hidden;pointer-events:none}
-.ld-emblem{position:relative;width:80px;height:80px;display:flex;align-items:center;justify-content:center}
-.ld-emblem svg{position:absolute;inset:0;animation:ldSpin 3.5s linear infinite}
-@keyframes ldSpin{to{transform:rotate(360deg)}}
-.ld-center{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--gold-hi),var(--gold),var(--gold-lo));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--void);font-size:20px;box-shadow:0 0 50px rgba(201,166,60,.4);animation:ldBreath 2s ease-in-out infinite;position:relative;z-index:1}
-@keyframes ldBreath{0%,100%{box-shadow:0 0 40px rgba(201,166,60,.3)}50%{box-shadow:0 0 80px rgba(201,166,60,.6)}}
-.ld-name{font-family:'Playfair Display',serif;font-size:30px;letter-spacing:.3em;color:var(--pearl);font-weight:400;display:flex;gap:2px}
-.ld-name span{opacity:0;transform:translateY(14px);animation:ldLetter .5s ease forwards}
-.ld-name span:nth-child(1){animation-delay:.06s}.ld-name span:nth-child(2){animation-delay:.13s}.ld-name span:nth-child(3){animation-delay:.20s}.ld-name span:nth-child(4){animation-delay:.27s}.ld-name span:nth-child(5){animation-delay:.34s}
-@keyframes ldLetter{to{opacity:1;transform:none}}
-.ld-track{width:180px;height:1px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
-.ld-run{height:100%;background:linear-gradient(90deg,transparent,var(--gold-hi),var(--gold),transparent);animation:ldRun 2s ease-in-out infinite}
-@keyframes ldRun{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
 
 /* TICKER */
 .ticker-wrap{overflow:hidden;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);background:#080c12;position:relative;z-index:10}
@@ -584,12 +569,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .ambient{background:radial-gradient(ellipse 80% 50% at 30% -10%,rgba(159,122,30,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(29,100,200,.03) 0%,transparent 55%)!important}
   html[data-theme="light"] .grain{opacity:.018!important}
 
-  /* ── 3. Loader ── */
-  html[data-theme="light"] #loader{background:#faf8f4!important}
-  html[data-theme="light"] .ld-name{color:#0f0d0a!important}
-  html[data-theme="light"] .ld-name span{color:#0f0d0a!important}
-  html[data-theme="light"] .ld-track{background:rgba(0,0,0,.07)!important}
-
   /* ── 4. Ticker ── */
   html[data-theme="light"] .ticker-wrap{background:rgba(240,236,226,.98)!important;border-top-color:rgba(0,0,0,.08)!important;border-bottom-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] .ticker-item{border-right-color:rgba(0,0,0,.06)!important}
@@ -726,6 +705,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.12)!important;color:#0f0d0a!important}
   html[data-theme="light"] input::placeholder,html[data-theme="light"] textarea::placeholder{color:rgba(0,0,0,.3)!important}
   html[data-theme="light"] #sw-from,html[data-theme="light"] #sw-to{background:#f5f0e8!important;color:#0f0d0a!important;border-color:rgba(0,0,0,.12)!important}
+  html[data-theme="light"] #mi-durations .period-btn div{color:inherit!important}
 
   /* ── 15. Receipt ── */
   html[data-theme="light"] .receipt-veil{background:rgba(220,210,195,.78)!important;backdrop-filter:blur(24px)}
@@ -757,26 +737,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
+<script src="intro-loader.js"></script>
 <div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 <canvas id="particleCanvas"></canvas>
 <div class="ambient"></div>
 <div class="grain"></div>
-
-<!-- LOADER -->
-<div id="loader">
-  <div class="ld-emblem">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <circle cx="40" cy="40" r="37" stroke="rgba(201,166,60,.18)" stroke-width="1" stroke-dasharray="4 6"/>
-      <circle cx="40" cy="3" r="2.5" fill="#c9a63c"/>
-    </svg>
-    <div class="ld-center">A</div>
-  </div>
-  <div class="ld-name"><span>A</span><span>U</span><span>R</span><span>U</span><span>M</span></div>
-  <div class="ld-track"><div class="ld-run"></div></div>
-  <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.3em;color:var(--fog);text-transform:uppercase">Investment Centre · Loading</p>
-</div>
-
 <!-- NAV -->
 <nav>
   <div style="display:flex;align-items:center;gap:10px">
@@ -1020,6 +986,59 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
           <input type="range" id="mi-slider" min="0" max="100" value="0" oninput="sliderAmt(this.value)">
         </div>
       </div>
+      <div style="margin-top:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <label style="font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:var(--fog);text-transform:uppercase">Investment Duration</label>
+          <span id="mi-dur-rate" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain)">20% / day</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px" id="mi-durations">
+          <button class="period-btn on" onclick="setDuration('1D',this)" style="text-align:center;padding:8px 4px">
+            <div style="font-size:11px;font-weight:600">Day</div>
+            <div style="font-size:8px;opacity:.7;margin-top:2px">20%</div>
+          </button>
+          <button class="period-btn" onclick="setDuration('1W',this)" style="text-align:center;padding:8px 4px">
+            <div style="font-size:11px;font-weight:600">Week</div>
+            <div style="font-size:8px;opacity:.7;margin-top:2px">140%</div>
+          </button>
+          <button class="period-btn" onclick="setDuration('1M',this)" style="text-align:center;padding:8px 4px">
+            <div style="font-size:11px;font-weight:600">Month</div>
+            <div style="font-size:8px;opacity:.7;margin-top:2px">600%</div>
+          </button>
+          <button class="period-btn" onclick="setDuration('1Y',this)" style="text-align:center;padding:8px 4px">
+            <div style="font-size:11px;font-weight:600">Year</div>
+            <div style="font-size:8px;opacity:.7;margin-top:2px">7,300%</div>
+          </button>
+        </div>
+      </div>
+      <div style="background:rgba(201,166,60,.04);border:1px solid var(--rim-gold);border-radius:14px;padding:14px 16px;margin-top:2px">
+        <p style="font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;margin-bottom:10px">Projected Returns</p>
+        <div style="display:grid;grid-template-columns:60px 1fr 1fr 1fr;gap:4px 8px;align-items:center">
+          <span style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.1em">Period</span>
+          <span style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.1em;text-align:right">Rate</span>
+          <span style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.1em;text-align:right">Profit</span>
+          <span style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.1em;text-align:right">Return</span>
+
+          <span id="rd-dy-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">Day</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-align:right">20%</span>
+          <span id="rd-dy-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">—</span>
+          <span id="rd-dy-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">—</span>
+
+          <span id="rd-wk-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">Week</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-align:right">140%</span>
+          <span id="rd-wk-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">—</span>
+          <span id="rd-wk-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">—</span>
+
+          <span id="rd-mt-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">Month</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-align:right">600%</span>
+          <span id="rd-mt-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">—</span>
+          <span id="rd-mt-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">—</span>
+
+          <span id="rd-yr-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">Year</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-align:right">7,300%</span>
+          <span id="rd-yr-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">—</span>
+          <span id="rd-yr-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">—</span>
+        </div>
+      </div>
       <div id="os-prop-yield-block" style="display:none">
         <div class="prop-yield-box">
           <div class="prop-yield-row"><span class="prop-yield-label">Weekly Income (20%)</span><span class="prop-yield-val" id="os-annual-yield">—</span></div>
@@ -1034,6 +1053,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <p style="font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:var(--fog);text-transform:uppercase;margin-bottom:5px">Order Summary</p>
         <div class="sum-row"><span class="sum-lbl">You invest</span><span id="os-invest" class="sum-val">$0.00</span></div>
         <div id="os-receive-row" style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px"><span class="sum-lbl">You receive</span><span id="os-get" class="sum-val" style="color:var(--gold)">—</span></div>
+        <div class="sum-row"><span id="os-profit-lbl" class="sum-lbl" style="color:var(--gain)">Projected Profit (20% · 1W)</span><span id="os-profit" class="sum-val" style="color:var(--gain)">+$0.00</span></div>
+        <div class="sum-row"><span class="sum-lbl" style="color:var(--gold);font-weight:600">Total Return</span><span id="os-return" class="sum-val" style="color:var(--gold);font-size:13px;font-weight:600">$0.00</span></div>
         <div class="sum-row"><span class="sum-lbl">Platform fee (0.1%)</span><span id="os-fee" class="sum-val">$0.00</span></div>
         <div class="sum-row"><span class="sum-lbl">Slippage (0.05%)</span><span id="os-slip" class="sum-val">$0.00</span></div>
         <div class="sum-divider"></div>
@@ -1299,6 +1320,14 @@ let authUser = null, profile = null, myHoldings = [], modalAsset = null;
 let liveFilter = 'all', allTransactions = [], txFilter = 'all', adminUsers = [];
 let activePanelTab = 'portfolio', adminPriceTab = 'crypto';
 let investChartInstance = null, investChartPeriod = '1D';
+const DAILY_PROFIT_RATE = 0.20; // 20% per day base
+const DURATION_RATES = {
+  '1D': { days: 1,   label: '1 Day'   },
+  '1W': { days: 7,   label: '1 Week'  },
+  '1M': { days: 30,  label: '1 Month' },
+  '1Y': { days: 365, label: '1 Year'  },
+};
+let investDuration = '1D';
 let _priceUpdatedAt = {};
 let depCoin = null, depAmt = 0;
 let CRYPTO_ADDRESSES = {};
@@ -1562,10 +1591,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // Build ticker immediately with default prices so it's visible during load
   buildTicker();
 
-  const loaderDone = new Promise(r => setTimeout(r, 1900));
   const { data: { session } } = await sb.auth.getSession();
-  await loaderDone;
-  document.getElementById('loader').classList.add('out');
   if (!session) { window.location.href = 'signup.html'; return; }
   authUser = session.user;
 
@@ -2044,6 +2070,8 @@ function openInvestModal(sym) {
     chartWrap.style.display = 'block';
     investChartPeriod = '1D';
     document.querySelectorAll('#mi-periods .period-btn').forEach(b=>{b.classList.remove('on'); if(b.textContent==='1D')b.classList.add('on');});
+    investDuration = '1D';
+    document.querySelectorAll('#mi-durations .period-btn').forEach(b=>{b.classList.remove('on'); if(b.querySelector('div')?.textContent==='Day')b.classList.add('on');});
     txt('mi-stat-high','$'+fmtP(a.price*1.032)); txt('mi-stat-low','$'+fmtP(a.price*0.971));
     const mcap = MCAP[sym]||5e9; txt('mi-stat-mcap',fmtLarge(mcap)); txt('mi-stat-vol',fmtLarge(mcap*0.028));
     setTimeout(()=>renderModalChart(sym,'1D'), 80);
@@ -2070,13 +2098,46 @@ function setInvestPeriod(period, btn) {
   btn.classList.add('on');
   if(modalAsset) renderModalChart(modalAsset.sym, period);
 }
+function setDuration(key, btn) {
+  investDuration = key;
+  document.querySelectorAll('#mi-durations .period-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  calcModal();
+}
+
 function calcModal() {
   if(!modalAsset||!profile) return;
   const a = modalAsset, isProp = a.cat==='property';
   const amt = parseFloat(document.getElementById('mi-amount').value)||0;
   const fee = +(amt*0.001).toFixed(2), slip = +(amt*0.0005).toFixed(2);
   const total = +(amt+fee+slip).toFixed(2), cash = Number(profile.cash), remain = +(cash-total).toFixed(2);
+  const dur = DURATION_RATES[investDuration] || DURATION_RATES['1D'];
+  const activeRate = DAILY_PROFIT_RATE * dur.days;
+  const profit = +(amt * activeRate).toFixed(2);
+  const totalReturn = +(amt + profit).toFixed(2);
+  const activePct = Math.round(activeRate * 100);
+  const durRateEl = document.getElementById('mi-dur-rate');
+  if (durRateEl) durRateEl.textContent = '20% / day';
+  const profitLblEl = document.getElementById('os-profit-lbl');
+  if (profitLblEl) profitLblEl.textContent = 'Projected Profit (' + activePct + '% · ' + dur.label + ')';
+  // breakdown card — all four periods
+  const bk = { '1D':1, '1W':7, '1M':30, '1Y':365 };
+  const ids = { '1D':'dy', '1W':'wk', '1M':'mt', '1Y':'yr' };
+  Object.entries(bk).forEach(([key, days]) => {
+    const id = ids[key];
+    const p = +(amt * DAILY_PROFIT_RATE * days).toFixed(2);
+    const t = +(amt + p).toFixed(2);
+    const isActive = key === investDuration;
+    const lbl = document.getElementById('rd-'+id+'-lbl');
+    if (lbl) lbl.style.color = isActive ? 'var(--gold)' : '';
+    const pEl = document.getElementById('rd-'+id+'-profit');
+    if (pEl) pEl.textContent = '+$'+fmtU(p);
+    const tEl = document.getElementById('rd-'+id+'-total');
+    if (tEl) { tEl.textContent = '$'+fmtU(t); tEl.style.color = isActive ? 'var(--gold)' : 'var(--pearl)'; tEl.style.fontWeight = isActive ? '600' : ''; }
+  });
   txt('os-invest','$'+amt.toFixed(2));
+  txt('os-profit','+$'+fmtU(profit));
+  txt('os-return','$'+fmtU(totalReturn));
   if(!isProp){ const qty=amt/a.price; txt('os-get',(qty<1?qty.toFixed(6):qty.toFixed(4))+' '+a.sym); }
   if(isProp){
     const yld = computePropYield(amt, a);

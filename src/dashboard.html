@@ -38,32 +38,6 @@ body{font-family:'Instrument Sans',sans-serif;background:var(--void);color:var(-
   background-size:220px}
 #particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35}
 
-/* ── LOADER ── */
-#aurum-loader{position:fixed;inset:0;z-index:9999;background:var(--void);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
-  transition:opacity .9s cubic-bezier(.4,0,.2,1),visibility .9s}
-#aurum-loader.out{opacity:0;visibility:hidden;pointer-events:none}
-.ld-emblem{position:relative;width:80px;height:80px;display:flex;align-items:center;justify-content:center}
-.ld-emblem svg{position:absolute;inset:0;animation:ldSpin 3.5s linear infinite}
-@keyframes ldSpin{to{transform:rotate(360deg)}}
-.ld-center{width:48px;height:48px;border-radius:14px;
-  background:linear-gradient(135deg,var(--gold-hi),var(--gold),var(--gold-lo));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-weight:700;color:var(--void);font-size:20px;
-  box-shadow:0 0 50px rgba(201,166,60,.4);
-  animation:ldBreath 2s ease-in-out infinite;position:relative;z-index:1}
-@keyframes ldBreath{0%,100%{box-shadow:0 0 40px rgba(201,166,60,.3)}50%{box-shadow:0 0 80px rgba(201,166,60,.6)}}
-.ld-name{font-family:'Playfair Display',serif;font-size:30px;letter-spacing:.3em;color:var(--pearl);font-weight:400;display:flex;gap:2px}
-.ld-name span{opacity:0;transform:translateY(14px);animation:ldLetter .5s ease forwards}
-.ld-name span:nth-child(1){animation-delay:.06s}.ld-name span:nth-child(2){animation-delay:.13s}
-.ld-name span:nth-child(3){animation-delay:.20s}.ld-name span:nth-child(4){animation-delay:.27s}
-.ld-name span:nth-child(5){animation-delay:.34s}
-@keyframes ldLetter{to{opacity:1;transform:none}}
-.ld-track{width:180px;height:1px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
-.ld-run{height:100%;background:linear-gradient(90deg,transparent,var(--gold-hi),var(--gold),transparent);animation:ldRun 2s ease-in-out infinite}
-@keyframes ldRun{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
-.ld-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--fog);text-transform:uppercase}
-
 /* ── AUTH GATE ── */
 #authGate{display:none;position:fixed;inset:0;z-index:998;background:var(--void);align-items:center;justify-content:center}
 
@@ -955,13 +929,6 @@ body.menu-open{overflow:hidden}
   html[data-theme="light"] .grain{opacity:.015!important}
   html[data-theme="light"] #particleCanvas{opacity:.1!important}
 
-  /* ── 3. Loader ── */
-  html[data-theme="light"] #aurum-loader{background:#faf8f4!important}
-  html[data-theme="light"] .ld-name{color:#0f0d0a!important}
-  html[data-theme="light"] .ld-name span{color:#0f0d0a!important}
-  html[data-theme="light"] .ld-track{background:rgba(0,0,0,.07)!important}
-  html[data-theme="light"] .ld-sub{color:#7a5c38!important}
-
   /* ── 4. Ticker ── */
   html[data-theme="light"] .ticker-wrap{background:rgba(240,235,224,.98)!important;border-top-color:rgba(0,0,0,.08)!important;border-bottom-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] .ticker-item{border-right-color:rgba(0,0,0,.06)!important}
@@ -1183,26 +1150,12 @@ body.menu-open{overflow:hidden}
 <link rel="stylesheet" href="premium-base.css">
 </head>
 <body class="overflow-x-hidden">
+<script src="intro-loader.js"></script>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:99999;pointer-events:none;opacity:0;background:#faf8f4;transition:opacity .15s ease"></div>
 
 <canvas id="particleCanvas"></canvas>
 <div class="ambient"></div>
 <div class="grain"></div>
-
-<!-- LOADER -->
-<div id="aurum-loader">
-  <div class="ld-emblem">
-    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-      <circle cx="40" cy="40" r="37" stroke="rgba(201,166,60,.18)" stroke-width="1" stroke-dasharray="4 6"/>
-      <circle cx="40" cy="3" r="2.5" fill="#c9a63c"/>
-    </svg>
-    <div class="ld-center">A</div>
-  </div>
-  <div class="ld-name"><span>A</span><span>U</span><span>R</span><span>U</span><span>M</span></div>
-  <div class="ld-track"><div class="ld-run"></div></div>
-  <div class="ld-sub">Dashboard · Loading</div>
-</div>
-
 <!-- AUTH GATE -->
 <div id="authGate" style="display:none;position:fixed;inset:0;z-index:998;background:var(--void);align-items:center;justify-content:center">
   <div style="text-align:center">
@@ -1269,7 +1222,7 @@ body.menu-open{overflow:hidden}
           <i class="fas fa-plus" style="font-size:11px"></i>
           <span class="hide-mobile">Deposit</span>
         </button>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="width:34px;height:34px;border-radius:9px;font-size:14px"><span class="theme-icon">☀</span></button><div id="mobAvatarWrap" class="nav-avatar" title="Account">?</div>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><span class="theme-icon">☀</span></button><div id="mobAvatarWrap" class="nav-avatar" title="Account">?</div>
       </div>
     </nav>
 
@@ -2343,18 +2296,15 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.re
   }
 
   window.addEventListener('DOMContentLoaded', async () => {
-    const loaderDone = new Promise(r => setTimeout(r, 1900));
+    // Show the verifying indicator immediately instead of a blank screen
+    document.getElementById('authGate').style.display = 'flex';
+
     const { data: { session } } = await sb.auth.getSession();
-    await loaderDone;
-    document.getElementById('aurum-loader').classList.add('out');
     if (!session) { window.location.href = 'signup.html'; return; }
     authUser = session.user;
     setGreeting();
-    await loadProfile();
-    await loadPortfolioStats();
-    await loadTransactions();
-    await loadAddressesFromDb();
-    checkPendingBadge();
+
+    // Reveal the app shell as soon as session is confirmed — don't wait for data
     document.getElementById('authGate').style.display = 'none';
     showApp();
     buildTicker();
@@ -2422,6 +2372,12 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.re
         }
       }
     ).subscribe();
+
+    // Fetch user data in background after shell is visible
+    // Profile must load first (portfolio stats depend on profile.cash)
+    await loadProfile();
+    await Promise.all([loadPortfolioStats(), loadTransactions(), loadAddressesFromDb()]);
+    checkPendingBadge();
   });
 
   window.addEventListener('storage', (e) => {

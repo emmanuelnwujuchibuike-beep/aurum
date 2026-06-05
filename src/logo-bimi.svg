@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Aurum Capital — BIMI Brand Logo
+  SVG Tiny PS profile (BIMI-compliant)
+  Square viewBox, no scripts, no external refs, no filters
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 500 500"
+     version="1.2"
+     baseProfile="tiny-ps">
+
+  <title>Aurum Capital</title>
+
+  <defs>
+
+    <!-- Deep background: dark navy centre fading to near-black -->
+    <radialGradient id="bg" cx="50%" cy="42%" r="62%">
+      <stop offset="0%"   stop-color="#0e2038"/>
+      <stop offset="60%"  stop-color="#060e1c"/>
+      <stop offset="100%" stop-color="#020406"/>
+    </radialGradient>
+
+    <!-- Gold gradient for the A: light top-left → rich mid → dark bottom-right -->
+    <linearGradient id="gold" x1="18%" y1="4%" x2="78%" y2="96%">
+      <stop offset="0%"   stop-color="#f8ecaa"/>
+      <stop offset="38%"  stop-color="#d4a93e"/>
+      <stop offset="72%"  stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#6e4410"/>
+    </linearGradient>
+
+    <!-- Gold gradient for rings: light → mid → dark -->
+    <linearGradient id="ringGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#f0da7a"/>
+      <stop offset="45%"  stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#8a6520"/>
+    </linearGradient>
+
+    <!-- Lighter gold for accent dots -->
+    <radialGradient id="dotGold" cx="35%" cy="35%" r="65%">
+      <stop offset="0%"   stop-color="#fdf0b8"/>
+      <stop offset="100%" stop-color="#c9a84c"/>
+    </radialGradient>
+
+  </defs>
+
+  <!-- ── Background circle ── -->
+  <circle cx="250" cy="250" r="250" fill="url(#bg)"/>
+
+  <!-- ── Outer ring (main border, 4px thick, gold gradient) ── -->
+  <circle cx="250" cy="250" r="241" fill="none" stroke="url(#ringGold)" stroke-width="4.5"/>
+
+  <!-- ── Second ring (inner, subtle, 1px) ── -->
+  <circle cx="250" cy="250" r="231" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.28"/>
+
+  <!-- ── Geometric octagon accent (very faint, decorative) ── -->
+  <!--
+    Regular octagon, radius 208, centred at 250,250, rotated 22.5°
+    Points computed at angles 22.5°, 67.5°, 112.5°, 157.5°, 202.5°, 247.5°, 292.5°, 337.5°
+  -->
+  <polygon
+    points="443,167 332,57 168,57 57,167 57,333 168,443 332,443 443,333"
+    fill="none" stroke="#c9a84c" stroke-width="1.3" opacity="0.16"/>
+
+  <!-- ── Corner tick marks at octagon vertices (premium detail) ── -->
+  <!-- Top-left corner bracket -->
+  <line x1="168" y1="57"  x2="152" y2="57"  stroke="#c9a84c" stroke-width="1.4" opacity="0.35"/>
+  <line x1="168" y1="57"  x2="168" y2="73"  stroke="#c9a84c" stroke-width="1.4" opacity="0.35"/>
+  <!-- Top-right corner bracket -->
+  <line x1="332" y1="57"  x2="348" y2="57"  stroke="#c9a84c" stroke-width="1.4" opacity="0.35"/>
+  <line x1="332" y1="57"  x2="332" y2="73"  stroke="#c9a84c" stroke-width="1.4" opacity="0.35"/>
+  <!-- Bottom-left corner bracket -->
+  <line x1="168" y1="443" x2="152" y2="443" stroke="#c9a84c" stroke-width="1.4" opacity="0.35"/>
+  <line x1="168" y1="443" x2="168" y2="427" stroke="#c9a84c" stroke-width="1.4" opacity="0.35"/>
+  <!-- Bottom-right corner bracket -->
+  <line x1="332" y1="443" x2="348" y2="443" stroke="#c9a84c" stroke-width="1.4" opacity="0.35"/>
+  <line x1="332" y1="443" x2="332" y2="427" stroke="#c9a84c" stroke-width="1.4" opacity="0.35"/>
+
+  <!--
+    ── The "A" monogram ──────────────────────────────────────────────────────
+    Constructed as a filled path using the even-odd fill rule so the inner
+    triangular opening above the crossbar is punched out automatically.
+
+    Key coordinates (500×500 canvas):
+      Apex:              (250, 118)
+      Left outer base:   (108, 392)   Right outer base:   (392, 392)
+      Left inner base:   (155, 392)   Right inner base:   (345, 392)
+      Crossbar bottom:   y = 293      Left x=211, Right x=289
+      Inner-edge apex:   (250, 214)   (where inner edges converge)
+      Crossbar top:      y = 260      Left x=225, Right x=275
+
+    Outer subpath traces the full A silhouette (apex → right outer → right
+    foot → crossbar bottom → left foot → left outer → back to apex).
+    Inner subpath is the triangular opening (punched out by even-odd rule).
+  -->
+  <path fill-rule="evenodd" fill="url(#gold)"
+    d="M 250 118
+       L 392 392
+       L 345 392
+       L 289 293
+       L 211 293
+       L 155 392
+       L 108 392
+       Z
+       M 250 214
+       L 275 260
+       L 225 260
+       Z"/>
+
+  <!-- Crossbar end-dot accents (where crossbar meets the legs) -->
+  <circle cx="216" cy="276" r="5.5" fill="url(#dotGold)" opacity="0.72"/>
+  <circle cx="284" cy="276" r="5.5" fill="url(#dotGold)" opacity="0.72"/>
+
+  <!-- Apex tip dot (top of the A) -->
+  <circle cx="250" cy="118" r="4" fill="#f8ecaa" opacity="0.55"/>
+
+</svg>

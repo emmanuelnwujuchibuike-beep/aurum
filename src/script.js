@@ -50,75 +50,6 @@ const HERO_CASH     = 28040;
 const _priceFreezeUntil = {};
 const FREEZE_MS = 35_000;   // 35 s — slightly longer than the 30 s poll
 
-/* ═══════════════════════════════════════════════════════
-   window.onPriceUpdate
-   Called by coingecko-sync.js (and price-sync.js from Supabase).
-   This is THE single update path for every DOM element.
-═══════════════════════════════════════════════════════ */
-window.onPriceUpdate = function (sym, newPrice, newChg) {
-  const asset = ASSETS.find(a => a.sym === sym);
-  if (!asset || !newPrice || newPrice <= 0) return;
-
-  const oldPrice   = asset.price;
-  asset.price      = newPrice;
-  asset.chg        = newChg != null ? newChg : asset.chg;
-  asset.up         = asset.chg >= 0;
-  _priceFreezeUntil[sym] = Date.now() + FREEZE_MS;
-
-  const pStr = '$' + fmtPrice(newPrice);
-  const cStr = (asset.up ? '+' : '') + Number(asset.chg).toFixed(2) + '%';
-
-  /* 1 ── Market-cards grid */
-  const mcEl = document.getElementById('mc-pr-' + sym);
-  if (mcEl) {
-    const wasUp = newPrice >= oldPrice;
-    mcEl.textContent = pStr;
-    mcEl.classList.remove('flash-up', 'flash-dn');
-    void mcEl.offsetWidth;
-    mcEl.classList.add(wasUp ? 'flash-up' : 'flash-dn');
-    setTimeout(() => mcEl.classList.remove('flash-up', 'flash-dn'), 1400);
-  }
-  const mcChgEl = document.getElementById('mc-chg-' + sym);
-  if (mcChgEl) {
-    mcChgEl.textContent = cStr;
-    mcChgEl.className = 'mc-badge ' + (asset.up ? 'up' : 'dn');
-  }
-
-  /* 2 ── Assets table */
-  const tbEl = document.getElementById('tbl-pr-' + sym);
-  if (tbEl) tbEl.textContent = pStr;
-  const tbcEl = document.getElementById('tbl-chg-' + sym);
-  if (tbcEl) {
-    tbcEl.textContent = cStr;
-    tbcEl.className = 'tbl-chg ' + (asset.up ? 'up' : 'dn');
-  }
-
-  /* 3 ── Ticker spans */
-  document.querySelectorAll('.t-item').forEach(el => {
-    const symEl = el.querySelector('.t-sym');
-    if (symEl && symEl.textContent === sym) {
-      const prEl  = el.querySelector('.t-price');
-      const chgEl = el.querySelector('.t-chg');
-      if (prEl)  prEl.textContent  = pStr;
-      if (chgEl) {
-        chgEl.textContent = cStr;
-        chgEl.className   = 't-chg ' + (asset.up ? 'up' : 'dn');
-      }
-    }
-  });
-
-  /* 4 ── Hero card individual asset rows */
-  const hpEl = document.getElementById('pr-' + sym);
-  if (hpEl) hpEl.textContent = pStr;
-  const hcEl = document.getElementById('chg-' + sym);
-  if (hcEl) {
-    hcEl.textContent = cStr;
-    hcEl.className   = 'asset-chg ' + (asset.up ? 'up' : 'dn');
-  }
-
-  /* 5 ── Hero portfolio total */
-  updateHeroPortfolio();
-};
 
 /* Recomputes the hero card portfolio value */
 function updateHeroPortfolio() {
@@ -199,7 +130,7 @@ function buildMarketCards(filter = 'all') {
 function filterMarkets(cat, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
   if (btn) btn.classList.add('on');
-  buildMarketCards(cat);
+  buildMarketGrid(cat === 'all' || !cat ? 'all' : cat);
 }
 window.filterMarkets = filterMarkets;
 
@@ -278,8 +209,7 @@ document.head.appendChild(_fstyle);
    INIT
 ═══════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  buildTicker();
-  buildMarketCards();
+  buildMarketGrid('all');
   buildAssetsTable();
   updateHeroPortfolio();
 });
@@ -322,12 +252,14 @@ const IDX_META = {
   AAPL: { icon:'fab fa-apple',         color:'#a2aaad', name:'Apple',     cat:'stocks',      mcap:2900e9, cgId:null          },
   NVDA: { icon:'fas fa-microchip',     color:'#76b900', name:'NVIDIA',    cat:'stocks',      mcap:2150e9, cgId:null          },
   MSFT: { icon:'fab fa-windows',       color:'#00a4ef', name:'Microsoft', cat:'stocks',      mcap:3060e9, cgId:null          },
-  GOLD: { icon:'fas fa-gem',           color:'#c9a84c', name:'Gold Spot', cat:'commodities', mcap:14e12,  cgId:null          },
+  GOLD:   { icon:'fas fa-gem',        color:'#c9a84c', name:'Gold Spot',   cat:'commodities', mcap:14e12,   cgId:null },
+  OIL:    { icon:'fas fa-oil-can',    color:'#8b5e3c', name:'Crude Oil',   cat:'commodities', mcap:1.8e12,  cgId:null },
+  SILVER: { icon:'fas fa-circle',     color:'#adb5c0', name:'Silver Spot', cat:'commodities', mcap:1.5e12,  cgId:null },
 };
 
 /* ── Canonical price + change store (single source of truth) ── */
-const IDX_P = { BTC:67430, ETH:3280, SOL:188, BNB:612, XRP:0.72, ADA:0.48, TSLA:248.5, AAPL:189.3, NVDA:875.2, MSFT:412.7, GOLD:2350 };
-const IDX_C = { BTC:2.8,   ETH:1.4,  SOL:3.1, BNB:-0.9, XRP:-1.2, ADA:0.8, TSLA:-0.6, AAPL:0.4, NVDA:2.1, MSFT:0.8, GOLD:0.3 };
+const IDX_P = { BTC:94000, ETH:3500, SOL:245, BNB:680, XRP:0.62, ADA:0.52, TSLA:350, AAPL:205, NVDA:1080, MSFT:440, GOLD:3200, OIL:70, SILVER:32 };
+const IDX_C = { BTC:2.8,  ETH:1.4,  SOL:3.1, BNB:-0.9, XRP:-1.2, ADA:0.8, TSLA:-0.6, AAPL:0.4, NVDA:2.1, MSFT:0.8, GOLD:0.4, OIL:-0.7, SILVER:1.1 };
 
 /* Per-symbol 24h stats derived at chart-open time */
 const IDX_STATS = {};
@@ -359,12 +291,27 @@ var _volSer     = null;
 var _chartBars  = [];
 var _lastBarTime = 0;
 
+/* Track which symbols have received a confirmed live price (not just a seed) */
+var _livePriceTs = {};   /* sym → timestamp of last live price */
+
 /* ═══════════════════════════════════════════════════════
    window.onPriceUpdate  — central broadcast
    Keeps IDX_P / IDX_C in sync AND updates every DOM element
 ═══════════════════════════════════════════════════════ */
 window.onPriceUpdate = function (sym, newPrice, newChg) {
   if (!newPrice || newPrice <= 0) return;
+
+  /* Guard: if we already have a live (edge-function) price for this symbol
+     that arrived within the last 20 s, and this broadcast is the same as
+     a known seed value, ignore it — it's likely coingecko-sync's initial
+     seed broadcast racing with real data. */
+  var SEED_PRICES = { BTC:94000, ETH:3500, SOL:245, BNB:680, XRP:0.62, ADA:0.52,
+                      TSLA:350, AAPL:205, NVDA:1080, MSFT:440, GOLD:3200, OIL:70, SILVER:32 };
+  var isStale = (SEED_PRICES[sym] !== undefined && newPrice === SEED_PRICES[sym]);
+  if (isStale && _livePriceTs[sym] && (Date.now() - _livePriceTs[sym] < 20000)) return;
+
+  /* Mark as live if it differs from seed */
+  if (!isStale) _livePriceTs[sym] = Date.now();
 
   /* ★ Always keep canonical stores up-to-date */
   IDX_P[sym] = newPrice;
@@ -411,12 +358,16 @@ window.onPriceUpdate = function (sym, newPrice, newChg) {
     tbC.style.background = up ? 'rgba(34,197,94,.08)' : 'rgba(239,68,68,.08)';
   }
 
-  /* ④ Ticker */
-  document.querySelectorAll('.tk-p-' + sym).forEach(el => el.textContent = pStr);
-  document.querySelectorAll('.tk-c-' + sym).forEach(el => {
-    el.textContent = cStr;
-    el.style.color = up ? '#22c55e' : '#ef4444';
+  /* ④ Ticker — inline ticker (tick-px-* / tick-chg-* IDs, two copies) */
+  ['', '-2'].forEach(function(sfx) {
+    const tPx  = document.getElementById('tick-px-'  + sym + sfx);
+    const tChg = document.getElementById('tick-chg-' + sym + sfx);
+    if (tPx)  { tPx.textContent = pStr; tPx.classList.remove('loading'); }
+    if (tChg) { tChg.textContent = cStr; tChg.className = 'tick-chg ' + (up ? 'up' : 'dn'); tChg.style.display = ''; }
   });
+  /* also class-based ticker (tk-p-* / tk-c-*) for fallback */
+  document.querySelectorAll('.tk-p-' + sym).forEach(el => el.textContent = pStr);
+  document.querySelectorAll('.tk-c-' + sym).forEach(el => { el.textContent = cStr; el.style.color = up ? '#22c55e' : '#ef4444'; });
 
   /* ⑤ Chart modal — if this symbol is currently open */
   if (_chartSym === sym) {
@@ -437,7 +388,13 @@ window.onPriceUpdate = function (sym, newPrice, newChg) {
     pushLiveBarUpdate(sym, newPrice);
   }
 
-  /* ⑥ Rebuild ticker so new price shows immediately */
+  /* ⑥ Mobile menu coin strip */
+  const mmPx  = document.getElementById('mm-px-'  + sym);
+  const mmChg = document.getElementById('mm-chg-' + sym);
+  if (mmPx)  mmPx.textContent  = pStr;
+  if (mmChg) { mmChg.textContent = cStr; mmChg.className = 'mm-coin-chg ' + (up ? 'chg-up' : 'chg-dn'); }
+
+  /* ⑦ Rebuild ticker */
   buildTicker();
 };
 
@@ -481,120 +438,162 @@ function pushLiveBarUpdate(sym, livePrice) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   REAL HISTORICAL DATA  — CoinGecko /market_chart
+   REAL HISTORICAL DATA  — Twelve Data (primary) → CoinGecko (crypto fallback)
 ═══════════════════════════════════════════════════════ */
 
-/* Map our TF codes → CoinGecko params { days, interval } */
+const EDGE_OHLCV_URL = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/get-ohlcv';
+const EDGE_ANON_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
+
+/* ── Fetch OHLCV from the Twelve Data edge function ─────────────────────── */
+async function fetchTwelveDataOHLCV(sym, tf) {
+  const url  = EDGE_OHLCV_URL
+    + '?symbol=' + encodeURIComponent(sym)
+    + '&tf='     + encodeURIComponent(tf);
+  const resp = await fetch(url, {
+    headers: { 'Authorization': 'Bearer ' + EDGE_ANON_KEY, 'apikey': EDGE_ANON_KEY },
+  });
+  if (!resp.ok) throw new Error('OHLCV edge HTTP ' + resp.status);
+  const json = await resp.json();
+  if (!json.success || !Array.isArray(json.values) || json.values.length < 3) {
+    throw new Error(json.error || 'Insufficient OHLCV data');
+  }
+
+  const dec  = (IDX_P[sym] >= 1) ? 2 : 4;
+  /* Twelve Data returns newest-first — reverse to oldest-first for the chart */
+  const bars = json.values.slice().reverse().map(function(item) {
+    return {
+      time:   Math.floor(new Date(item.datetime).getTime() / 1000),
+      open:   +parseFloat(item.open  || 0).toFixed(dec),
+      high:   +parseFloat(item.high  || 0).toFixed(dec),
+      low:    +parseFloat(item.low   || 0).toFixed(dec),
+      close:  +parseFloat(item.close || 0).toFixed(dec),
+      volume: parseInt(item.volume   || 0, 10) || 0,
+    };
+  }).filter(function(b) { return b.time > 0 && b.open > 0; });
+
+  if (bars.length < 3) throw new Error('Too few valid bars: ' + bars.length);
+
+  /* Snap last bar to current live price */
+  const livePrice = IDX_P[sym];
+  if (livePrice > 0) {
+    const last = bars[bars.length - 1];
+    last.close = +livePrice.toFixed(dec);
+    last.high  = +Math.max(last.high, last.close).toFixed(dec);
+    last.low   = +Math.min(last.low,  last.close).toFixed(dec);
+    _lastBarTime = last.time;
+  }
+  console.info('[chart] ✓ Twelve Data OHLCV ' + sym + '/' + tf + ': ' + bars.length + ' bars');
+  return bars;
+}
+
+/* Map our TF codes → CoinGecko params { days, interval } (crypto fallback only) */
 const TF_TO_CG = {
-  '1H': { days: '1',   interval: 'minutely'  }, // ~60 1-min points
-  '4H': { days: '1',   interval: 'minutely'  }, // we'll bin to 4H
-  '1D': { days: '90',  interval: 'daily'     }, // 90 daily candles
-  '1W': { days: '365', interval: 'daily'     }, // ~52 weekly buckets
-  '1M': { days: '730', interval: 'daily'     }, // ~24 monthly buckets
-  '3M': { days: '730', interval: 'daily'     }, // ~8 quarterly buckets
-  '1Y': { days: 'max', interval: 'weekly'    }, // full history weekly
+  '5M': { days: '1',   interval: 'minutely'  },
+  '1H': { days: '1',   interval: 'minutely'  },
+  '4H': { days: '1',   interval: 'minutely'  },
+  '1D': { days: '90',  interval: 'daily'     },
+  '1W': { days: '365', interval: 'daily'     },
+  '1M': { days: '730', interval: 'daily'     },
+  '3M': { days: '730', interval: 'daily'     },
+  '1Y': { days: 'max', interval: 'weekly'    },
 };
 
 /**
- * Fetch real OHLCV from CoinGecko for a given symbol + timeframe.
- * Returns an array of { time, open, high, low, close, volume } objects,
- * with the last bar's close snapped to the current IDX_P[sym].
- *
- * Falls back to synthetic data on any error.
+ * fetchRealOHLCV — priority order:
+ *   1. Twelve Data edge function (all symbols, including crypto)
+ *   2. CoinGecko direct (crypto only — fallback if Twelve Data fails)
+ *   3. Synthetic data (final fallback)
  */
 async function fetchRealOHLCV(sym, tf) {
-  const meta  = IDX_META[sym];
-  const cgId  = meta && meta.cgId;
 
-  /* Stocks / commodities have no CoinGecko ID — use synthetic immediately */
-  if (!cgId) return genOHLCV(sym, tf);
-
-  const { days, interval } = TF_TO_CG[tf] || TF_TO_CG['1D'];
-
+  /* ── 1. Twelve Data (primary source for all symbols) ── */
   try {
-    /* ── Fetch OHLC data (4-value candles) ── */
-    const ohlcUrl = `https://api.coingecko.com/api/v3/coins/${cgId}/ohlc`
-      + `?vs_currency=usd&days=${days === 'max' ? 365 : days}`;
-
-    /* ── Fetch volume separately via market_chart ── */
-    const volUrl  = `https://api.coingecko.com/api/v3/coins/${cgId}/market_chart`
-      + `?vs_currency=usd&days=${days === 'max' ? 365 : days}&interval=${interval}`;
-
-    const [ohlcResp, volResp] = await Promise.all([
-      fetch(ohlcUrl,  { cache: 'no-store' }),
-      fetch(volUrl,   { cache: 'no-store' }),
-    ]);
-
-    if (!ohlcResp.ok) throw new Error('OHLC HTTP ' + ohlcResp.status);
-
-    const ohlcRaw = await ohlcResp.json(); // [[ts,o,h,l,c], ...]
-    let   volMap  = {};
-
-    if (volResp.ok) {
-      const volData = await volResp.json();
-      (volData.total_volumes || []).forEach(([ts, vol]) => {
-        /* Round ts to nearest day-bucket so it matches OHLC keys */
-        const dayKey = Math.floor(ts / 86400000);
-        volMap[dayKey] = (volMap[dayKey] || 0) + vol;
-      });
-    }
-
-    if (!ohlcRaw || !ohlcRaw.length) throw new Error('Empty OHLC payload');
-
-    /* ── Bucket raw CG candles into our desired timeframe ── */
-    const bucketMs = tfBucketMs(tf);
-    const bucketed = {};
-
-    ohlcRaw.forEach(([tsMs, o, h, l, c]) => {
-      const bucket = Math.floor(tsMs / bucketMs) * bucketMs;
-      if (!bucketed[bucket]) {
-        bucketed[bucket] = { open: o, high: h, low: l, close: c, tsMs };
-      } else {
-        bucketed[bucket].high  = Math.max(bucketed[bucket].high, h);
-        bucketed[bucket].low   = Math.min(bucketed[bucket].low,  l);
-        bucketed[bucket].close = c; // last close in bucket
-      }
-    });
-
-    const dec  = IDX_P[sym] >= 1 ? 2 : 4;
-    const bars = Object.entries(bucketed)
-      .sort(([a], [b]) => +a - +b)
-      .map(([bucketMs, bar]) => {
-        const dayKey = Math.floor(+bucketMs / 86400000);
-        const vol    = volMap[dayKey] || volMap[dayKey - 1] || 0;
-        return {
-          time:   Math.floor(+bucketMs / 1000),
-          open:   +bar.open .toFixed(dec),
-          high:   +bar.high .toFixed(dec),
-          low:    +bar.low  .toFixed(dec),
-          close:  +bar.close.toFixed(dec),
-          volume: Math.floor(vol),
-        };
-      });
-
-    if (bars.length < 3) throw new Error('Too few bars: ' + bars.length);
-
-    /* ★ Snap last bar's close to the CURRENT live price from IDX_P */
-    const livePrice = IDX_P[sym];
-    if (bars.length && livePrice > 0) {
-      const last = bars[bars.length - 1];
-      last.close = +livePrice.toFixed(dec);
-      last.high  = +Math.max(last.high, last.close).toFixed(dec);
-      last.low   = +Math.min(last.low,  last.close).toFixed(dec);
-    }
-
-    console.info(`[chart-fix] ✓ Real OHLCV for ${sym}/${tf}: ${bars.length} bars`);
-    return bars;
-
+    return await fetchTwelveDataOHLCV(sym, tf);
   } catch (err) {
-    console.warn(`[chart-fix] CoinGecko OHLCV failed for ${sym}/${tf}:`, err.message, '— using synthetic data');
-    return genOHLCV(sym, tf);
+    console.warn('[chart] Twelve Data failed for ' + sym + '/' + tf + ':', err.message);
   }
+
+  /* ── 2. CoinGecko fallback (crypto only) ── */
+  const meta = IDX_META[sym];
+  const cgId = meta && meta.cgId;
+  if (cgId) {
+    const { days, interval } = TF_TO_CG[tf] || TF_TO_CG['1D'];
+    try {
+      const ohlcUrl = 'https://api.coingecko.com/api/v3/coins/' + cgId + '/ohlc'
+        + '?vs_currency=usd&days=' + (days === 'max' ? 365 : days);
+      const volUrl  = 'https://api.coingecko.com/api/v3/coins/' + cgId + '/market_chart'
+        + '?vs_currency=usd&days=' + (days === 'max' ? 365 : days) + '&interval=' + interval;
+
+      const [ohlcResp, volResp] = await Promise.all([
+        fetch(ohlcUrl, { cache: 'no-store' }),
+        fetch(volUrl,  { cache: 'no-store' }),
+      ]);
+      if (!ohlcResp.ok) throw new Error('OHLC HTTP ' + ohlcResp.status);
+
+      const ohlcRaw = await ohlcResp.json();
+      let   volMap  = {};
+      if (volResp.ok) {
+        const volData = await volResp.json();
+        (volData.total_volumes || []).forEach(([ts, vol]) => {
+          const dayKey = Math.floor(ts / 86400000);
+          volMap[dayKey] = (volMap[dayKey] || 0) + vol;
+        });
+      }
+      if (!ohlcRaw || !ohlcRaw.length) throw new Error('Empty OHLC payload');
+
+      const bucketMs = tfBucketMs(tf);
+      const bucketed = {};
+      ohlcRaw.forEach(([tsMs, o, h, l, c]) => {
+        const bucket = Math.floor(tsMs / bucketMs) * bucketMs;
+        if (!bucketed[bucket]) {
+          bucketed[bucket] = { open: o, high: h, low: l, close: c };
+        } else {
+          bucketed[bucket].high  = Math.max(bucketed[bucket].high, h);
+          bucketed[bucket].low   = Math.min(bucketed[bucket].low,  l);
+          bucketed[bucket].close = c;
+        }
+      });
+
+      const dec  = IDX_P[sym] >= 1 ? 2 : 4;
+      const bars = Object.entries(bucketed)
+        .sort(([a], [b]) => +a - +b)
+        .map(([bMs, bar]) => {
+          const dayKey = Math.floor(+bMs / 86400000);
+          const vol    = volMap[dayKey] || volMap[dayKey - 1] || 0;
+          return {
+            time:   Math.floor(+bMs / 1000),
+            open:   +bar.open .toFixed(dec),
+            high:   +bar.high .toFixed(dec),
+            low:    +bar.low  .toFixed(dec),
+            close:  +bar.close.toFixed(dec),
+            volume: Math.floor(vol),
+          };
+        });
+      if (bars.length < 3) throw new Error('Too few bars: ' + bars.length);
+
+      const livePrice = IDX_P[sym];
+      if (livePrice > 0) {
+        const last = bars[bars.length - 1];
+        last.close = +livePrice.toFixed(dec);
+        last.high  = +Math.max(last.high, last.close).toFixed(dec);
+        last.low   = +Math.min(last.low,  last.close).toFixed(dec);
+      }
+      console.info('[chart] CoinGecko fallback OHLCV ' + sym + '/' + tf + ': ' + bars.length + ' bars');
+      return bars;
+    } catch (err) {
+      console.warn('[chart] CoinGecko fallback failed for ' + sym + '/' + tf + ':', err.message);
+    }
+  }
+
+  /* ── 3. Synthetic data (final fallback) ── */
+  console.warn('[chart] Using synthetic data for ' + sym + '/' + tf);
+  return genOHLCV(sym, tf);
 }
 
 /* Convert our TF string to milliseconds per bucket */
 function tfBucketMs(tf) {
   const map = {
+    '5M': 5  * 60 * 1000,
     '1H': 60      * 60 * 1000,
     '4H': 4  * 60 * 60 * 1000,
     '1D': 24 * 60 * 60 * 1000,
@@ -612,9 +611,12 @@ function tfBucketMs(tf) {
 ═══════════════════════════════════════════════════════ */
 function genOHLCV(sym, tf) {
   const basePrice = IDX_P[sym] || 100;
+  const chgPct    = IDX_C[sym] || 0;  // 24h % change (negative = dropping)
   const cfg = {
-    '1H': { bars:60,  step:3600,     vol:0.0012, trend:0.00003 },
-    '4H': { bars:72,  step:14400,    vol:0.0025, trend:0.00006 },
+    // No upward trend bias for intraday TFs — direction comes from starting price
+    '5M': { bars:200, step:300,      vol:0.0006, trend:0 },
+    '1H': { bars:60,  step:3600,     vol:0.0012, trend:0 },
+    '4H': { bars:72,  step:14400,    vol:0.0025, trend:0 },
     '1D': { bars:90,  step:86400,    vol:0.018,  trend:0.0004  },
     '1W': { bars:52,  step:604800,   vol:0.04,   trend:0.001   },
     '1M': { bars:36,  step:2592000,  vol:0.08,   trend:0.002   },
@@ -622,10 +624,24 @@ function genOHLCV(sym, tf) {
     '1Y': { bars:52,  step:604800*2, vol:0.12,   trend:0.0025  },
   }[tf] || { bars:90, step:86400, vol:0.018, trend:0.0004 };
 
-  const now     = Math.floor(Date.now() / 1000);
-  const t0      = now - cfg.bars * cfg.step;
-  const bars    = [];
-  let   close   = basePrice * (0.72 + Math.random() * 0.22);
+  const now  = Math.floor(Date.now() / 1000);
+  const t0   = now - cfg.bars * cfg.step;
+  const bars = [];
+
+  // For intraday TFs, estimate the period's starting price by scaling the 24h change
+  // proportionally so the chart trends in the correct direction.
+  // e.g. if BTC is down 3% today and we're drawing a 4H chart, the 4H start should
+  // be ~0.5% above current price (4/24 of -3%), not always below current.
+  const isIntraday = tf === '5M' || tf === '1H' || tf === '4H';
+  let close;
+  if (isIntraday) {
+    const periodHours  = (cfg.bars * cfg.step) / 3600;
+    const scaledChg    = chgPct * Math.min(1, periodHours / 24);
+    close = (basePrice / (1 + scaledChg / 100)) * (0.997 + Math.random() * 0.006);
+  } else {
+    close = basePrice * (0.72 + Math.random() * 0.22);
+  }
+
   const volBase = basePrice * 1400;
   const dec     = basePrice >= 1 ? 2 : 4;
 
@@ -825,7 +841,7 @@ async function buildChart(sym, type, tf) {
       tickMarkFormatter(t) {
         const d = new Date(t * 1000);
         const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        if (tf === '1H' || tf === '4H') return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+        if (tf === '5M' || tf === '1H' || tf === '4H') return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
         if (tf === '1D') return d.getDate() + ' ' + M[d.getMonth()];
         return M[d.getMonth()] + ' ' + d.getFullYear();
       },
@@ -1073,8 +1089,9 @@ function applyLocalStorage() {
 window.addEventListener('load', function () {
   setTimeout(() => { const l = document.getElementById('loader'); if (l) l.classList.add('out'); }, 1800);
   buildTicker();
-  buildMarketGrid('all');
-  buildAssetsTable();
+  /* buildMarketGrid / buildAssetsTable already ran at DOMContentLoaded with
+     IDX_P seeds. Re-running here with those same seeds RESETS any live prices
+     that coingecko-sync already wrote into the DOM — so we do NOT rebuild. */
   applyLocalStorage();
 });
 

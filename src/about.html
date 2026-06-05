@@ -767,85 +767,6 @@
     footer { padding: 20px; }
   }
 
-  /* ═══════════════════════════════════════════
-     ULTRA-PREMIUM PAGE LOADER
-  ═══════════════════════════════════════════ */
-  #loader {
-    position: fixed; inset: 0; z-index: 99999;
-    background: var(--void, #040608);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 24px;
-    transition: opacity .8s cubic-bezier(.4,0,.2,1);
-  }
-  #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-  /* Emblem rings */
-  .ld-emblem { position: relative; width: 72px; height: 72px; }
-  .ld-ring {
-    position: absolute; inset: 0; border-radius: 50%;
-    border: 1px solid rgba(201,168,76,.2);
-    animation: ldRingPulse 2.4s ease-in-out infinite;
-  }
-  .ld-ring:nth-child(2) { inset: 6px; border-color: rgba(201,168,76,.38); animation-delay: .3s; animation-duration: 2.1s; }
-  .ld-ring:nth-child(3) { inset: 13px; border-color: rgba(201,168,76,.55); animation-delay: .6s; animation-duration: 1.8s; }
-  @keyframes ldRingPulse { 0%,100%{opacity:.3;transform:scale(1)} 50%{opacity:1;transform:scale(1.04)} }
-  .ld-core {
-    position: absolute; inset: 20px; border-radius: 50%;
-    background: linear-gradient(135deg, rgba(201,168,76,.92), rgba(168,124,40,.9));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Cormorant Garamond', serif; font-weight: 700;
-    color: #040608; font-size: 18px;
-    box-shadow: 0 0 28px rgba(201,168,76,.4), 0 0 56px rgba(201,168,76,.15);
-  }
-
-  /* Wordmark letter-reveal */
-  .ld-wordmark {
-    font-family: 'Cormorant Garamond', serif; font-size: 30px;
-    letter-spacing: .32em; font-weight: 400;
-    color: transparent;
-    background: linear-gradient(135deg, #c9a84c, #e8c96a, #c9a84c);
-    -webkit-background-clip: text; background-clip: text;
-  }
-  .ld-wordmark span {
-    opacity: 0; transform: translateY(12px) skewX(-4deg);
-    display: inline-block;
-    animation: ldReveal .6s cubic-bezier(.2,0,.0,1) forwards;
-  }
-  .ld-wordmark span:nth-child(1){animation-delay:.10s}
-  .ld-wordmark span:nth-child(2){animation-delay:.18s}
-  .ld-wordmark span:nth-child(3){animation-delay:.26s}
-  .ld-wordmark span:nth-child(4){animation-delay:.34s}
-  .ld-wordmark span:nth-child(5){animation-delay:.42s}
-  @keyframes ldReveal { to { opacity:1; transform:none; } }
-
-  .ld-sub {
-    font-family: 'JetBrains Mono', monospace; font-size: 8px;
-    letter-spacing: .36em; text-transform: uppercase;
-    color: var(--steel, #5a6880);
-  }
-
-  /* Progress bar */
-  .ld-progress {
-    width: 200px; height: 1px;
-    background: rgba(255,255,255,.06); position: relative; overflow: visible;
-  }
-  .ld-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, transparent, #c9a84c, #e8c96a, #c9a84c, transparent);
-    animation: ldProgress 1.8s ease-in-out forwards; position: relative;
-  }
-  .ld-progress-fill::after {
-    content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-    width: 4px; height: 4px; border-radius: 50%; background: #e8c96a;
-    box-shadow: 0 0 8px #c9a84c, 0 0 20px rgba(201,168,76,.4);
-  }
-  @keyframes ldProgress { 0%{width:0} 60%{width:78%} 100%{width:100%} }
-
-  /* Light mode loader */
-  html[data-theme="light"] #loader { background: #faf8f4; }
-  html[data-theme="light"] .ld-sub { color: #8a7060; }
-  html[data-theme="light"] .ld-progress { background: rgba(0,0,0,.08); }
-
   /* Hero scan line effect */
   .hero-scan {
     position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 2;
@@ -1026,23 +947,10 @@
 <link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
+<script src="intro-loader.js"></script>
 
 <div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
-
-<!-- ULTRA-PREMIUM LOADER -->
-<div id="loader">
-  <div class="ld-emblem">
-    <div class="ld-ring"></div>
-    <div class="ld-ring"></div>
-    <div class="ld-ring"></div>
-    <div class="ld-core">A</div>
-  </div>
-  <div class="ld-wordmark"><span>A</span><span>U</span><span>R</span><span>U</span><span>M</span></div>
-  <div class="ld-sub">About — Our Story</div>
-  <div class="ld-progress"><div class="ld-progress-fill"></div></div>
-</div>
-
 <!-- ═══════════════════════════════════════════
      NAV
 ════════════════════════════════════════════ -->

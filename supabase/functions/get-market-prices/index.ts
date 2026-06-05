@@ -52,11 +52,11 @@ const STOCK_SYMBOLS: Record<string, string> = {
   EURUSD: "EUR/USD",
   GBPUSD: "GBP/USD",
   USDJPY: "USD/JPY",
-  // Commodities
-  XAUUSD: "XAU/USD", // Gold
-  XAGUSD: "XAG/USD", // Silver
-  // WTI/USD is not served on the Basic plan; BRENT/USD is the available crude benchmark
-  USOIL: "BRENT/USD", // Brent Crude Oil
+  // Commodities (precious metals as forex pairs; oil as Twelve Data CFD code)
+  XAUUSD: "XAU/USD", // Gold spot
+  XAGUSD: "XAG/USD", // Silver spot
+  // UKOIL = Brent Crude Oil CFD on Twelve Data (BRENT/USD and WTI/USD are not valid symbols)
+  USOIL: "UKOIL", // Brent Crude Oil
 };
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -71,7 +71,7 @@ interface PriceResult {
   volume24h?: number;
   marketCap?: number;
   lastUpdated: string;
-  source: "coingecko" | "twelvedata" | "binance" | "cache";
+  source: "coingecko" | "twelvedata" | "binance" | "yahoo" | "cache";
 }
 
 interface CacheEntry {
@@ -144,6 +144,63 @@ async function fetchCryptoPrice(symbols: string[]): Promise<PriceResult[]> {
 }
 
 // ─── Twelve Data fetcher (stocks / forex / commodities) ─────────────────────
+// Fetches each symbol individually in parallel so one bad symbol (e.g. an
+// unsupported commodity pair) cannot silently break the entire batch.
+
+async function fetchOneTwelveDataSymbol(
+  frontSym: string,
+  tdSym: string,
+  apiKey: string,
+): Promise<PriceResult | null> {
+  // Slashes in forex/commodity symbols (XAU/USD) must be passed literally —
+  // Twelve Data does not accept percent-encoded slashes in this field.
+  const url =
+    `https://api.twelvedata.com/quote?symbol=${tdSym}&apikey=${apiKey}`;
+
+  const res = await fetch(url, {
+    headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(8000),
+  });
+
+  if (!res.ok) {
+    console.warn(`[TD] ${frontSym} HTTP ${res.status}`);
+    return null;
+  }
+
+  const e = await res.json();
+
+  // Twelve Data error response carries a `code` or `status:"error"` field
+  if (e.code || e.status === "error") {
+    console.warn(`[TD] ${frontSym} error: ${e.message ?? e.code}`);
+    return null;
+  }
+
+  const price = parseFloat(e.close ?? e.price ?? "0");
+  if (!(price > 0)) return null;
+
+  const prevClose = parseFloat(e.previous_close ?? "0");
+  const rawPct    = parseFloat(e.percent_change ?? "");
+  const changePct = !isNaN(rawPct)
+    ? rawPct
+    : prevClose > 0 ? (price - prevClose) / prevClose * 100 : 0;
+  const rawChange = parseFloat(e.change ?? "");
+  const change    = !isNaN(rawChange) ? rawChange : price - prevClose;
+
+  console.info(`[TD] ${frontSym} = ${price}`);
+  return {
+    symbol: frontSym,
+    price,
+    change24h: change,
+    changePct24h: +changePct.toFixed(4),
+    high24h: parseFloat(e.high ?? "0"),
+    low24h:  parseFloat(e.low  ?? "0"),
+    volume24h: parseFloat(e.volume ?? "0"),
+    lastUpdated: e.datetime
+      ? new Date(e.datetime).toISOString()
+      : new Date().toISOString(),
+    source: "twelvedata" as const,
+  };
+}
 
 async function fetchStockPrice(symbols: string[]): Promise<PriceResult[]> {
   const TWELVE_DATA_KEY = Deno.env.get("TWELVE_DATA_API_KEY");
@@ -152,64 +209,31 @@ async function fetchStockPrice(symbols: string[]): Promise<PriceResult[]> {
     return [];
   }
 
-  const tdSymbols = symbols
-    .map((s) => STOCK_SYMBOLS[s.toUpperCase()])
-    .filter(Boolean)
-    .join(",");
+  // Build list of (frontendSymbol, twelveDataSymbol) pairs
+  const pairs: Array<[string, string]> = symbols
+    .map((s): [string, string] | null => {
+      const tdSym = STOCK_SYMBOLS[s.toUpperCase()];
+      return tdSym ? [s.toUpperCase(), tdSym] : null;
+    })
+    .filter((p): p is [string, string] => p !== null);
 
-  if (!tdSymbols) return [];
+  if (!pairs.length) return [];
 
-  // Do NOT use encodeURIComponent — commas and slashes in symbol names
-  // (e.g. XAU/USD, WTI/USD) must be passed literally to Twelve Data
-  const url =
-    `https://api.twelvedata.com/quote?symbol=${tdSymbols}` +
-    `&apikey=${TWELVE_DATA_KEY}`;
+  // Fetch all symbols in parallel; a failure on one does not affect others
+  const settled = await Promise.allSettled(
+    pairs.map(([front, td]) => fetchOneTwelveDataSymbol(front, td, TWELVE_DATA_KEY)),
+  );
 
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
-  if (!res.ok) {
-    throw new Error(`Twelve Data error: ${res.status}`);
-  }
+  const results: PriceResult[] = [];
+  settled.forEach((r, i) => {
+    if (r.status === "fulfilled" && r.value) {
+      results.push(r.value);
+    } else if (r.status === "rejected") {
+      console.warn(`[TD] ${pairs[i][0]} fetch threw:`, r.reason);
+    }
+  });
 
-  const json = await res.json();
-
-  // If single symbol, Twelve Data returns the object directly (not an array)
-  const entries: any[] = Array.isArray(json)
-    ? json
-    : symbols.length === 1
-    ? [json]
-    : Object.values(json);
-
-  const reverseMap: Record<string, string> = {};
-  for (const [sym, tdSym] of Object.entries(STOCK_SYMBOLS)) {
-    reverseMap[tdSym] = sym;
-  }
-
-  return entries
-    .filter((e) => e && !e.code) // filter Twelve Data error objects (have a `code` field)
-    .map((e) => {
-      const price     = parseFloat(e.close ?? e.price ?? "0");
-      // Prefer Twelve Data's own percent_change; compute from previous_close as fallback
-      const rawPct    = parseFloat(e.percent_change ?? "");
-      const prevClose = parseFloat(e.previous_close ?? "0");
-      const changePct = !isNaN(rawPct) ? rawPct
-        : (prevClose > 0 ? (price - prevClose) / prevClose * 100 : 0);
-      const rawChange = parseFloat(e.change ?? "");
-      const change    = !isNaN(rawChange) ? rawChange : (price - prevClose);
-
-      return {
-        symbol: reverseMap[e.symbol] ?? e.symbol,
-        price,
-        change24h: change,
-        changePct24h: +changePct.toFixed(4),
-        high24h: parseFloat(e.high ?? "0"),
-        low24h: parseFloat(e.low ?? "0"),
-        volume24h: parseFloat(e.volume ?? "0"),
-        lastUpdated: e.datetime
-          ? new Date(e.datetime).toISOString()
-          : new Date().toISOString(),
-        source: "twelvedata" as const,
-      };
-    });
+  return results;
 }
 
 // ─── Binance fallback for single-symbol real-time price ──────────────────────
@@ -236,6 +260,104 @@ async function fetchBinanceFallback(symbol: string): Promise<PriceResult | null>
   } catch {
     return null;
   }
+}
+
+// ─── Commodity fallbacks: oil + silver ───────────────────────────────────────
+// Twelve Data Basic plan does not include crude oil or silver futures.
+// Strategy: Yahoo Finance v8/chart (no crumb/cookie needed) → metals.live for silver.
+
+/** Yahoo Finance v8/chart — works without session crumbs unlike v7/quote */
+async function fetchYahooChart(
+  frontSym: string,
+  yahooTicker: string,
+): Promise<PriceResult | null> {
+  // NOTE: do NOT encodeURIComponent — Yahoo needs the literal = in "BZ=F"
+  const url =
+    `https://query2.finance.yahoo.com/v8/finance/chart/${yahooTicker}` +
+    `?interval=1d&range=2d&includePrePost=false`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Accept": "application/json",
+      },
+      signal: AbortSignal.timeout(7000),
+    });
+    if (!res.ok) { console.warn(`[YF] ${frontSym} HTTP ${res.status}`); return null; }
+    const json   = await res.json();
+    const meta   = json?.chart?.result?.[0]?.meta;
+    const price  = meta?.regularMarketPrice;
+    if (!(price > 0)) { console.warn(`[YF] ${frontSym} no price in response`); return null; }
+    const prev      = meta.previousClose ?? meta.chartPreviousClose ?? 0;
+    const change    = prev > 0 ? +(price - prev).toFixed(4)                  : 0;
+    const changePct = prev > 0 ? +((price - prev) / prev * 100).toFixed(4)   : 0;
+    console.info(`[YF] ${frontSym} (${yahooTicker}) = ${price}`);
+    return {
+      symbol:       frontSym,
+      price,
+      change24h:    change,
+      changePct24h: changePct,
+      high24h:      meta.regularMarketDayHigh,
+      low24h:       meta.regularMarketDayLow,
+      volume24h:    meta.regularMarketVolume,
+      lastUpdated:  new Date().toISOString(),
+      source:       "yahoo" as const,
+    };
+  } catch (err) {
+    console.warn(`[YF] ${frontSym} error:`, String(err));
+    return null;
+  }
+}
+
+/** metals.live — free, no API key, real-time precious-metal spot prices */
+async function fetchMetalsLive(
+  frontSym: string,
+  metalKey: string,
+): Promise<PriceResult | null> {
+  try {
+    const res = await fetch("https://metals.live/api/v1/spot", {
+      headers: { "Accept": "application/json" },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return null;
+    const raw    = await res.json();
+    // Response is either an object or a single-element array
+    const record = Array.isArray(raw) ? raw[0] : raw;
+    const price  = record?.[metalKey];
+    if (!(price > 0)) return null;
+    console.info(`[metals.live] ${frontSym} (${metalKey}) = ${price}`);
+    return {
+      symbol:       frontSym,
+      price,
+      change24h:    0,
+      changePct24h: 0,
+      lastUpdated:  new Date().toISOString(),
+      source:       "yahoo" as const,
+    };
+  } catch (err) {
+    console.warn("[metals.live] error:", String(err));
+    return null;
+  }
+}
+
+/** Fetch any missing commodity symbols using the above fallbacks */
+async function fetchMissingCommodities(missing: string[]): Promise<PriceResult[]> {
+  const settled = await Promise.allSettled(
+    missing.map(async (sym): Promise<PriceResult | null> => {
+      if (sym === "USOIL") {
+        return await fetchYahooChart("USOIL", "BZ=F");
+      }
+      if (sym === "XAGUSD") {
+        // Try Yahoo Finance first; fall back to metals.live
+        const yf = await fetchYahooChart("XAGUSD", "SI=F");
+        return yf ?? await fetchMetalsLive("XAGUSD", "XAG");
+      }
+      return null;
+    }),
+  );
+  return settled
+    .map((r) => (r.status === "fulfilled" ? r.value : null))
+    .filter((v): v is PriceResult => v !== null);
 }
 
 // ─── Main handler ────────────────────────────────────────────────────────────
@@ -311,7 +433,7 @@ serve(async (req: Request) => {
       }
     }
 
-    // Fetch stocks / forex / commodities
+    // Fetch stocks / forex / commodities via Twelve Data
     if (stockSymbols.length > 0) {
       try {
         const stockPrices = await fetchStockPrice(stockSymbols);
@@ -319,6 +441,17 @@ serve(async (req: Request) => {
       } catch (err) {
         console.error("Twelve Data fetch failed:", err);
       }
+    }
+
+    // Commodity fallback — fetch oil & silver if Twelve Data didn't return them
+    const fetchedSyms   = new Set(results.map((r) => r.symbol));
+    const commoditySyms = ["USOIL", "XAGUSD"];
+    const missingComm   = commoditySyms.filter(
+      (s) => symbols.includes(s) && !fetchedSyms.has(s),
+    );
+    if (missingComm.length > 0) {
+      const commPrices = await fetchMissingCommodities(missingComm);
+      results.push(...commPrices);
     }
 
     // Cache and return

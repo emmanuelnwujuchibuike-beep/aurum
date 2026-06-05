@@ -64,148 +64,6 @@
       cursor: auto;
     }
 
-    /* ══════════════════════════════════════════════════
-       SPECTACULAR LOADER — 5-Stage Cinematic Entrance
-    ══════════════════════════════════════════════════ */
-    #loader {
-      position: fixed; inset: 0; z-index: 99000;
-      background: #020406;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 0;
-      transition: opacity .9s cubic-bezier(.4,0,.2,1), visibility .9s;
-      overflow: hidden;
-    }
-    #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-    /* Ambient radial glow behind logo */
-    #loader::before {
-      content: ''; position: absolute; inset: 0; z-index: 0;
-      background: radial-gradient(ellipse 55% 55% at 50% 50%, rgba(201,168,76,0.05) 0%, transparent 70%);
-      animation: ldAmbient 2.5s ease-in-out infinite alternate;
-    }
-    @keyframes ldAmbient { 0%{opacity:.6;transform:scale(.95)} 100%{opacity:1;transform:scale(1.05)} }
-
-    /* Corner bracket decorations */
-    .ld-corner {
-      position: absolute; width: 44px; height: 44px;
-      border-color: rgba(201,168,76,0.22); border-style: solid;
-      opacity: 0; animation: fadeIn .6s 2.1s forwards;
-    }
-    .ld-corner-tl { top: 32px; left: 32px; border-width: 1px 0 0 1px; }
-    .ld-corner-tr { top: 32px; right: 32px; border-width: 1px 1px 0 0; }
-    .ld-corner-bl { bottom: 32px; left: 32px; border-width: 0 0 1px 1px; }
-    .ld-corner-br { bottom: 32px; right: 32px; border-width: 0 1px 1px 0; }
-
-    /* Stage 1 — SVG Ring + Monogram */
-    .ld-emblem {
-      position: relative; z-index: 1; margin-bottom: 46px;
-      opacity: 0; animation: fadeIn .3s .05s forwards;
-    }
-    .ld-ring-svg { width: 136px; height: 136px; display: block; }
-    .ld-ring-bg  { fill: none; stroke: rgba(201,168,76,0.1); stroke-width: 1; }
-    .ld-ring-arc {
-      fill: none; stroke: url(#ldGold); stroke-width: 1.5; stroke-linecap: round;
-      stroke-dasharray: 428; stroke-dashoffset: 428;
-      animation: drawRing 1.5s .12s cubic-bezier(.65,0,.35,1) forwards;
-      transform-origin: 68px 68px; transform: rotate(-90deg);
-    }
-    .ld-ring-inner {
-      fill: none; stroke: rgba(201,168,76,0.07); stroke-width: 1;
-      stroke-dasharray: 360; stroke-dashoffset: 360;
-      animation: drawRing .9s .7s ease-out forwards;
-      transform-origin: 68px 68px; transform: rotate(45deg);
-    }
-    /* Tick marks on ring */
-    .ld-ring-tick { stroke: rgba(201,168,76,0.35); stroke-width: 1; stroke-linecap: round; }
-
-    .ld-monogram {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -52%) scale(.5);
-      font-family: var(--ff-display); font-size: 50px; font-weight: 400;
-      color: var(--gold); line-height: 1;
-      opacity: 0; filter: blur(10px);
-      animation: ldMonoReveal .75s .95s cubic-bezier(.25,.46,.45,.94) forwards;
-      text-shadow: 0 0 60px rgba(201,168,76,0.75), 0 0 120px rgba(201,168,76,0.3);
-    }
-    @keyframes ldMonoReveal {
-      to { opacity: 1; filter: blur(0); transform: translate(-50%, -52%) scale(1); }
-    }
-
-    /* Stage 2 — Wordmark */
-    .ld-text-block { position: relative; z-index: 1; text-align: center; }
-    .ld-wordmark {
-      font-family: var(--ff-display);
-      font-size: clamp(30px, 5vw, 56px);
-      letter-spacing: .3em;
-      color: #edf2f8; overflow: hidden;
-      line-height: 1; margin-bottom: 10px;
-      padding-right: .3em; /* compensate letter-spacing */
-    }
-    .ld-wordmark span {
-      display: inline-block; opacity: 0;
-      transform: translateY(74px) rotateX(-90deg);
-      animation: ldLetterIn .6s cubic-bezier(.25,.46,.45,.94) forwards;
-    }
-    .ld-wordmark span:nth-child(1){animation-delay:.78s}
-    .ld-wordmark span:nth-child(2){animation-delay:.87s}
-    .ld-wordmark span:nth-child(3){animation-delay:.96s}
-    .ld-wordmark span:nth-child(4){animation-delay:1.05s}
-    .ld-wordmark span:nth-child(5){animation-delay:1.14s}
-    @keyframes ldLetterIn { to { opacity:1; transform:translateY(0) rotateX(0); } }
-
-    .ld-capital {
-      font-family: var(--ff-mono); font-size: clamp(8px, 1.1vw, 11.5px);
-      letter-spacing: .7em; text-transform: uppercase;
-      color: rgba(255,255,255,.22);
-      opacity: 0; animation: fadeUp .5s 1.46s forwards;
-      padding-right: .7em;
-    }
-
-    /* Stage 3 — Divider + Tagline */
-    .ld-divider {
-      position: relative; z-index: 1;
-      width: 0; height: 1px; margin: 30px auto 24px;
-      background: linear-gradient(90deg, transparent, rgba(201,168,76,.55), transparent);
-      animation: ldDivGrow .65s 1.65s cubic-bezier(.25,.46,.45,.94) forwards;
-    }
-    @keyframes ldDivGrow { to { width: 170px; } }
-
-    .ld-tagline {
-      position: relative; z-index: 1;
-      font-family: var(--ff-body); font-size: 11px;
-      letter-spacing: .24em; text-transform: uppercase;
-      color: rgba(255,255,255,.28);
-      opacity: 0; animation: fadeUp .5s 1.9s forwards;
-    }
-
-    /* Stage 4 — Progress row */
-    .ld-progress-row {
-      position: relative; z-index: 1;
-      display: flex; align-items: center; gap: 14px;
-      margin-top: 42px;
-      opacity: 0; animation: fadeIn .4s 2.1s forwards;
-    }
-    .ld-progress {
-      width: 200px; height: 1px;
-      background: rgba(255,255,255,.06); border-radius: 1px; overflow: hidden;
-    }
-    .ld-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold-dim), var(--gold-light));
-      width: 0;
-      animation: ldBar 1.1s 2.2s cubic-bezier(.4,0,.2,1) forwards;
-      box-shadow: 0 0 12px rgba(201,168,76,.7);
-    }
-    @keyframes ldBar { to { width: 100%; } }
-    .ld-pct {
-      font-family: var(--ff-mono); font-size: 10px;
-      color: var(--gold); letter-spacing: .08em;
-      min-width: 36px; text-align: right;
-    }
-
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes fadeIn { to { opacity: 1; } }
-
     /* ── NOISE GRAIN ── */
     body::after {
       content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9000; opacity: 0.025;
@@ -478,6 +336,7 @@
     @keyframes flashChg  { 0%{transform:scale(1.15)} 100%{transform:scale(1)} }
     .px-flash-up   { animation: flashUp .8s ease forwards; }
     .px-flash-down { animation: flashDown .8s ease forwards; }
+    .px-flash      { animation: flashUp .9s ease forwards; }
     .chg-flash     { animation: flashChg .5s ease forwards; }
 
     /* ── REVEAL ── */
@@ -851,7 +710,7 @@
     }
     /* But NOT these — they have their own critical transitions */
     .particle, .diamond-particle, .cursor-glow, .hero-orb-1, .hero-orb-2, .hero-orb-3,
-    .hero-grid, .ld-bar, .ld-wordmark span, .ticker-track, .mm-link, .mm-logo,
+    .hero-grid, .ticker-track, .mm-link, .mm-logo,
     .mm-close, .mm-cta, .mm-strip, .mm-coins, [class*="reveal"], .asset-card,
     .btn-hero-primary, .btn-hero-ghost, .logo-mark, .market-card, .vert-card,
     .prop-card, .social-btn, .ac-row, .ac-foot-btn, .theme-toggle, .theme-icon {
@@ -889,8 +748,6 @@
     /* ── LIGHT MODE GLOBAL ── */
     html[data-theme="light"] body { background: var(--ink); color: var(--text-1); }
     html[data-theme="light"] body::after { opacity: 0.01; }
-    html[data-theme="light"] #loader { background: var(--ink); }
-
     /* ── LIGHT HEADER ── */
     html[data-theme="light"] header.scrolled {
       background: rgba(250,248,244,0.92);
@@ -1074,72 +931,14 @@
     /* ── LIGHT SECTIONS ── */
     html[data-theme="light"] .section-title { color: var(--text-1); }
     html[data-theme="light"] .section-sub { color: var(--text-2); }
-
-    /* ── LIGHT LOADER ── */
-    html[data-theme="light"] .ld-wordmark { color: var(--text-1); }
-    html[data-theme="light"] .ld-capital  { color: var(--text-3); }
-    html[data-theme="light"] .ld-tagline  { color: var(--text-3); }
-    html[data-theme="light"] .ld-progress { background: rgba(0,0,0,0.06); }
   </style>
 </head>
 <body>
+<script src="intro-loader.js"></script>
 
   <!-- Cursor glow & theme overlay -->
   <div id="cursorGlow" class="cursor-glow"></div>
   <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;background:rgba(250,248,244,0.6);backdrop-filter:blur(2px);transition:opacity .15s ease;"></div>
-
-  <!-- ══ SPECTACULAR LOADER ══ -->
-  <div id="loader">
-    <!-- Corner brackets -->
-    <div class="ld-corner ld-corner-tl"></div>
-    <div class="ld-corner ld-corner-tr"></div>
-    <div class="ld-corner ld-corner-bl"></div>
-    <div class="ld-corner ld-corner-br"></div>
-
-    <!-- Stage 1: SVG Ring + Monogram -->
-    <div class="ld-emblem">
-      <svg class="ld-ring-svg" viewBox="0 0 136 136">
-        <defs>
-          <linearGradient id="ldGold" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%"   stop-color="#c9a84c"/>
-            <stop offset="40%"  stop-color="#f5d97a"/>
-            <stop offset="100%" stop-color="#8a6e2a"/>
-          </linearGradient>
-        </defs>
-        <!-- Outer static ring -->
-        <circle class="ld-ring-bg" cx="68" cy="68" r="64"/>
-        <!-- Inner decorative ring -->
-        <circle class="ld-ring-inner" cx="68" cy="68" r="57" stroke-dasharray="8 10"/>
-        <!-- Main arc (draws) -->
-        <circle class="ld-ring-arc" cx="68" cy="68" r="68" pathLength="428"/>
-        <!-- Tick marks at 12, 3, 6, 9 o'clock -->
-        <line class="ld-ring-tick" x1="68" y1="2"  x2="68" y2="12" opacity="0.4"/>
-        <line class="ld-ring-tick" x1="134" y1="68" x2="124" y2="68" opacity="0.4"/>
-        <line class="ld-ring-tick" x1="68" y1="134" x2="68" y2="124" opacity="0.4"/>
-        <line class="ld-ring-tick" x1="2" y1="68"  x2="12" y2="68" opacity="0.4"/>
-      </svg>
-      <div class="ld-monogram">A</div>
-    </div>
-
-    <!-- Stage 2: Wordmark -->
-    <div class="ld-text-block">
-      <div class="ld-wordmark">
-        <span>A</span><span>U</span><span>R</span><span>U</span><span>M</span>
-      </div>
-      <div class="ld-capital">Capital</div>
-    </div>
-
-    <!-- Stage 3: Divider + Tagline -->
-    <div class="ld-divider"></div>
-    <div class="ld-tagline">Precision Investment Platform</div>
-
-    <!-- Stage 4: Progress -->
-    <div class="ld-progress-row">
-      <div class="ld-progress"><div class="ld-bar"></div></div>
-      <div class="ld-pct" id="ldPct">0%</div>
-    </div>
-  </div>
-
   <!-- Particles -->
   <div id="particles" style="position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden;"></div>
 
@@ -1581,6 +1380,7 @@
           <button class="cha-btn" onclick="setChartType('bar',this)"><i class="fas fa-chart-bar" style="margin-right:3px;font-size:9px;"></i>Bars</button>
         </div>
         <div class="cha-btn-grp" id="cha-tf-grp">
+          <button class="cha-btn" onclick="setChartTF('5M',this)">5M</button>
           <button class="cha-btn" onclick="setChartTF('1H',this)">1H</button>
           <button class="cha-btn" onclick="setChartTF('4H',this)">4H</button>
           <button class="cha-btn on" onclick="setChartTF('1D',this)">1D</button>
@@ -1611,71 +1411,8 @@
   </div>
 
   <!-- ══ SCRIPTS ══ -->
-  <script src="price-sync.js"></script>
-
   <script>
-  /* ══════════════════════════════════════════════
-     AURUM CAPITAL — PAGE CONTROLLER  (FIXED)
-
-     BUG FIXES IN THIS VERSION:
-     ─────────────────────────────────────────────
-     FIX 1 — TICKER STOPS ON MOBILE (touch events)
-       Root cause: The original code used mouseenter/
-       mouseleave to pause/resume the RAF loop. On touch
-       devices, a scroll or tap fires mouseenter but
-       mouseleave NEVER fires, permanently killing the
-       animation.
-       Fix: Use touchstart / touchend instead of mouse
-       events on touch-capable devices. Additionally,
-       the entire scroll mechanism is now backed by a
-       CSS @keyframes animation as a reliable fallback —
-       on first load the CSS animation runs immediately
-       while the JS RAF loop takes over once _tickerHalf
-       is correctly measured. This means the ticker is
-       NEVER blank, even during init.
-
-     FIX 2 — TICKER DISAPPEARS (bad measurement)
-       Root cause: _tickerHalf was measured with
-       getBoundingClientRect() inside a single RAF.
-       On slow/cold devices the fonts may not have
-       loaded yet so all item widths return ~0, setting
-       _tickerHalf=0. With half=0, the wraparound
-       condition `_tickerPos <= -0` is always true,
-       so every frame does `_tickerPos += 0`, the
-       transform becomes translateX(NaN) after
-       accumulated float errors, hiding the track.
-       Fix: Measure with retries — if the measured
-       width is 0 or implausibly small, retry up to
-       10 times with 100ms gaps (waiting for font
-       layout to stabilise). Only hand off from CSS
-       animation to JS RAF once a valid width is
-       confirmed. A minimum guard (`_tickerHalf > 50`)
-       prevents divide-by-zero style failures.
-
-     FIX 3 — SLOW FIRST LOAD ON NEW DEVICE
-       Root cause: buildTicker() was called inside
-       DOMContentLoaded and then waited for another
-       RAF before measuring — on a slow device with
-       font loading this meant ~600ms of blank ticker
-       before prices even attempt to show. Also no
-       persisted prices on a brand-new device meant
-       "—" for every value until CoinGecko responded.
-       Fix: (a) buildTicker() now runs as early as
-       possible — inline in the <script> tag, not
-       waiting for DOMContentLoaded — since the ticker
-       element is already in the DOM above this script.
-       (b) The CSS animation provides immediate visual
-       motion even before JS measures the half-width.
-       (c) The retry measurement runs async with
-       document.fonts.ready as an additional trigger
-       so fonts are definitely loaded before the JS
-       loop takes over.
-
-     PRICE PERSISTENCE STRATEGY (unchanged):
-     ─────────────────────────────────────────────
-     localStorage key: "aurum_live_prices_v2"
-     Schema: { sym: { price, chg, mcap, ts }, ... }
-  ══════════════════════════════════════════════ */
+ 
   (function() {
 
     var LS_KEY = 'aurum_live_prices_v2';
@@ -1804,8 +1541,10 @@
         });
     }
 
-    fetchCoinGeckoPrices();
-    setInterval(fetchCoinGeckoPrices, 30000);
+    /* fetchCoinGeckoPrices() removed — coingecko-sync.js already fetches
+       all crypto prices via the edge function every 15 s.
+       Running a second CoinGecko fetch here caused duplicate onPriceUpdate
+       calls and race conditions with the edge-function data. */
 
     /* ════════════════════════════════════════════
        TICKER  —  FIXED VERSION
@@ -2069,65 +1808,10 @@
       });
     }
 
-    /* ── PRICE UPDATE HOOK ── */
-    window.onPriceUpdate = function(sym, price, chg) {
-      if (!MARKET_DATA[sym]) return;
-      window.PRICES[sym]  = price;
-      window.CHANGES[sym] = chg;
-      var isUp = (_prevPrices[sym] != null) ? (price >= _prevPrices[sym]) : (chg >= 0);
-
-      /* Hero card */
-      var prEl  = document.getElementById('pr-'  + sym);
-      var chgEl = document.getElementById('chg-' + sym);
-      if (prEl) {
-        var newStr = fmtP(price);
-        if (prEl.textContent !== newStr) { prEl.textContent = newStr; flashPrice(prEl, isUp); }
-      }
-      if (chgEl) {
-        var newChg = fmtChg(chg);
-        var oldChg = chgEl.textContent;
-        chgEl.textContent = newChg;
-        chgEl.className   = 'ac-chg ' + (chg >= 0 ? 'up' : 'dn');
-        if (oldChg !== newChg) flashChgEl(chgEl);
-      }
-
-      /* Market grid */
-      var mcPx  = document.getElementById('mc-px-'  + sym);
-      var mcChg = document.getElementById('mc-chg-' + sym);
-      if (mcPx)  mcPx.textContent  = fmtP(price);
-      if (mcChg) { mcChg.textContent = fmtChg(chg); mcChg.className = 'mc-chg ' + (chg >= 0 ? 'up' : 'dn'); }
-
-      /* Assets table */
-      var atPx  = document.getElementById('at-px-'  + sym);
-      var atChg = document.getElementById('at-chg-' + sym);
-      if (atPx)  atPx.textContent  = fmtP(price);
-      if (atChg) { atChg.textContent = fmtChg(chg); atChg.className = 'at-chg ' + (chg >= 0 ? 'up' : 'dn'); }
-
-      /* Ticker — update text in both copies */
-      if (CG_SYMS.indexOf(sym) !== -1) {
-        ['', '-2'].forEach(function(sfx) {
-          var tPx  = document.getElementById('tick-px-'  + sym + sfx);
-          var tChg = document.getElementById('tick-chg-' + sym + sfx);
-          if (tPx) {
-            tPx.textContent = fmtP(price);
-            tPx.classList.remove('loading');
-          }
-          if (tChg) {
-            tChg.textContent = fmtChg(chg);
-            tChg.className   = 'tick-chg ' + (chg >= 0 ? 'up' : 'dn');
-            tChg.style.display = '';
-          }
-        });
-      }
-
-      /* Mobile menu coin strip */
-      var mmPx  = document.getElementById('mm-px-'  + sym);
-      var mmChg = document.getElementById('mm-chg-' + sym);
-      if (mmPx)  mmPx.textContent  = fmtP(price);
-      if (mmChg) { mmChg.textContent = fmtChg(chg); mmChg.className = 'mm-coin-chg ' + (chg >= 0 ? 'chg-up' : 'chg-dn'); }
-
-      _prevPrices[sym] = price;
-    };
+    /* ── PRICE UPDATE HOOK — delegated to script.js ── */
+    /* window.onPriceUpdate is defined in script.js (defer).
+       The mobile menu coin strip is still updated here via the
+       storage cross-tab event and the menu-open call below. */
 
     /* Cross-tab price broadcast */
     window.addEventListener('storage', function(e) {
@@ -2137,7 +1821,7 @@
         if (!data || typeof data !== 'object') return;
         Object.keys(data).forEach(function(sym) {
           var p = data[sym].price;
-          var c = data[sym].change;
+          var c = data[sym].changePct24h != null ? data[sym].changePct24h : data[sym].chg;
           if (p != null) {
             window.PRICES[sym]  = p;
             window.CHANGES[sym] = c != null ? c : 0;
@@ -2244,35 +1928,6 @@
     }
     for (var pi = 0; pi < 18; pi++) { setTimeout(spawnParticle, pi * 600); }
 
-    /* ── LOADER — Percentage counter + orchestrated hide ── */
-    (function() {
-      var pctEl = document.getElementById('ldPct');
-      if (pctEl) {
-        var val = 0, start = Date.now(), dur = 1100, delay = 2200;
-        function tickPct() {
-          var elapsed = Date.now() - start - delay;
-          if (elapsed < 0) { requestAnimationFrame(tickPct); return; }
-          var progress = Math.min(elapsed / dur, 1);
-          var ease = 1 - Math.pow(1 - progress, 2);
-          val = Math.floor(ease * 100);
-          pctEl.textContent = val + '%';
-          if (progress < 1) requestAnimationFrame(tickPct);
-        }
-        requestAnimationFrame(tickPct);
-      }
-    })();
-
-    function hideLoader() {
-      var loader = document.getElementById('loader');
-      if (loader && !loader.classList.contains('hidden')) {
-        loader.classList.add('hidden');
-        document.body.classList.add('hero-revealed');
-        if (window.initReveal) initReveal();
-      }
-    }
-    window.addEventListener('load', function(){ setTimeout(hideLoader, 2800); });
-    setTimeout(hideLoader, 3800);
-
     /* ══════════════════════════════════════════
        INIT — DOMContentLoaded
        
@@ -2285,8 +1940,6 @@
        page (market grid, table, menu coins).
     ══════════════════════════════════════════ */
     document.addEventListener('DOMContentLoaded', function(){
-      buildMarketGrid('all');
-      buildAssetsTable();
       buildMenuCoins();
       applyAuthState();
       initReveal();
@@ -2366,9 +2019,9 @@
       }
     };
 
-    /* Listen for system-level preference changes */
+    /* Always follow system-level preference changes */
     window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
-      if (!localStorage.getItem(THEME_KEY)) applyTheme(e.matches ? 'light' : 'dark');
+      applyTheme(e.matches ? 'light' : 'dark');
     });
   })();
 
