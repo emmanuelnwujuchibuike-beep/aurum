@@ -2308,15 +2308,159 @@ function renderPortfolioPanel() {
     document.getElementById('alloc-legend').innerHTML=''; return;
   }
   const liveMap={}; ALL_ASSETS.forEach(a=>liveMap[a.sym]=a.price);
-  let total=0,cryptoV=0,stocksV=0,commodV=0,propV=0,pnl=0;
-  myHoldings.forEach(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);total+=val;pnl+=val-cost;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol);if(asset?.cat==='crypto')cryptoV+=val;else if(asset?.cat==='stocks')stocksV+=val;else if(asset?.cat==='commodities')commodV+=val;else propV+=val;});
+  let total=0,cryptoV=0,stocksV=0,commodV=0,propV=0,pnl=0,costBasis=0;
+  myHoldings.forEach(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);total+=val;pnl+=val-cost;costBasis+=cost;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol);if(asset?.cat==='crypto')cryptoV+=val;else if(asset?.cat==='stocks')stocksV+=val;else if(asset?.cat==='commodities')commodV+=val;else propV+=val;});
+  const totalPct=costBasis>0?(pnl/costBasis*100):0;
   txt('pf-total','$'+fmtU(total));
-  const pnlEl=document.getElementById('pf-pnl-badge'); pnlEl.textContent=(pnl>=0?'+':'-')+' $'+fmtU(Math.abs(pnl)); pnlEl.style.color=pnl>=0?'var(--gain)':'var(--loss)'; pnlEl.style.background=pnl>=0?'var(--gain-bg)':'var(--loss-bg)';
+  const pnlEl=document.getElementById('pf-pnl-badge'); pnlEl.textContent=(pnl>=0?'+':'-')+' $'+fmtU(Math.abs(pnl))+' ('+(totalPct>=0?'+':'')+totalPct.toFixed(2)+'%)'; pnlEl.style.color=pnl>=0?'var(--gain)':'var(--loss)'; pnlEl.style.background=pnl>=0?'var(--gain-bg)':'var(--loss-bg)';
   txt('pf-pos-badge', myHoldings.length+' position'+(myHoldings.length!==1?'s':''));
   const segs=[];if(cryptoV>0)segs.push({label:'Crypto',val:cryptoV,color:'#f7931a'});if(stocksV>0)segs.push({label:'Stocks',val:stocksV,color:'#4285f4'});if(commodV>0)segs.push({label:'Commodities',val:commodV,color:'#c9a84c'});if(propV>0)segs.push({label:'Real Estate',val:propV,color:'#c9a63c'});
   document.getElementById('alloc-bar').innerHTML=segs.map(s=>`<div style="flex:${s.val};background:${s.color};border-radius:4px;min-width:4px"></div>`).join('')||'<div style="flex:1;background:rgba(255,255,255,.06);border-radius:6px"></div>';
   document.getElementById('alloc-legend').innerHTML=segs.map(s=>`<span style="display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)"><span style="width:8px;height:8px;border-radius:2px;background:${s.color};flex-shrink:0"></span>${s.label} ${total>0?((s.val/total)*100).toFixed(1):0}%</span>`).join('');
-  document.getElementById('holdings-list').innerHTML=myHoldings.map(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);const chg=cost>0?((val-cost)/cost*100):0;const up=chg>=0;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};const isProp=asset.cat==='property';const withdrawBtn=isProp?`<button onclick="event.stopPropagation();openPropertyWithdraw('${h.symbol}')" style="margin-top:6px;width:100%;padding:6px;border-radius:8px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.18);color:#e84848;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;cursor:pointer">Withdraw Investment</button>`:'';return`<div class="holding-row" onclick="${isProp?'':'openInvestModal(\''+h.symbol+'\')'}"><div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0"><div style="width:36px;height:36px;border-radius:12px;background:${asset.color}16;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${asset.icon}"></i></div><div style="min-width:0"><p style="font-weight:600;color:var(--pearl);font-size:13px">${h.symbol}</p><p style="color:var(--fog);font-size:11px;font-family:'DM Mono',monospace">${Number(h.quantity)<1?Number(h.quantity).toFixed(6):Number(h.quantity).toFixed(4)} units</p></div></div><div style="text-align:right"><p style="font-family:'DM Mono',monospace;font-size:13px;color:var(--pearl)">$${fmtU(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${up?'var(--gain)':'var(--loss)'}">${up?'+':''}${chg.toFixed(2)}%</p></div></div>${withdrawBtn}`;}).join('');
+  document.getElementById('holdings-list').innerHTML=myHoldings.map(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);const chg=cost>0?((val-cost)/cost*100):0;const up=chg>=0;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};const isProp=asset.cat==='property';const actionBtn=isProp?`<button onclick="event.stopPropagation();openPropertyWithdraw('${h.symbol}')" style="margin-top:6px;width:100%;padding:6px;border-radius:8px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.18);color:#e84848;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;cursor:pointer">Withdraw Investment</button>`:`<button onclick="event.stopPropagation();openSellModal('${h.symbol}')" style="margin-top:6px;width:100%;padding:6px;border-radius:8px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.18);color:#e84848;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;cursor:pointer">Sell Position</button>`;return`<div class="holding-row" onclick="${isProp?'':'openInvestModal(\''+h.symbol+'\')'}"><div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0"><div style="width:36px;height:36px;border-radius:12px;background:${asset.color}16;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${asset.icon}"></i></div><div style="min-width:0"><p style="font-weight:600;color:var(--pearl);font-size:13px">${h.symbol}</p><p style="color:var(--fog);font-size:11px;font-family:'DM Mono',monospace">${Number(h.quantity)<1?Number(h.quantity).toFixed(6):Number(h.quantity).toFixed(4)} units</p></div></div><div style="text-align:right"><p style="font-family:'DM Mono',monospace;font-size:13px;color:var(--pearl)">$${fmtU(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${up?'var(--gain)':'var(--loss)'}">${up?'+':''}${chg.toFixed(2)}%</p></div></div>${actionBtn}`;}).join('');
+}
+
+// ══════════════════════════════════════════════════
+//  SELL POSITION MODAL
+// ══════════════════════════════════════════════════
+function openSellModal(sym) {
+  const holding = myHoldings.find(h => h.symbol === sym);
+  const asset   = ALL_ASSETS.find(a => a.sym === sym);
+  if (!holding || !asset || !profile) return;
+
+  const liveP   = asset.price || Number(holding.avg_buy_price);
+  const qty     = Number(holding.quantity);
+  const cost    = qty * Number(holding.avg_buy_price);
+  const val     = qty * liveP;
+  const pnl     = val - cost;
+  const pnlPct  = cost > 0 ? (pnl / cost * 100) : 0;
+  const maxAmt  = +val.toFixed(2);
+
+  document.getElementById('investSellModal')?.remove();
+
+  const up = pnl >= 0;
+  document.body.insertAdjacentHTML('beforeend', `
+  <div class="modal-veil open" id="investSellModal" onclick="if(event.target===this)this.remove()">
+    <div class="modal-box" style="max-width:460px">
+      <div class="modal-head" style="padding:22px 24px 16px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:13px;background:${asset.color}16;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0"><i class="${asset.icon}"></i></div>
+          <div><p style="font-size:16px;font-weight:600;color:var(--pearl)">${asset.name}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">${qty < 1 ? qty.toFixed(6) : qty.toFixed(4)} ${sym} · $${fmtP(liveP)} live</p></div>
+        </div>
+        <button onclick="document.getElementById('investSellModal').remove()" class="modal-close-btn">✕</button>
+      </div>
+      <div style="padding:0 24px 8px">
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <div style="flex:1;background:var(--lift);border:1px solid var(--rim);border-radius:12px;padding:12px 14px">
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Current Value</p>
+            <p style="font-family:'DM Mono',monospace;font-size:14px;color:var(--pearl)">$${fmtU(val)}</p>
+          </div>
+          <div style="flex:1;background:${up?'var(--gain-bg)':'var(--loss-bg)'};border:1px solid ${up?'rgba(29,189,108,.2)':'rgba(232,72,72,.2)'};border-radius:12px;padding:12px 14px">
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Unrealised P&L</p>
+            <p style="font-family:'DM Mono',monospace;font-size:14px;color:${up?'var(--gain)':'var(--loss)'}">${up?'+':'-'}$${fmtU(Math.abs(pnl))} (${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%)</p>
+          </div>
+        </div>
+        <div style="margin-bottom:6px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog);text-transform:uppercase">Amount to Sell (USD)</label>
+            <button onclick="document.getElementById('sell-amt-input').value=${maxAmt};calcSellModal('${sym}')" style="background:none;border:none;color:var(--gold);font-family:'DM Mono',monospace;font-size:9px;cursor:pointer">Max</button>
+          </div>
+          <input id="sell-amt-input" type="number" step="0.01" min="10" max="${maxAmt}" value="${maxAmt}" oninput="calcSellModal('${sym}')"
+            style="width:100%;padding:12px 14px;background:var(--lift);border:1px solid var(--rim);border-radius:12px;color:var(--pearl);font-family:'DM Mono',monospace;font-size:14px;box-sizing:border-box">
+        </div>
+        <div style="background:var(--lift);border:1px solid var(--rim);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between"><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">Fee (0.1%)</span><span id="sell-fee-out" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">-$${(maxAmt*0.001).toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--pearl);font-weight:600">You receive</span><span id="sell-net-out" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gain);font-weight:600">+$${fmtU(maxAmt*0.999)}</span></div>
+        </div>
+        <div id="sell-insuf" style="display:none;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-family:'DM Mono',monospace;font-size:10px;color:#e84848">⚠ Amount exceeds holding value</div>
+        <button id="sell-confirm-btn" onclick="confirmSellHolding('${sym}')"
+          style="width:100%;padding:13px;border-radius:13px;border:none;background:linear-gradient(135deg,rgba(232,72,72,.85),rgba(200,30,30,.7));color:#fff;font-family:'Instrument Sans',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+          <i class="fas fa-arrow-trend-down" style="font-size:12px"></i>
+          <span id="sell-confirm-lbl">Confirm Sell</span>
+          <div id="sell-spin" style="display:none;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%" class="spinner"></div>
+        </button>
+      </div>
+    </div>
+  </div>`);
+}
+
+function calcSellModal(sym) {
+  const holding = myHoldings.find(h => h.symbol === sym);
+  const asset   = ALL_ASSETS.find(a => a.sym === sym);
+  if (!holding || !asset) return;
+  const liveP  = asset.price || Number(holding.avg_buy_price);
+  const maxVal = Number(holding.quantity) * liveP;
+  const amt    = parseFloat(document.getElementById('sell-amt-input')?.value) || 0;
+  const fee    = +(amt * 0.001).toFixed(2);
+  const net    = +(amt - fee).toFixed(2);
+  const insuf  = amt > maxVal + 0.01 || amt < 10;
+  const feeEl  = document.getElementById('sell-fee-out');
+  const netEl  = document.getElementById('sell-net-out');
+  const insufEl= document.getElementById('sell-insuf');
+  const btn    = document.getElementById('sell-confirm-btn');
+  if (feeEl)  feeEl.textContent  = '-$' + fee.toFixed(2);
+  if (netEl)  netEl.textContent  = (net >= 0 ? '+' : '') + '$' + fmtU(Math.max(net, 0));
+  if (insufEl) insufEl.style.display = insuf ? 'block' : 'none';
+  if (btn)    btn.disabled = insuf;
+}
+
+async function confirmSellHolding(sym) {
+  const holding = myHoldings.find(h => h.symbol === sym);
+  const asset   = ALL_ASSETS.find(a => a.sym === sym);
+  if (!holding || !asset || !profile) return;
+
+  const liveP  = asset.price || Number(holding.avg_buy_price);
+  const amt    = parseFloat(document.getElementById('sell-amt-input')?.value) || 0;
+  const maxQty = Number(holding.quantity);
+  const qty    = amt / liveP;
+
+  if (amt < 10) { showToast('Minimum $10', '', 'error'); return; }
+  if (qty > maxQty + 0.000001) { showToast('Insufficient holdings', 'Amount exceeds holding value', 'error'); return; }
+
+  const fee       = +(amt * 0.001).toFixed(2);
+  const netUSD    = +(amt - fee).toFixed(2);
+  const realizedPnl = (liveP - Number(holding.avg_buy_price)) * qty;
+
+  const lbl  = document.getElementById('sell-confirm-lbl');
+  const spin = document.getElementById('sell-spin');
+  const btn  = document.getElementById('sell-confirm-btn');
+  if (lbl) lbl.style.display = 'none';
+  if (spin) spin.style.display = 'block';
+  if (btn) btn.disabled = true;
+
+  try {
+    const { data: fp } = await sb.from('profiles').select('cash').eq('id', authUser.id).single();
+    const newCash = +((Number(fp?.cash || 0)) + netUSD).toFixed(2);
+
+    await sb.from('transactions').insert({
+      user_id: authUser.id, type: 'sell', symbol: sym, name: asset.name,
+      icon: asset.icon, color: asset.color, quantity: qty, price_at_tx: liveP,
+      usd_amount: netUSD, status: 'approved',
+      note: `Sell ${sym} @ $${fmtP(liveP)} | P&L: ${realizedPnl>=0?'+':''}$${fmtU(realizedPnl)} | Fee: $${fee}`
+    });
+
+    const newQty = maxQty - qty;
+    if (newQty <= 0.0000001) {
+      await sb.from('holdings').delete().eq('id', holding.id);
+    } else {
+      await sb.from('holdings').update({ quantity: newQty, updated_at: new Date().toISOString() }).eq('id', holding.id);
+    }
+
+    await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
+
+    document.getElementById('investSellModal')?.remove();
+    await loadProfile();
+    await loadPortfolioStats();
+    await loadTransactions();
+
+    showToast('Sold ✓', `${sym} · +$${fmtU(netUSD)} added to cash`, 'success');
+  } catch (err) {
+    showToast('Sell failed', err.message || 'Please try again', 'error');
+  } finally {
+    if (lbl) lbl.style.display = 'inline';
+    if (spin) spin.style.display = 'none';
+    if (btn) btn.disabled = false;
+  }
 }
 
 function filterTx(f) {
@@ -2525,7 +2669,8 @@ function openPropertyWithdraw(sym) {
   const maturity = lock ? new Date(lock.lockedUntil).getTime() : null;
   const isPremature = maturity && now < maturity;
 
-  const currentVal = Number(holding.quantity) * Number(holding.avg_buy_price);
+  const livePrice  = ALL_ASSETS.find(a => a.sym === sym)?.price || Number(holding.avg_buy_price);
+  const currentVal = Number(holding.quantity) * livePrice;
   const penalty    = isPremature ? +(currentVal * PROPERTY_EARLY_PENALTY).toFixed(2) : 0;
   const netPayout  = +(currentVal - penalty).toFixed(2);
 

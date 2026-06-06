@@ -4,6 +4,45 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
+// ─── Supabase config (auto-injected by platform) ─────────────────────────────
+const SUPABASE_URL         = Deno.env.get("SUPABASE_URL") ?? "";
+const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
+// ─── Symbol normalisation: edge-function symbols → frontend/DB symbols ────────
+const NORM_SYM: Record<string, string> = {
+  XAUUSD: "GOLD",
+  XAGUSD: "SILVER",
+  USOIL:  "OIL",
+};
+
+/** Persist freshly-fetched prices to asset_prices so all devices sync via realtime */
+async function persistPrices(results: PriceResult[]): Promise<void> {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return;
+  const rows = results
+    .filter(r => r.price > 0)
+    .map(r => ({
+      sym:        NORM_SYM[r.symbol] ?? r.symbol,
+      price:      r.price,
+      chg:        r.changePct24h ?? 0,
+      updated_at: new Date().toISOString(),
+    }));
+  if (!rows.length) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/asset_prices`, {
+      method:  "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey":        SUPABASE_SERVICE_KEY,
+        "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`,
+        "Prefer":        "resolution=merge-duplicates",
+      },
+      body: JSON.stringify(rows),
+    });
+  } catch (e) {
+    console.warn("[persistPrices] DB write failed:", e);
+  }
+}
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -454,8 +493,9 @@ serve(async (req: Request) => {
       results.push(...commPrices);
     }
 
-    // Cache and return
+    // Cache and persist to DB for cross-device realtime sync (fire-and-forget)
     setCache(cacheKey, results);
+    persistPrices(results);
 
     return new Response(
       JSON.stringify({ success: true, data: results, cached: false }),
