@@ -1,0 +1,28 @@
+# Force LF line endings in the repository for all text files.
+# This prevents Windows Git (core.autocrlf=true) from converting
+# LF → CRLF on checkout, which breaks Deno edge functions on Linux.
+
+* text=auto eol=lf
+
+# Explicitly LF — source code & config
+*.ts   text eol=lf
+*.js   text eol=lf
+*.html text eol=lf
+*.css  text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.toml text eol=lf
+*.yaml text eol=lf
+*.yml  text eol=lf
+*.env  text eol=lf
+
+# Binary — never touch line endings
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
