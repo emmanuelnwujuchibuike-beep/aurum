@@ -132,7 +132,7 @@
 
     '<p class="ac-i-name">Aurum Capital</p>' +
     '<div class="ac-i-rule"></div>' +
-    '<p class="ac-i-tag">Private Wealth · Est. 2020</p>';
+    '<p class="ac-i-tag">Private Wealth · Est. 2007</p>';
 
   /* Insert as very first child of body so it covers all other content */
   document.body.insertBefore(el, document.body.firstChild);

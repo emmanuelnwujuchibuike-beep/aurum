@@ -49,7 +49,7 @@ serve(async (req: Request) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Aurum Capital <onboarding@resend.dev>",
+          from: "Aurum Capital <noreply@aurumcapitalinvest.com>",
           to: [Deno.env.get("NOTIFY_EMAIL")!],
           subject: `[Aurum] New ${formType} enquiry from ${fields.name}`,
           html: `<h2>New ${formType} submission</h2>
@@ -72,7 +72,7 @@ serve(async (req: Request) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "Aurum Capital <onboarding@resend.dev>",
+            from: "Aurum Capital <noreply@aurumcapitalinvest.com>",
             to: [fields.email],
             subject: "We received your message — Aurum Capital",
             html: `

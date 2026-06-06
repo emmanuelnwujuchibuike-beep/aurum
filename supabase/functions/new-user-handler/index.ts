@@ -468,7 +468,7 @@ function buildWelcomeHtml(
   <text x="300" y="246" text-anchor="middle" font-family="Georgia,serif"
         font-size="13" letter-spacing="8" fill="#c9a84c" opacity="0.9">AURUM CAPITAL</text>
   <text x="300" y="267" text-anchor="middle" font-family="Arial,sans-serif"
-        font-size="9.5" letter-spacing="4.5" fill="#8c9db5" opacity="0.7">PRIVATE WEALTH · ESTABLISHED 2020</text>
+        font-size="9.5" letter-spacing="4.5" fill="#8c9db5" opacity="0.7">PRIVATE WEALTH · ESTABLISHED 2007</text>
   <rect x="60" y="245" width="170" height="0.4" fill="#c9a84c" opacity="0.2"/>
   <rect x="370" y="245" width="170" height="0.4" fill="#c9a84c" opacity="0.2"/>
 </svg>

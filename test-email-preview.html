@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Email Preview — Visa Card Deposit Test</title>
+<style>
+  body { margin: 0; padding: 0; background: #1a1a2e; font-family: Arial, sans-serif; }
+  .switcher { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 999; display: flex; gap: 10px; background: rgba(0,0,0,.6); padding: 8px 14px; border-radius: 30px; backdrop-filter: blur(8px); }
+  .sw-btn { padding: 7px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,.15); background: transparent; color: rgba(255,255,255,.5); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: .2s; }
+  .sw-btn.active { background: #c9a84c; color: #040608; border-color: #c9a84c; font-weight: 700; }
+  .email-wrap { padding: 70px 16px 40px; }
+  .email-frame { display: none; }
+  .email-frame.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <button class="sw-btn active" onclick="show('admin',this)">Admin Email</button>
+  <button class="sw-btn" onclick="show('user',this)">User Email</button>
+</div>
+
+<!-- ═══════════════════════════════ ADMIN EMAIL ═══════════════════════════════ -->
+<div class="email-wrap">
+<div class="email-frame active" id="frame-admin">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#060810;min-height:100vh;">
+<tr><td align="center" style="padding:48px 16px 56px;">
+<table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;">
+
+  <tr><td style="padding-bottom:0;">
+    <div style="height:3px;background:linear-gradient(90deg,transparent 0%,#8a6820 15%,#c9a84c 40%,#e8c96a 55%,#c9a84c 70%,#8a6820 85%,transparent 100%);border-radius:2px 2px 0 0;"></div>
+  </td></tr>
+
+  <tr>
+    <td style="background:linear-gradient(180deg,#0d1020 0%,#0a0c18 100%);padding:32px 44px 28px;border-left:1px solid rgba(99,102,241,.15);border-right:1px solid rgba(99,102,241,.15);">
+      <table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td style="vertical-align:middle;">
+          <div>
+            <span style="font-size:24px;font-weight:700;letter-spacing:5px;color:#c9a84c;text-transform:uppercase;font-family:'Georgia',serif;">AURUM</span>
+            <span style="font-size:24px;font-weight:300;letter-spacing:5px;color:#4a6080;text-transform:uppercase;font-family:'Georgia',serif;">&nbsp;CAPITAL</span>
+          </div>
+          <div style="margin-top:5px;"><span style="font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Admin Intelligence Centre</span></div>
+        </td>
+        <td align="right" style="vertical-align:middle;">
+          <div style="display:inline-block;padding:7px 18px;background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.25);border-radius:24px;">
+            <span style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#ef4444;text-transform:uppercase;font-family:Arial,sans-serif;">⚡&nbsp;Action Required</span>
+          </div>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:linear-gradient(135deg,#090c1a 0%,#0b0e1e 50%,#080a14 100%);padding:40px 44px 36px;border-left:1px solid rgba(99,102,241,.15);border-right:1px solid rgba(99,102,241,.15);border-top:1px solid rgba(255,255,255,.04);">
+      <table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td>
+          <p style="margin:0 0 6px;font-size:9px;letter-spacing:3px;color:#818cf8;text-transform:uppercase;font-family:Arial,sans-serif;">New Deposit Request</p>
+          <h1 style="margin:0 0 14px;font-size:34px;color:#eef3fa;font-weight:400;letter-spacing:-.5px;line-height:1.2;font-family:'Georgia',serif;">$1,000.00&nbsp;<span style="font-size:16px;color:#3d5068;font-weight:400;">USD</span></h1>
+          <p style="margin:0;font-size:13px;color:#4a6080;font-family:Arial,sans-serif;line-height:1.7;">
+            John Doe has submitted a <strong style="color:#8ca0b8;">deposit request</strong> that requires your review and approval before funds are processed.
+          </p>
+        </td>
+        <td align="right" style="vertical-align:top;padding-left:24px;white-space:nowrap;">
+          <div style="display:inline-block;padding:10px 18px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.22);border-radius:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;">💳</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#818cf8;text-transform:uppercase;font-family:Arial,sans-serif;">Visa Card</div>
+          </div>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:linear-gradient(135deg,#0a0c14,#0d1020);padding:0 44px;border-left:1px solid rgba(99,102,241,.15);border-right:1px solid rgba(99,102,241,.15);">
+      <div style="margin:24px 0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.3),transparent);"></div>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#0a0c14;padding:0 44px 24px;border-left:1px solid rgba(99,102,241,.15);border-right:1px solid rgba(99,102,241,.15);">
+      <p style="margin:0 0 16px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Payment Details</p>
+
+      <!-- VISA CARD VISUAL -->
+      <table cellpadding="0" cellspacing="0" style="margin:0 auto 20px;width:100%;max-width:320px;">
+      <tr><td style="background:linear-gradient(135deg,#1a1f71 0%,#2832a0 50%,#0d1550 100%);border-radius:18px;padding:22px 24px 20px;box-shadow:0 24px 56px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.06);">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="vertical-align:middle;width:50%;">
+            <table cellpadding="0" cellspacing="0"><tr>
+              <td style="width:38px;height:28px;background:linear-gradient(145deg,#c8a040 0%,#edd060 30%,#f5e070 50%,#d4a840 72%,#a87a28 100%);border-radius:5px;border:1px solid rgba(0,0,0,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);font-size:0;line-height:0;">&nbsp;</td>
+            </tr></table>
+          </td>
+          <td align="right" style="vertical-align:middle;">
+            <span style="font-size:24px;font-weight:800;color:white;font-family:Georgia,serif;letter-spacing:4px;font-style:italic;text-shadow:0 2px 8px rgba(0,0,0,.5);">VISA</span>
+          </td>
+        </tr></table>
+        <p style="margin:20px 0 16px;font-size:15px;letter-spacing:.22em;color:rgba(255,255,255,.85);font-family:'Courier New',Courier,monospace;font-weight:700;line-height:1;">
+          ••••&nbsp;&nbsp;••••&nbsp;&nbsp;••••&nbsp;&nbsp;4521
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="vertical-align:bottom;padding-right:12px;">
+            <p style="margin:0 0 2px;font-size:7px;color:rgba(255,255,255,.38);letter-spacing:2.5px;text-transform:uppercase;font-family:Arial,sans-serif;">Card Holder</p>
+            <p style="margin:0;font-size:11px;color:rgba(255,255,255,.88);font-family:Arial,sans-serif;letter-spacing:1.5px;font-weight:600;">JOHN DOE</p>
+          </td>
+          <td align="right" style="vertical-align:bottom;">
+            <p style="margin:0 0 2px;font-size:7px;color:rgba(255,255,255,.38);letter-spacing:2px;text-transform:uppercase;font-family:Arial,sans-serif;">Valid Thru</p>
+            <p style="margin:0;font-size:13px;color:rgba(255,255,255,.88);font-family:'Courier New',Courier,monospace;letter-spacing:2px;font-weight:700;">12/28</p>
+          </td>
+        </tr></table>
+      </td></tr>
+      </table>
+
+      <!-- Detail rows -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,rgba(99,102,241,.04),rgba(99,102,241,.02));border:1px solid rgba(99,102,241,.14);border-radius:14px;overflow:hidden;">
+        <tr><td style="padding:4px 0;"><table width="100%" cellpadding="0" cellspacing="0">
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Card Type</td>
+              <td align="right" style="font-size:13px;font-family:Arial,sans-serif;color:#c8d8e8;font-weight:500;">Visa</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Card Number</td>
+              <td align="right" style="font-size:12px;font-family:'Courier New',Courier,monospace;color:#a8bdd4;letter-spacing:.04em;">•••• 4521</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Cardholder Name</td>
+              <td align="right" style="font-size:13px;font-family:Arial,sans-serif;color:#c8d8e8;font-weight:500;">John Doe</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Expiry Date</td>
+              <td align="right" style="font-size:12px;font-family:'Courier New',Courier,monospace;color:#a8bdd4;letter-spacing:.04em;">12/28</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Security Code</td>
+              <td align="right" style="font-size:13px;font-family:'Courier New',Courier,monospace;color:#c9a84c;font-weight:700;letter-spacing:.05em;">123</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Processing</td>
+              <td align="right" style="font-size:13px;font-family:Arial,sans-serif;color:#c8d8e8;font-weight:500;">Manual review · 24h</td>
+            </tr></table>
+          </td></tr>
+        </table></td></tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#0a0c14;padding:0 44px 24px;border-left:1px solid rgba(99,102,241,.15);border-right:1px solid rgba(99,102,241,.15);">
+      <p style="margin:0 0 12px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Transaction Record</p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.055);border-radius:14px;overflow:hidden;">
+        <tr><td style="padding:4px 0;"><table width="100%" cellpadding="0" cellspacing="0">
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Transaction ID</td>
+              <td align="right"><span style="font-family:'Courier New',monospace;font-size:12px;color:#8ca0b8;letter-spacing:.1em;">#A3F2C1B8</span></td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Amount</td>
+              <td align="right"><span style="font-size:16px;font-weight:700;color:#c9a84c;font-family:'Georgia',serif;">$1,000.00 USD</span></td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Date &amp; Time</td>
+              <td align="right" style="font-size:13px;font-family:Arial,sans-serif;color:#c8d8e8;font-weight:500;">June 6, 2025 at 03:45 PM WAT</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Status</td>
+              <td align="right"><span style="padding:4px 14px;background:rgba(243,186,47,.1);color:#f3ba2f;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;font-family:Arial,sans-serif;">⏳ PENDING APPROVAL</span></td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Note</td>
+              <td align="right"><span style="font-size:11px;color:#4a6080;font-family:Arial,sans-serif;line-height:1.5;">Card Deposit · Visa · •••• 4521 · John Doe · 12/28 · 123 · $1,000.00 · Manual review</span></td>
+            </tr></table>
+          </td></tr>
+        </table></td></tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#0a0c14;padding:0 44px 32px;border-left:1px solid rgba(99,102,241,.15);border-right:1px solid rgba(99,102,241,.15);">
+      <p style="margin:0 0 12px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Client Information</p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.055);border-radius:14px;overflow:hidden;">
+        <tr><td style="padding:4px 0;"><table width="100%" cellpadding="0" cellspacing="0">
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Full Name</td>
+              <td align="right" style="font-size:13px;font-family:Arial,sans-serif;color:#c8d8e8;font-weight:500;">John Doe</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Email</td>
+              <td align="right"><a href="mailto:john@example.com" style="color:#60a5fa;text-decoration:none;font-family:Arial,sans-serif;">john@example.com</a></td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">User ID</td>
+              <td align="right"><span style="font-family:'Courier New',monospace;font-size:11px;color:#2a3a50;">usr_a3f2c1b8d7e4f9</span></td>
+            </tr></table>
+          </td></tr>
+        </table></td></tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#0a0c14;padding:0 44px;border-left:1px solid rgba(99,102,241,.15);border-right:1px solid rgba(99,102,241,.15);">
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent);"></div>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:linear-gradient(180deg,#0a0c14 0%,#090b12 100%);padding:36px 44px 40px;text-align:center;border-left:1px solid rgba(99,102,241,.15);border-right:1px solid rgba(99,102,241,.15);">
+      <p style="margin:0 0 20px;font-size:13px;color:#3d5068;font-family:Arial,sans-serif;">Navigate to <strong style="color:#5a7090;">Pending Approvals</strong> in the admin panel to action this request.</p>
+      <a href="#" style="display:inline-block;padding:17px 48px;background:linear-gradient(135deg,#b8892a 0%,#c9a84c 35%,#e8c96a 55%,#c9a84c 75%,#a87c28 100%);color:#040608;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:Arial,sans-serif;box-shadow:0 12px 32px rgba(201,168,76,.28),0 4px 12px rgba(0,0,0,.4);">Review &amp; Approve →</a>
+    </td>
+  </tr>
+
+  <tr><td><div style="height:1px;background:linear-gradient(90deg,transparent 0%,#8a6820 15%,#c9a84c 40%,#e8c96a 55%,#c9a84c 70%,#8a6820 85%,transparent 100%);"></div></td></tr>
+
+  <tr>
+    <td style="background:#050709;border-radius:0 0 16px 16px;padding:28px 44px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><p style="margin:0 0 4px;font-size:13px;color:#6a5020;font-family:'Georgia',serif;letter-spacing:2px;text-transform:uppercase;">Aurum Capital</p>
+          <p style="margin:0;font-size:10px;color:#1a2535;font-family:Arial,sans-serif;">Dubai · London · New York · Singapore</p></td>
+          <td align="right"><p style="margin:0;font-size:10px;color:#1a2535;font-family:Arial,sans-serif;">Admin Notification</p>
+          <p style="margin:4px 0 0;font-size:10px;color:#1a2535;font-family:Arial,sans-serif;">© 2025 Aurum Capital</p></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+</table>
+</td></tr>
+</table>
+
+</div>
+
+<!-- ═══════════════════════════════ USER EMAIL ═══════════════════════════════ -->
+<div class="email-frame" id="frame-user">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#060810;min-height:100vh;">
+<tr><td align="center" style="padding:48px 16px 56px;">
+<table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;">
+
+  <tr><td><div style="height:3px;background:linear-gradient(90deg,transparent 0%,#8a6820 15%,#c9a84c 40%,#e8c96a 55%,#c9a84c 70%,#8a6820 85%,transparent 100%);border-radius:2px 2px 0 0;"></div></td></tr>
+
+  <tr>
+    <td style="background:linear-gradient(180deg,#0d1020 0%,#0a0c18 100%);padding:32px 44px 26px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td>
+          <span style="font-size:24px;font-weight:700;letter-spacing:5px;color:#c9a84c;text-transform:uppercase;font-family:'Georgia',serif;">AURUM</span>
+          <span style="font-size:24px;font-weight:300;letter-spacing:5px;color:#4a6080;text-transform:uppercase;font-family:'Georgia',serif;">&nbsp;CAPITAL</span>
+          <div style="margin-top:5px;"><span style="font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Private Investment Platform</span></div>
+        </td>
+        <td align="right" style="vertical-align:middle;">
+          <div style="display:inline-block;padding:7px 16px;background:rgba(243,186,47,.08);border:1px solid rgba(243,186,47,.2);border-radius:24px;">
+            <span style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#f3ba2f;text-transform:uppercase;font-family:Arial,sans-serif;">⏳&nbsp;Under Review</span>
+          </div>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:linear-gradient(160deg,#090c1a 0%,#0b0e1e 40%,#090b16 100%);padding:44px 44px 36px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);border-top:1px solid rgba(255,255,255,.04);">
+      <p style="margin:0 0 8px;font-size:11px;letter-spacing:2.5px;color:#5a7090;text-transform:uppercase;font-family:Arial,sans-serif;">Dear John,</p>
+      <h1 style="margin:0 0 16px;font-size:32px;color:#eef3fa;font-weight:400;line-height:1.25;font-family:'Georgia',serif;">Your deposit request<br/><span style="color:#c9a84c;">has been received.</span></h1>
+      <p style="margin:0;font-size:14px;color:#4a6080;font-family:Arial,sans-serif;line-height:1.8;max-width:460px;">
+        We have successfully received your deposit of <strong style="color:#8ca0b8;">$1,000.00 USD</strong> and our team is currently reviewing it. You will receive a confirmation once approved.
+      </p>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:linear-gradient(180deg,#090b16,#0a0d1a);padding:0 44px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <div style="margin:28px 0 20px;background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.18);border-radius:16px;padding:22px 28px;">
+        <table width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td>
+            <p style="margin:0 0 4px;font-size:9px;letter-spacing:3px;color:#6a5020;text-transform:uppercase;font-family:Arial,sans-serif;">Deposit Amount</p>
+            <p style="margin:0;font-size:38px;font-weight:700;color:#c9a84c;font-family:'Georgia',serif;letter-spacing:-1px;">$1,000.00</p>
+            <p style="margin:4px 0 0;font-size:11px;color:#3d5068;font-family:Arial,sans-serif;">United States Dollar (USD)</p>
+          </td>
+          <td align="right" style="vertical-align:middle;">
+            <p style="margin:0 0 4px;font-size:9px;letter-spacing:2px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Reference</p>
+            <p style="margin:0;font-size:16px;font-family:'Courier New',Courier,monospace;color:#8ca0b8;letter-spacing:.12em;font-weight:700;">#A3F2C1B8</p>
+            <div style="margin-top:10px;display:inline-block;padding:5px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:20px;">
+              <span style="font-size:10px;color:#818cf8;font-family:Arial,sans-serif;font-weight:700;letter-spacing:.5px;">Visa Card</span>
+            </div>
+          </td>
+        </tr></table>
+      </div>
+    </td>
+  </tr>
+
+  <!-- CARD VISUAL -->
+  <tr>
+    <td style="background:#0a0d1a;padding:0 44px 8px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <p style="margin:0 0 14px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Payment Instrument</p>
+      <table cellpadding="0" cellspacing="0" style="margin:0 auto 4px;width:100%;max-width:320px;">
+      <tr><td style="background:linear-gradient(135deg,#1a1f71 0%,#2832a0 50%,#0d1550 100%);border-radius:18px;padding:22px 24px 20px;box-shadow:0 24px 56px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.06);">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="vertical-align:middle;width:50%;">
+            <table cellpadding="0" cellspacing="0"><tr>
+              <td style="width:38px;height:28px;background:linear-gradient(145deg,#c8a040 0%,#edd060 30%,#f5e070 50%,#d4a840 72%,#a87a28 100%);border-radius:5px;border:1px solid rgba(0,0,0,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);font-size:0;line-height:0;">&nbsp;</td>
+            </tr></table>
+          </td>
+          <td align="right" style="vertical-align:middle;">
+            <span style="font-size:24px;font-weight:800;color:white;font-family:Georgia,serif;letter-spacing:4px;font-style:italic;text-shadow:0 2px 8px rgba(0,0,0,.5);">VISA</span>
+          </td>
+        </tr></table>
+        <p style="margin:20px 0 16px;font-size:15px;letter-spacing:.22em;color:rgba(255,255,255,.85);font-family:'Courier New',Courier,monospace;font-weight:700;line-height:1;">••••&nbsp;&nbsp;••••&nbsp;&nbsp;••••&nbsp;&nbsp;4521</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td style="vertical-align:bottom;padding-right:12px;">
+            <p style="margin:0 0 2px;font-size:7px;color:rgba(255,255,255,.38);letter-spacing:2.5px;text-transform:uppercase;font-family:Arial,sans-serif;">Card Holder</p>
+            <p style="margin:0;font-size:11px;color:rgba(255,255,255,.88);font-family:Arial,sans-serif;letter-spacing:1.5px;font-weight:600;">JOHN DOE</p>
+          </td>
+          <td align="right" style="vertical-align:bottom;">
+            <p style="margin:0 0 2px;font-size:7px;color:rgba(255,255,255,.38);letter-spacing:2px;text-transform:uppercase;font-family:Arial,sans-serif;">Valid Thru</p>
+            <p style="margin:0;font-size:13px;color:rgba(255,255,255,.88);font-family:'Courier New',Courier,monospace;letter-spacing:2px;font-weight:700;">12/28</p>
+          </td>
+        </tr></table>
+      </td></tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#0a0d1a;padding:16px 44px 24px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <p style="margin:0 0 12px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Deposit Summary</p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:14px;overflow:hidden;">
+        <tr><td style="padding:4px 0;"><table width="100%" cellpadding="0" cellspacing="0">
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Reference ID</td>
+              <td align="right"><span style="font-family:'Courier New',monospace;font-size:12px;color:#8ca0b8;letter-spacing:.1em;">#A3F2C1B8</span></td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Date Submitted</td>
+              <td align="right" style="font-size:13px;font-family:Arial,sans-serif;color:#c8d8e8;font-weight:500;">June 6, 2025 at 03:45 PM WAT</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Card Type</td>
+              <td align="right" style="font-size:13px;font-family:Arial,sans-serif;color:#c8d8e8;font-weight:500;">Visa</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.045);">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Card Number</td>
+              <td align="right" style="font-size:12px;font-family:'Courier New',Courier,monospace;color:#a8bdd4;letter-spacing:.04em;">•••• 4521</td>
+            </tr></table>
+          </td></tr>
+          <tr><td style="padding:14px 24px;">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-size:10px;color:#3d5068;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1.4px;">Processing</td>
+              <td align="right" style="font-size:13px;font-family:Arial,sans-serif;color:#c8d8e8;font-weight:500;">Manual review · 24h</td>
+            </tr></table>
+          </td></tr>
+        </table></td></tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#0a0d1a;padding:0 44px 32px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <p style="margin:0 0 16px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">What Happens Next</p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:4px;"><tr>
+        <td style="vertical-align:top;width:40px;padding-top:2px;"><div style="width:28px;height:28px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:50%;text-align:center;line-height:28px;font-size:11px;color:#c9a84c;font-family:Arial,sans-serif;font-weight:700;">1</div></td>
+        <td style="vertical-align:top;padding:4px 0 18px;">
+          <p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#c8d8e8;font-family:Arial,sans-serif;">Request In Review Queue</p>
+          <p style="margin:0;font-size:12px;color:#3d5068;font-family:Arial,sans-serif;line-height:1.65;">Our compliance team is verifying your payment details and confirming receipt.</p>
+        </td>
+      </tr></table>
+      <div style="margin-left:13px;width:1px;height:12px;background:rgba(201,168,76,.2);margin-bottom:4px;"></div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:4px;"><tr>
+        <td style="vertical-align:top;width:40px;padding-top:2px;"><div style="width:28px;height:28px;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);border-radius:50%;text-align:center;line-height:28px;font-size:11px;color:#60a5fa;font-family:Arial,sans-serif;font-weight:700;">2</div></td>
+        <td style="vertical-align:top;padding:4px 0 18px;">
+          <p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#8ca0b8;font-family:Arial,sans-serif;">You Receive a Decision Email</p>
+          <p style="margin:0;font-size:12px;color:#3d5068;font-family:Arial,sans-serif;line-height:1.65;">You will be notified by email once your deposit has been approved or if any action is required.</p>
+        </td>
+      </tr></table>
+      <div style="margin-left:13px;width:1px;height:12px;background:rgba(29,189,108,.2);margin-bottom:4px;"></div>
+      <table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td style="vertical-align:top;width:40px;padding-top:2px;"><div style="width:28px;height:28px;background:rgba(29,189,108,.07);border:1px solid rgba(29,189,108,.2);border-radius:50%;text-align:center;line-height:28px;font-size:11px;color:#1dbd6c;font-family:Arial,sans-serif;font-weight:700;">3</div></td>
+        <td style="vertical-align:top;padding:4px 0;">
+          <p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#8ca0b8;font-family:Arial,sans-serif;">Portfolio Balance Updated</p>
+          <p style="margin:0;font-size:12px;color:#3d5068;font-family:Arial,sans-serif;line-height:1.65;">Once approved, your portfolio balance is credited immediately and you can begin investing.</p>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:#0a0d1a;padding:0 44px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent);"></div>
+    </td>
+  </tr>
+
+  <tr>
+    <td style="background:linear-gradient(180deg,#0a0d1a,#090b16);padding:36px 44px 40px;text-align:center;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <p style="margin:0 0 20px;font-size:13px;color:#3d5068;font-family:Arial,sans-serif;line-height:1.7;">While you wait, you can monitor your portfolio, explore market data,<br/>and review open positions in your dashboard.</p>
+      <a href="#" style="display:inline-block;padding:17px 52px;background:linear-gradient(135deg,#b8892a 0%,#c9a84c 35%,#e8c96a 55%,#c9a84c 75%,#a87c28 100%);color:#040608;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:Arial,sans-serif;box-shadow:0 12px 32px rgba(201,168,76,.28),0 4px 12px rgba(0,0,0,.4);">View Dashboard →</a>
+      <p style="margin:18px 0 0;font-size:11px;color:#1e2d3d;font-family:Arial,sans-serif;">Need help?&nbsp;<a href="#" style="color:#3d5878;text-decoration:underline;">Contact our support team</a></p>
+    </td>
+  </tr>
+
+  <tr><td><div style="height:1px;background:linear-gradient(90deg,transparent 0%,#8a6820 15%,#c9a84c 40%,#e8c96a 55%,#c9a84c 70%,#8a6820 85%,transparent 100%);"></div></td></tr>
+
+  <tr>
+    <td style="background:#050709;border-radius:0 0 16px 16px;padding:28px 44px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><p style="margin:0 0 4px;font-size:13px;color:#6a5020;font-family:'Georgia',serif;letter-spacing:2px;text-transform:uppercase;">Aurum Capital</p>
+          <p style="margin:0;font-size:10px;color:#1a2535;font-family:Arial,sans-serif;">Dubai · London · New York · Singapore</p></td>
+          <td align="right"><p style="margin:0;font-size:10px;color:#1a2535;font-family:Arial,sans-serif;">© 2025 Aurum Capital</p></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+</table>
+</td></tr>
+</table>
+
+</div>
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.email-frame').forEach(f => f.classList.remove('active'));
+  document.querySelectorAll('.sw-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('frame-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
