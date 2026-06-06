@@ -305,27 +305,43 @@ serve(async (req: Request) => {
         const live   = Number((prices as Record<string, number>)[sym]) || Number(h.avg_buy_price)
         const qty    = Number(h.quantity)
         const weight = (live * qty) / totalVal
-        const newAvg = live - (parsedTarget * weight / qty)
+        const newAvg = Math.max(live - (parsedTarget * weight / qty), 0.0001)
+        const prevAvg = Number(h.avg_buy_price)
 
-        if (newAvg <= 0) {
-          failed.push(`${sym}: computed avg ${newAvg.toFixed(4)} skipped`)
-          continue
-        }
+        console.log(`[apply_target_pnl] ${sym}: prevAvg=${prevAvg} newAvg=${Number(newAvg.toFixed(8))} live=${live} qty=${qty} target=${parsedTarget}`)
 
-        // FIXED: plain .select() — no profile join
         const { data: updRow, error: updErr } = await svc
           .from("holdings")
           .update({
             avg_buy_price: Number(newAvg.toFixed(8)),
             updated_at: new Date().toISOString(),
           })
-          .eq("id", h.id)
+          .eq("user_id", userId as string)
+          .eq("symbol", sym)
           .select()
+
+        console.log(`[apply_target_pnl] ${sym}: updErr=${updErr?.message ?? 'none'} updRow=${JSON.stringify(updRow)}`)
 
         if (updErr) {
           failed.push(`${sym}: ${updErr.message}`)
+        } else if (!updRow || updRow.length === 0) {
+          failed.push(`${sym}: update matched 0 rows`)
         } else {
-          updated.push(updRow?.[0])
+          // Verify the write actually persisted (catches silent trigger reverts)
+          const { data: verify } = await svc
+            .from("holdings")
+            .select("avg_buy_price")
+            .eq("user_id", userId as string)
+            .eq("symbol", sym)
+            .single()
+          const actual = Number(verify?.avg_buy_price)
+          const expected = Number(newAvg.toFixed(8))
+          console.log(`[apply_target_pnl] ${sym}: verify actual=${actual} expected=${expected} match=${Math.abs(actual-expected)<0.000001}`)
+          if (Math.abs(actual - expected) > 0.000001) {
+            failed.push(`${sym}: write reverted (got ${actual}, expected ${expected})`)
+          } else {
+            updated.push(updRow[0])
+          }
         }
       }
 

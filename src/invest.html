@@ -804,6 +804,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <a href="trade.html" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-arrow-right-arrow-left"></i></div><div><div class="mm-link-name">Trade</div><div class="mm-link-desc">Live execution</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></a>
       <button onclick="closeMenu();setFilter('crypto',document.querySelector('[data-f=crypto]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-bitcoin-sign"></i></div><div><div class="mm-link-name">Cryptocurrency</div><div class="mm-link-desc">BTC · ETH · SOL · more</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
       <button onclick="closeMenu();setFilter('stocks',document.querySelector('[data-f=stocks]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-building-columns"></i></div><div><div class="mm-link-name">Global Equities</div><div class="mm-link-desc">TSLA · AAPL · NVDA · more</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
+      <button onclick="closeMenu();setFilter('commodities',document.querySelector('[data-f=commodities]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-coins"></i></div><div><div class="mm-link-name">Commodities</div><div class="mm-link-desc">GOLD · OIL · SILVER</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
       <button onclick="closeMenu();setFilter('property',document.querySelector('[data-f=property]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-building"></i></div><div><div class="mm-link-name">Real Estate</div><div class="mm-link-desc">Tokenized · From $500</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
       <div class="mm-divider"></div>
       <div class="mm-sec-label">// Account</div>
@@ -839,6 +840,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <button class="chip on" data-f="all" onclick="setFilter('all',this)">All Markets</button>
       <button class="chip" data-f="crypto" onclick="setFilter('crypto',this)"><i class="fas fa-bitcoin-sign" style="margin-right:4px;font-size:8.5px"></i>Crypto</button>
       <button class="chip" data-f="stocks" onclick="setFilter('stocks',this)">Equities</button>
+      <button class="chip" data-f="commodities" onclick="setFilter('commodities',this)"><i class="fas fa-coins" style="margin-right:4px;font-size:8.5px"></i>Commodities</button>
       <button class="chip" data-f="property" onclick="setFilter('property',this)">Real Estate</button>
     </div>
     <div class="filter-right">
@@ -868,6 +870,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div><div class="sec-eyebrow">// Global Equities</div><div class="sec-line"></div><h2 class="sec-title">Stock <em>Market</em></h2></div>
     </div>
     <div class="asset-grid" id="stocksGrid">
+      <div class="skeleton" style="height:420px"></div><div class="skeleton" style="height:420px"></div><div class="skeleton" style="height:420px"></div>
+    </div>
+  </section>
+  <div class="gold-sep"></div>
+  <section id="sec-commodities" class="reveal" style="margin-bottom:64px">
+    <div class="sec-head">
+      <div><div class="sec-eyebrow">// Precious Metals & Energy</div><div class="sec-line"></div><h2 class="sec-title">Raw <em>Commodities</em></h2></div>
+      <div class="live-pill"><div class="live-dot"></div>LIVE PRICES</div>
+    </div>
+    <div class="asset-grid" id="commoditiesGrid">
       <div class="skeleton" style="height:420px"></div><div class="skeleton" style="height:420px"></div><div class="skeleton" style="height:420px"></div>
     </div>
   </section>
@@ -1306,7 +1318,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div id="kHint" style="position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:8px;color:rgba(201,166,60,0);letter-spacing:.14em;pointer-events:none;transition:color .6s;white-space:nowrap">↑ ↑ ↓ ↓ ← → ← → B A · ADMIN</div>
 
 <script src="coingecko-sync.js?v=4"></script>
-<script src="price-sync.js"></script>
 <script>
 // ══════════════════════════════════════════════════
 //  CONFIG & SUPABASE
@@ -1373,6 +1384,11 @@ const STOCKS=[
   {sym:'AMZN',name:'Amazon',cat:'stocks',icon:'fab fa-amazon',color:'#ff9900',price:195.50,chg:-0.55,desc:"Global e-commerce leader and the world's largest cloud services provider.",vol24h:31.2e9,mktcap:2050e9},
   {sym:'GOOGL',name:'Alphabet Inc.',cat:'stocks',icon:'fab fa-google',color:'#4285f4',price:178.30,chg:+1.77,desc:'Search, YouTube, Google Cloud, and Waymo autonomous vehicle technology.',vol24h:19.8e9,mktcap:2230e9},
 ];
+const COMMODITIES=[
+  {sym:'GOLD',name:'Gold',cat:'commodities',icon:'fas fa-coins',color:'#c9a84c',price:3200,chg:+0.4,desc:'Timeless store of value and inflation hedge. The ultimate safe-haven asset held by central banks worldwide.',vol24h:210e9,mktcap:18500e9},
+  {sym:'OIL',name:'Crude Oil (WTI)',cat:'commodities',icon:'fas fa-oil-can',color:'#8b6914',price:70,chg:-1.2,desc:'Global benchmark crude oil driving energy markets. Prices influence transport, manufacturing, and inflation worldwide.',vol24h:45e9,mktcap:null},
+  {sym:'SILVER',name:'Silver',cat:'commodities',icon:'fas fa-circle',color:'#a8a9ad',price:32,chg:+0.7,desc:'Precious metal with dual industrial and investment demand. Key material in solar panels, electronics, and jewellery.',vol24h:20e9,mktcap:1800e9},
+];
 const PROPERTY=[
   {sym:'LOND',name:'The Shard Tower Suite',cat:'property',icon:'fas fa-building',color:'#c9a63c',price:500,yield_:20,location:'Southwark, London SE1',type:'Commercial',valuation:'$2.4M',valuationNum:2400000,funded:62,minEntry:500,img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&q=80',desc:'Premium commercial suite in London\'s iconic Shard skyscraper. Earn stable income from blue-chip tenants.'},
   {sym:'DXB',name:'Burj Khalifa Residences',cat:'property',icon:'fas fa-city',color:'#e8c96a',price:1000,yield_:20,location:'Downtown Dubai, UAE',type:'Hospitality',valuation:'$5.1M',valuationNum:5100000,funded:48,minEntry:1000,img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80',desc:'Iconic residences in the world\'s tallest building. Benefit from Dubai\'s booming luxury hospitality sector.'},
@@ -1381,7 +1397,7 @@ const PROPERTY=[
   {sym:'SGP',name:'Marina Bay Tower',cat:'property',icon:'fas fa-water',color:'#3cc8c8',price:500,yield_:20,location:'Marina Bay, Singapore',type:'Commercial',valuation:'$3.8M',valuationNum:3800000,funded:60,minEntry:500,img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&q=80',desc:'Strategic office tower in Singapore\'s premier financial district with AAA corporate tenants.'},
   {sym:'PAR',name:'Champs-Élysées Office',cat:'property',icon:'fas fa-tower-broadcast',color:'#627eea',price:1000,yield_:20,location:'8th Arrondissement, Paris',type:'Office',valuation:'$6.2M',valuationNum:6200000,funded:55,minEntry:1000,img:'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80',desc:'Prestigious address on Paris\'s most famous boulevard, with high-demand corporate office tenants.'},
 ];
-const ALL_ASSETS = [...CRYPTO, ...STOCKS, ...PROPERTY];
+const ALL_ASSETS = [...CRYPTO, ...STOCKS, ...COMMODITIES, ...PROPERTY];
 const MCAP = {BTC:1920e9,ETH:395e9,SOL:82e9,BNB:90e9,XRP:38e9,ADA:17e9,TSLA:790e9,AAPL:2900e9,NVDA:2160e9,MSFT:3070e9,AMZN:2050e9,GOOGL:2230e9};
 
 const DEPOSIT_COINS = [
@@ -1789,8 +1805,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('searchInput').addEventListener('input', renderAll);
   document.getElementById('signOutLink')?.addEventListener('click', doSignOut);
 
-  const obs = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), {threshold:.07});
+  const obs = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), {threshold:.07, rootMargin:'0px 0px 400px 0px'});
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  // Fallback: reveal all sections after 3s in case user hasn't scrolled (common on mobile)
+  setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible')), 3000);
 
   // Nav toggle
   const toggle = document.getElementById('navToggle');
@@ -2184,13 +2202,15 @@ function renderAll() {
 
   document.getElementById('sec-crypto').style.display = show('crypto') ? '' : 'none';
   document.getElementById('sec-stocks').style.display = show('stocks') ? '' : 'none';
+  document.getElementById('sec-commodities').style.display = show('commodities') ? '' : 'none';
   document.getElementById('sec-property').style.display = show('property') ? '' : 'none';
 
-  const cf=CRYPTO.filter(ok), sf=STOCKS.filter(ok), pf=PROPERTY.filter(ok);
+  const cf=CRYPTO.filter(ok), sf=STOCKS.filter(ok), comF=COMMODITIES.filter(ok), pf=PROPERTY.filter(ok);
   const empty = msg => `<div style="grid-column:1/-1;padding:40px;text-align:center;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--fog)">${msg}</div>`;
 
   document.getElementById('cryptoGrid').innerHTML = cf.length ? cf.map(assetCard).join('') : empty('No results');
   document.getElementById('stocksGrid').innerHTML = sf.length ? sf.map(assetCard).join('') : empty('No results');
+  document.getElementById('commoditiesGrid').innerHTML = comF.length ? comF.map(assetCard).join('') : empty('No results');
   document.getElementById('propertyGrid').innerHTML = pf.length ? pf.map(propCard).join('') : empty('No results');
 
   // Trigger entrance animation + init charts with stagger
@@ -2207,6 +2227,7 @@ function renderAll() {
 
     cf.forEach((a, i) => setTimeout(() => initChart(a, 'area', '1D'), i * 50 + 100));
     sf.forEach((a, i) => setTimeout(() => initChart(a, 'area', '1D'), i * 50 + 100 + cf.length * 50));
+    comF.forEach((a, i) => setTimeout(() => initChart(a, 'area', '1D'), i * 50 + 100 + (cf.length + sf.length) * 50));
     pf.forEach((a, i) => setTimeout(() => initChart(a, 'area', '1M'), i * 50 + 200));
   });
 }
@@ -2224,7 +2245,7 @@ function setFilter(f, btn) {
 //  TICKER
 // ══════════════════════════════════════════════════
 function buildTicker() {
-  const all = [...CRYPTO, ...STOCKS];
+  const all = [...CRYPTO, ...STOCKS, ...COMMODITIES];
   // Duplicate for seamless CSS loop; only first set gets IDs to avoid duplicates
   document.getElementById('liveTicker').innerHTML = [...all, ...all].map((a, idx) => {
     const up = a.chg >= 0;
@@ -2255,7 +2276,7 @@ function closeMenu() {
   document.body.classList.remove('menu-open');
 }
 function buildMenuCoins() {
-  const all = [...CRYPTO, ...STOCKS];
+  const all = [...CRYPTO, ...STOCKS, ...COMMODITIES];
   document.getElementById('mmCoins').innerHTML = all.map(a => {
     const up = a.chg >= 0;
     return `<div class="mm-coin" onclick="closeMenu();openInvestModal('${a.sym}')">
@@ -2287,12 +2308,12 @@ function renderPortfolioPanel() {
     document.getElementById('alloc-legend').innerHTML=''; return;
   }
   const liveMap={}; ALL_ASSETS.forEach(a=>liveMap[a.sym]=a.price);
-  let total=0,cryptoV=0,stocksV=0,propV=0,pnl=0;
-  myHoldings.forEach(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);total+=val;pnl+=val-cost;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol);if(asset?.cat==='crypto')cryptoV+=val;else if(asset?.cat==='stocks')stocksV+=val;else propV+=val;});
+  let total=0,cryptoV=0,stocksV=0,commodV=0,propV=0,pnl=0;
+  myHoldings.forEach(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);total+=val;pnl+=val-cost;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol);if(asset?.cat==='crypto')cryptoV+=val;else if(asset?.cat==='stocks')stocksV+=val;else if(asset?.cat==='commodities')commodV+=val;else propV+=val;});
   txt('pf-total','$'+fmtU(total));
   const pnlEl=document.getElementById('pf-pnl-badge'); pnlEl.textContent=(pnl>=0?'+':'-')+' $'+fmtU(Math.abs(pnl)); pnlEl.style.color=pnl>=0?'var(--gain)':'var(--loss)'; pnlEl.style.background=pnl>=0?'var(--gain-bg)':'var(--loss-bg)';
   txt('pf-pos-badge', myHoldings.length+' position'+(myHoldings.length!==1?'s':''));
-  const segs=[];if(cryptoV>0)segs.push({label:'Crypto',val:cryptoV,color:'#f7931a'});if(stocksV>0)segs.push({label:'Stocks',val:stocksV,color:'#4285f4'});if(propV>0)segs.push({label:'Real Estate',val:propV,color:'#c9a63c'});
+  const segs=[];if(cryptoV>0)segs.push({label:'Crypto',val:cryptoV,color:'#f7931a'});if(stocksV>0)segs.push({label:'Stocks',val:stocksV,color:'#4285f4'});if(commodV>0)segs.push({label:'Commodities',val:commodV,color:'#c9a84c'});if(propV>0)segs.push({label:'Real Estate',val:propV,color:'#c9a63c'});
   document.getElementById('alloc-bar').innerHTML=segs.map(s=>`<div style="flex:${s.val};background:${s.color};border-radius:4px;min-width:4px"></div>`).join('')||'<div style="flex:1;background:rgba(255,255,255,.06);border-radius:6px"></div>';
   document.getElementById('alloc-legend').innerHTML=segs.map(s=>`<span style="display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)"><span style="width:8px;height:8px;border-radius:2px;background:${s.color};flex-shrink:0"></span>${s.label} ${total>0?((s.val/total)*100).toFixed(1):0}%</span>`).join('');
   document.getElementById('holdings-list').innerHTML=myHoldings.map(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);const chg=cost>0?((val-cost)/cost*100):0;const up=chg>=0;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};const isProp=asset.cat==='property';const withdrawBtn=isProp?`<button onclick="event.stopPropagation();openPropertyWithdraw('${h.symbol}')" style="margin-top:6px;width:100%;padding:6px;border-radius:8px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.18);color:#e84848;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;cursor:pointer">Withdraw Investment</button>`:'';return`<div class="holding-row" onclick="${isProp?'':'openInvestModal(\''+h.symbol+'\')'}"><div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0"><div style="width:36px;height:36px;border-radius:12px;background:${asset.color}16;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${asset.icon}"></i></div><div style="min-width:0"><p style="font-weight:600;color:var(--pearl);font-size:13px">${h.symbol}</p><p style="color:var(--fog);font-size:11px;font-family:'DM Mono',monospace">${Number(h.quantity)<1?Number(h.quantity).toFixed(6):Number(h.quantity).toFixed(4)} units</p></div></div><div style="text-align:right"><p style="font-family:'DM Mono',monospace;font-size:13px;color:var(--pearl)">$${fmtU(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${up?'var(--gain)':'var(--loss)'}">${up?'+':''}${chg.toFixed(2)}%</p></div></div>${withdrawBtn}`;}).join('');

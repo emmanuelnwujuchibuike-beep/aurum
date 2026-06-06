@@ -2102,7 +2102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <script>
 
-/* ---------- CONFIG & GLOBALS ---------- */
+  /* ---------- CONFIG & GLOBALS ---------- */
 const SUPABASE_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
 const EDGE_FN_URL   = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment';
@@ -2134,7 +2134,6 @@ let txDeleteMode = false;
 let allMyTransactions = [];
 let txModalFilter = 'all';
 
-/* FIX B: trade lock prevents realtime from overwriting mid-trade */
 let _tradeLock = false;
 
 const DEFAULT_PRICES = {
@@ -2382,9 +2381,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   sb.channel('dash-profile').on('postgres_changes',
     { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${authUser.id}` },
     ({ new: row }) => {
-      /* FIX B: ignore realtime events while a trade is actively writing to DB.
-         This prevents a stale snapshot from the realtime subscription
-         overwriting the optimistic local update we set during confirmTrade. */
       if (_tradeLock) return;
       profile = { ...profile, ...row }; refreshUI();
     }
@@ -2708,7 +2704,6 @@ async function confirmTrade() {
   document.getElementById('trade-spin').style.display = 'flex';
   document.getElementById('trade-confirm-btn').disabled = true;
 
-  /* FIX B: Lock realtime profile updates during the write sequence */
   _tradeLock = true;
 
   try {
@@ -2737,7 +2732,6 @@ async function confirmTrade() {
       }
 
     } else {
-      /* SELL */
       const netUSD = +(amt - fee).toFixed(2);
       const { data: tx, error: txErr } = await sb.from('transactions').insert({
         user_id: authUser.id, type: 'sell', symbol: a.sym, name: a.name, icon: a.icon, color: a.color,
@@ -2756,26 +2750,17 @@ async function confirmTrade() {
       }
     }
 
-    /* Update cash in DB */
     const { error: cashErr } = await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
     if (cashErr) throw cashErr;
 
-    /* FIX B+C: Update local profile immediately so the UI reflects the new
-       cash without waiting for the realtime event (which is now locked out). */
     profile = { ...profile, cash: newCash };
 
-    /* FIX D: Refresh holdings and portfolio stats explicitly.
-       A short delay guards against DB replication lag so loadPortfolioStats
-       doesn't pick up a stale snapshot of the holding we just mutated. */
     await new Promise(r => setTimeout(r, 300));
     await Promise.all([loadPortfolioStats(), loadTransactions()]);
-
-    /* Refresh the full profile from DB to confirm persisted cash value */
     await loadProfile();
 
     closeTradeModal();
 
-    /* Build receipt P&L */
     const updatedHolding = myHoldings.find(h => h.symbol === a.sym);
     let pnl = 0, pnlLabel = 'Unrealised P&L';
     if (!isBuy) {
@@ -2804,7 +2789,6 @@ async function confirmTrade() {
     document.getElementById('trade-confirm-label').style.display = 'flex';
     document.getElementById('trade-spin').style.display = 'none';
     document.getElementById('trade-confirm-btn').disabled = false;
-    /* FIX B: Release the realtime lock */
     _tradeLock = false;
   }
 }
@@ -2894,7 +2878,6 @@ async function confirmDashPropertyWithdraw(sym, currentVal, penalty, netPayout) 
       : `Property withdrawal ${sym} | Amount: $${fmtUSD(netPayout)}`;
     await sb.from('transactions').insert({ user_id: authUser.id, type: 'sell', symbol: sym, name: asset.name, icon: asset.icon, color: asset.color, quantity: Number(holding.quantity), price_at_tx: Number(holding.avg_buy_price), usd_amount: netPayout, status: 'approved', note });
     await sb.from('holdings').delete().eq('id', holding.id);
-    /* FIX C: Read fresh cash before updating */
     const { data: fp } = await sb.from('profiles').select('cash').eq('id', authUser.id).single();
     const newCash = +((Number(fp?.cash || 0)) + netPayout).toFixed(2);
     await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
@@ -3577,7 +3560,7 @@ function admRenderHoldings(rows) {
     const meta = ASSET_META[h.symbol] || {}; const live = PRICES[h.symbol] || Number(h.avg_buy_price);
     const val = Number(h.quantity) * live; const cost = Number(h.quantity) * Number(h.avg_buy_price); const pnl = val - cost;
     const name = h.profiles ? `${h.profiles.first_name || ''} ${h.profiles.last_name || ''}` : h.user_id.slice(0, 8) + '…';
-    return `<tr><td style="color:var(--pearl)">${esc(name)}</td><td><span class="badge" style="background:${(meta.color || '#5a6880')}18;color:${meta.color || '#5a6880'};border:1px solid ${(meta.color || '#5a6880')}30">${h.symbol}</span></td><td class="mono">${Number(h.quantity).toFixed(4)}</td><td class="mono" style="color:var(--gold)">$${fmtPrice(Number(h.avg_buy_price))}</td><td class="mono">$${fmtUSD(val)}</td><td class="mono" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}$${fmtUSD(pnl)}</td><td style="display:flex;gap:5px"><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admEditHoldingInline('${h.id}','${h.user_id}','${h.symbol}',${h.quantity},${h.avg_buy_price})">Edit</button><button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admDeleteHolding('${h.id}')">Del</button></td></tr>`;
+    return `<tr><td style="color:var(--pearl)">${esc(name)}</td><td><span class="badge" style="background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};border:1px solid ${(meta.color||'#5a6880')}30">${h.symbol}</span></td><td class="mono">${Number(h.quantity).toFixed(4)}</td><td class="mono" style="color:var(--gold)">$${fmtPrice(Number(h.avg_buy_price))}</td><td class="mono">$${fmtUSD(val)}</td><td class="mono" style="color:${pnl >= 0 ? '#22c55e' : '#ef4444'}">${pnl >= 0 ? '+' : ''}$${fmtUSD(pnl)}</td><td style="display:flex;gap:5px"><button class="adm-btn adm-btn-gold adm-btn-sm" onclick="admEditHoldingInline('${h.id}','${h.user_id}','${h.symbol}',${h.quantity},${h.avg_buy_price})">Edit</button><button class="adm-btn adm-btn-loss adm-btn-sm" onclick="admDeleteHolding('${h.id}')">Del</button></td></tr>`;
   }).join('');
 }
 function admFilterHoldings(q) { const f = q.toLowerCase(); admRenderHoldings(admAllHoldings.filter(h => (h.symbol || '').toLowerCase().includes(f))); }
@@ -3598,16 +3581,24 @@ window.admEditHoldingInline   = admEditHoldingInline;
 window.admDeleteHolding       = admDeleteHolding;
 
 /* ══════════════════════════════════════════════════════════════
-   P&L EDITOR
+   P&L EDITOR — ALL THREE BUGS FIXED:
    
-   FIX A: admLoadUserPnl now calls callAdmin('get_user_holdings')
-   instead of a direct anon-client sb.from('holdings') query.
-   The anon client respects RLS: an admin user cannot read OTHER
-   users' holdings via the anon key.  The edge function uses the
-   service-role key which bypasses RLS, so it works for any uid.
+   BUG 1: Stray console.log block inside admApplyTargetPnl was
+          executing as function body code after the finally block,
+          causing silent errors that aborted the post-apply refresh.
+          FIXED: removed entirely.
    
-   FIX E: uid is always passed explicitly and the <select> is
-   re-synced after every await boundary.
+   BUG 2: admLoadHoldings() calls admPopulateSelects() which
+          rebuilds and resets the pnl-user <select>, so the uid
+          was being lost between the apply call and the re-render.
+          FIXED: uid captured once before any await, re-synced to
+          the select after admLoadHoldings() completes.
+   
+   BUG 3: uid was being re-read from the DOM after await
+          boundaries, so any intermediate DOM manipulation
+          (including admPopulateSelects) would corrupt it.
+          FIXED: uid stored as a plain string at function start,
+          passed explicitly to admLoadUserPnl(uid).
 ══════════════════════════════════════════════════════════════ */
 
 function admPopulateSelects() {
@@ -3625,12 +3616,13 @@ function admPopulateSelects() {
   });
 }
 
-async function admLoadUserPnl(explicitUid) {
+async function admLoadUserPnl(explicitUid, skipTargetReset) {
   const pnlUserEl = document.getElementById('pnl-user');
-  /* FIX E: capture uid synchronously; never re-read from DOM after any await */
+  /* Capture uid synchronously — never re-read from DOM after any await */
   const uid = explicitUid || (pnlUserEl ? pnlUserEl.value : '');
   if (!uid) return;
 
+  /* Sync the select to the uid we're actually loading */
   if (pnlUserEl && pnlUserEl.value !== uid) pnlUserEl.value = uid;
 
   document.getElementById('pnl-positions-card').style.display = 'block';
@@ -3638,14 +3630,11 @@ async function admLoadUserPnl(explicitUid) {
     '<div style="text-align:center;padding:24px;color:#5a6880"><div class="spin"></div></div>';
 
   try {
-    /* ─────────────────────────────────────────────────────────────────────
-       FIX A: Use the edge function (service-role key) to fetch holdings.
-       Direct anon-client queries are blocked by RLS for cross-user reads.
-    ───────────────────────────────────────────────────────────────────── */
+    /* Use the edge function (service-role key) — anon client blocked by RLS for cross-user reads */
     const holdingsData = await callAdmin('get_user_holdings', { userId: uid });
     const hs = holdingsData || [];
 
-    /* FIX E: re-sync select after the await above */
+    /* Re-sync after the await in case something else touched the select */
     if (pnlUserEl && pnlUserEl.value !== uid) pnlUserEl.value = uid;
 
     if (!hs.length) {
@@ -3661,7 +3650,7 @@ async function admLoadUserPnl(explicitUid) {
     });
 
     const pnlTargetEl = document.getElementById('pnl-target');
-    if (pnlTargetEl) pnlTargetEl.value = totalPnl.toFixed(2);
+    if (pnlTargetEl && !skipTargetReset) pnlTargetEl.value = totalPnl.toFixed(2);
 
     const summaryHtml =
       '<div style="margin-bottom:14px;padding:12px;background:var(--lift);border:1px solid var(--rim);border-radius:10px;display:flex;gap:20px;flex-wrap:wrap">' +
@@ -3720,7 +3709,10 @@ async function admLoadUserPnl(explicitUid) {
                 (pnl >= 0 ? '+' : '') + '$' + fmtUSD(pnl) +
               '</div>' +
             '</div>' +
-            '<button class="adm-btn adm-btn-gold adm-btn-sm" id="pnl-save-' + h.id + '" onclick="admSaveSinglePnl(\'' + h.id + '\',\'' + uid + '\')">Save</button>' +
+            /* uid embedded in data-attribute at render time — no DOM select dependency */
+            '<button class="adm-btn adm-btn-gold adm-btn-sm" id="pnl-save-' + h.id + '"' +
+            ' data-hold-id="' + h.id + '" data-uid="' + uid + '"' +
+            ' onclick="admSaveSinglePnl(this.dataset.holdId, this.dataset.uid)">Save</button>' +
           '</div>' +
         '</div>'
       );
@@ -3729,7 +3721,7 @@ async function admLoadUserPnl(explicitUid) {
     document.getElementById('pnl-positions-body').innerHTML =
       summaryHtml + '<div style="display:flex;flex-direction:column;gap:10px">' + rowsHtml + '</div>';
 
-    /* FIX E: restore select after innerHTML rebuild */
+    /* Final re-sync after innerHTML rebuild */
     if (pnlUserEl) pnlUserEl.value = uid;
 
   } catch (err) {
@@ -3740,19 +3732,23 @@ async function admLoadUserPnl(explicitUid) {
 }
 
 async function admSaveSinglePnl(holdId, uid) {
+  if (!holdId || !uid) {
+    showToast('Error', 'Missing holding ID or user ID', 'error');
+    return;
+  }
+
   const avgEl   = document.getElementById('pnl-avg-' + holdId);
   const qtyEl   = document.getElementById('pnl-qty-' + holdId);
   const saveBtn = document.getElementById('pnl-save-' + holdId);
+  const pnlEl   = document.getElementById('pnl-pnl-' + holdId);
 
   if (!avgEl || !qtyEl) {
-    alert('ERROR: Input fields not found for holdId: ' + holdId);
+    showToast('Error', 'Input fields not found', 'error');
     return;
   }
 
   const avg = parseFloat(avgEl.value);
   const qty = parseFloat(qtyEl.value);
-
-  alert('DEBUG — About to save:\nholdId: ' + holdId + '\nuid: ' + uid + '\navg: ' + avg + '\nqty: ' + qty);
 
   if (isNaN(avg) || avg <= 0) { showToast('Invalid avg buy price', 'Must be a positive number', 'error'); return; }
   if (isNaN(qty) || qty <= 0) { showToast('Invalid quantity', 'Must be a positive number', 'error'); return; }
@@ -3760,36 +3756,36 @@ async function admSaveSinglePnl(holdId, uid) {
   if (saveBtn) { saveBtn.textContent = 'Saving…'; saveBtn.disabled = true; }
 
   try {
-    const result = await callAdmin('update_holding', { holdingId: holdId, avgPrice: avg, quantity: qty });
-    alert('SUCCESS:\n' + JSON.stringify(result, null, 2));
-    showToast('P&L Saved ✓', `Avg: $${result?.avg_buy_price} · Qty: ${result?.quantity}`, 'success');
-  } catch (err) {
-    alert('FAILED:\n' + err.message);
-    showToast('Save failed', err.message, 'error');
-  } finally {
-    if (saveBtn) { saveBtn.textContent = 'Save'; saveBtn.disabled = false; }
-  }
-}
+    const updatedRow = await callAdmin('update_holding', { holdingId: holdId, avgPrice: avg, quantity: qty });
 
-async function admApplyTargetPnl() {
-  const pnlUserEl   = document.getElementById('pnl-user');
-  const pnlTargetEl = document.getElementById('pnl-target');
-  const uid    = pnlUserEl   ? pnlUserEl.value               : '';
-  const target = pnlTargetEl ? parseFloat(pnlTargetEl.value) : NaN;
+    const savedAvg = Number(updatedRow?.avg_buy_price ?? avg);
+    const savedQty = Number(updatedRow?.quantity ?? qty);
 
-  if (!uid)          { showToast('Error', 'Select a user first', 'error');           return; }
-  if (isNaN(target)) { showToast('Error', 'Enter a valid target P&L amount', 'error'); return; }
+    avgEl.value = savedAvg.toFixed(4);
+    qtyEl.value = savedQty.toFixed(6);
 
-  const applyBtn = document.querySelector('[onclick="admApplyTargetPnl()"]');
-  if (applyBtn) { applyBtn.textContent = 'Applying…'; applyBtn.disabled = true; }
+    if (pnlEl) {
+      const livePrice = PRICES[updatedRow?.symbol] || avg;
+      const newPnl = (livePrice - savedAvg) * savedQty;
+      pnlEl.textContent = (newPnl >= 0 ? '+' : '') + '$' + fmtUSD(Math.abs(newPnl));
+      pnlEl.style.color = newPnl >= 0 ? '#22c55e' : '#ef4444';
+    }
 
-  try {
-    const result = await callAdmin('apply_target_pnl', { userId: uid, targetPnl: target, prices: PRICES });
+    if (saveBtn) {
+      saveBtn.textContent = '✓ Saved';
+      saveBtn.style.background = 'rgba(34,197,94,.2)';
+      saveBtn.style.color = '#22c55e';
+      setTimeout(() => {
+        saveBtn.textContent = 'Save';
+        saveBtn.style.background = '';
+        saveBtn.style.color = '';
+        saveBtn.disabled = false;
+      }, 2000);
+    }
 
-    const failMsg = result?.failed?.length ? ` (${result.failed.length} skipped)` : '';
-    showToast('Target P&L Applied ✓', `${result?.updated ?? '?'} positions updated${failMsg}`, 'success');
+    showToast('P&L Saved ✓', `${updatedRow?.symbol} — Avg: $${savedAvg.toFixed(2)} · Qty: ${savedQty.toFixed(6)}`, 'success');
 
-    await admLoadHoldings();
+    admLoadHoldings();
     admUpdateStats();
 
     if (authUser && uid === authUser.id) {
@@ -3803,28 +3799,72 @@ async function admApplyTargetPnl() {
         portVal += val; pnl += val - cost; costBasis += cost;
       });
       const cash = Number(profile?.cash || 0);
-      setTxt('portVal',  fmtUSD(portVal));
-      setTxt('posCount', myHoldings.length);
-      setTxt('netWorth', fmtUSD(cash + portVal));
-      const pEl = document.getElementById('portPnl');
-      if (pEl) { pEl.textContent = (pnl >= 0 ? '+' : '') + ' $' + fmtUSD(Math.abs(pnl)) + ' P&L'; pEl.style.color = pnl >= 0 ? '#1dbd6c' : '#e84848'; }
       updateNetworthHero(cash, portVal, pnl, costBasis);
       updatePanelStats();
     }
 
-    await admLoadUserPnl(uid);
+  } catch (err) {
+    showToast('Save failed', err.message || 'Please try again', 'error');
+    if (saveBtn) { saveBtn.textContent = 'Save'; saveBtn.disabled = false; }
+  }
+}
+
+async function admApplyTargetPnl() {
+  const pnlUserEl   = document.getElementById('pnl-user');
+  const pnlTargetEl = document.getElementById('pnl-target');
+
+  /* Capture BOTH values synchronously before any await — never re-read from DOM */
+  const uid    = pnlUserEl   ? pnlUserEl.value               : '';
+  const target = pnlTargetEl ? parseFloat(pnlTargetEl.value) : NaN;
+
+  if (!uid)          { showToast('Error', 'Select a user first', 'error');            return; }
+  if (isNaN(target)) { showToast('Error', 'Enter a valid target P&L amount', 'error'); return; }
+
+  const applyBtn = document.querySelector('[onclick="admApplyTargetPnl()"]');
+  if (applyBtn) { applyBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:11px"></i> Applying…'; applyBtn.disabled = true; }
+
+  let succeeded = false;
+  try {
+    const result = await callAdmin('apply_target_pnl', { userId: uid, targetPnl: target, prices: PRICES });
+
+    const updCount  = result?.updated  ?? 0;
+    const failCount = result?.failed?.length ?? 0;
+    if (updCount === 0 && failCount > 0) {
+      showToast('Apply failed', result.failed[0], 'error');
+    } else {
+      const failNote = failCount ? ` (${failCount} failed)` : '';
+      showToast('Target P&L Applied ✓', `${updCount} position${updCount !== 1 ? 's' : ''} updated${failNote}`, 'success');
+      succeeded = true;
+    }
+
+    admUpdateStats();
+
+    /* Reload positions panel WITHOUT resetting pnl-target — the user's entered value stays,
+       panel just refreshes the avg prices and P&L preview from the newly saved DB state. */
+    await admLoadUserPnl(uid, true);
 
   } catch (err) {
     showToast('Apply failed', err.message, 'error');
   } finally {
-    if (applyBtn) { applyBtn.textContent = 'Apply Target P&L'; applyBtn.disabled = false; }
+    if (applyBtn) {
+      if (succeeded) {
+        applyBtn.innerHTML = '<i class="fas fa-check" style="font-size:11px"></i> Applied';
+        applyBtn.style.background = 'rgba(34,197,94,.15)';
+        applyBtn.style.color = '#22c55e';
+        applyBtn.disabled = false;
+        setTimeout(() => {
+          applyBtn.innerHTML = '<i class="fas fa-magic-wand-sparkles"></i> Apply Target P&L';
+          applyBtn.style.background = '';
+          applyBtn.style.color = '';
+        }, 2500);
+      } else {
+        applyBtn.innerHTML = '<i class="fas fa-magic-wand-sparkles"></i> Apply Target P&L';
+        applyBtn.style.background = '';
+        applyBtn.style.color = '';
+        applyBtn.disabled = false;
+      }
+    }
   }
-
-  // Run this in browser console to see what holdId looks like
-document.querySelectorAll('[id^="pnl-save-"]').forEach(btn => {
-  console.log('Button id:', btn.id);
-  console.log('onclick:', btn.getAttribute('onclick'));
-});
 }
 
 window.admLoadUserPnl    = admLoadUserPnl;

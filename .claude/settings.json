@@ -15,7 +15,8 @@
       "Bash(py --version)",
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\u\\\\OneDrive\\\\Documents\\\\Aurum capital\\\\src\\\\\" -Recurse -File | Select-Object -ExpandProperty Extension | Sort-Object | Get-Unique)",
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\u\\\\OneDrive\\\\Documents\\\\Aurum capital\\\\\" -Directory | Select-Object Name)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(npx supabase *)"
     ]
   }
 }
