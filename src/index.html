@@ -159,8 +159,8 @@
     .mm-backdrop { position: absolute; inset: 0; background: rgba(4,6,8,0); backdrop-filter: blur(0px); transition: background .5s, backdrop-filter .5s; }
     .mobile-menu.open .mm-backdrop { background: rgba(4,6,8,.82); backdrop-filter: blur(14px); }
     .mm-panel {
-      position: absolute; 
-      top: 10; 
+      position: absolute;
+      top: 0;
       right: 0;
       width: min(310px, 84vw); 
       height: 100%;
@@ -530,6 +530,7 @@
       .verticals-grid { grid-template-columns: 1fr; }
       .property-grid { grid-template-columns: 1fr; }
       .trust-row { gap: 0; flex-wrap: wrap; }
+      .trust-item + .trust-item { border-left: none; padding-left: 0; padding-top: 14px; }
       .cha-stats { grid-template-columns: repeat(3,1fr); }
       .footer-grid { grid-template-columns: 1fr; gap: 32px; }
       .asset-card { overflow: hidden; }
@@ -569,23 +570,6 @@
     .theme-icon { display: inline-block; transition: transform .55s cubic-bezier(.34,1.56,.64,1), opacity .3s; line-height: 1; }
     .theme-toggle.spin .theme-icon { transform: rotate(360deg) scale(0.5); opacity: 0; }
 
-    /* ══════════════════════════════════════════════════
-       CURSOR GLOW
-    ══════════════════════════════════════════════════ */
-    .cursor-glow {
-      position: fixed; pointer-events: none; z-index: 9001;
-      width: 380px; height: 380px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(201,168,76,0.055) 0%, transparent 70%);
-      transform: translate(-50%, -50%);
-      transition: opacity .4s;
-      mix-blend-mode: screen;
-      will-change: left, top;
-    }
-    html[data-theme="light"] .cursor-glow {
-      background: radial-gradient(circle, rgba(180,140,50,0.07) 0%, transparent 70%);
-      mix-blend-mode: multiply;
-    }
-    @media (hover: none) { .cursor-glow { display: none; } }
 
     /* ══════════════════════════════════════════════════
        LUXURY ANIMATIONS
@@ -625,16 +609,6 @@
       50%     { text-shadow: 0 0 24px rgba(201,168,76,.5); }
     }
 
-    /* Diamond particles */
-    .diamond-particle {
-      position: fixed; z-index: 2; pointer-events: none;
-      width: 5px; height: 5px;
-      background: var(--gold);
-      clip-path: polygon(50% 0%,100% 50%,50% 100%,0% 50%);
-      animation: floatDiamond linear infinite;
-      opacity: 0;
-    }
-
     /* Section label shimmer */
     .section-label {
       background: linear-gradient(90deg, var(--gold-dim) 0%, var(--gold-light) 40%, var(--gold-dim) 60%, var(--gold) 100%);
@@ -644,10 +618,10 @@
     }
     .section-label::before { background: var(--gold); opacity: .55; }
 
-    /* Enhanced reveals */
-    .reveal { opacity: 1; transform: translateY(0) scale(1); filter: blur(0);
-      transition: opacity .85s cubic-bezier(.25,.46,.45,.94), transform .85s cubic-bezier(.25,.46,.45,.94), filter .85s; }
-    .reveal.in { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    /* Enhanced spring reveals */
+    .reveal { opacity: 0; transform: translateY(28px); filter: blur(2px);
+      transition: opacity .95s cubic-bezier(.16,1,.3,1), transform .95s cubic-bezier(.16,1,.3,1), filter .95s cubic-bezier(.16,1,.3,1); }
+    .reveal.in { opacity: 1; transform: none; filter: blur(0); }
 
     /* Hero title enhanced */
     .hero-title { letter-spacing: -.01em; }
@@ -709,7 +683,7 @@
       transition-timing-function: cubic-bezier(.25,.46,.45,.94);
     }
     /* But NOT these — they have their own critical transitions */
-    .particle, .diamond-particle, .cursor-glow, .hero-orb-1, .hero-orb-2, .hero-orb-3,
+    .particle, .aurora-orb, .hero-orb-1, .hero-orb-2, .hero-orb-3,
     .hero-grid, .ticker-track, .mm-link, .mm-logo,
     .mm-close, .mm-cta, .mm-strip, .mm-coins, [class*="reveal"], .asset-card,
     .btn-hero-primary, .btn-hero-ghost, .logo-mark, .market-card, .vert-card,
@@ -931,16 +905,208 @@
     /* ── LIGHT SECTIONS ── */
     html[data-theme="light"] .section-title { color: var(--text-1); }
     html[data-theme="light"] .section-sub { color: var(--text-2); }
+
+    /* ══════════════════════════════════════════════════
+       FAQ SECTION
+    ══════════════════════════════════════════════════ */
+    .faq-section { padding: 110px 40px; position: relative; overflow: hidden; }
+    .faq-section::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 70% at 8% 55%, rgba(201,168,76,.045) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 50% at 90% 15%, rgba(98,126,234,.03) 0%, transparent 55%);
+    }
+    .faq-inner { max-width: 1240px; margin: 0 auto; position: relative; z-index: 1; }
+    .faq-layout { display: grid; grid-template-columns: 340px 1fr; gap: 88px; align-items: start; }
+    .faq-sidebar { position: sticky; top: 90px; }
+
+    .faq-badge {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-family: var(--ff-mono); font-size: 9px; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--gold); padding: 6px 14px 6px 10px; border-radius: 99px;
+      background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.22); margin-bottom: 24px;
+    }
+    .faq-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+    .faq-sidebar-title {
+      font-family: var(--ff-display); font-size: clamp(32px,3.2vw,48px); font-weight: 400;
+      line-height: 1.06; color: var(--text-1); margin-bottom: 16px; letter-spacing: -.01em;
+    }
+    .faq-sidebar-title em { font-style: italic; color: var(--gold); }
+    .faq-sidebar-sub {
+      font-size: 15px; color: var(--text-3); font-weight: 300; line-height: 1.75; margin-bottom: 40px;
+    }
+
+    /* Still have questions card */
+    .faq-contact-card {
+      background: linear-gradient(135deg, rgba(201,168,76,.06) 0%, rgba(10,16,30,.7) 100%);
+      border: 1px solid rgba(201,168,76,.2); border-radius: 20px; padding: 26px 24px;
+      position: relative; overflow: hidden; text-decoration: none; display: block;
+      transition: border-color .3s, transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+    }
+    .faq-contact-card::before {
+      content: ''; position: absolute; top: -50px; right: -50px; width: 160px; height: 160px;
+      border-radius: 50%; background: radial-gradient(circle,rgba(201,168,76,.12) 0%,transparent 65%);
+      pointer-events: none;
+    }
+    .faq-contact-card:hover { border-color: rgba(201,168,76,.42); transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,.32); }
+    .faq-cc-icon {
+      width: 38px; height: 38px; border-radius: 12px; margin-bottom: 14px;
+      background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.22);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: var(--gold);
+    }
+    .faq-cc-title { font-family: var(--ff-display); font-size: 17px; color: var(--text-1); margin-bottom: 6px; }
+    .faq-cc-sub { font-size: 13px; color: var(--text-3); font-weight: 300; line-height: 1.6; margin-bottom: 16px; }
+    .faq-cc-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--ff-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold); transition: gap .3s;
+    }
+    .faq-contact-card:hover .faq-cc-link { gap: 11px; }
+
+    /* Accordion list */
+    .faq-list { display: flex; flex-direction: column; }
+    .faq-item { border-bottom: 1px solid rgba(255,255,255,.065); }
+    .faq-item:first-child { border-top: 1px solid rgba(255,255,255,.065); }
+    .faq-item.faq-open { border-bottom-color: rgba(201,168,76,.2); }
+
+    .faq-btn {
+      display: flex; align-items: center; gap: 18px; width: 100%; padding: 24px 0;
+      background: none; border: none; cursor: pointer; text-align: left; position: relative;
+    }
+    .faq-num {
+      font-family: var(--ff-mono); font-size: 9.5px; letter-spacing: .14em;
+      color: var(--gold); opacity: .5; flex-shrink: 0; min-width: 22px;
+      transition: opacity .3s;
+    }
+    .faq-item.faq-open .faq-num { opacity: 1; }
+    .faq-q {
+      font-family: var(--ff-display); font-size: 18px; font-weight: 400;
+      color: var(--text-2); line-height: 1.3; flex: 1; transition: color .3s;
+    }
+    .faq-item.faq-open .faq-q,
+    .faq-btn:hover .faq-q { color: var(--text-1); }
+    .faq-icon {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: var(--text-3);
+      transition: all .45s cubic-bezier(.16,1,.3,1);
+    }
+    .faq-item.faq-open .faq-icon {
+      background: rgba(201,168,76,.1); border-color: rgba(201,168,76,.3);
+      color: var(--gold); transform: rotate(45deg);
+    }
+
+    /* Grid-based height animation — handles any answer length */
+    .faq-answer-wrap {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows .5s cubic-bezier(.16,1,.3,1);
+    }
+    .faq-item.faq-open .faq-answer-wrap { grid-template-rows: 1fr; }
+    .faq-answer-inner { overflow: hidden; }
+    .faq-answer {
+      padding: 0 0 26px 40px;
+      font-size: 15px; color: var(--text-3); line-height: 1.82; font-weight: 300;
+    }
+    .faq-answer strong { color: var(--text-2); font-weight: 500; }
+    .faq-answer a { color: var(--gold); text-decoration: none; }
+    .faq-answer a:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .faq-layout { grid-template-columns: 1fr; gap: 52px; }
+      .faq-sidebar { position: static; }
+      .faq-contact-card { max-width: 480px; }
+    }
+    @media (max-width: 640px) {
+      .faq-section { padding: 72px 20px; }
+      .faq-q { font-size: 16px; }
+      .faq-btn { padding: 20px 0; gap: 14px; }
+      .faq-answer { padding: 0 0 22px 34px; font-size: 14px; }
+    }
+    @media (max-width: 480px) {
+      .faq-section { padding: 60px 16px; }
+      .faq-btn { padding: 18px 0; }
+      .faq-q { font-size: 15px; }
+      .faq-answer { padding-left: 24px; }
+      .faq-icon { width: 24px; height: 24px; font-size: 11px; }
+    }
+
+    /* Light theme overrides */
+    html[data-theme="light"] .faq-item { border-bottom-color: rgba(0,0,0,.07); }
+    html[data-theme="light"] .faq-item:first-child { border-top-color: rgba(0,0,0,.07); }
+    html[data-theme="light"] .faq-item.faq-open { border-bottom-color: rgba(184,144,45,.28); }
+    html[data-theme="light"] .faq-contact-card {
+      background: linear-gradient(135deg,rgba(184,144,45,.07) 0%,rgba(255,252,245,.92) 100%);
+    }
+    html[data-theme="light"] .faq-icon { border-color: rgba(0,0,0,.1); color: var(--text-3); }
+    html[data-theme="light"] .faq-item.faq-open .faq-icon { background: rgba(184,144,45,.1); border-color: rgba(184,144,45,.3); }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LUXURY MOTION SYSTEM — outdomode-style
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+    /* — Animated grain — */
+    .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.032;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='g'%3E%3CfeTurbulence baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23g)'/%3E%3C/svg%3E");
+      background-size:220px;animation:grainPos .18s steps(1) infinite}
+    @keyframes grainPos{
+      0%  {background-position:0 0}      10% {background-position:-5% -10%}
+      20% {background-position:-15% 5%}  30% {background-position:7% -25%}
+      40% {background-position:-5% 25%}  50% {background-position:-15% 10%}
+      60% {background-position:15% 0}    70% {background-position:0 15%}
+      80% {background-position:3% 35%}   90% {background-position:-10% 10%}}
+
+    /* — Fixed aurora orbs — */
+    .aurora-orb{position:fixed;pointer-events:none;z-index:1;border-radius:50%;filter:blur(110px);will-change:transform}
+    .aurora-1{width:700px;height:550px;background:radial-gradient(circle,rgba(201,168,76,.09) 0%,transparent 65%);
+      top:-18%;left:-12%;animation:auroraA 22s ease-in-out infinite}
+    .aurora-2{width:560px;height:680px;background:radial-gradient(circle,rgba(98,126,234,.06) 0%,transparent 60%);
+      bottom:-22%;right:-14%;animation:auroraB 28s ease-in-out infinite reverse}
+    .aurora-3{width:460px;height:460px;background:radial-gradient(circle,rgba(29,197,94,.04) 0%,transparent 60%);
+      top:45%;left:48%;animation:auroraC 34s ease-in-out infinite}
+    @keyframes auroraA{0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(4%,3%) scale(1.07)} 66%{transform:translate(-3%,6%) scale(.96)}}
+    @keyframes auroraB{0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-5%,-4%) scale(1.1)} 66%{transform:translate(4%,-5%) scale(.93)}}
+    @keyframes auroraC{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.6} 50%{transform:translate(-49%,-51%) scale(1.2);opacity:1}}
+
+    /* — Lerp cursor — */
+    #lux-cur{position:fixed;top:0;left:0;pointer-events:none;z-index:99998}
+    #lux-cur-dot{position:absolute;width:5px;height:5px;border-radius:50%;
+      background:var(--gold);transform:translate(-50%,-50%);transition:width .2s,height .2s,border-radius .2s}
+    #lux-cur-ring{position:absolute;width:34px;height:34px;border-radius:50%;
+      border:1px solid rgba(201,168,76,.4);transform:translate(-50%,-50%);
+      transition:width .55s cubic-bezier(.16,1,.3,1),height .55s cubic-bezier(.16,1,.3,1),border-color .35s}
+    body.cur-hover #lux-cur-dot{width:3px;height:3px}
+    body.cur-hover #lux-cur-ring{width:54px;height:54px;border-color:rgba(201,168,76,.72)}
+    body.cur-click #lux-cur-dot{width:8px;height:8px;background:rgba(201,168,76,.6)}
+    body.cur-click #lux-cur-ring{width:20px;height:20px;transition-duration:.08s}
+    @media(pointer:coarse){#lux-cur{display:none}.grain-overlay{display:none}}
+
+    /* — Char stagger — */
+    @keyframes charUp{from{opacity:0;transform:translateY(55%)}to{opacity:1;transform:translateY(0)}}
+
+    /* light-theme adjustments */
+    html[data-theme="light"] #lux-cur-dot{background:var(--gold)}
+    html[data-theme="light"] #lux-cur-ring{border-color:rgba(184,144,45,.45)}
+    html[data-theme="light"] body.cur-hover #lux-cur-ring{border-color:rgba(184,144,45,.72)}
+    html[data-theme="light"] .grain-overlay{opacity:.015}
+    html[data-theme="light"] .aurora-1{opacity:.5}
+    html[data-theme="light"] .aurora-2{opacity:.4}
+    html[data-theme="light"] .aurora-3{opacity:.3}
   </style>
 </head>
 <body>
 <script src="intro-loader.js"></script>
 
-  <!-- Cursor glow & theme overlay -->
-  <div id="cursorGlow" class="cursor-glow"></div>
+  <!-- Luxury motion layer -->
+  <div class="grain-overlay" aria-hidden="true"></div>
+  <div class="aurora-orb aurora-1" aria-hidden="true"></div>
+  <div class="aurora-orb aurora-2" aria-hidden="true"></div>
+  <div class="aurora-orb aurora-3" aria-hidden="true"></div>
+  <div id="lux-cur" aria-hidden="true"><div id="lux-cur-dot"></div><div id="lux-cur-ring"></div></div>
   <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;background:rgba(250,248,244,0.6);backdrop-filter:blur(2px);transition:opacity .15s ease;"></div>
-  <!-- Particles -->
-  <div id="particles" style="position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden;"></div>
 
   <!-- HEADER -->
   <header id="mainHeader">
@@ -953,6 +1119,7 @@
       <a href="invest.html">Invest</a>
       <a href="#assets">Assets</a>
       <a href="#property">Property</a>
+      <a href="#faq">FAQ</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </nav>
@@ -1013,6 +1180,13 @@
           <div class="mm-link-inner">
             <div class="mm-link-icon"><i class="fas fa-building"></i></div>
             <div><div class="mm-link-name">Property</div><div class="mm-link-desc">Prime real estate</div></div>
+          </div>
+          <i class="fas fa-chevron-right mm-link-arrow"></i>
+        </a>
+        <a href="#faq" class="mm-link" onclick="closeMenu()">
+          <div class="mm-link-inner">
+            <div class="mm-link-icon"><i class="fas fa-circle-question"></i></div>
+            <div><div class="mm-link-name">FAQ</div><div class="mm-link-desc">Common questions answered</div></div>
           </div>
           <i class="fas fa-chevron-right mm-link-arrow"></i>
         </a>
@@ -1306,6 +1480,121 @@
   </section>
 
   <!-- ══ CTA BAND ══ -->
+  <!-- ══ FAQ ══ -->
+  <section class="faq-section" id="faq">
+    <div class="faq-inner">
+      <div class="faq-layout">
+
+        <!-- Sidebar (sticky on desktop) -->
+        <div class="faq-sidebar reveal">
+          <div class="faq-badge"><span class="faq-badge-dot"></span> Common Questions</div>
+          <h2 class="faq-sidebar-title">Everything you<br>need to <em>know</em></h2>
+          <p class="faq-sidebar-sub">Straightforward answers to the questions our investors ask most. Can't find what you're looking for? Our advisors are always available.</p>
+
+          <a href="contact.html" class="faq-contact-card">
+            <div class="faq-cc-icon"><i class="fas fa-headset"></i></div>
+            <div class="faq-cc-title">Still have questions?</div>
+            <p class="faq-cc-sub">Our team responds within 24 hours. No bots — real advisors who know the platform.</p>
+            <span class="faq-cc-link">Contact Support <i class="fas fa-arrow-right" style="font-size:9px"></i></span>
+          </a>
+        </div>
+
+        <!-- Accordion -->
+        <div class="faq-list reveal reveal-delay-1">
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span class="faq-num">01</span>
+              <span class="faq-q">How does Aurum Capital work?</span>
+              <span class="faq-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer-inner">
+              <div class="faq-answer">Aurum Capital is a <strong>multi-asset investment platform</strong> that lets you invest across crypto, global equities, commodities, and real estate — all from one dashboard. Deposit funds, choose your allocations, and monitor your full portfolio with real-time P&amp;L analytics updated every 30 seconds.</div>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span class="faq-num">02</span>
+              <span class="faq-q">Is my investment capital secure?</span>
+              <span class="faq-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer-inner">
+              <div class="faq-answer">Security is foundational to everything we build. Your account is protected with <strong>bank-grade 256-bit AES encryption</strong>, mandatory two-factor authentication, and cold storage for digital assets. Our platform undergoes regular third-party audits and operates under applicable financial services regulation.</div>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span class="faq-num">03</span>
+              <span class="faq-q">What assets can I invest in?</span>
+              <span class="faq-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer-inner">
+              <div class="faq-answer">You have access to four major asset classes: <strong>Cryptocurrencies</strong> (Bitcoin, Ethereum, Solana, and 50+ altcoins), <strong>Global equities</strong> (Tesla, Apple, Nvidia, Microsoft and more), <strong>Commodities</strong> (Gold, Silver, Crude Oil), and <strong>Premium real estate</strong> — fractional ownership in institutional-grade property.</div>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span class="faq-num">04</span>
+              <span class="faq-q">What are the minimum investment amounts?</span>
+              <span class="faq-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer-inner">
+              <div class="faq-answer">There is <strong>no minimum for crypto or stock positions</strong> — you can start with any amount. Real estate investments begin from <strong>$1,000</strong>, allowing fractional access to properties that would otherwise require hundreds of thousands in capital. All minimum requirements are displayed clearly before you confirm any position.</div>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span class="faq-num">05</span>
+              <span class="faq-q">How do deposits and withdrawals work?</span>
+              <span class="faq-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer-inner">
+              <div class="faq-answer">Deposits are accepted via <strong>bank transfer, debit/credit card</strong>, and direct crypto transfer — typically credited within minutes. Withdrawals to your bank are processed within <strong>1–3 business days</strong>; crypto withdrawals usually settle within 24 hours. There are no withdrawal fees on standard accounts.</div>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span class="faq-num">06</span>
+              <span class="faq-q">Are there management or trading fees?</span>
+              <span class="faq-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer-inner">
+              <div class="faq-answer">Aurum Capital charges <strong>0% annual management fee</strong>. A small, transparent trading spread applies to each transaction — always shown upfront before you confirm. There are no subscription fees, no hidden charges, and no penalty for holding cash in your account.</div>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span class="faq-num">07</span>
+              <span class="faq-q">How quickly can I open an account?</span>
+              <span class="faq-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer-inner">
+              <div class="faq-answer">Account creation takes <strong>under 5 minutes</strong>. Sign up with your email address, complete a brief identity verification (KYC) — typically instant for most applicants — fund your account, and you are ready to invest. <a href="signup.html">Get started here →</a></div>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span class="faq-num">08</span>
+              <span class="faq-q">Can I track my portfolio performance in real time?</span>
+              <span class="faq-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer-inner">
+              <div class="faq-answer">Yes. Your personal dashboard provides a <strong>live view of your entire portfolio</strong> — current value, unrealised P&amp;L, allocation breakdown across asset classes, and position-level performance. Prices stream directly from global exchanges and refresh every 30 seconds automatically.</div>
+            </div></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="cta-band">
     <div class="cta-band-inner reveal">
       <div>
@@ -1920,23 +2209,6 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     function initReveal() { document.querySelectorAll('.reveal').forEach(function(el){ revealObserver.observe(el); }); }
 
-    /* ── PARTICLES ── */
-    function spawnParticle() {
-      var p = document.getElementById('particles');
-      if (!p) return;
-      var el = document.createElement('div');
-      el.className = 'particle';
-      el.style.left = Math.random() * 100 + 'vw';
-      var dur   = (Math.random() * 16 + 10) + 's';
-      var delay = (Math.random() * 6) + 's';
-      el.style.animationDuration = dur;
-      el.style.animationDelay   = delay;
-      el.style.width = el.style.height = (Math.random() * 2 + 1.5) + 'px';
-      el.style.opacity = (Math.random() * 0.4 + 0.1).toString();
-      p.appendChild(el);
-      setTimeout(function(){ el.remove(); spawnParticle(); }, (parseFloat(dur) + parseFloat(delay)) * 1000 + 500);
-    }
-    for (var pi = 0; pi < 18; pi++) { setTimeout(spawnParticle, pi * 600); }
 
     /* ══════════════════════════════════════════
        INIT — DOMContentLoaded
@@ -2036,64 +2308,117 @@
   })();
 
   /* ══════════════════════════════════════════
-     CURSOR GLOW — smooth magnetic follow
+     FAQ ACCORDION
   ══════════════════════════════════════════ */
-  (function() {
-    var glow = document.getElementById('cursorGlow');
-    if (!glow) return;
-    if (window.matchMedia('(hover: none)').matches) return; /* skip on touch */
-
-    var tx = window.innerWidth / 2, ty = window.innerHeight / 2;
-    var cx = tx, cy = ty;
-    var raf;
-
-    document.addEventListener('mousemove', function(e) {
-      tx = e.clientX; ty = e.clientY;
-    }, { passive: true });
-
-    /* Ease glow position — lags slightly behind cursor for silky feel */
-    function loop() {
-      cx += (tx - cx) * 0.07;
-      cy += (ty - cy) * 0.07;
-      glow.style.left = cx + 'px';
-      glow.style.top  = cy + 'px';
-      raf = requestAnimationFrame(loop);
-    }
-    loop();
-
-    /* Expand on interactive elements */
-    document.addEventListener('mouseover', function(e) {
-      if (e.target.matches('button,a,.market-card,.prop-card,.vert-card,.ac-row')) {
-        glow.style.width = glow.style.height = '520px';
-      }
-    }, { passive: true });
-    document.addEventListener('mouseout', function(e) {
-      if (e.target.matches('button,a,.market-card,.prop-card,.vert-card,.ac-row')) {
-        glow.style.width = glow.style.height = '380px';
-      }
-    }, { passive: true });
+  (function(){
+    document.querySelectorAll('.faq-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var item=btn.closest('.faq-item');
+        var isOpen=item.classList.contains('faq-open');
+        /* close all */
+        document.querySelectorAll('.faq-item').forEach(function(i){
+          i.classList.remove('faq-open');
+          i.querySelector('.faq-btn').setAttribute('aria-expanded','false');
+        });
+        /* open clicked if it was closed */
+        if(!isOpen){
+          item.classList.add('faq-open');
+          btn.setAttribute('aria-expanded','true');
+          /* smooth scroll into view on mobile */
+          if(window.innerWidth<768){
+            setTimeout(function(){
+              item.scrollIntoView({behavior:'smooth',block:'nearest'});
+            },120);
+          }
+        }
+      });
+    });
   })();
 
   /* ══════════════════════════════════════════
-     DIAMOND PARTICLES — luxury accent
+     LUXURY MOTION SYSTEM
   ══════════════════════════════════════════ */
-  (function() {
-    var container = document.getElementById('particles');
-    if (!container) return;
-    function spawnDiamond() {
-      var d = document.createElement('div');
-      d.className = 'diamond-particle';
-      d.style.left  = (Math.random() * 100) + 'vw';
-      var dur   = (Math.random() * 20 + 14) + 's';
-      var delay = (Math.random() * 8) + 's';
-      d.style.animationDuration = dur;
-      d.style.animationDelay   = delay;
-      d.style.width = d.style.height = (Math.random() * 3 + 3) + 'px';
-      container.appendChild(d);
-      setTimeout(function() { d.remove(); spawnDiamond(); },
-        (parseFloat(dur) + parseFloat(delay)) * 1000 + 200);
+  (function(){
+
+    /* ① Lerp cursor */
+    if(window.matchMedia('(pointer:fine)').matches){
+      var dot=document.getElementById('lux-cur-dot');
+      var ring=document.getElementById('lux-cur-ring');
+      var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+      document.addEventListener('mousemove',function(e){
+        mx=e.clientX;my=e.clientY;
+        dot.style.left=mx+'px';dot.style.top=my+'px';
+      },{passive:true});
+      document.addEventListener('mousedown',function(){document.body.classList.add('cur-click');});
+      document.addEventListener('mouseup',function(){document.body.classList.remove('cur-click');});
+      (function tick(){
+        rx+=(mx-rx)*.1;ry+=(my-ry)*.1;
+        ring.style.left=rx+'px';ring.style.top=ry+'px';
+        requestAnimationFrame(tick);
+      })();
+      document.addEventListener('mouseover',function(e){
+        var t=e.target.closest('a,button,[onclick],.market-card,.prop-card,.vert-card,.ac-row,.btn-hero-primary,.btn-hero-ghost');
+        document.body.classList.toggle('cur-hover',!!t);
+      },{passive:true});
     }
-    for (var di = 0; di < 6; di++) setTimeout(spawnDiamond, di * 1400);
+
+    /* ② Hero headline char stagger */
+    function animChars(el){
+      if(!el||el.dataset.cs)return;
+      el.dataset.cs='1';
+      var txt=el.textContent;
+      el.textContent='';
+      txt.split('').forEach(function(c,i){
+        if(c===' '){el.appendChild(document.createTextNode(' '));return;}
+        var s=document.createElement('span');
+        s.textContent=c;
+        s.style.cssText='display:inline-block;animation:charUp .7s cubic-bezier(.16,1,.3,1) '+(i*.028).toFixed(3)+'s both';
+        el.appendChild(s);
+      });
+    }
+
+    /* ③ Magnetic hover on CTA buttons */
+    function initMag(){
+      document.querySelectorAll('.btn-hero-primary,.btn-hero-ghost,.btn-gold').forEach(function(el){
+        el.style.willChange='transform';
+        el.addEventListener('mousemove',function(e){
+          var r=el.getBoundingClientRect();
+          var x=(e.clientX-r.left-r.width/2)*.14;
+          var y=(e.clientY-r.top-r.height/2)*.14;
+          el.style.transform='translate('+x+'px,'+y+'px)';
+        });
+        el.addEventListener('mouseleave',function(){el.style.transform='';});
+      });
+    }
+
+    /* ④ Aurora scroll parallax */
+    var a1=document.querySelector('.aurora-1');
+    var a2=document.querySelector('.aurora-2');
+    var a3=document.querySelector('.aurora-3');
+    window.addEventListener('scroll',function(){
+      var y=window.scrollY;
+      if(a1)a1.style.marginTop=(y*-.04)+'px';
+      if(a2)a2.style.marginBottom=(y*-.05)+'px';
+      if(a3)a3.style.marginTop=(y*-.025)+'px';
+    },{passive:true});
+
+    document.addEventListener('DOMContentLoaded',function(){
+      /* fire char stagger on hero headline */
+      var heroTitle=document.querySelector('.hero-title');
+      if(heroTitle){
+        /* wait for hero-revealed so it's visible first */
+        var mo=new MutationObserver(function(){
+          if(document.body.classList.contains('hero-revealed')){
+            mo.disconnect();
+            setTimeout(function(){animChars(heroTitle);},200);
+          }
+        });
+        mo.observe(document.body,{attributes:true,attributeFilter:['class']});
+        if(document.body.classList.contains('hero-revealed'))animChars(heroTitle);
+      }
+      initMag();
+    });
+
   })();
   </script>
   <script src="chat-widget.js"></script>

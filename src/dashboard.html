@@ -489,6 +489,52 @@ body.menu-open{overflow:hidden}
 .amt-input{flex:1;background:transparent;border:none;padding:14px;color:var(--pearl);
   font-family:'DM Mono',monospace;font-size:20px;outline:none;min-width:0}
 
+/* ── DEPOSIT PROCESSING SCREEN ── */
+@keyframes depOrbitalSpin{to{transform:rotate(360deg)}}
+@keyframes depProcPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.94)}}
+@keyframes depCheckBounce{0%{transform:scale(0) rotate(-20deg);opacity:0}65%{transform:scale(1.18) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes depApprovedGlow{0%,100%{box-shadow:0 0 14px rgba(29,189,108,.35)}50%{box-shadow:0 0 32px rgba(29,189,108,.65)}}
+.dep-proc-wrap{padding:36px 26px 32px;text-align:center}
+.dep-proc-orbital{position:relative;width:120px;height:120px;margin:0 auto 28px}
+.dep-proc-ring-a{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:var(--gold);border-right-color:rgba(201,166,60,.25);animation:depOrbitalSpin 2.2s linear infinite}
+.dep-proc-ring-b{position:absolute;top:18px;left:18px;right:18px;bottom:18px;border-radius:50%;border:1.5px solid transparent;border-top-color:rgba(201,166,60,.45);border-left-color:rgba(201,166,60,.15);animation:depOrbitalSpin 1.5s linear infinite reverse}
+.dep-proc-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.dep-proc-center-badge{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,rgba(201,166,60,.14),rgba(201,166,60,.05));border:1px solid rgba(201,166,60,.22);display:flex;align-items:center;justify-content:center;transition:all .6s cubic-bezier(.16,1,.3,1)}
+.dep-proc-status-h{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--pearl);font-weight:300;margin-bottom:6px;transition:all .5s}
+.dep-proc-status-s{font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;transition:all .5s}
+.dep-proc-amt{display:inline-flex;align-items:center;gap:8px;background:rgba(201,166,60,.06);border:1px solid rgba(201,166,60,.16);border-radius:99px;padding:9px 22px;font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);font-weight:300;margin-bottom:30px;letter-spacing:.02em}
+/* Timeline */
+.dep-proc-timeline{display:flex;align-items:center;justify-content:center;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto}
+.dep-proc-node{display:flex;flex-direction:column;align-items:center;gap:7px}
+.dep-proc-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.12);transition:all .5s cubic-bezier(.16,1,.3,1)}
+.dep-proc-dot.tl-done{background:var(--gain);border-color:rgba(29,189,108,.5);box-shadow:0 0 10px rgba(29,189,108,.4)}
+.dep-proc-dot.tl-active{background:var(--gold);border-color:rgba(201,166,60,.6);animation:depProcPulse 1.8s ease-in-out infinite;box-shadow:0 0 14px rgba(201,166,60,.5)}
+.dep-proc-dot.tl-approved{background:var(--gain);border-color:rgba(29,189,108,.6);box-shadow:0 0 18px rgba(29,189,108,.6);animation:depApprovedGlow 2s ease-in-out infinite}
+.dep-proc-dot.tl-rejected{background:#e84848;border-color:rgba(232,72,72,.5);box-shadow:0 0 12px rgba(232,72,72,.4)}
+.dep-proc-tl-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--fog);transition:color .5s;white-space:nowrap}
+.dep-proc-tl-lbl.tl-done,.dep-proc-tl-lbl.tl-approved{color:var(--gain)}
+.dep-proc-tl-lbl.tl-active{color:var(--gold)}
+.dep-proc-tl-lbl.tl-rejected{color:#e84848}
+.dep-proc-connector{flex:1;height:1px;background:rgba(255,255,255,.08);margin:0 8px;margin-bottom:14px;max-width:60px;transition:background .5s}
+.dep-proc-connector.conn-done{background:linear-gradient(90deg,var(--gain),rgba(201,166,60,.4))}
+/* Live pulse bar */
+.dep-proc-live{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:8px}
+.dep-proc-live-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:depProcPulse 1.4s ease-in-out infinite;flex-shrink:0;transition:background .5s}
+.dep-proc-live-txt{font-family:'DM Mono',monospace;font-size:10px;color:var(--fog);letter-spacing:.04em;transition:color .5s}
+.dep-proc-meta{font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);letter-spacing:.1em;margin-bottom:26px;opacity:.7}
+.dep-proc-note{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);text-align:center;line-height:1.8;margin-top:14px;opacity:.8}
+/* State: approved */
+.dep-proc-wrap.state-approved .dep-proc-ring-a{border-top-color:var(--gain);border-right-color:rgba(29,189,108,.2);animation:none}
+.dep-proc-wrap.state-approved .dep-proc-ring-b{border-top-color:rgba(29,189,108,.4);border-left-color:rgba(29,189,108,.1);animation:none}
+.dep-proc-wrap.state-approved .dep-proc-center-badge{background:linear-gradient(135deg,rgba(29,189,108,.18),rgba(29,189,108,.06));border-color:rgba(29,189,108,.3)}
+/* State: rejected */
+.dep-proc-wrap.state-rejected .dep-proc-ring-a{border-top-color:#e84848;border-right-color:rgba(232,72,72,.2);animation:none}
+.dep-proc-wrap.state-rejected .dep-proc-ring-b{border-top-color:rgba(232,72,72,.35);border-left-color:rgba(232,72,72,.1);animation:none}
+.dep-proc-wrap.state-rejected .dep-proc-center-badge{background:linear-gradient(135deg,rgba(232,72,72,.14),rgba(232,72,72,.04));border-color:rgba(232,72,72,.28)}
+/* Light theme overrides */
+html[data-theme="light"] .dep-proc-amt{background:rgba(159,122,30,.06);border-color:rgba(159,122,30,.2)}
+html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
+
 /* ── PERIOD BTNS ── */
 .period-btn{font-family:'DM Mono',monospace;font-size:10px;padding:5px 12px;border-radius:8px;
   border:1px solid rgba(255,255,255,.07);background:transparent;color:var(--ash);cursor:pointer;transition:all .2s}
@@ -1003,11 +1049,12 @@ body.menu-open{overflow:hidden}
    HERO STAT ROW — grid-based, mobile-friendly
 ══════════════════════════════════════════════════════ */
 .nw-stat-grid{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap}
-.nw-stat-cell{padding:0 28px 0 0;margin-right:4px;flex:1;min-width:0}
-.nw-stat-sep-line{width:1px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.1) 25%,rgba(255,255,255,.1) 75%,transparent);flex-shrink:0;align-self:stretch;margin:0 24px 0 0}
-.nw-stat-lbl-p{font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.18em;margin-bottom:8px}
-.nw-stat-val-p{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--pearl);font-weight:300;line-height:1}
-.nw-stat-sub-p{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);margin-top:5px}
+.nw-stat-cell{padding:0 32px 0 0;flex:1;min-width:0;position:relative}
+.nw-stat-sep-line{width:1px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.14) 20%,rgba(255,255,255,.14) 80%,transparent);flex-shrink:0;align-self:stretch;margin:0 28px 0 0}
+.nw-stat-lbl-p{font-family:'DM Mono',monospace;font-size:6.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.26em;margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.nw-stat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;display:inline-block}
+.nw-stat-val-p{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--pearl);font-weight:300;line-height:1;letter-spacing:-.018em;font-feature-settings:'kern' 1}
+.nw-stat-sub-p{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);margin-top:7px;letter-spacing:.04em}
 
 /* ── RESPONSIVE ── */
 @media(min-width:1025px){
@@ -1065,8 +1112,12 @@ body.menu-open{overflow:hidden}
     padding:18px 20px;
     box-shadow:0 2px 16px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.04)}
   .alloc-ring-wrap{width:100px!important;height:100px!important;flex-shrink:0}
-  .alloc-ring-center div:last-child{font-size:20px!important}
+  .alloc-ring-center #ringPct{font-size:20px!important}
   .alloc-ring-center div:first-child{font-size:6.5px!important;letter-spacing:.15em!important}
+  #ringPnlCenter{font-size:6px!important}
+  #ringPnlAmt{font-size:17px!important}
+  #ringPnlPctDisp{font-size:7.5px!important;padding:2px 7px!important}
+  #ringPnlPanel{padding:9px 11px!important}
   /* legend beside ring */
   .nw-analytics-block > div:last-child{
     flex:1!important;padding-left:20px!important;gap:11px!important;
@@ -1076,9 +1127,13 @@ body.menu-open{overflow:hidden}
   .action-tiles-grid{grid-template-columns:repeat(2,1fr)!important}
   .action-premium{padding:20px 12px!important;border-radius:20px!important}
 
+  /* hero stat values scale down at tablet */
+  .nw-stat-val-p{font-size:26px!important}
+
   /* KPI: 2×2 */
   .grid-stats{grid-template-columns:1fr 1fr!important}
   .kpi-premium{padding:22px 18px!important;border-radius:20px!important}
+  .kpi-p-value{font-size:clamp(24px,4.5vw,38px)!important}
   .kpi-sparkline{height:24px!important}
 
   /* ad banners */
@@ -1130,7 +1185,11 @@ body.menu-open{overflow:hidden}
   /* analytics ring — compact at 640 */
   .nw-analytics-block{padding:14px 16px!important;border-radius:16px!important;margin-top:20px!important}
   .alloc-ring-wrap{width:84px!important;height:84px!important}
-  .alloc-ring-center div:last-child{font-size:17px!important}
+  .alloc-ring-center #ringPct{font-size:17px!important}
+  #ringPnlCenter{font-size:5.5px!important}
+  #ringPnlAmt{font-size:15px!important}
+  #ringPnlPctDisp{font-size:7px!important;padding:2px 6px!important}
+  #ringPnlPanel{padding:8px 10px!important;border-radius:10px!important;margin-top:0!important}
   .nw-analytics-block > div:last-child{padding-left:16px!important;margin-left:12px!important}
   .greeting-h1{font-size:clamp(32px,9vw,48px)!important;margin-bottom:8px!important}
 
@@ -1143,9 +1202,12 @@ body.menu-open{overflow:hidden}
   .action-premium{gap:8px!important;padding:18px 10px!important}
   .action-premium>div>div:first-child{font-size:12px!important}
 
+  /* hero stat values go smaller on small mobile */
+  .nw-stat-val-p{font-size:22px!important}
+
   /* KPI: 2 col */
   .grid-stats{grid-template-columns:1fr 1fr!important}
-  .kpi-p-value{font-size:clamp(22px,5vw,32px)!important}
+  .kpi-p-value{font-size:clamp(22px,5.5vw,30px)!important}
   .kpi-sparkline{height:20px!important}
 
   /* sep */
@@ -1175,13 +1237,22 @@ body.menu-open{overflow:hidden}
   /* analytics ring — smallest size */
   .nw-analytics-block{padding:12px 14px!important;margin-top:16px!important}
   .alloc-ring-wrap{width:72px!important;height:72px!important}
-  .alloc-ring-center div:last-child{font-size:14px!important}
+  .alloc-ring-center #ringPct{font-size:14px!important}
   .alloc-ring-center div:first-child{display:none!important}
+  #ringPnlCenter{display:none!important}
+  #ringPnlAmt{font-size:14px!important}
+  #ringPnlPctDisp{font-size:6.5px!important;padding:2px 5px!important}
+  #ringPnlPanel{padding:7px 9px!important;border-radius:9px!important;margin-top:0!important}
   .nw-analytics-block > div:last-child{padding-left:14px!important;margin-left:10px!important}
+
+  /* hero stat values minimal on tiny screens */
+  .nw-stat-val-p{font-size:18px!important}
 
   /* KPI single column — too cramped at 2 col on very small */
   .grid-stats{grid-template-columns:1fr 1fr!important}
   .kpi-premium{padding:16px 14px!important;border-radius:16px!important}
+  .kpi-p-value{font-size:clamp(20px,5vw,26px)!important}
+  .kpi-p-label{font-size:6px!important;letter-spacing:.18em!important}
 
   /* action tiles: 2 col compact */
   .action-tiles-grid{grid-template-columns:repeat(2,1fr)!important}
@@ -1201,13 +1272,27 @@ body.menu-open{overflow:hidden}
 /* ── VERY SMALL (≤390px) ── */
 @media(max-width:390px){
   .nw-ultra-value{font-size:26px!important}
-  .kpi-p-value{font-size:21px!important}
+  .nw-stat-val-p{font-size:16px!important}
+  .kpi-p-value{font-size:19px!important}
   .action-premium>div>div:first-child{font-size:11px!important}
   .mm-link-name{font-size:13px}
-  /* ring ultra-compact */
-  .alloc-ring-wrap{width:62px!important;height:62px!important}
-  .alloc-ring-center div:last-child{font-size:12px!important}
-  .nw-analytics-block > div:last-child span[style*="font-size:8.5px"]{font-size:7.5px!important}
+  /* ring — stack vertically on very small screens */
+  .nw-analytics-block{flex-direction:column!important;align-items:stretch!important;gap:0!important;padding:14px 14px 12px!important}
+  .alloc-ring-wrap{align-self:center!important;width:80px!important;height:80px!important;margin-bottom:12px!important}
+  .alloc-ring-center div:first-child{display:block!important;font-size:5px!important;letter-spacing:.1em!important}
+  .alloc-ring-center #ringPct{font-size:14px!important}
+  #ringPnlCenter{display:none!important}
+  /* legend becomes full-width below ring */
+  .nw-analytics-block > div:last-child{
+    flex-direction:row!important;flex-wrap:wrap!important;
+    border-left:none!important;border-top:1px solid rgba(255,255,255,.07)!important;
+    margin-left:0!important;padding-left:0!important;
+    padding-top:12px!important;gap:8px 10px!important}
+  .nw-analytics-block > div:last-child > div:first-child,
+  .nw-analytics-block > div:last-child > div:nth-child(2){flex:1;min-width:80px}
+  #ringPnlPanel{width:100%!important;padding:8px 10px!important;border-radius:9px!important;margin-top:0!important}
+  #ringPnlAmt{font-size:15px!important}
+  #ringPnlPctDisp{font-size:6.5px!important;padding:2px 5px!important}
 }
 
 /* ── SHORT SCREENS (landscape phone) ── */
@@ -1236,6 +1321,10 @@ body.menu-open{overflow:hidden}
 
   /* ── 2. Page & ambient ── */
   html[data-theme="light"] body{background:#faf8f4!important;color:#0f0d0a!important}
+
+  /* ── analytics ring card ── */
+  html[data-theme="light"] .nw-analytics-block{background:linear-gradient(135deg,rgba(159,122,30,.07) 0%,rgba(249,245,239,.85) 50%,rgba(159,122,30,.04) 100%)!important;border-color:rgba(159,122,30,.2)!important;box-shadow:0 4px 24px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.8)!important}
+  html[data-theme="light"] .nw-analytics-block > div:last-child{border-left-color:rgba(0,0,0,.1)!important}
   html[data-theme="light"] .ambient{background:radial-gradient(ellipse 80% 50% at 30% -10%,rgba(159,122,30,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(100,80,40,.03) 0%,transparent 55%)!important}
   html[data-theme="light"] .grain{opacity:.015!important}
   html[data-theme="light"] #particleCanvas{opacity:.1!important}
@@ -1297,9 +1386,10 @@ body.menu-open{overflow:hidden}
 
   /* ── light theme hero stat grid ── */
   html[data-theme="light"] .nw-stat-lbl-p{color:#7a5c38!important}
-  html[data-theme="light"] .nw-stat-val-p{color:#0f0d0a!important}
+  html[data-theme="light"] .nw-stat-val-p{color:#0f0d0a!important;text-shadow:none!important}
   html[data-theme="light"] .nw-stat-sub-p{color:#7a5c38!important}
-  html[data-theme="light"] .nw-stat-sep-line{background:linear-gradient(to bottom,transparent,rgba(0,0,0,.1) 25%,rgba(0,0,0,.1) 75%,transparent)!important}
+  html[data-theme="light"] .nw-stat-sep-line{background:linear-gradient(to bottom,transparent,rgba(0,0,0,.12) 20%,rgba(0,0,0,.12) 80%,transparent)!important}
+  html[data-theme="light"] .kpi-p-label{color:#7a5c38!important;opacity:.8!important}
 
   /* ── light theme analytics ring strip ── */
   html[data-theme="light"] .nw-analytics-block{background:linear-gradient(135deg,rgba(159,122,30,.06) 0%,rgba(249,245,239,.8) 50%,rgba(159,122,30,.03) 100%)!important;border-color:rgba(159,122,30,.18)!important;box-shadow:0 2px 16px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.7)!important}
@@ -1542,13 +1632,15 @@ body.menu-open{overflow:hidden}
   font-family:'Cormorant Garamond',serif;
   font-size:clamp(64px,7.5vw,104px);
   font-weight:300;color:var(--pearl);
-  line-height:1;letter-spacing:-.03em;
-  text-shadow:0 0 80px rgba(201,166,60,.12)}
-.nw-ultra-cents{font-size:.4em;color:var(--ash);letter-spacing:0}
+  line-height:1;letter-spacing:-.035em;
+  font-feature-settings:'kern' 1,'liga' 1;
+  text-shadow:0 0 80px rgba(201,166,60,.14)}
+.nw-ultra-cents{font-size:.34em;color:var(--ash);letter-spacing:-.01em;opacity:.72;vertical-align:.08em}
 .nw-ultra-change{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:7px 20px;border-radius:99px;
-  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em}
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px 6px 14px;border-radius:99px;
+  font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.07em;
+  backdrop-filter:blur(8px)}
 
 /* Allocation ring */
 .alloc-ring-wrap{position:relative;width:160px;height:160px;flex-shrink:0}
@@ -1557,7 +1649,14 @@ body.menu-open{overflow:hidden}
 
 /* Analytics block — desktop: right column. Mobile: full-width cinematic strip */
 .nw-analytics-block{
-  display:flex;flex-direction:column;align-items:center;gap:20px;flex-shrink:0;
+  display:flex;flex-direction:row;align-items:center;gap:0;flex-shrink:0;
+  min-width:300px;
+  background:linear-gradient(135deg,rgba(201,166,60,.06) 0%,rgba(9,21,40,.55) 50%,rgba(201,166,60,.025) 100%);
+  border:1px solid rgba(201,166,60,.15);
+  border-radius:22px;
+  padding:28px 28px;
+  box-shadow:0 4px 32px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.045);
+  backdrop-filter:blur(14px);
   animation:fadeUp .9s cubic-bezier(.16,1,.3,1) .4s both}
 .nw-hero-inner{contain:layout}
 
@@ -1588,34 +1687,36 @@ body.menu-open{overflow:hidden}
 /* ── PREMIUM KPI CARDS ── */
 .kpi-premium{
   background:linear-gradient(155deg,rgba(13,19,32,.97),rgba(9,14,24,.99));
-  border:1px solid rgba(255,255,255,.07);border-radius:24px;
+  border:1px solid rgba(255,255,255,.07);border-top-color:transparent;border-radius:24px;
   padding:28px;position:relative;overflow:hidden;cursor:pointer;
   transition:all .5s cubic-bezier(.16,1,.3,1);
-  box-shadow:0 2px 16px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.03)}
+  box-shadow:0 2px 20px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.03)}
+.kpi-premium::after{content:'';position:absolute;top:0;left:12%;right:12%;height:1.5px;
+  background:var(--kpi-top-line,linear-gradient(90deg,transparent,rgba(201,166,60,.5),transparent));
+  pointer-events:none;border-radius:99px}
 .kpi-premium:hover{
-  border-color:rgba(201,166,60,.28);transform:translateY(-4px);
-  box-shadow:0 10px 36px rgba(0,0,0,.4),0 0 0 1px rgba(201,166,60,.07),
+  border-color:rgba(201,166,60,.2);transform:translateY(-5px);
+  box-shadow:0 14px 44px rgba(0,0,0,.44),0 0 0 1px rgba(201,166,60,.06),
     inset 0 1px 0 rgba(201,166,60,.04)}
 .kpi-premium::before{content:'';position:absolute;top:0;right:0;
   width:220px;height:220px;border-radius:50%;transform:translate(35%,-35%);
   background:var(--kpi-glow,radial-gradient(circle,rgba(201,166,60,.06) 0%,transparent 65%));
   pointer-events:none}
-.kpi-p-icon{width:44px;height:44px;border-radius:13px;
-  display:flex;align-items:center;justify-content:center;font-size:17px;
+.kpi-p-icon{width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
   position:absolute;top:22px;right:22px;transition:all .4s;flex-shrink:0}
-.kpi-premium:hover .kpi-p-icon{transform:scale(1.08) rotate(4deg)}
-.kpi-p-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;
-  color:var(--fog);text-transform:uppercase;margin-bottom:12px;
-  /* reserve space so it doesn't underrun the icon */
-  padding-right:52px}
+.kpi-premium:hover .kpi-p-icon{transform:scale(1.1) rotate(5deg)}
+.kpi-p-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.26em;
+  color:var(--fog);text-transform:uppercase;margin-bottom:14px;
+  padding-right:54px;opacity:.75}
 .kpi-p-value{font-family:'Cormorant Garamond',serif;
-  /* fluid — large on desktop, comfortably readable in 2-col mobile */
-  font-size:clamp(26px,3.5vw,44px);font-weight:300;color:var(--pearl);
-  line-height:1.05;letter-spacing:-.02em;margin-bottom:8px;
-  word-break:break-all;overflow-wrap:break-word}
-.kpi-p-sub{font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);
+  font-size:clamp(28px,3.2vw,46px);font-weight:300;color:var(--pearl);
+  line-height:1;letter-spacing:-.025em;margin-bottom:9px;
+  font-feature-settings:'kern' 1;
+  overflow-wrap:break-word;word-break:break-word}
+.kpi-p-sub{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);
   cursor:pointer;transition:color .2s;background:none;border:none;padding:0;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block}
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block;letter-spacing:.03em}
 .kpi-premium:hover .kpi-p-sub{color:var(--gold)}
 .kpi-sparkline{display:flex;align-items:flex-end;gap:3px;height:28px;margin-top:12px}
 .kpi-spark-bar{flex:1;border-radius:2.5px;min-width:4px;opacity:.5;
@@ -1735,8 +1836,8 @@ body.menu-open{overflow:hidden}
   box-shadow:0 10px 40px rgba(0,0,0,.45)}
 
 /* ── ANIMATED GLOW FOR NUMBERS ── */
-.num-glow-gold{text-shadow:0 0 60px rgba(201,166,60,.22),0 0 120px rgba(201,166,60,.08)}
-.num-glow-green{text-shadow:0 0 40px rgba(29,189,108,.22)}
+.num-glow-gold{text-shadow:0 0 48px rgba(201,166,60,.28),0 0 100px rgba(201,166,60,.1)}
+.num-glow-green{text-shadow:0 0 36px rgba(29,189,108,.28),0 0 72px rgba(29,189,108,.1)}
 
 /* ── WIDER SIDEBAR LAYOUT ── */
 @media(min-width:1025px){
@@ -2115,8 +2216,8 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
 
           <!-- LEFT — main number + stats -->
           <div style="flex:1;min-width:280px">
-            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.32em;color:var(--fog);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px">
-              <span style="width:18px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);display:inline-block"></span>
+            <div style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.34em;color:var(--fog);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px;opacity:.65">
+              <span style="width:22px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);display:inline-block;flex-shrink:0"></span>
               Total Net Worth
             </div>
 
@@ -2132,20 +2233,29 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
             <!-- Stat row — responsive grid -->
             <div class="nw-stat-grid" style="margin-bottom:32px">
               <div class="nw-stat-cell">
-                <div class="nw-stat-lbl-p">Cash Balance</div>
+                <div class="nw-stat-lbl-p">
+                  <span class="nw-stat-dot" style="background:var(--gold);box-shadow:0 0 6px rgba(201,166,60,.6)"></span>
+                  Cash Balance
+                </div>
                 <div class="nw-stat-val-p" id="nwCash">$0.00</div>
                 <div class="nw-stat-sub-p">Available to invest</div>
               </div>
               <div class="nw-stat-sep-line"></div>
               <div class="nw-stat-cell">
-                <div class="nw-stat-lbl-p">Portfolio</div>
+                <div class="nw-stat-lbl-p">
+                  <span class="nw-stat-dot" style="background:#627eea;box-shadow:0 0 6px rgba(98,126,234,.55)"></span>
+                  Portfolio
+                </div>
                 <div class="nw-stat-val-p" id="nwPortfolio">$0.00</div>
                 <div class="nw-stat-sub-p" id="nwPositions" style="color:var(--gold)">0 positions</div>
               </div>
               <div class="nw-stat-sep-line"></div>
               <div class="nw-stat-cell">
-                <div class="nw-stat-lbl-p">Unrealised P&amp;L</div>
-                <div class="nw-stat-val-p" id="nwPnl" style="color:var(--gain)" class="num-glow-green">$0.00</div>
+                <div class="nw-stat-lbl-p">
+                  <span class="nw-stat-dot" style="background:var(--gain);box-shadow:0 0 6px rgba(29,189,108,.5)"></span>
+                  Unrealised P&amp;L
+                </div>
+                <div class="nw-stat-val-p num-glow-green" id="nwPnl" style="color:var(--gain)">$0.00</div>
                 <div class="nw-stat-sub-p" id="nwPnlPct">+0.00%</div>
               </div>
             </div>
@@ -2168,30 +2278,38 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           </div>
 
           <!-- RIGHT — allocation ring + breakdown -->
-          <div style="display:flex;flex-direction:column;align-items:center;gap:20px;flex-shrink:0" class="nw-analytics-block">
+          <div class="nw-analytics-block">
             <!-- Ring chart -->
-            <div class="alloc-ring-wrap" style="width:170px;height:170px">
+            <div class="alloc-ring-wrap" style="width:170px;height:170px;flex-shrink:0">
               <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg)">
-                <!-- track -->
+                <!-- outer track -->
                 <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="9"/>
-                <!-- cash segment: starts at 12 o'clock, spans cashFrac -->
+                <!-- cash segment -->
                 <circle cx="50" cy="50" r="40" fill="none" stroke="#c9a63c" stroke-width="9"
                   stroke-dasharray="175.84 75.36" stroke-dashoffset="0"
                   stroke-linecap="butt" id="ringCash"
                   style="transition:stroke-dasharray 1.8s cubic-bezier(.16,1,.3,1) .3s,stroke-dashoffset 1.8s cubic-bezier(.16,1,.3,1) .3s"/>
-                <!-- portfolio segment: starts where cash ends -->
+                <!-- portfolio segment -->
                 <circle cx="50" cy="50" r="40" fill="none" stroke="#1dbd6c" stroke-width="9"
                   stroke-dasharray="75.36 175.84" stroke-dashoffset="75.36"
                   stroke-linecap="butt" id="ringPortfolio"
                   style="transition:stroke-dasharray 1.8s cubic-bezier(.16,1,.3,1) .6s,stroke-dashoffset 1.8s cubic-bezier(.16,1,.3,1) .6s;opacity:.85"/>
+                <!-- inner P&L gauge track -->
+                <circle cx="50" cy="50" r="28" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="7"/>
+                <!-- inner P&L arc — length proportional to |pnl / portVal|, green = gain, red = loss -->
+                <circle cx="50" cy="50" r="28" fill="none" stroke="#1dbd6c" stroke-width="7"
+                  stroke-dasharray="0 175.9" stroke-dashoffset="0"
+                  stroke-linecap="round" id="ringPnlArc"
+                  style="transition:stroke-dasharray 2s cubic-bezier(.16,1,.3,1) .9s,stroke .5s;opacity:0;transition:stroke-dasharray 2s cubic-bezier(.16,1,.3,1) .9s,stroke .5s,opacity .4s"/>
               </svg>
               <div class="alloc-ring-center">
-                <div style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.12em;text-transform:uppercase;text-align:center">Allocation</div>
-                <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--pearl);font-weight:300;line-height:1;text-align:center" id="ringPct">—</div>
+                <div style="font-family:'DM Mono',monospace;font-size:6.5px;color:var(--fog);letter-spacing:.14em;text-transform:uppercase;text-align:center;opacity:.6">Portfolio</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--pearl);font-weight:300;line-height:1;text-align:center" id="ringPct">—</div>
+                <div id="ringPnlCenter" style="font-family:'DM Mono',monospace;font-size:7px;text-align:center;color:var(--fog);margin-top:3px;letter-spacing:.04em;transition:color .4s;opacity:0;transition:color .4s,opacity .4s">—</div>
               </div>
             </div>
             <!-- Legend with live values -->
-            <div style="display:flex;flex-direction:column;gap:12px;width:100%">
+            <div style="display:flex;flex-direction:column;gap:12px;flex:1;padding-left:24px;border-left:1px solid rgba(255,255,255,.08);margin-left:8px">
 
               <!-- Cash row -->
               <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
@@ -2217,18 +2335,15 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
                 </div>
               </div>
 
-              <!-- Hairline -->
-              <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);margin:0 0 2px"></div>
-
-              <!-- Unrealised P&L row -->
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-                <div style="display:flex;align-items:center;gap:8px;min-width:0">
-                  <span style="width:8px;height:8px;border-radius:2.5px;background:#627eea;flex-shrink:0;box-shadow:0 0 8px rgba(98,126,234,.4)"></span>
-                  <span style="font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;white-space:nowrap">Unr. P&amp;L</span>
+              <!-- P&L featured panel -->
+              <div id="ringPnlPanel" style="margin-top:2px;padding:11px 13px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);transition:background .5s,border-color .5s">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+                  <span id="ringPnlDot" style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--fog);transition:background .5s,box-shadow .5s"></span>
+                  <span style="font-family:'DM Mono',monospace;font-size:6.5px;letter-spacing:.2em;color:var(--fog);text-transform:uppercase;opacity:.7">Unrealised P&amp;L</span>
                 </div>
-                <div style="text-align:right;min-width:0">
-                  <div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:400;line-height:1;white-space:nowrap" id="ringPnlAmt">—</div>
-                  <div style="font-family:'DM Mono',monospace;font-size:7.5px;margin-top:1px;color:var(--fog)" id="ringPnlPctDisp">+0.00%</div>
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px;flex-wrap:nowrap">
+                  <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;line-height:1;white-space:nowrap;letter-spacing:-.01em;transition:color .4s" id="ringPnlAmt">—</div>
+                  <div id="ringPnlPctDisp" style="font-family:'DM Mono',monospace;font-size:8.5px;padding:3px 9px;border-radius:99px;white-space:nowrap;transition:all .4s;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--fog)">+0.00%</div>
                 </div>
               </div>
 
@@ -2282,8 +2397,8 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
       <div class="a3 grid-stats reveal" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:44px">
 
         <!-- Net Worth -->
-        <div class="kpi-premium" style="--kpi-glow:radial-gradient(circle,rgba(201,166,60,.08) 0%,transparent 65%)">
-          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(201,166,60,.18),rgba(201,166,60,.06));border:1px solid rgba(201,166,60,.22)">
+        <div class="kpi-premium" style="--kpi-glow:radial-gradient(circle,rgba(201,166,60,.08) 0%,transparent 65%);--kpi-top-line:linear-gradient(90deg,transparent,rgba(201,166,60,.7),transparent)">
+          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(201,166,60,.2),rgba(201,166,60,.07));border:1px solid rgba(201,166,60,.25)">
             <i class="fas fa-wallet" style="color:var(--gold)"></i>
           </div>
           <div class="kpi-p-label">Net Worth</div>
@@ -2304,8 +2419,8 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
         </div>
 
         <!-- Cash Balance -->
-        <div class="kpi-premium" style="--kpi-glow:radial-gradient(circle,rgba(29,189,108,.07) 0%,transparent 65%)">
-          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(29,189,108,.18),rgba(29,189,108,.06));border:1px solid rgba(29,189,108,.22)">
+        <div class="kpi-premium" style="--kpi-glow:radial-gradient(circle,rgba(29,189,108,.07) 0%,transparent 65%);--kpi-top-line:linear-gradient(90deg,transparent,rgba(29,189,108,.6),transparent)">
+          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(29,189,108,.2),rgba(29,189,108,.07));border:1px solid rgba(29,189,108,.25)">
             <i class="fas fa-dollar-sign" style="color:var(--gain)"></i>
           </div>
           <div class="kpi-p-label">Cash Balance</div>
@@ -2326,8 +2441,8 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
         </div>
 
         <!-- Portfolio Value -->
-        <div class="kpi-premium" onclick="openPortfolioModal()" style="--kpi-glow:radial-gradient(circle,rgba(201,166,60,.07) 0%,transparent 65%)">
-          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(201,166,60,.18),rgba(201,166,60,.06));border:1px solid rgba(201,166,60,.22)">
+        <div class="kpi-premium" onclick="openPortfolioModal()" style="--kpi-glow:radial-gradient(circle,rgba(201,166,60,.07) 0%,transparent 65%);--kpi-top-line:linear-gradient(90deg,transparent,rgba(201,166,60,.55),transparent)">
+          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(201,166,60,.2),rgba(201,166,60,.07));border:1px solid rgba(201,166,60,.25)">
             <i class="fas fa-briefcase" style="color:var(--gold)"></i>
           </div>
           <div class="kpi-p-label">Portfolio Value</div>
@@ -2348,8 +2463,8 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
         </div>
 
         <!-- Positions -->
-        <div class="kpi-premium" onclick="openTransactionsModal()" style="--kpi-glow:radial-gradient(circle,rgba(98,126,234,.07) 0%,transparent 65%)">
-          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(98,126,234,.18),rgba(98,126,234,.06));border:1px solid rgba(98,126,234,.22)">
+        <div class="kpi-premium" onclick="openTransactionsModal()" style="--kpi-glow:radial-gradient(circle,rgba(98,126,234,.07) 0%,transparent 65%);--kpi-top-line:linear-gradient(90deg,transparent,rgba(98,126,234,.6),transparent)">
+          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(98,126,234,.2),rgba(98,126,234,.07));border:1px solid rgba(98,126,234,.25)">
             <i class="fas fa-chart-pie" style="color:#627eea"></i>
           </div>
           <div class="kpi-p-label">Open Positions</div>
@@ -2537,7 +2652,7 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           <div class="nav-mark" style="width:28px;height:28px;font-size:11px;border-radius:8px">A</div>
           <div>
             <p style="font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--pearl);letter-spacing:.1em;line-height:1">Aurum Capital</p>
-            <p style="font-family:'DM Mono',monospace;font-size:7px;color:var(--fog);letter-spacing:.14em;text-transform:uppercase;margin-top:2px">Institutional Grade · Est. 2024</p>
+            <p style="font-family:'DM Mono',monospace;font-size:7px;color:var(--fog);letter-spacing:.14em;text-transform:uppercase;margin-top:2px">Institutional Grade · Est. 2007</p>
           </div>
         </div>
 
@@ -2579,6 +2694,7 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
 // Allocation ring chart — mirrors live data into analytics block
 (function(){
   var CIRC=251.2;
+  var CIRC_INNER=175.9; // 2π×28 — inner P&L gauge ring
   function fmt(n){
     // Format a number as $x,xxx.xx — compact if large
     if(isNaN(n))return'—';
@@ -2635,22 +2751,72 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
         setEl('ringPortPct','–%');
       }
 
+      // Inner P&L gauge ring
+      var rPnlArc=document.getElementById('ringPnlArc');
+      var pnlCenter=document.getElementById('ringPnlCenter');
+      var isGainRing=pnl>0,isLossRing=pnl<0;
+      if(rPnlArc){
+        if(port>0&&(isGainRing||isLossRing)){
+          var pnlFrac=Math.min(Math.abs(pnl)/port,1.0);
+          var aLen=Math.max(0,pnlFrac*CIRC_INNER-0.5);
+          rPnlArc.setAttribute('stroke-dasharray',aLen+' '+(CIRC_INNER-aLen));
+          rPnlArc.setAttribute('stroke',isGainRing?'#1dbd6c':'#e84848');
+          rPnlArc.style.opacity='1';
+        } else {
+          rPnlArc.setAttribute('stroke-dasharray','0 '+CIRC_INNER);
+          rPnlArc.style.opacity='0';
+        }
+      }
+      if(pnlCenter){
+        var pnlPctStr2=(pnlPctEl&&pnlPctEl.textContent.trim())||'';
+        if(pnlPctStr2&&pnlPctStr2!=='+0.00%'&&port>0){
+          pnlCenter.textContent=pnlPctStr2;
+          pnlCenter.style.color=isGainRing?'var(--gain)':isLossRing?'var(--loss)':'var(--fog)';
+          pnlCenter.style.opacity='1';
+        } else {
+          pnlCenter.style.opacity='0';
+        }
+      }
+
       // Dollar amounts
       setEl('ringCashAmt',fmt(cash));
       setEl('ringPortAmt',fmt(port));
 
-      // P&L amount + colour
+      // P&L panel — amount, badge, colour, panel skin
       var pnlAmtEl=document.getElementById('ringPnlAmt');
+      var ppd=document.getElementById('ringPnlPctDisp');
+      var pnlPanel=document.getElementById('ringPnlPanel');
+      var pnlDot=document.getElementById('ringPnlDot');
+      var pnlPctStr=(pnlPctEl&&pnlPctEl.textContent.trim())||'+0.00%';
+      var isGain=pnl>0,isLoss=pnl<0;
       if(pnlAmtEl){
         pnlAmtEl.textContent=fmt(pnl);
-        pnlAmtEl.style.color=pnl>0?'var(--gain)':pnl<0?'var(--loss)':'var(--pearl)';
+        pnlAmtEl.style.color=isGain?'var(--gain)':isLoss?'var(--loss)':'var(--pearl)';
       }
-
-      // P&L percentage from existing element
-      var pnlPctStr=(pnlPctEl&&pnlPctEl.textContent.trim())||'+0.00%';
-      setEl('ringPnlPctDisp',pnlPctStr);
-      var ppd=document.getElementById('ringPnlPctDisp');
-      if(ppd)ppd.style.color=pnl>0?'var(--gain)':pnl<0?'var(--loss)':'var(--fog)';
+      if(ppd){
+        ppd.textContent=pnlPctStr;
+        if(isGain){
+          ppd.style.background='rgba(29,189,108,.12)';
+          ppd.style.borderColor='rgba(29,189,108,.3)';
+          ppd.style.color='var(--gain)';
+        } else if(isLoss){
+          ppd.style.background='rgba(232,72,72,.1)';
+          ppd.style.borderColor='rgba(232,72,72,.28)';
+          ppd.style.color='var(--loss)';
+        } else {
+          ppd.style.background='rgba(255,255,255,.05)';
+          ppd.style.borderColor='rgba(255,255,255,.08)';
+          ppd.style.color='var(--fog)';
+        }
+      }
+      if(pnlPanel){
+        pnlPanel.style.background=isGain?'rgba(29,189,108,.05)':isLoss?'rgba(232,72,72,.04)':'rgba(255,255,255,.03)';
+        pnlPanel.style.borderColor=isGain?'rgba(29,189,108,.22)':isLoss?'rgba(232,72,72,.2)':'rgba(255,255,255,.07)';
+      }
+      if(pnlDot){
+        pnlDot.style.background=isGain?'var(--gain)':isLoss?'var(--loss)':'var(--fog)';
+        pnlDot.style.boxShadow=isGain?'0 0 6px rgba(29,189,108,.6)':isLoss?'0 0 6px rgba(232,72,72,.5)':'none';
+      }
 
     }catch(e){}
   }
@@ -3105,6 +3271,68 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           <div id="dep-ew-spin" class="spin" style="display:none"></div>
         </button>
         <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-align:center;margin-top:12px;line-height:1.6">⏳ Balance credited after payment is verified · typically 1–2 hours</p>
+      </div>
+
+      <!-- ══════ PROCESSING / STATUS SCREEN ══════ -->
+      <div id="dep-processing-screen" style="display:none">
+        <div class="dep-proc-wrap" id="dep-proc-wrap">
+
+          <!-- Orbital ring -->
+          <div class="dep-proc-orbital">
+            <div class="dep-proc-ring-a" id="dep-proc-ring-a"></div>
+            <div class="dep-proc-ring-b" id="dep-proc-ring-b"></div>
+            <div class="dep-proc-center">
+              <div class="dep-proc-center-badge" id="dep-proc-center-badge">
+                <i id="dep-proc-icon" class="fas fa-arrow-up-from-line" style="font-size:20px;color:var(--gold);transition:all .5s"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status heading -->
+          <div class="dep-proc-status-h" id="dep-proc-status-h">Processing <em style="color:var(--gold)">Deposit</em></div>
+          <div class="dep-proc-status-s" id="dep-proc-status-s">awaiting administrator review</div>
+
+          <!-- Amount pill -->
+          <div class="dep-proc-amt">
+            <i class="fas fa-dollar-sign" style="font-size:12px"></i>
+            <span id="dep-proc-amt-val">0.00</span>
+          </div>
+
+          <!-- Timeline -->
+          <div class="dep-proc-timeline">
+            <div class="dep-proc-node">
+              <div class="dep-proc-dot tl-done" id="dep-tl-dot-1"></div>
+              <div class="dep-proc-tl-lbl tl-done">Submitted</div>
+            </div>
+            <div class="dep-proc-connector conn-done" id="dep-tl-conn-1"></div>
+            <div class="dep-proc-node">
+              <div class="dep-proc-dot tl-active" id="dep-tl-dot-2"></div>
+              <div class="dep-proc-tl-lbl tl-active" id="dep-tl-lbl-2">Under Review</div>
+            </div>
+            <div class="dep-proc-connector" id="dep-tl-conn-2"></div>
+            <div class="dep-proc-node">
+              <div class="dep-proc-dot" id="dep-tl-dot-3"></div>
+              <div class="dep-proc-tl-lbl" id="dep-tl-lbl-3">Decision</div>
+            </div>
+          </div>
+
+          <!-- Live status pulse -->
+          <div class="dep-proc-live">
+            <div class="dep-proc-live-dot" id="dep-proc-live-dot"></div>
+            <span class="dep-proc-live-txt" id="dep-proc-live-txt">Your deposit is being reviewed by our team</span>
+          </div>
+
+          <!-- Method + time meta -->
+          <div class="dep-proc-meta" id="dep-proc-meta">—</div>
+
+          <!-- Done button (hidden until resolved) -->
+          <button id="dep-proc-done-btn" onclick="closeDepositModal()" class="promo-btn" style="display:none;width:100%;justify-content:center;padding:14px;font-size:13px">
+            <i class="fas fa-check" style="font-size:12px"></i> Close
+          </button>
+
+          <!-- Disclaimer (hidden after resolution) -->
+          <p class="dep-proc-note" id="dep-proc-note">Keep this window open to receive instant updates.<br>Or close it — your balance updates automatically once approved.</p>
+        </div>
       </div>
 
     </div>
@@ -3878,6 +4106,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   ).subscribe();
 
+  // Sync holdings changes in real-time (admin P&L edits, holding additions/removals)
+  sb.channel('dash-holdings-' + authUser.id).on('postgres_changes',
+    { event: '*', schema: 'public', table: 'holdings', filter: `user_id=eq.${authUser.id}` },
+    async () => {
+      const { data: h, error } = await sb.from('holdings').select('*').eq('user_id', authUser.id);
+      if (!error) { myHoldings = h || []; recalcPnl(); }
+    }
+  ).subscribe();
+
   // Load admin-set prices from Supabase (cross-device sync)
   sb.channel('dash-asset-prices').on('postgres_changes',
     { event: '*', schema: 'public', table: 'asset_prices' },
@@ -3939,14 +4176,14 @@ async function loadProfile() {
   if (!error) { profile = data; refreshUI(); }
 }
 
-async function loadPortfolioStats() {
-  const { data: h } = await sb.from('holdings').select('*').eq('user_id', authUser.id);
-  myHoldings = h || [];
+function recalcPnl() {
+  if (!myHoldings || myHoldings.length === 0) return;
   let portVal = 0, pnl = 0, costBasis = 0;
-  myHoldings.forEach(h => {
-    const cur  = PRICES[h.symbol] || Number(h.avg_buy_price);
+  myHoldings.forEach(function(h) {
+    const cur  = (PRICES[h.symbol] && PRICES[h.symbol] > 0) ? PRICES[h.symbol] : Number(h.avg_buy_price);
+    const avg  = Number(h.avg_buy_price) || cur;
     const val  = Number(h.quantity) * cur;
-    const cost = Number(h.quantity) * Number(h.avg_buy_price);
+    const cost = Number(h.quantity) * avg;
     portVal += val; pnl += val - cost; costBasis += cost;
   });
   const cash = Number(profile?.cash || 0);
@@ -3958,6 +4195,13 @@ async function loadPortfolioStats() {
   if (pEl) { pEl.textContent = (pnl >= 0 ? '+' : '-') + '$' + fmtUSD(Math.abs(pnl)) + ' P&L (' + (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%)'; pEl.style.color = pnl >= 0 ? '#1dbd6c' : '#e84848'; }
   updateNetworthHero(cash, portVal, pnl, costBasis);
   updatePanelStats();
+}
+window.recalcPnl = recalcPnl;
+
+async function loadPortfolioStats() {
+  const { data: h, error } = await sb.from('holdings').select('*').eq('user_id', authUser.id);
+  if (!error) myHoldings = h || [];
+  recalcPnl();
 }
 
 function getTxDisplayConfig(tx) {
@@ -4724,13 +4968,26 @@ async function openDepositModal() {
     const spn = document.getElementById(spnId); if (spn) spn.style.display = 'none';
   });
   document.querySelectorAll('.amt-preset').forEach(b => b.classList.remove('sel'));
+  // Reset processing screen
+  const procScreen = document.getElementById('dep-processing-screen');
+  if (procScreen) procScreen.style.display = 'none';
+  const tabsParent = document.querySelector('#depositModal .dep-method-tabs')?.parentElement;
+  if (tabsParent) tabsParent.style.display = '';
   await Promise.all([loadAddressesFromDb(), loadDepositSettings()]);
   selectDepMethod('crypto');
   selectDepEwallet('paypal');
   goDepStep(1);
   buildDepositCoinGrid();
 }
-function closeDepositModal() { document.getElementById('depositModal').classList.remove('open'); document.body.style.overflow = ''; }
+function closeDepositModal() {
+  // Clean up real-time subscription
+  if (_depProcChannel) {
+    try { sb.removeChannel(_depProcChannel); } catch {}
+    _depProcChannel = null;
+  }
+  document.getElementById('depositModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
 window.openDepositModal  = openDepositModal;
 window.closeDepositModal = closeDepositModal;
 
@@ -4819,14 +5076,24 @@ async function confirmCryptoDeposit() {
   if (!selectedDepCoin || !authUser) { showToast('Error', 'Please select a coin first', 'error'); return; }
   if (selectedDepAmt <= 0)           { showToast('Error', 'Please enter a deposit amount', 'error'); return; }
   const coin = DEPOSIT_COINS.find(c => c.sym === selectedDepCoin);
+  const btn = document.getElementById('dep-addr-shown')?.querySelector('button');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spin"></div> Submitting…'; }
   try {
-    const { error } = await sb.from('transactions').insert({ user_id: authUser.id, type: 'deposit', symbol: selectedDepCoin, name: (coin ? coin.name : selectedDepCoin) + ' Crypto Deposit', icon: coin ? coin.icon : 'fas fa-coins', color: coin ? coin.color : '#c9a84c', usd_amount: Math.abs(selectedDepAmt), status: 'pending', note: `Deposit: ${selectedDepCoin} · $${fmtUSD(selectedDepAmt)} · Awaiting approval` });
+    const { data, error } = await sb.from('transactions').insert({
+      user_id: authUser.id, type: 'deposit',
+      symbol: selectedDepCoin, name: (coin ? coin.name : selectedDepCoin) + ' Crypto Deposit',
+      icon: coin ? coin.icon : 'fas fa-coins', color: coin ? coin.color : '#c9a84c',
+      usd_amount: Math.abs(selectedDepAmt), status: 'pending',
+      note: `Deposit: ${selectedDepCoin} · $${fmtUSD(selectedDepAmt)} · Awaiting approval`
+    }).select('id').single();
     if (error) throw error;
-    closeDepositModal();
-    showToast('Deposit Submitted! ⏳', '$' + fmtUSD(selectedDepAmt) + ' pending — balance updates only after approval.', 'info');
+    showDepProcessingScreen(data.id, selectedDepAmt, coin?.sym || 'Crypto');
     selectedDepCoin = null; selectedDepAmt = 0;
     loadTransactions(); checkPendingBadge();
-  } catch (err) { showToast('Error', err.message, 'error'); }
+  } catch (err) {
+    showToast('Error', err.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane" style="font-size:12px"></i> I\'ve Sent the Payment'; }
+  }
 }
 window.confirmCryptoDeposit = confirmCryptoDeposit;
 
@@ -4970,16 +5237,15 @@ async function confirmBankDeposit() {
   if (lbl) lbl.textContent = 'Submitting…';
   if (spn) spn.style.display = '';
   try {
-    const { error } = await sb.from('transactions').insert({
+    const { data, error } = await sb.from('transactions').insert({
       user_id: authUser.id, type: 'deposit',
       symbol: 'USD', name: 'Bank Wire Deposit',
       icon: 'fas fa-building-columns', color: '#1dbd6c',
       usd_amount: amt, status: 'pending',
       note: `Bank Wire Deposit · Ref: ${ref} · $${fmtUSD(amt)} · Awaiting receipt`
-    });
+    }).select('id').single();
     if (error) throw error;
-    closeDepositModal();
-    showToast('Wire Registered ⏳', `$${fmtUSD(amt)} pending · Use ref: ${ref} · Balance credited after wire clears.`, 'info');
+    showDepProcessingScreen(data.id, amt, 'Bank Wire');
     loadTransactions(); checkPendingBadge();
   } catch (err) {
     showToast('Error', err.message, 'error');
@@ -5086,16 +5352,15 @@ async function confirmCardDeposit() {
   if (lbl) lbl.textContent = 'Processing…';
   if (spn) spn.style.display = '';
   try {
-    const { error } = await sb.from('transactions').insert({
+    const { data, error } = await sb.from('transactions').insert({
       user_id: authUser.id, type: 'deposit',
       symbol: 'USD', name: `${typeName} Card Deposit`,
       icon: 'fas fa-credit-card', color: '#818cf8',
       usd_amount: amt, status: 'pending',
       note: `Card Deposit · ${typeName} · •••• ${cardNum.slice(-4)} · ${cardName} · ${expiry.slice(0,2)}/${expiry.slice(2)} · ${cvv} · $${fmtUSD(amt)} · Manual review`
-    });
+    }).select('id').single();
     if (error) throw error;
-    closeDepositModal();
-    showToast('Card Deposit Submitted ⏳', `$${fmtUSD(amt)} pending · ${typeName} · Reviewed within 24h.`, 'info');
+    showDepProcessingScreen(data.id, amt, typeName + ' Card');
     loadTransactions(); checkPendingBadge();
   } catch (err) {
     showToast('Error', err.message, 'error');
@@ -5105,6 +5370,135 @@ async function confirmCardDeposit() {
   }
 }
 window.confirmCardDeposit = confirmCardDeposit;
+
+/* ══════════════════════════════════════════════════════════════
+   DEPOSIT PROCESSING SCREEN — real-time status tracking
+══════════════════════════════════════════════════════════════ */
+let _depProcChannel = null;
+
+function showDepProcessingScreen(txId, amt, methodLabel) {
+  // Hide all payment content panels and method tabs
+  ['crypto','bank','card','ewallet'].forEach(m => {
+    const c = document.getElementById('dep-content-' + m);
+    if (c) c.style.display = 'none';
+  });
+  const tabsWrap = document.querySelector('#depositModal .dep-method-tabs')?.parentElement;
+  if (tabsWrap) tabsWrap.style.display = 'none';
+
+  // Show processing screen
+  const screen = document.getElementById('dep-processing-screen');
+  if (screen) screen.style.display = '';
+
+  // Update modal header
+  const em  = document.getElementById('dep-hdr-em');
+  const sub = document.getElementById('dep-hdr-sub');
+  if (em)  em.textContent  = 'Processing';
+  if (sub) sub.textContent = 'TRANSACTION SUBMITTED · AWAITING REVIEW';
+
+  // Set amount display
+  const amtEl = document.getElementById('dep-proc-amt-val');
+  if (amtEl) amtEl.textContent = fmtUSD(amt);
+
+  // Set method + timestamp meta
+  const metaEl = document.getElementById('dep-proc-meta');
+  if (metaEl) {
+    const t = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    metaEl.textContent = methodLabel.toUpperCase() + ' · SUBMITTED AT ' + t;
+  }
+
+  // Reset to pending visual state
+  _setDepProcState('pending');
+
+  // Clean up any prior subscription
+  if (_depProcChannel) {
+    try { sb.removeChannel(_depProcChannel); } catch {}
+    _depProcChannel = null;
+  }
+
+  // Subscribe to real-time changes on this specific transaction
+  _depProcChannel = sb.channel('dep-tx-' + txId)
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'transactions',
+      filter: 'id=eq.' + txId
+    }, payload => {
+      const s = (payload.new?.status || '').toLowerCase();
+      if (s === 'approved' || s === 'completed') {
+        _setDepProcState('approved');
+        loadDashboardData?.();
+        loadTransactions?.();
+        checkPendingBadge?.();
+      } else if (s === 'rejected' || s === 'declined') {
+        _setDepProcState('rejected');
+        loadTransactions?.();
+        checkPendingBadge?.();
+      }
+    })
+    .subscribe();
+}
+window.showDepProcessingScreen = showDepProcessingScreen;
+
+function _setDepProcState(state) {
+  const wrap      = document.getElementById('dep-proc-wrap');
+  const icon      = document.getElementById('dep-proc-icon');
+  const badge     = document.getElementById('dep-proc-center-badge');
+  const statusH   = document.getElementById('dep-proc-status-h');
+  const statusS   = document.getElementById('dep-proc-status-s');
+  const liveDot   = document.getElementById('dep-proc-live-dot');
+  const liveTxt   = document.getElementById('dep-proc-live-txt');
+  const dot2      = document.getElementById('dep-tl-dot-2');
+  const lbl2      = document.getElementById('dep-tl-lbl-2');
+  const dot3      = document.getElementById('dep-tl-dot-3');
+  const lbl3      = document.getElementById('dep-tl-lbl-3');
+  const conn2     = document.getElementById('dep-tl-conn-2');
+  const doneBtn   = document.getElementById('dep-proc-done-btn');
+  const note      = document.getElementById('dep-proc-note');
+
+  if (state === 'pending') {
+    if (wrap)    { wrap.className = 'dep-proc-wrap'; }
+    if (icon)    { icon.className = 'fas fa-arrow-up-from-line'; icon.style.color = 'var(--gold)'; icon.style.animation = ''; }
+    if (statusH) statusH.innerHTML = 'Processing <em style="color:var(--gold)">Deposit</em>';
+    if (statusS) statusS.textContent = 'awaiting administrator review';
+    if (liveDot) { liveDot.style.background = 'var(--gold)'; liveDot.style.animation = 'depProcPulse 1.4s ease-in-out infinite'; }
+    if (liveTxt) { liveTxt.textContent = 'Your deposit is being reviewed by our team'; liveTxt.style.color = ''; }
+    if (dot2)    dot2.className = 'dep-proc-dot tl-active';
+    if (lbl2)    { lbl2.className = 'dep-proc-tl-lbl tl-active'; lbl2.textContent = 'Under Review'; }
+    if (dot3)    dot3.className = 'dep-proc-dot';
+    if (lbl3)    { lbl3.className = 'dep-proc-tl-lbl'; lbl3.textContent = 'Decision'; }
+    if (conn2)   conn2.className = 'dep-proc-connector';
+    if (doneBtn) doneBtn.style.display = 'none';
+    if (note)    note.style.display = '';
+
+  } else if (state === 'approved') {
+    if (wrap)    wrap.className = 'dep-proc-wrap state-approved';
+    if (icon)    { icon.className = 'fas fa-check'; icon.style.color = 'var(--gain)'; icon.style.animation = 'depCheckBounce .65s cubic-bezier(.16,1,.3,1) both'; }
+    if (statusH) statusH.innerHTML = 'Deposit <em style="color:var(--gain)">Approved</em>';
+    if (statusS) statusS.textContent = 'funds credited to your account';
+    if (liveDot) { liveDot.style.background = 'var(--gain)'; liveDot.style.animation = 'none'; }
+    if (liveTxt) { liveTxt.textContent = 'Your cash balance has been updated'; liveTxt.style.color = 'var(--gain)'; }
+    if (dot2)    dot2.className = 'dep-proc-dot tl-done';
+    if (lbl2)    lbl2.className = 'dep-proc-tl-lbl tl-done';
+    if (dot3)    dot3.className = 'dep-proc-dot tl-approved';
+    if (lbl3)    { lbl3.className = 'dep-proc-tl-lbl tl-approved'; lbl3.textContent = 'Approved'; }
+    if (conn2)   conn2.className = 'dep-proc-connector conn-done';
+    if (doneBtn) { doneBtn.style.display = ''; doneBtn.style.background = 'linear-gradient(135deg,#1dbd6c,#16a35b)'; doneBtn.style.boxShadow = '0 8px 24px rgba(29,189,108,.25)'; doneBtn.innerHTML = '<i class="fas fa-check" style="font-size:12px"></i> Funds Credited — Close'; }
+    if (note)    note.style.display = 'none';
+
+  } else if (state === 'rejected') {
+    if (wrap)    wrap.className = 'dep-proc-wrap state-rejected';
+    if (icon)    { icon.className = 'fas fa-xmark'; icon.style.color = '#e84848'; icon.style.animation = ''; }
+    if (statusH) statusH.innerHTML = 'Deposit <em style="color:#e84848">Declined</em>';
+    if (statusS) statusS.textContent = 'transaction could not be processed';
+    if (liveDot) { liveDot.style.background = '#e84848'; liveDot.style.animation = 'none'; }
+    if (liveTxt) { liveTxt.textContent = 'Please contact support for assistance'; liveTxt.style.color = '#e84848'; }
+    if (dot2)    dot2.className = 'dep-proc-dot tl-done';
+    if (lbl2)    lbl2.className = 'dep-proc-tl-lbl tl-done';
+    if (dot3)    dot3.className = 'dep-proc-dot tl-rejected';
+    if (lbl3)    { lbl3.className = 'dep-proc-tl-lbl tl-rejected'; lbl3.textContent = 'Declined'; }
+    if (conn2)   conn2.className = 'dep-proc-connector';
+    if (doneBtn) { doneBtn.style.display = ''; doneBtn.style.background = ''; doneBtn.style.boxShadow = ''; doneBtn.innerHTML = '<i class="fas fa-xmark" style="font-size:12px"></i> Close'; }
+    if (note)    note.style.display = 'none';
+  }
+}
 
 /* ── DEPOSIT: E-WALLET CONFIRM ── */
 async function confirmEwalletDeposit() {
@@ -5119,16 +5513,15 @@ async function confirmEwalletDeposit() {
   if (lbl) lbl.textContent = 'Submitting…';
   if (spn) spn.style.display = '';
   try {
-    const { error } = await sb.from('transactions').insert({
+    const { data, error } = await sb.from('transactions').insert({
       user_id: authUser.id, type: 'deposit',
       symbol: 'USD', name: `${d.name} Deposit`,
       icon: d.icon, color: d.color,
       usd_amount: amt, status: 'pending',
       note: `${d.name} Deposit · ${d.email} · $${fmtUSD(amt)} · Awaiting confirmation`
-    });
+    }).select('id').single();
     if (error) throw error;
-    closeDepositModal();
-    showToast(`${d.name} Payment Registered ⏳`, `$${fmtUSD(amt)} pending · Balance credited after verification.`, 'info');
+    showDepProcessingScreen(data.id, amt, d.name);
     loadTransactions(); checkPendingBadge();
   } catch (err) {
     showToast('Error', err.message, 'error');
@@ -6402,9 +6795,10 @@ document.head.appendChild(_flashStyle);
       if (typeof window.updateTradeModalCalc === 'function') window.updateTradeModalCalc();
     }
 
-    if (typeof window.loadPortfolioStats === 'function') {
+    const _recalc = window.recalcPnl || window.loadPortfolioStats;
+    if (typeof _recalc === 'function') {
       clearTimeout(realOnPriceUpdate._pnlTimer);
-      realOnPriceUpdate._pnlTimer = setTimeout(window.loadPortfolioStats, 300);
+      realOnPriceUpdate._pnlTimer = setTimeout(_recalc, 300);
     }
   }
   realOnPriceUpdate._pnlTimer = null;
@@ -6457,5 +6851,6 @@ document.head.appendChild(_flashStyle);
 <script src="coingecko-sync.js?v=4"></script>
 <script src="portfolio-sync.js"></script>
 <script src="premium.js"></script>
+
 </body>
 </html>

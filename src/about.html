@@ -767,6 +767,18 @@
     footer { padding: 20px; }
   }
 
+  @media (max-width: 480px) {
+    .hero { padding: 96px 16px 48px; }
+    .hero-title { font-size: clamp(40px, 11vw, 56px); }
+    .hero-subtitle { font-size: 14px; }
+    .story { padding: 48px 16px; }
+    .values { padding: 48px 16px; }
+    .team { padding: 48px 16px; }
+    .awards { padding: 48px 16px; }
+    .cta-section { padding: 48px 16px 64px; }
+    .team-grid { grid-template-columns: 1fr; }
+  }
+
   /* Hero scan line effect */
   .hero-scan {
     position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 2;
