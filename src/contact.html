@@ -546,7 +546,7 @@
   .social-card.linkedin-card { background:rgba(10,102,194,.08); } .social-card.linkedin-card:hover { border-color:rgba(10,102,194,.4); }
   .social-card.instagram-card { background:rgba(225,48,108,.05); } .social-card.instagram-card:hover { border-color:rgba(225,48,108,.3); }
   .social-card.telegram-card { background:rgba(0,136,204,.06); } .social-card.telegram-card:hover { border-color:rgba(0,136,204,.35); }
-  .social-card.youtube-card { background:rgba(255,0,0,.05); } .social-card.youtube-card:hover { border-color:rgba(255,0,0,.3); }
+  .social-card.tiktok-card { background:rgba(0,0,0,.55); } .social-card.tiktok-card:hover { border-color:rgba(255,255,255,.18); }
   .social-card.facebook-card { background:rgba(24,119,242,.05); } .social-card.facebook-card:hover { border-color:rgba(24,119,242,.3); }
   .social-icon-wrap { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; position:relative; z-index:1; }
   .social-card-text { position:relative; z-index:1; }
@@ -1029,12 +1029,17 @@
   html[data-theme="light"] .social-card-name{color:#1a1008!important}
   html[data-theme="light"] .social-card-handle{color:#7a6448!important}
   html[data-theme="light"] .social-card-arr{color:#7a6448!important}
-  html[data-theme="light"] .social-card.x-card{background:rgba(0,0,0,.04)!important}
-  html[data-theme="light"] .social-card.x-card:hover{border-color:rgba(0,0,0,.18)!important}
+  html[data-theme="light"] .social-card.x-card{background:rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .social-card.x-card:hover{border-color:rgba(0,0,0,.22)!important}
+  html[data-theme="light"] .social-card.x-card .social-icon-wrap{background:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] .social-card.x-card .fa-x-twitter{color:#0f0d0a!important}
   html[data-theme="light"] .social-card.linkedin-card{background:rgba(10,102,194,.06)!important}
   html[data-theme="light"] .social-card.instagram-card{background:rgba(225,48,108,.04)!important}
   html[data-theme="light"] .social-card.telegram-card{background:rgba(0,136,204,.05)!important}
-  html[data-theme="light"] .social-card.youtube-card{background:rgba(255,0,0,.04)!important}
+  html[data-theme="light"] .social-card.tiktok-card{background:rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .social-card.tiktok-card:hover{border-color:rgba(0,0,0,.2)!important}
+  html[data-theme="light"] .social-card.tiktok-card .social-icon-wrap{background:rgba(0,0,0,.1)!important}
+  html[data-theme="light"] .social-card.tiktok-card .fa-tiktok{color:#0f0d0a!important}
   html[data-theme="light"] .social-card.facebook-card{background:rgba(24,119,242,.04)!important}
 
   /* ── Availability row ── */
@@ -1368,12 +1373,12 @@
       <div class="hero-social-block">
         <div class="social-strip-title">// Connect with us</div>
         <div class="social-cards">
-          <a href="https://x.com/AurumCapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card x-card"><div class="social-icon-wrap" style="background:rgba(255,255,255,.08)"><i class="fab fa-x-twitter" style="color:#fff"></i></div><div class="social-card-text"><div class="social-card-name">X (Twitter)</div><div class="social-card-handle">@AurumCapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
-          <a href="https://linkedin.com/company/aurumcapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card linkedin-card"><div class="social-icon-wrap" style="background:rgba(10,102,194,.15)"><i class="fab fa-linkedin-in" style="color:#0a66c2"></i></div><div class="social-card-text"><div class="social-card-name">LinkedIn</div><div class="social-card-handle">Aurum Capitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
-          <a href="https://instagram.com/aurum.capitalinvest" target="_blank" rel="noopener noreferrer" class="social-card instagram-card"><div class="social-icon-wrap" style="background:rgba(225,48,108,.1)"><i class="fab fa-instagram" style="color:#e1306c"></i></div><div class="social-card-text"><div class="social-card-name">Instagram</div><div class="social-card-handle">@aurum.capitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
-          <a href="https://t.me/AurumCapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card telegram-card"><div class="social-icon-wrap" style="background:rgba(0,136,204,.12)"><i class="fab fa-telegram" style="color:#0088cc"></i></div><div class="social-card-text"><div class="social-card-name">Telegram</div><div class="social-card-handle">t.me/AurumCapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
-          <a href="https://youtube.com/@AurumCapitalTV" target="_blank" rel="noopener noreferrer" class="social-card youtube-card"><div class="social-icon-wrap" style="background:rgba(255,0,0,.08)"><i class="fab fa-youtube" style="color:#ff0000"></i></div><div class="social-card-text"><div class="social-card-name">YouTube</div><div class="social-card-handle">Aurum Capital TV</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
-          <a href="https://facebook.com/AurumCapitalHQ" target="_blank" rel="noopener noreferrer" class="social-card facebook-card"><div class="social-icon-wrap" style="background:rgba(24,119,242,.1)"><i class="fab fa-facebook-f" style="color:#1877f2"></i></div><div class="social-card-text"><div class="social-card-name">Facebook</div><div class="social-card-handle">AurumCapitalHQ</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="https://x.com/aurumcapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card x-card"><div class="social-icon-wrap" style="background:rgba(255,255,255,.08)"><i class="fab fa-x-twitter" style="color:#fff"></i></div><div class="social-card-text"><div class="social-card-name">X (Twitter)</div><div class="social-card-handle">@aurumcapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="https://linkedin.com/company/aurumcapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card linkedin-card"><div class="social-icon-wrap" style="background:rgba(10,102,194,.15)"><i class="fab fa-linkedin-in" style="color:#0a66c2"></i></div><div class="social-card-text"><div class="social-card-name">LinkedIn</div><div class="social-card-handle">aurumcapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="https://instagram.com/aurumcapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card instagram-card"><div class="social-icon-wrap" style="background:rgba(225,48,108,.1)"><i class="fab fa-instagram" style="color:#e1306c"></i></div><div class="social-card-text"><div class="social-card-name">Instagram</div><div class="social-card-handle">@aurumcapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="https://t.me/aurumcapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card telegram-card"><div class="social-icon-wrap" style="background:rgba(0,136,204,.12)"><i class="fab fa-telegram" style="color:#0088cc"></i></div><div class="social-card-text"><div class="social-card-name">Telegram</div><div class="social-card-handle">@aurumcapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="https://tiktok.com/@aurumcapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card tiktok-card"><div class="social-icon-wrap" style="background:rgba(255,255,255,.08)"><i class="fab fa-tiktok" style="color:#fff"></i></div><div class="social-card-text"><div class="social-card-name">TikTok</div><div class="social-card-handle">@aurumcapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
+          <a href="https://facebook.com/aurumcapitalinvest" target="_blank" rel="noopener noreferrer" class="social-card facebook-card"><div class="social-icon-wrap" style="background:rgba(24,119,242,.1)"><i class="fab fa-facebook-f" style="color:#1877f2"></i></div><div class="social-card-text"><div class="social-card-name">Facebook</div><div class="social-card-handle">aurumcapitalinvest</div></div><i class="fas fa-arrow-up-right social-card-arr"></i></a>
         </div>
       </div>
     </div>

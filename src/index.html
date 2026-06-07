@@ -62,6 +62,9 @@
       line-height: 1.7;
       overflow-x: hidden;
       cursor: auto;
+      will-change: scroll-position;
+      overscroll-behavior-x: none;
+      touch-action: pan-y;
     }
 
     /* ── NOISE GRAIN ── */
@@ -255,7 +258,7 @@
     /* ── HERO ── */
     .hero { min-height: 100svh; padding: 140px 40px 80px; position: relative; display: flex; align-items: center; overflow: hidden; }
     .hero-bg { position: absolute; inset: 0; z-index: 0; background: radial-gradient(ellipse 80% 60% at 60% 30%, rgba(201,168,76,0.06) 0%, transparent 65%), radial-gradient(ellipse 60% 80% at 10% 70%, rgba(98,126,234,0.04) 0%, transparent 55%), linear-gradient(160deg, #02040a 0%, #06090e 40%, #020406 100%); }
-    .hero-grid { position: absolute; inset: 0; z-index: 1; background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse 90% 80% at 50% 30%, black 0%, transparent 80%); animation: gridDrift 20s ease-in-out infinite alternate; }
+    .hero-grid { position: absolute; inset: 0; z-index: 1; background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse 90% 80% at 50% 30%, black 0%, transparent 80%); animation: gridDrift 20s ease-in-out infinite alternate; will-change: background-position; }
     @keyframes gridDrift { 0% { background-position: 0 0, 0 0; } 100% { background-position: 16px 12px, 16px 12px; } }
     .hero-orb-1 { position: absolute; z-index: 2; width: 700px; height: 700px; border-radius: 50%; top: -20%; right: -5%; background: radial-gradient(circle, rgba(201,168,76,0.10) 0%, transparent 65%); animation: orbBreath 8s ease-in-out infinite alternate, orbDrift1 22s ease-in-out infinite alternate; pointer-events: none; opacity: 0; }
     .hero-orb-2 { position: absolute; z-index: 2; width: 500px; height: 500px; border-radius: 50%; bottom: 5%; left: -10%; background: radial-gradient(circle, rgba(98,126,234,0.06) 0%, transparent 65%); animation: orbBreath 11s ease-in-out infinite alternate-reverse, orbDrift2 26s ease-in-out infinite alternate; pointer-events: none; opacity: 0; }
@@ -543,7 +546,7 @@
     .reveal-delay-4 { transition-delay: .48s; }
 
     /* ── SECTIONS ── */
-    .section { padding: 100px 40px; position: relative; }
+    .section { padding: 100px 40px; position: relative; content-visibility: auto; contain-intrinsic-size: 0 600px; }
     .section-inner { max-width: 1240px; margin: 0 auto; }
     .section-label { font-family: var(--ff-mono); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; display: inline-flex; align-items: center; gap: 12px; }
     .section-label::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--gold); opacity: .6; }
@@ -636,7 +639,7 @@
     .prop-meta-val { font-family: var(--ff-display); font-size: 18px; font-weight: 400; color: var(--gold); line-height: 1.1; margin-bottom: 3px; }
     .prop-meta-lbl { font-family: var(--ff-mono); font-size: 8px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
     .prop-invest-row { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 14px; }
-    .cta-band { background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(0,0,0,0) 60%); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 100px 40px; position: relative; overflow: hidden; }
+    .cta-band { background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(0,0,0,0) 60%); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 100px 40px; position: relative; overflow: hidden; content-visibility: auto; contain-intrinsic-size: 0 400px; }
     .cta-band::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(201,168,76,0.08) 0%, transparent 65%); pointer-events: none; }
     .cta-band-inner { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 60px; position: relative; z-index: 1; }
     .cta-title { font-family: var(--ff-display); font-size: clamp(28px, 3.5vw, 50px); font-weight: 400; color: var(--text-1); line-height: 1.1; margin-bottom: 14px; }
@@ -815,10 +818,10 @@
     }
     .section-label::before { background: var(--gold); opacity: .55; }
 
-    /* Enhanced spring reveals */
-    .reveal { opacity: 0; transform: translateY(28px); filter: blur(2px);
-      transition: opacity .95s cubic-bezier(.16,1,.3,1), transform .95s cubic-bezier(.16,1,.3,1), filter .95s cubic-bezier(.16,1,.3,1); }
-    .reveal.in { opacity: 1; transform: none; filter: blur(0); }
+    /* Enhanced spring reveals — no blur to keep reveals compositor-only */
+    .reveal { opacity: 0; transform: translateY(24px);
+      transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
+    .reveal.in { opacity: 1; transform: none; }
 
     /* Hero title enhanced */
     .hero-title { letter-spacing: -.01em; }
@@ -873,9 +876,9 @@
       );
     }
 
-    /* Smooth global theme transitions */
+    /* Smooth global theme transitions — no box-shadow (would repaint on hover during scroll) */
     *, *::before, *::after {
-      transition-property: background-color, border-color, color, box-shadow;
+      transition-property: background-color, border-color, color;
       transition-duration: .35s;
       transition-timing-function: cubic-bezier(.25,.46,.45,.94);
     }
@@ -1108,7 +1111,7 @@
     /* ══════════════════════════════════════════════════
        FAQ SECTION
     ══════════════════════════════════════════════════ */
-    .faq-section { padding: 110px 40px; position: relative; overflow: hidden; }
+    .faq-section { padding: 110px 40px; position: relative; overflow: hidden; content-visibility: auto; contain-intrinsic-size: 0 700px; }
     .faq-section::before {
       content: ''; position: absolute; inset: 0; pointer-events: none;
       background:
@@ -1250,7 +1253,8 @@
     /* — Animated grain — */
     .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.032;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='g'%3E%3CfeTurbulence baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23g)'/%3E%3C/svg%3E");
-      background-size:220px;animation:grainPos .18s steps(1) infinite}
+      background-size:220px;animation:grainPos .18s steps(1) infinite;
+      contain:paint;will-change:background-position}
     @keyframes grainPos{
       0%  {background-position:0 0}      10% {background-position:-5% -10%}
       20% {background-position:-15% 5%}  30% {background-position:7% -25%}
@@ -1259,7 +1263,7 @@
       80% {background-position:3% 35%}   90% {background-position:-10% 10%}}
 
     /* — Fixed aurora orbs — */
-    .aurora-orb{position:fixed;pointer-events:none;z-index:1;border-radius:50%;filter:blur(110px);will-change:transform}
+    .aurora-orb{position:fixed;pointer-events:none;z-index:1;border-radius:50%;filter:blur(110px);will-change:transform;translate:0 var(--par-y,0px)}
     .aurora-1{width:700px;height:550px;background:radial-gradient(circle,rgba(201,168,76,.09) 0%,transparent 65%);
       top:-18%;left:-12%;animation:auroraA 22s ease-in-out infinite}
     .aurora-2{width:560px;height:680px;background:radial-gradient(circle,rgba(98,126,234,.06) 0%,transparent 60%);
@@ -2145,12 +2149,7 @@
     }
 
     function tickerLoop() {
-      if (_tickerPaused) {
-        _tickerRAF = requestAnimationFrame(tickerLoop);
-        return;
-      }
       _tickerPos -= _tickerSpeed;
-      /* FIX: guard _tickerHalf > 0 to prevent NaN accumulation */
       if (_tickerHalf > 0 && _tickerPos <= -_tickerHalf) {
         _tickerPos += _tickerHalf;
       }
@@ -2164,28 +2163,28 @@
       var outer = document.getElementById('tickerOuter');
       if (!outer) return;
 
-      /* Desktop: mouse hover pauses */
+      /* Desktop: pause cancels rAF; resume restarts loop */
       outer.addEventListener('mouseenter', function() {
         _tickerPaused = true;
+        if (_tickerRAF) { cancelAnimationFrame(_tickerRAF); _tickerRAF = null; }
       });
       outer.addEventListener('mouseleave', function() {
         _tickerPaused = false;
+        if (!_tickerRAF) tickerLoop();
       });
 
-      /* FIX: Mobile touch — pause on touchstart, resume on touchend/touchcancel.
-         The original code used only mouseenter/mouseleave. On touch devices:
-           - touchstart fires (and may also fire a synthetic mouseenter)
-           - mouseleave NEVER fires after a touch
-         This permanently froze the ticker after any tap/scroll on mobile.
-         Using touchend/touchcancel ensures the animation always resumes. */
+      /* Mobile touch — same cancel/restart pattern */
       outer.addEventListener('touchstart', function() {
         _tickerPaused = true;
+        if (_tickerRAF) { cancelAnimationFrame(_tickerRAF); _tickerRAF = null; }
       }, { passive: true });
       outer.addEventListener('touchend', function() {
         _tickerPaused = false;
+        if (!_tickerRAF) tickerLoop();
       }, { passive: true });
       outer.addEventListener('touchcancel', function() {
         _tickerPaused = false;
+        if (!_tickerRAF) tickerLoop();
       }, { passive: true });
     })();
 
@@ -2483,24 +2482,20 @@
 
     window.toggleTheme = function() {
       var next = html.dataset.theme === 'dark' ? 'light' : 'dark';
-      var overlay = document.getElementById('themeOverlay');
-      var btn     = document.getElementById('themeToggle');
-
-      if (btn) {
-        btn.classList.add('spin');
-        setTimeout(function(){ btn.classList.remove('spin'); }, 600);
-      }
-
-      if (overlay) {
-        /* Cinematic cross-fade: flash overlay, swap theme mid-fade */
-        overlay.style.opacity = '1';
-        setTimeout(function() {
-          applyTheme(next);
-          overlay.style.opacity = '0';
-        }, 140);
-      } else {
-        applyTheme(next);
-      }
+      var ns = document.createElement('style');
+      ns.id = '__aurum_nt';
+      ns.textContent = '*,*::before,*::after{transition:none!important}';
+      document.head.appendChild(ns);
+      applyTheme(next);
+      void document.documentElement.offsetHeight;
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          var el = document.getElementById('__aurum_nt');
+          if (el) el.remove();
+        });
+      });
+      var btn = document.getElementById('themeToggle');
+      if (btn) { btn.classList.add('spin'); setTimeout(function(){ btn.classList.remove('spin'); }, 400); }
     };
 
     /* Always follow system-level preference changes */
@@ -2593,15 +2588,21 @@
       });
     }
 
-    /* ④ Aurora scroll parallax */
+    /* ④ Aurora scroll parallax — rAF-throttled, compositor-only via CSS translate property */
     var a1=document.querySelector('.aurora-1');
     var a2=document.querySelector('.aurora-2');
     var a3=document.querySelector('.aurora-3');
+    var _parRAF=false;
     window.addEventListener('scroll',function(){
-      var y=window.scrollY;
-      if(a1)a1.style.marginTop=(y*-.04)+'px';
-      if(a2)a2.style.marginBottom=(y*-.05)+'px';
-      if(a3)a3.style.marginTop=(y*-.025)+'px';
+      if(_parRAF)return;
+      _parRAF=true;
+      requestAnimationFrame(function(){
+        _parRAF=false;
+        var y=window.scrollY;
+        if(a1)a1.style.setProperty('--par-y',(y*-.04).toFixed(1)+'px');
+        if(a2)a2.style.setProperty('--par-y',(y*.05).toFixed(1)+'px');
+        if(a3)a3.style.setProperty('--par-y',(y*-.025).toFixed(1)+'px');
+      });
     },{passive:true});
 
     document.addEventListener('DOMContentLoaded',function(){

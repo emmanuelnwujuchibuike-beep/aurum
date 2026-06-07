@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="currency-utils.js"></script>
 <script src="dashboard.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{display:['Cormorant Garamond','serif'],body:['Instrument Sans','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{void:'#040608',deep:'#080c12',surface:'#111820',lift:'#172030',steel:'#5a6880',mist:'#8c9db5',snow:'#edf2f8',gold:{DEFAULT:'#c9a84c',bright:'#e8c96a'},gain:'#22c55e',loss:'#ef4444'}}}}</script>
@@ -74,9 +75,9 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   box-shadow:0 0 18px rgba(201,166,60,.28)}
 .nav-wordmark{font-family:'Cormorant Garamond',serif;font-size:19px;letter-spacing:.1em;color:var(--pearl)}
 .nav-right{display:flex;align-items:center;gap:12px}
-.nav-cash-box{text-align:right;padding-right:14px;border-right:1px solid var(--rim)}
+.nav-cash-box{text-align:right;padding-right:14px;border-right:1px solid var(--rim);max-width:180px;min-width:0}
 .nav-cash-label{font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.18em;text-transform:uppercase}
-.nav-cash-val{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--pearl);font-weight:300}
+.nav-cash-val{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,1.6vw,20px);color:var(--pearl);font-weight:300;display:block;max-width:100%}
 .nav-deposit-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;
   background:linear-gradient(135deg,var(--gold-hi),var(--gold),var(--gold-lo));
   color:var(--void);font-weight:600;font-size:12px;border:none;cursor:pointer;
@@ -155,7 +156,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .mm-port-cell{padding:14px 12px;text-align:center;border-right:1px solid rgba(255,255,255,.06)}
 .mm-port-cell:last-child{border-right:none}
 .mm-port-lbl{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:var(--fog);margin-bottom:6px}
-.mm-port-val{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--pearl);font-weight:300;line-height:1}
+.mm-port-val{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,3.5vw,17px);color:var(--pearl);font-weight:300;line-height:1;display:block;max-width:100%}
 
 /* ── scrollable nav ── */
 .mm-nav{flex:1;min-height:0;overflow-y:auto;padding:14px 14px 80px;
@@ -235,20 +236,25 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .mm-status-text{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.12em;color:var(--fog);text-transform:uppercase}
 body.menu-open{overflow:hidden}
 
-/* ── KPI CARDS ── */
+/* ── KPI STRIP + CARDS ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:44px}
 .kpi-card{background:linear-gradient(150deg,rgba(14,20,30,.9),rgba(9,13,20,.9));
   border:1px solid var(--rim);border-radius:var(--r-card);padding:22px 24px;
   position:relative;overflow:hidden;cursor:pointer;transition:all .4s}
 .kpi-card:hover{border-color:rgba(201,166,60,.35);transform:translateY(-3px);box-shadow:0 28px 70px rgba(0,0,0,.7)}
-.kpi-card::after{content:'';position:absolute;inset:0;border-radius:var(--r-card);
-  background:linear-gradient(135deg,rgba(255,255,255,.02),transparent);pointer-events:none}
-.kpi-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;color:var(--fog);text-transform:uppercase;margin-bottom:12px}
-.kpi-val{font-family:'Playfair Display',serif;font-size:clamp(22px,2.5vw,32px);font-weight:300;color:var(--pearl);line-height:1}
+.kpi-card::after{content:'';position:absolute;top:0;left:18%;right:18%;height:1px;
+  background:var(--kpi-line,linear-gradient(90deg,transparent,rgba(201,166,60,.45),transparent));pointer-events:none}
+.kpi-card::before{content:'';position:absolute;inset:0;border-radius:var(--r-card);
+  background:var(--kpi-glow,radial-gradient(circle,rgba(201,166,60,.05) 0%,transparent 65%));pointer-events:none}
+.kpi-card>*{position:relative;z-index:2}
+.kpi-label{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--fog);text-transform:uppercase;margin-bottom:12px;padding-right:50px}
+.kpi-val{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.8vw,36px);font-weight:300;color:var(--pearl);line-height:1}
 .kpi-val .accent{color:var(--gold)}
-.kpi-sub{font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:9px;cursor:pointer;transition:color .2s}
+.kpi-sub{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);margin-top:9px;cursor:pointer;transition:color .2s;display:block;background:none;border:none;padding:0;text-align:left;width:100%}
 .kpi-sub:hover{color:var(--gold)}
-.kpi-icon{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:11px;
-  display:flex;align-items:center;justify-content:center;font-size:15px}
+.kpi-icon{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform .3s}
+.kpi-card:hover .kpi-icon{transform:scale(1.1) rotate(5deg)}
 
 /* ── SECTION HEADS ── */
 .sec-eyebrow{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.26em;color:var(--gold);text-transform:uppercase;margin-bottom:6px}
@@ -351,8 +357,6 @@ body.menu-open{overflow:hidden}
   #withdrawModal .wd-modal-hdr{padding:16px 18px 14px!important}
   #withdrawModal .wd-modal-hdr h3{font-size:22px!important}
   #withdrawModal .wd-modal-body{padding:16px 18px 32px!important}
-  /* balance */
-  #wd-avail-bal{font-size:24px!important}
   /* method tab sub text hidden to save space */
   #withdrawModal .dm-sub{display:none!important}
   #withdrawModal .dep-method-tab{padding:12px 8px 10px!important;min-width:60px!important}
@@ -365,7 +369,6 @@ body.menu-open{overflow:hidden}
 @media(max-width:480px){
   #withdrawModal .wd-modal-hdr h3{font-size:20px!important}
   #withdrawModal .wd-modal-body{padding:14px 14px 28px!important}
-  #wd-avail-bal{font-size:22px!important}
   #withdrawModal .dep-method-tab{padding:10px 6px 8px!important;min-width:52px!important}
   #withdrawModal .dm-name{font-size:10px!important}
   /* coin grid 2-col stays but smaller */
@@ -403,7 +406,6 @@ body.menu-open{overflow:hidden}
   #transactionsModal .modal-hdr{padding:13px 15px 12px!important}
   #transactionsModal .modal-hdr h3{font-size:20px!important}
   .tx-stats-strip > div{padding:11px 12px!important}
-  #txm-total,#txm-invested,#txm-received,#txm-net{font-size:18px!important}
   #txModalList > div{padding:11px 14px!important}
   .tx-filter-btn{padding:5px 9px!important;font-size:9.5px!important}
 }
@@ -411,7 +413,6 @@ body.menu-open{overflow:hidden}
 /* ≤ 390px — very small screens */
 @media(max-width:390px){
   .tx-stats-strip > div{padding:10px 11px!important}
-  #txm-total,#txm-invested,#txm-received,#txm-net{font-size:15px!important}
   #txModalList > div{padding:10px 12px!important;gap:10px!important}
   #txModalList > div > div:first-child{width:32px!important;height:32px!important;border-radius:10px!important}
   #txModalList > div > div:last-child > p:first-child{font-size:14px!important}
@@ -545,7 +546,7 @@ body.menu-open{overflow:hidden}
 .dep-proc-center-badge{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,rgba(201,166,60,.14),rgba(201,166,60,.05));border:1px solid rgba(201,166,60,.22);display:flex;align-items:center;justify-content:center;transition:all .6s cubic-bezier(.16,1,.3,1)}
 .dep-proc-status-h{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--pearl);font-weight:300;margin-bottom:6px;transition:all .5s}
 .dep-proc-status-s{font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;transition:all .5s}
-.dep-proc-amt{display:inline-flex;align-items:center;gap:8px;background:rgba(201,166,60,.06);border:1px solid rgba(201,166,60,.16);border-radius:99px;padding:9px 22px;font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);font-weight:300;margin-bottom:30px;letter-spacing:.02em}
+.dep-proc-amt{display:inline-flex;align-items:center;gap:8px;background:rgba(201,166,60,.06);border:1px solid rgba(201,166,60,.16);border-radius:99px;padding:9px 22px;font-family:'Cormorant Garamond',serif;font-size:clamp(18px,4vw,26px);color:var(--gold);font-weight:300;margin-bottom:30px;letter-spacing:.02em}
 /* Timeline */
 .dep-proc-timeline{display:flex;align-items:center;justify-content:center;margin-bottom:20px;max-width:320px;margin-left:auto;margin-right:auto}
 .dep-proc-node{display:flex;flex-direction:column;align-items:center;gap:7px}
@@ -1089,15 +1090,45 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
 .tx-stats-strip{display:grid;grid-template-columns:repeat(4,1fr)}
 
 /* ══════════════════════════════════════════════════════
-   HERO STAT ROW — grid-based, mobile-friendly
+   HERO STAT ROW — ultra premium card grid
 ══════════════════════════════════════════════════════ */
-.nw-stat-grid{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap}
-.nw-stat-cell{padding:0 32px 0 0;flex:1;min-width:0;position:relative}
-.nw-stat-sep-line{width:1px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.14) 20%,rgba(255,255,255,.14) 80%,transparent);flex-shrink:0;align-self:stretch;margin:0 28px 0 0}
-.nw-stat-lbl-p{font-family:'DM Mono',monospace;font-size:6.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.26em;margin-bottom:11px;display:flex;align-items:center;gap:7px}
-.nw-stat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;display:inline-block}
-.nw-stat-val-p{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--pearl);font-weight:300;line-height:1;letter-spacing:-.018em;font-feature-settings:'kern' 1}
-.nw-stat-sub-p{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);margin-top:7px;letter-spacing:.04em}
+@keyframes statdot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.38;transform:scale(.7)}}
+.nw-stat-grid{display:flex;align-items:stretch;gap:10px;flex-wrap:nowrap;margin-bottom:32px}
+.nw-stat-sep-line{display:none!important}
+.nw-stat-cell{
+  flex:1;min-width:0;position:relative;overflow:hidden;
+  padding:18px 20px 16px;
+  background:linear-gradient(150deg,rgba(var(--sc-rgb),.032) 0%,rgba(0,0,0,.06) 100%);
+  border:1px solid rgba(var(--sc-rgb),.16);
+  border-radius:18px;
+  transition:border-color .35s ease,background .35s ease}
+.nw-stat-cell::before{
+  content:'';position:absolute;
+  top:0;left:18%;right:18%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(var(--sc-rgb),.9),transparent)}
+.nw-stat-cell::after{
+  content:'';position:absolute;
+  top:-40px;right:-40px;width:130px;height:130px;
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(var(--sc-rgb),.07) 0%,transparent 70%)}
+.nw-stat-cell:hover{
+  border-color:rgba(var(--sc-rgb),.35);
+  background:linear-gradient(150deg,rgba(var(--sc-rgb),.06) 0%,rgba(0,0,0,.04) 100%)}
+.nw-stat-lbl-p{font-family:'DM Mono',monospace;font-size:7px;color:var(--fog);text-transform:uppercase;letter-spacing:.2em;margin-bottom:12px;display:flex;align-items:center;gap:7px;opacity:.85}
+.nw-stat-dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block;
+  background:rgba(var(--sc-rgb),1);
+  box-shadow:0 0 8px rgba(var(--sc-rgb),.75);
+  animation:statdot-pulse 3s ease-in-out infinite}
+.nw-stat-val-p{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(18px,1.9vw,26px);
+  color:var(--pearl);font-weight:300;line-height:1;
+  letter-spacing:-.022em;
+  font-feature-settings:'kern' 1,'liga' 1;
+  text-shadow:0 0 40px rgba(var(--sc-rgb),.2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nw-stat-sub-p{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);margin-top:9px;letter-spacing:.04em;opacity:.8}
 
 /* ── RESPONSIVE ── */
 @media(min-width:1025px){
@@ -1118,12 +1149,13 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
 
   /* hero */
   .nw-ultra-hero{padding:36px 32px!important;border-radius:26px!important}
-  .nw-ultra-value{font-size:clamp(48px,8vw,76px)!important}
+  .nw-ultra-value:not([data-len]){font-size:clamp(48px,8vw,76px)!important}
 
   /* grids */
   .grid-2col{grid-template-columns:1fr!important}
   .grid-3col{grid-template-columns:1fr 1fr!important}
   .grid-stats{grid-template-columns:1fr 1fr!important}
+  .kpi-strip{grid-template-columns:1fr 1fr!important}
   .action-tiles-grid{grid-template-columns:repeat(4,1fr)!important}
   .adm-stats{grid-template-columns:repeat(3,1fr)!important}
 
@@ -1138,10 +1170,9 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
 
   /* hero */
   .nw-ultra-hero{padding:28px 22px!important;border-radius:22px!important}
-  .nw-ultra-value{font-size:clamp(40px,9vw,62px)!important}
-  .nw-stat-grid{flex-wrap:wrap;gap:16px!important}
-  .nw-stat-cell{flex:0 0 auto;padding-right:0!important;margin-right:0!important}
-  .nw-stat-sep-line{display:none!important}
+  .nw-ultra-value:not([data-len]){font-size:clamp(40px,9vw,62px)!important}
+  .nw-stat-grid{gap:8px!important}
+  .nw-stat-cell{padding:16px 16px 14px!important;border-radius:15px!important}
 
   /* hero inner wrap */
   .nw-hero-inner{gap:0!important}
@@ -1171,13 +1202,14 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   .action-premium{padding:20px 12px!important;border-radius:20px!important}
 
   /* hero stat values scale down at tablet */
-  .nw-stat-val-p{font-size:26px!important}
+  .nw-stat-val-p{font-size:clamp(16px,2.8vw,24px)!important}
 
   /* KPI: 2×2 */
   .grid-stats{grid-template-columns:1fr 1fr!important}
-  .kpi-premium{padding:22px 18px!important;border-radius:20px!important}
-  .kpi-p-value{font-size:clamp(24px,4.5vw,38px)!important}
-  .kpi-sparkline{height:24px!important}
+  .kpi-strip{grid-template-columns:1fr 1fr!important;gap:10px!important}
+  .kpi-card{padding:18px 18px!important;border-radius:18px!important}
+  .kpi-val{font-size:clamp(20px,4vw,30px)!important}
+  .kpi-icon{width:32px!important;height:32px!important;font-size:13px!important;top:14px!important;right:14px!important}
 
   /* ad banners */
   .ad-grid{grid-template-columns:1fr!important}
@@ -1222,7 +1254,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
 
   /* hero */
   .nw-ultra-hero{padding:22px 16px!important;border-radius:18px!important}
-  .nw-ultra-value{font-size:clamp(32px,8.5vw,46px)!important}
+  .nw-ultra-value:not([data-len]){font-size:clamp(32px,8.5vw,46px)!important}
   .greeting-status-bar{display:none!important}
 
   /* analytics ring — compact at 640 */
@@ -1246,12 +1278,17 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   .action-premium>div>div:first-child{font-size:12px!important}
 
   /* hero stat values go smaller on small mobile */
-  .nw-stat-val-p{font-size:22px!important}
+  .nw-stat-grid{gap:6px!important;flex-wrap:wrap!important}
+  .nw-stat-cell{padding:14px 14px 12px!important;border-radius:13px!important;min-width:calc(50% - 3px)!important}
+  .nw-stat-val-p{font-size:clamp(18px,4.5vw,26px)!important}
 
   /* KPI: 2 col */
   .grid-stats{grid-template-columns:1fr 1fr!important}
-  .kpi-p-value{font-size:clamp(22px,5.5vw,30px)!important}
-  .kpi-sparkline{height:20px!important}
+  .kpi-strip{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .kpi-card{padding:15px 14px!important;border-radius:15px!important}
+  .kpi-val{font-size:clamp(18px,4.5vw,26px)!important}
+  .kpi-icon{width:28px!important;height:28px!important;font-size:12px!important;top:12px!important;right:12px!important}
+  .kpi-label{margin-bottom:9px!important;padding-right:36px!important}
 
   /* sep */
   .sep-ultra{margin:36px 0!important}
@@ -1275,7 +1312,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
 @media(max-width:480px){
   main{padding:14px 10px!important}
   .nw-ultra-hero{padding:18px 14px!important}
-  .nw-ultra-value{font-size:30px!important}
+  .nw-ultra-value:not([data-len]){font-size:clamp(26px,7vw,32px)!important}
 
   /* analytics ring — smallest size */
   .nw-analytics-block{padding:12px 14px!important;margin-top:16px!important}
@@ -1289,13 +1326,19 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   .nw-analytics-block > div:last-child{padding-left:14px!important;margin-left:10px!important}
 
   /* hero stat values minimal on tiny screens */
-  .nw-stat-val-p{font-size:18px!important}
+  .nw-stat-cell{padding:12px 12px 10px!important;border-radius:11px!important;min-width:calc(50% - 4px)!important}
+  .nw-stat-val-p{font-size:clamp(16px,4.2vw,22px)!important}
+  .nw-stat-lbl-p{font-size:6px!important;letter-spacing:.16em!important}
+  .nw-stat-sub-p{font-size:7.5px!important}
 
-  /* KPI single column — too cramped at 2 col on very small */
+  /* KPI 2 col compact */
   .grid-stats{grid-template-columns:1fr 1fr!important}
-  .kpi-premium{padding:16px 14px!important;border-radius:16px!important}
-  .kpi-p-value{font-size:clamp(20px,5vw,26px)!important}
-  .kpi-p-label{font-size:6px!important;letter-spacing:.18em!important}
+  .kpi-strip{grid-template-columns:1fr 1fr!important;gap:7px!important}
+  .kpi-card{padding:13px 12px!important;border-radius:13px!important}
+  .kpi-val{font-size:clamp(16px,4.5vw,22px)!important}
+  .kpi-label{font-size:6px!important;letter-spacing:.16em!important;margin-bottom:8px!important;padding-right:32px!important}
+  .kpi-icon{width:26px!important;height:26px!important;font-size:11px!important;top:10px!important;right:10px!important}
+  .kpi-sub{font-size:7.5px!important}
 
   /* action tiles: 2 col compact */
   .action-tiles-grid{grid-template-columns:repeat(2,1fr)!important}
@@ -1314,9 +1357,15 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
 
 /* ── VERY SMALL (≤390px) ── */
 @media(max-width:390px){
-  .nw-ultra-value{font-size:26px!important}
-  .nw-stat-val-p{font-size:16px!important}
-  .kpi-p-value{font-size:19px!important}
+  .nw-ultra-value:not([data-len]){font-size:clamp(22px,6.5vw,28px)!important}
+  .nw-stat-grid{gap:5px!important;flex-wrap:wrap!important}
+  .nw-stat-cell{padding:10px 10px 9px!important;border-radius:10px!important;min-width:calc(50% - 3px)!important}
+  .nw-stat-val-p{font-size:clamp(15px,4vw,20px)!important}
+  .nw-stat-lbl-p{font-size:5.5px!important;letter-spacing:.14em!important;margin-bottom:8px!important}
+  .nw-stat-sub-p{font-size:7px!important}
+  .kpi-p-value{font-size:clamp(17px,4.8vw,20px)!important}
+  .kpi-strip{grid-template-columns:1fr 1fr!important}
+  .kpi-val{font-size:clamp(14px,4vw,18px)!important}
   .action-premium>div>div:first-child{font-size:11px!important}
   .mm-link-name{font-size:13px}
   /* ring — stack vertically on very small screens */
@@ -1337,6 +1386,19 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   #ringPnlAmt{font-size:15px!important}
   #ringPnlPctDisp{font-size:6.5px!important;padding:2px 5px!important}
 }
+
+/* ── RING LEGEND AMOUNTS — responsive ── */
+#ringCashAmt,#ringPortAmt{font-size:clamp(11px,1.6vw,15px)!important;white-space:nowrap}
+#ringPnlAmt{font-size:clamp(14px,2.2vw,20px)!important}
+#ringPnlPctDisp{font-size:clamp(7px,1.1vw,8.5px)!important}
+
+/* ── TRADE RECEIPT MODAL — responsive values ── */
+#rc2-gross,#rc2-fee,#rc2-price{font-size:clamp(11px,2vw,13px)!important}
+#rc2-total{font-size:clamp(12px,2.4vw,15px)!important}
+#rc2-pnl,#rc2-newbal{font-size:clamp(14px,3vw,18px)!important}
+
+/* ── TRADE MODAL — responsive preview values ── */
+#to-total{font-size:clamp(13px,2.5vw,15px)!important}
 
 /* ── SHORT SCREENS (landscape phone) ── */
 @media(max-height:620px){
@@ -1428,6 +1490,9 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   html[data-theme="light"] .mm-cta{background:linear-gradient(to top,rgba(240,234,220,.98) 55%,transparent)!important;border-top-color:rgba(0,0,0,.08)!important}
 
   /* ── light theme hero stat grid ── */
+  html[data-theme="light"] .nw-stat-cell{background:linear-gradient(150deg,rgba(var(--sc-rgb),.06) 0%,rgba(255,255,255,.7) 100%)!important;border-color:rgba(var(--sc-rgb),.22)!important}
+  html[data-theme="light"] .nw-stat-cell::after{background:radial-gradient(circle,rgba(var(--sc-rgb),.04) 0%,transparent 70%)}
+  html[data-theme="light"] .nw-stat-cell:hover{border-color:rgba(var(--sc-rgb),.4)!important;background:linear-gradient(150deg,rgba(var(--sc-rgb),.1) 0%,rgba(255,255,255,.8) 100%)!important}
   html[data-theme="light"] .nw-stat-lbl-p{color:#7a5c38!important}
   html[data-theme="light"] .nw-stat-val-p{color:#0f0d0a!important;text-shadow:none!important}
   html[data-theme="light"] .nw-stat-sub-p{color:#7a5c38!important}
@@ -1460,7 +1525,8 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   /* ── 9. KPI cards ── */
   html[data-theme="light"] .kpi-card{background:linear-gradient(150deg,rgba(255,255,255,.98),rgba(249,245,237,.96))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 20px rgba(0,0,0,.06)!important}
   html[data-theme="light"] .kpi-card:hover{border-color:rgba(159,122,30,.35)!important;box-shadow:0 28px 70px rgba(0,0,0,.12)!important}
-  html[data-theme="light"] .kpi-card::after{background:linear-gradient(135deg,rgba(255,255,255,.6),transparent)!important}
+  html[data-theme="light"] .kpi-card::after{background:linear-gradient(90deg,transparent,rgba(159,122,30,.28),transparent)!important}
+  html[data-theme="light"] .kpi-card::before{background:radial-gradient(circle,rgba(159,122,30,.03) 0%,transparent 65%)!important}
   html[data-theme="light"] .kpi-label{color:#7a5c38!important}
   html[data-theme="light"] .kpi-val{color:#0f0d0a!important}
   html[data-theme="light"] .kpi-sub{color:#7a5c38!important}
@@ -1675,9 +1741,15 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   font-family:'Cormorant Garamond',serif;
   font-size:clamp(64px,7.5vw,104px);
   font-weight:300;color:var(--pearl);
-  line-height:1;letter-spacing:-.035em;
+  line-height:1.05;letter-spacing:-.035em;
   font-feature-settings:'kern' 1,'liga' 1;
-  text-shadow:0 0 80px rgba(201,166,60,.14)}
+  text-shadow:0 0 80px rgba(201,166,60,.14);
+  max-width:100%;display:block;word-break:break-word;
+  transition:font-size .3s ease}
+/* Auto-shrink hero value for longer currency strings — !important beats media queries */
+.nw-ultra-value[data-len="long"]  {font-size:clamp(48px,5.8vw,80px)!important}
+.nw-ultra-value[data-len="xlong"] {font-size:clamp(36px,4.4vw,60px)!important}
+.nw-ultra-value[data-len="xxlong"]{font-size:clamp(26px,3.4vw,46px)!important}
 .nw-ultra-cents{font-size:.34em;color:var(--ash);letter-spacing:-.01em;opacity:.72;vertical-align:.08em}
 .nw-ultra-change{
   display:inline-flex;align-items:center;gap:8px;
@@ -1753,10 +1825,9 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   color:var(--fog);text-transform:uppercase;margin-bottom:14px;
   padding-right:54px;opacity:.75}
 .kpi-p-value{font-family:'Cormorant Garamond',serif;
-  font-size:clamp(28px,3.2vw,46px);font-weight:300;color:var(--pearl);
+  font-size:clamp(26px,3vw,42px);font-weight:300;color:var(--pearl);
   line-height:1;letter-spacing:-.025em;margin-bottom:9px;
-  font-feature-settings:'kern' 1;
-  overflow-wrap:break-word;word-break:break-word}
+  font-feature-settings:'kern' 1}
 .kpi-p-sub{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);
   cursor:pointer;transition:color .2s;background:none;border:none;padding:0;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block;letter-spacing:.03em}
@@ -2262,10 +2333,11 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
             <div style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.34em;color:var(--fog);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px;opacity:.65">
               <span style="width:22px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);display:inline-block;flex-shrink:0"></span>
               Total Net Worth
+              <button class="dash-bal-eye" onclick="toggleBalHidden()" style="background:none;border:none;color:var(--fog);cursor:pointer;font-size:12px;padding:2px 4px;line-height:1;letter-spacing:0;opacity:1;transition:color .2s" title="Hide/show balances"><i class="fas fa-eye"></i></button>
             </div>
 
             <div class="nw-ultra-value num-glow-gold">
-              $<span id="nwWhole">0</span><span class="nw-ultra-cents" id="nwCents">.00</span>
+              <span id="nwSym">$</span><span id="nwWhole">0</span><span class="nw-ultra-cents" id="nwCents">.00</span>
             </div>
 
             <div id="nwChangeBadge" class="nw-ultra-change nw-change-up" style="display:inline-flex;margin-top:14px;margin-bottom:32px">
@@ -2273,32 +2345,30 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
               <span id="nwChangeText">Portfolio value</span>
             </div>
 
-            <!-- Stat row — responsive grid -->
-            <div class="nw-stat-grid" style="margin-bottom:32px">
-              <div class="nw-stat-cell">
+            <!-- Stat row — ultra premium card grid -->
+            <div class="nw-stat-grid">
+              <div class="nw-stat-cell" style="--sc:#c9a84c;--sc-rgb:201,168,60">
                 <div class="nw-stat-lbl-p">
-                  <span class="nw-stat-dot" style="background:var(--gold);box-shadow:0 0 6px rgba(201,166,60,.6)"></span>
+                  <span class="nw-stat-dot"></span>
                   Cash Balance
                 </div>
-                <div class="nw-stat-val-p" id="nwCash">$0.00</div>
+                <div class="nw-stat-val-p" id="nwCash" style="color:var(--pearl)">$0.00</div>
                 <div class="nw-stat-sub-p">Available to invest</div>
               </div>
-              <div class="nw-stat-sep-line"></div>
-              <div class="nw-stat-cell">
+              <div class="nw-stat-cell" style="--sc:#627eea;--sc-rgb:98,126,234">
                 <div class="nw-stat-lbl-p">
-                  <span class="nw-stat-dot" style="background:#627eea;box-shadow:0 0 6px rgba(98,126,234,.55)"></span>
+                  <span class="nw-stat-dot"></span>
                   Portfolio
                 </div>
-                <div class="nw-stat-val-p" id="nwPortfolio">$0.00</div>
-                <div class="nw-stat-sub-p" id="nwPositions" style="color:var(--gold)">0 positions</div>
+                <div class="nw-stat-val-p" id="nwPortfolio" style="color:var(--pearl)">$0.00</div>
+                <div class="nw-stat-sub-p" id="nwPositions" style="color:rgba(98,126,234,.9)">0 positions</div>
               </div>
-              <div class="nw-stat-sep-line"></div>
-              <div class="nw-stat-cell">
+              <div class="nw-stat-cell" style="--sc:#1dbd6c;--sc-rgb:29,189,108">
                 <div class="nw-stat-lbl-p">
-                  <span class="nw-stat-dot" style="background:var(--gain);box-shadow:0 0 6px rgba(29,189,108,.5)"></span>
+                  <span class="nw-stat-dot"></span>
                   Unrealised P&amp;L
                 </div>
-                <div class="nw-stat-val-p num-glow-green" id="nwPnl" style="color:var(--gain)">$0.00</div>
+                <div class="nw-stat-val-p" id="nwPnl" style="color:var(--gain)">$0.00</div>
                 <div class="nw-stat-sub-p" id="nwPnlPct">+0.00%</div>
               </div>
             </div>
@@ -2436,96 +2506,41 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
         </a>
       </div>
 
-      <!-- KPI STRIP — PREMIUM -->
-      <div class="a3 grid-stats reveal" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:44px">
+      <!-- KPI STRIP -->
+      <div class="a3 kpi-strip reveal">
 
         <!-- Net Worth -->
-        <div class="kpi-premium" style="--kpi-glow:radial-gradient(circle,rgba(201,166,60,.08) 0%,transparent 65%);--kpi-top-line:linear-gradient(90deg,transparent,rgba(201,166,60,.7),transparent)">
-          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(201,166,60,.2),rgba(201,166,60,.07));border:1px solid rgba(201,166,60,.25)">
-            <i class="fas fa-wallet" style="color:var(--gold)"></i>
-          </div>
-          <div class="kpi-p-label">Net Worth</div>
-          <div class="kpi-p-value num-glow-gold">$<span class="accent" id="netWorth">0.00</span></div>
-          <div class="kpi-p-sub">Cash + Portfolio</div>
-          <div class="kpi-sparkline" style="--spark-lo:rgba(201,166,60,.35);--spark-hi:rgba(201,166,60,.8)">
-            <div class="kpi-spark-bar" style="height:45%"></div>
-            <div class="kpi-spark-bar" style="height:60%"></div>
-            <div class="kpi-spark-bar" style="height:40%"></div>
-            <div class="kpi-spark-bar" style="height:75%"></div>
-            <div class="kpi-spark-bar" style="height:55%"></div>
-            <div class="kpi-spark-bar" style="height:85%"></div>
-            <div class="kpi-spark-bar" style="height:70%"></div>
-            <div class="kpi-spark-bar" style="height:90%"></div>
-            <div class="kpi-spark-bar" style="height:78%"></div>
-            <div class="kpi-spark-bar" style="height:100%"></div>
-          </div>
+        <div class="kpi-card" style="--kpi-glow:radial-gradient(circle,rgba(201,166,60,.08) 0%,transparent 65%);--kpi-line:linear-gradient(90deg,transparent,rgba(201,166,60,.5),transparent)">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,rgba(201,166,60,.18),rgba(201,166,60,.06));border:1px solid rgba(201,166,60,.22);color:var(--gold)"><i class="fas fa-wallet"></i></div>
+          <div class="kpi-label" style="display:flex;align-items:center;gap:5px">Net Worth<button class="dash-bal-eye" onclick="toggleBalHidden()" style="background:none;border:none;color:var(--fog);cursor:pointer;font-size:10px;padding:0 2px;line-height:1;flex-shrink:0;transition:color .2s" title="Hide/show balances"><i class="fas fa-eye"></i></button></div>
+          <div class="kpi-val"><span class="accent" id="netWorth">$0.00</span></div>
+          <div class="kpi-sub">Cash + Portfolio</div>
         </div>
 
         <!-- Cash Balance -->
-        <div class="kpi-premium" style="--kpi-glow:radial-gradient(circle,rgba(29,189,108,.07) 0%,transparent 65%);--kpi-top-line:linear-gradient(90deg,transparent,rgba(29,189,108,.6),transparent)">
-          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(29,189,108,.2),rgba(29,189,108,.07));border:1px solid rgba(29,189,108,.25)">
-            <i class="fas fa-dollar-sign" style="color:var(--gain)"></i>
-          </div>
-          <div class="kpi-p-label">Cash Balance</div>
-          <div class="kpi-p-value num-glow-green">$<span id="cashBal" style="color:var(--gain)">0.00</span></div>
-          <button onclick="openDepositModal()" class="kpi-p-sub" style="color:var(--gain)">+ Fund Account →</button>
-          <div class="kpi-sparkline" style="--spark-lo:rgba(29,189,108,.3);--spark-hi:rgba(29,189,108,.75)">
-            <div class="kpi-spark-bar" style="height:60%"></div>
-            <div class="kpi-spark-bar" style="height:80%"></div>
-            <div class="kpi-spark-bar" style="height:55%"></div>
-            <div class="kpi-spark-bar" style="height:90%"></div>
-            <div class="kpi-spark-bar" style="height:70%"></div>
-            <div class="kpi-spark-bar" style="height:100%"></div>
-            <div class="kpi-spark-bar" style="height:75%"></div>
-            <div class="kpi-spark-bar" style="height:88%"></div>
-            <div class="kpi-spark-bar" style="height:65%"></div>
-            <div class="kpi-spark-bar" style="height:95%"></div>
-          </div>
+        <div class="kpi-card" style="--kpi-glow:radial-gradient(circle,rgba(29,189,108,.07) 0%,transparent 65%);--kpi-line:linear-gradient(90deg,transparent,rgba(29,189,108,.5),transparent)">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,rgba(29,189,108,.18),rgba(29,189,108,.06));border:1px solid rgba(29,189,108,.22);color:var(--gain)"><i class="fas fa-dollar-sign"></i></div>
+          <div class="kpi-label">Cash Balance</div>
+          <div class="kpi-val"><span id="cashBal" style="color:var(--gain)">$0.00</span></div>
+          <button onclick="openDepositModal()" class="kpi-sub" style="color:var(--gain)">+ Fund Account →</button>
         </div>
 
         <!-- Portfolio Value -->
-        <div class="kpi-premium" onclick="openPortfolioModal()" style="--kpi-glow:radial-gradient(circle,rgba(201,166,60,.07) 0%,transparent 65%);--kpi-top-line:linear-gradient(90deg,transparent,rgba(201,166,60,.55),transparent)">
-          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(201,166,60,.2),rgba(201,166,60,.07));border:1px solid rgba(201,166,60,.25)">
-            <i class="fas fa-briefcase" style="color:var(--gold)"></i>
-          </div>
-          <div class="kpi-p-label">Portfolio Value</div>
-          <div class="kpi-p-value num-glow-gold">$<span class="accent" id="portVal">0.00</span></div>
-          <div class="kpi-p-sub" id="portPnl" style="color:var(--gain)">+$0.00 P&amp;L</div>
-          <div class="kpi-sparkline" style="--spark-lo:rgba(201,166,60,.3);--spark-hi:rgba(201,166,60,.72)">
-            <div class="kpi-spark-bar" style="height:50%"></div>
-            <div class="kpi-spark-bar" style="height:65%"></div>
-            <div class="kpi-spark-bar" style="height:45%"></div>
-            <div class="kpi-spark-bar" style="height:80%"></div>
-            <div class="kpi-spark-bar" style="height:60%"></div>
-            <div class="kpi-spark-bar" style="height:92%"></div>
-            <div class="kpi-spark-bar" style="height:72%"></div>
-            <div class="kpi-spark-bar" style="height:85%"></div>
-            <div class="kpi-spark-bar" style="height:100%"></div>
-            <div class="kpi-spark-bar" style="height:88%"></div>
-          </div>
+        <div class="kpi-card" onclick="openPortfolioModal()" style="--kpi-glow:radial-gradient(circle,rgba(201,166,60,.07) 0%,transparent 65%);--kpi-line:linear-gradient(90deg,transparent,rgba(201,166,60,.42),transparent)">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,rgba(201,166,60,.18),rgba(201,166,60,.06));border:1px solid rgba(201,166,60,.22);color:var(--gold)"><i class="fas fa-briefcase"></i></div>
+          <div class="kpi-label">Portfolio Value</div>
+          <div class="kpi-val"><span class="accent" id="portVal">$0.00</span></div>
+          <div class="kpi-sub" id="portPnl" style="color:var(--gain)">+$0.00 P&amp;L</div>
         </div>
 
-        <!-- Positions -->
-        <div class="kpi-premium" onclick="openTransactionsModal()" style="--kpi-glow:radial-gradient(circle,rgba(98,126,234,.07) 0%,transparent 65%);--kpi-top-line:linear-gradient(90deg,transparent,rgba(98,126,234,.6),transparent)">
-          <div class="kpi-p-icon" style="background:linear-gradient(135deg,rgba(98,126,234,.2),rgba(98,126,234,.07));border:1px solid rgba(98,126,234,.25)">
-            <i class="fas fa-chart-pie" style="color:#627eea"></i>
-          </div>
-          <div class="kpi-p-label">Open Positions</div>
-          <div class="kpi-p-value"><span id="posCount" style="color:#627eea">0</span></div>
-          <div class="kpi-p-sub" style="color:#627eea">View transactions →</div>
-          <div class="kpi-sparkline" style="--spark-lo:rgba(98,126,234,.3);--spark-hi:rgba(98,126,234,.75)">
-            <div class="kpi-spark-bar" style="height:35%"></div>
-            <div class="kpi-spark-bar" style="height:55%"></div>
-            <div class="kpi-spark-bar" style="height:70%"></div>
-            <div class="kpi-spark-bar" style="height:50%"></div>
-            <div class="kpi-spark-bar" style="height:80%"></div>
-            <div class="kpi-spark-bar" style="height:65%"></div>
-            <div class="kpi-spark-bar" style="height:90%"></div>
-            <div class="kpi-spark-bar" style="height:75%"></div>
-            <div class="kpi-spark-bar" style="height:100%"></div>
-            <div class="kpi-spark-bar" style="height:85%"></div>
-          </div>
+        <!-- Open Positions -->
+        <div class="kpi-card" onclick="openTransactionsModal()" style="--kpi-glow:radial-gradient(circle,rgba(98,126,234,.07) 0%,transparent 65%);--kpi-line:linear-gradient(90deg,transparent,rgba(98,126,234,.5),transparent)">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,rgba(98,126,234,.18),rgba(98,126,234,.06));border:1px solid rgba(98,126,234,.22);color:#627eea"><i class="fas fa-chart-pie"></i></div>
+          <div class="kpi-label">Open Positions</div>
+          <div class="kpi-val"><span id="posCount" style="color:#627eea">0</span></div>
+          <div class="kpi-sub" style="color:#627eea">View transactions →</div>
         </div>
+
       </div>
 
       <!-- FEATURED PROPERTY HERO -->
@@ -2739,11 +2754,12 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
   var CIRC=251.2;
   var CIRC_INNER=175.9; // 2π×28 — inner P&L gauge ring
   function fmt(n){
-    // Format a number as $x,xxx.xx — compact if large
     if(isNaN(n))return'—';
+    if(window.AurumCurrency) return (n<0?'-':'')+window.AurumCurrency.fmtCompact(Math.abs(n));
     var neg=n<0;var abs=Math.abs(n);
     var s;
     if(abs>=1e6) s=(abs/1e6).toFixed(2)+'M';
+    else if(abs>=1e4) s=(abs/1e3).toFixed(1)+'K';
     else if(abs>=1e3) s=abs.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
     else s=abs.toFixed(2);
     return(neg?'-':'')+'$'+s;
@@ -2755,11 +2771,11 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
       var pnlEl=document.getElementById('nwPnl'),pnlPctEl=document.getElementById('nwPnlPct');
       if(!cashEl||!portEl)return;
 
-      var cash=parseFloat(cashEl.textContent.replace(/[^0-9.-]/g,''))||0;
-      var port=parseFloat(portEl.textContent.replace(/[^0-9.-]/g,''))||0;
-      var pnl=parseFloat((pnlEl||{}).textContent.replace(/[^0-9.-]/g,''))||0;
-      // preserve sign — check raw text for minus
-      if(pnlEl&&pnlEl.textContent.trim().startsWith('-'))pnl=-Math.abs(pnl);
+      // Prefer data-raw (set by updateNetworthHero) to avoid parsing compact text like "1.23M"
+      var cash=parseFloat(cashEl.dataset.raw)||parseFloat(cashEl.textContent.replace(/[^0-9.-]/g,''))||0;
+      var port=parseFloat(portEl.dataset.raw)||parseFloat(portEl.textContent.replace(/[^0-9.-]/g,''))||0;
+      var pnl=parseFloat((pnlEl||{}).dataset.raw);
+      if(isNaN(pnl)){pnl=parseFloat((pnlEl||{}).textContent.replace(/[^0-9.-]/g,''))||0;if(pnlEl&&pnlEl.textContent.trim().startsWith('-'))pnl=-Math.abs(pnl);}
       var total=cash+port;
 
       // Ring segments — adjacent arcs (no overlap)
@@ -2893,11 +2909,11 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
     <div class="port-summary-strip">
       <div style="padding:20px 24px;border-right:1px solid rgba(255,255,255,.07)">
         <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">Portfolio Value</p>
-        <p id="pm-portval" style="font-family:'Playfair Display',serif;font-size:26px;color:var(--pearl);font-weight:300">$0.00</p>
+        <p id="pm-portval" style="font-family:'Playfair Display',serif;font-size:clamp(16px,3.2vw,26px);color:var(--pearl);font-weight:300">$0.00</p>
       </div>
       <div style="padding:20px 24px;border-right:1px solid rgba(255,255,255,.07)">
         <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">Total P&amp;L</p>
-        <p id="pm-pnl" style="font-family:'Playfair Display',serif;font-size:26px;color:var(--gain);font-weight:300">+$0.00</p>
+        <p id="pm-pnl" style="font-family:'Playfair Display',serif;font-size:clamp(16px,3.2vw,26px);color:var(--gain);font-weight:300">+$0.00</p>
       </div>
       <div style="padding:20px 24px">
         <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">Positions</p>
@@ -2932,10 +2948,10 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
       </div>
     </div>
     <div class="tx-stats-strip" style="border-bottom:1px solid rgba(255,255,255,.07)">
-      <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Total Trades</p><p id="txm-total" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--pearl);font-weight:300">0</p></div>
-      <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Invested</p><p id="txm-invested" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--loss);font-weight:300">$0</p></div>
-      <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Received</p><p id="txm-received" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gain);font-weight:300">$0</p></div>
-      <div style="padding:18px 22px"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Net Flow</p><p id="txm-net" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--pearl);font-weight:300">$0</p></div>
+      <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Total Trades</p><p id="txm-total" style="font-family:'Playfair Display',serif;font-size:clamp(16px,3vw,22px);color:var(--pearl);font-weight:300">0</p></div>
+      <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Invested</p><p id="txm-invested" style="font-family:'Playfair Display',serif;font-size:clamp(16px,3vw,22px);color:var(--loss);font-weight:300">$0</p></div>
+      <div style="padding:18px 22px;border-right:1px solid rgba(255,255,255,.06)"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Received</p><p id="txm-received" style="font-family:'Playfair Display',serif;font-size:clamp(16px,3vw,22px);color:var(--gain);font-weight:300">$0</p></div>
+      <div style="padding:18px 22px"><p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--fog);text-transform:uppercase;margin-bottom:6px">Net Flow</p><p id="txm-net" style="font-family:'Playfair Display',serif;font-size:clamp(16px,3vw,22px);color:var(--pearl);font-weight:300">$0</p></div>
     </div>
     <div id="txModalList">
       <div style="text-align:center;padding:40px;color:var(--fog)"><div class="spin" style="width:20px;height:20px;border-width:2px;margin:0 auto"></div></div>
@@ -3337,8 +3353,7 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
 
           <!-- Amount pill -->
           <div class="dep-proc-amt">
-            <i class="fas fa-dollar-sign" style="font-size:12px"></i>
-            <span id="dep-proc-amt-val">0.00</span>
+            <span id="dep-proc-amt-val">$0.00</span>
           </div>
 
           <!-- Timeline -->
@@ -3400,7 +3415,7 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
       <div style="background:var(--lift);border:1px solid var(--rim);border-radius:16px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
         <div>
           <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Available Balance</p>
-          <p id="wd-avail-bal" style="font-family:'Playfair Display',serif;font-size:30px;color:var(--gain);font-weight:300">$0.00</p>
+          <p id="wd-avail-bal" style="font-family:'Playfair Display',serif;font-size:clamp(18px,4vw,28px);color:var(--gain);font-weight:300">$0.00</p>
         </div>
         <div style="width:48px;height:48px;border-radius:14px;background:var(--gain-bg);display:flex;align-items:center;justify-content:center"><i class="fas fa-dollar-sign" style="color:var(--gain);font-size:20px"></i></div>
       </div>
@@ -4030,9 +4045,9 @@ function updatePanelStats() {
   const nwEl = document.getElementById('panelNetWorth');
   const cEl  = document.getElementById('panelCash');
   const pEl  = document.getElementById('panelPnl');
-  if (nwEl) nwEl.textContent = '$' + fmtUSD(cash + portVal);
-  if (cEl)  cEl.textContent  = '$' + fmtUSD(cash);
-  if (pEl)  { pEl.textContent = (pnl >= 0 ? '+' : '') + '$' + fmtUSD(pnl); pEl.style.color = pnl >= 0 ? '#1dbd6c' : '#e84848'; }
+  if (nwEl) nwEl.textContent = maskVal(fmtMoneyCompact(cash + portVal));
+  if (cEl)  cEl.textContent  = maskVal(fmtMoneyCompact(cash));
+  if (pEl)  { pEl.textContent = (pnl >= 0 ? '+' : '-') + maskVal(fmtMoneyCompact(Math.abs(pnl))); pEl.style.color = pnl >= 0 ? '#1dbd6c' : '#e84848'; }
 }
 window.openDashMenu  = openDashMenu;
 window.closeDashMenu = closeDashMenu;
@@ -4040,12 +4055,23 @@ window.closeDashMenu = closeDashMenu;
 /* ---------- NET WORTH HERO ---------- */
 function updateNetworthHero(cash, portVal, pnl, costBasis) {
   const total = cash + portVal;
-  const wholePart = Math.floor(total).toLocaleString('en-US');
-  const centsPart = '.' + (total % 1).toFixed(2).slice(2);
-  const nwWhole = document.getElementById('nwWhole');
-  const nwCents = document.getElementById('nwCents');
-  if (nwWhole) nwWhole.textContent = wholePart;
-  if (nwCents) nwCents.textContent = centsPart;
+  const converted = window.AurumCurrency ? AurumCurrency.convert(total) : total;
+  const sym = window.AurumCurrency ? AurumCurrency.sym() : '$';
+  const wholePart = Math.floor(Math.abs(converted)).toLocaleString('en-US');
+  const centsPart = '.' + (Math.abs(converted) % 1).toFixed(2).slice(2);
+  const nwSymEl  = document.getElementById('nwSym');
+  const nwWhole  = document.getElementById('nwWhole');
+  const nwCents  = document.getElementById('nwCents');
+  if (isBalHidden()) {
+    if (nwSymEl) nwSymEl.textContent = '';
+    if (nwWhole) nwWhole.textContent = '••••••';
+    if (nwCents) nwCents.textContent = '';
+  } else {
+    if (nwSymEl) nwSymEl.textContent = sym;
+    if (nwWhole) nwWhole.textContent = wholePart;
+    if (nwCents) nwCents.textContent = centsPart;
+  }
+  scaleHeroValue();
 
   const nwCashEl = document.getElementById('nwCash');
   const nwPortEl = document.getElementById('nwPortfolio');
@@ -4055,10 +4081,10 @@ function updateNetworthHero(cash, portVal, pnl, costBasis) {
   const badge    = document.getElementById('nwChangeBadge');
   const badgeText= document.getElementById('nwChangeText');
 
-  if (nwCashEl) nwCashEl.textContent = '$' + fmtUSD(cash);
-  if (nwPortEl) nwPortEl.textContent = '$' + fmtUSD(portVal);
+  if (nwCashEl) { nwCashEl.textContent = maskVal(fmtMoneyCompact(cash));       nwCashEl.dataset.raw = cash; }
+  if (nwPortEl) { nwPortEl.textContent = maskVal(fmtMoneyCompact(portVal));    nwPortEl.dataset.raw = portVal; }
   if (nwPos)    nwPos.textContent    = myHoldings.length + ' position' + (myHoldings.length !== 1 ? 's' : '');
-  if (nwPnlEl)  { nwPnlEl.textContent = (pnl >= 0 ? '+' : '-') + '$' + fmtUSD(Math.abs(pnl)); nwPnlEl.style.color = pnl >= 0 ? 'var(--gain)' : 'var(--loss)'; }
+  if (nwPnlEl)  { nwPnlEl.textContent = (pnl >= 0 ? '+' : '-') + maskVal(fmtMoneyCompact(Math.abs(pnl))); nwPnlEl.dataset.raw = pnl; nwPnlEl.style.color = pnl >= 0 ? 'var(--gain)' : 'var(--loss)'; }
   const pct = costBasis > 0 ? (pnl / costBasis * 100) : 0;
   if (nwPnlPct) { nwPnlPct.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%'; nwPnlPct.style.color = pct >= 0 ? 'var(--gain)' : 'var(--fog)'; }
   if (badge && badgeText) {
@@ -4081,6 +4107,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('authGate').style.display = 'none';
   showApp();
+  applyDashBalVisibility();
   buildTicker();
   renderCryptoGrid();
   buildDepositCoinGrid();
@@ -4138,12 +4165,12 @@ window.addEventListener('DOMContentLoaded', async () => {
       if (!oldRow || row.status === oldRow.status) return;
       const amt = Math.abs(Number(row.usd_amount || 0));
       if (row.status === 'approved') {
-        if (row.type === 'deposit')  showStatusNotification('✅ Deposit Approved!', `$${fmtUSD(amt)} credited to your balance.`, 'success');
-        else if (row.type === 'withdraw') showStatusNotification('✅ Withdrawal Approved!', `$${fmtUSD(amt)} withdrawal processed.`, 'success');
+        if (row.type === 'deposit')  showStatusNotification('✅ Deposit Approved!', `${fmtMoney(amt)} credited to your balance.`, 'success');
+        else if (row.type === 'withdraw') showStatusNotification('✅ Withdrawal Approved!', `${fmtMoney(amt)} withdrawal processed.`, 'success');
         loadProfile(); loadTransactions(); checkPendingBadge();
       } else if (row.status === 'rejected') {
-        if (row.type === 'deposit')  showStatusNotification('❌ Deposit Rejected', `$${fmtUSD(amt)} deposit was not approved.`, 'error');
-        else if (row.type === 'withdraw') showStatusNotification('❌ Withdrawal Rejected', `$${fmtUSD(amt)} withdrawal was rejected.`, 'error');
+        if (row.type === 'deposit')  showStatusNotification('❌ Deposit Rejected', `${fmtMoney(amt)} deposit was not approved.`, 'error');
+        else if (row.type === 'withdraw') showStatusNotification('❌ Withdrawal Rejected', `${fmtMoney(amt)} withdrawal was rejected.`, 'error');
         loadTransactions(); checkPendingBadge();
       }
     }
@@ -4230,12 +4257,12 @@ function recalcPnl() {
     portVal += val; pnl += val - cost; costBasis += cost;
   });
   const cash = Number(profile?.cash || 0);
-  setTxt('portVal',  fmtUSD(portVal));
+  setTxt('portVal',  maskVal(fmtMoneyCompact(portVal)));
   setTxt('posCount', myHoldings.length);
-  setTxt('netWorth', fmtUSD(cash + portVal));
+  setTxt('netWorth', maskVal(fmtMoneyCompact(cash + portVal)));
   const pct = costBasis > 0 ? (pnl / costBasis * 100) : 0;
   const pEl = document.getElementById('portPnl');
-  if (pEl) { pEl.textContent = (pnl >= 0 ? '+' : '-') + '$' + fmtUSD(Math.abs(pnl)) + ' P&L (' + (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%)'; pEl.style.color = pnl >= 0 ? '#1dbd6c' : '#e84848'; }
+  if (pEl) { pEl.textContent = (pnl >= 0 ? '+' : '-') + maskVal(fmtMoneyCompact(Math.abs(pnl))) + ' P&L (' + (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%)'; pEl.style.color = pnl >= 0 ? '#1dbd6c' : '#e84848'; }
   updateNetworthHero(cash, portVal, pnl, costBasis);
   updatePanelStats();
 }
@@ -4275,7 +4302,7 @@ async function loadTransactions() {
     let amtDisplay = '';
     if (isPending)  amtDisplay = '<span class="badge-pending"><span></span>Pending</span>';
     else if (isRejected) amtDisplay = '<p style="font-family:\'DM Mono\',monospace;font-size:10px;color:#5a6880;text-decoration:line-through">Rejected</p>';
-    else amtDisplay = `<p style="font-family:'DM Mono',monospace;font-size:12px;color:${isPos ? '#1dbd6c' : '#e84848'};white-space:nowrap">${isPos ? '+' : ''}$${fmtUSD(Math.abs(amt))}</p>`;
+    else amtDisplay = `<p style="font-family:'DM Mono',monospace;font-size:12px;color:${isPos ? '#1dbd6c' : '#e84848'};white-space:nowrap">${isPos ? '+' : ''}${fmtMoneyCompact(Math.abs(amt))}</p>`;
     return `<div class="activity-item"><div style="width:36px;height:36px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${c.icon}" style="color:${c.color};font-size:13px"></i></div><div style="flex:1;min-width:0"><p style="font-size:13px;font-weight:500;color:var(--pearl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tx.type.charAt(0).toUpperCase() + tx.type.slice(1)} ${tx.symbol || ''}</p><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)">${d.toLocaleDateString()} · ${d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</p></div>${amtDisplay}</div>`;
   }).join('');
 }
@@ -4293,12 +4320,12 @@ function refreshUI() {
   const cash = Number(profile.cash || 0);
   const name = ((profile.first_name || '') + ' ' + (profile.last_name || '')).trim() || 'Investor';
   const ini  = profile.avatar_initials || '?';
-  setTxt('cashBal',    fmtUSD(cash));
-  setTxt('headerCash', '$' + fmtUSD(cash));
-  setTxt('sbCash',     '$' + fmtUSD(cash) + ' available');
+  setTxt('cashBal',    maskVal(fmtMoneyCompact(cash)));
+  setTxt('headerCash', maskVal(fmtMoneyCompact(cash)));
+  setTxt('sbCash',     maskVal(fmtMoneyCompact(cash)) + ' available');
   setTxt('sbName',     name);
   setTxt('greetName',  profile.first_name || 'Investor');
-  setTxt('wd-avail-bal', '$' + fmtUSD(cash));
+  setTxt('wd-avail-bal', fmtMoney(cash));
   ['sbAvatar', 'mobAvatarWrap', 'mmAvatar'].forEach(id => setTxt(id, ini));
   setTxt('mmName', name);
   const planEl = document.getElementById('mmPlan');
@@ -4415,7 +4442,8 @@ function openTradeModal(sym, type) {
   chgEl.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
   chgEl.style.color = chg >= 0 ? '#1dbd6c' : '#e84848';
   setTradeType(type);
-  document.getElementById('trade-amount').value = 100;
+  document.getElementById('trade-amount').value = +usdToLocal(100).toFixed(2);
+  updateDepModalCurrency();
   updateTradeModalCalc();
   document.getElementById('tradeModal').classList.add('open');
 }
@@ -4443,7 +4471,7 @@ function setTradeType(type) {
       const pnl      = val - cost;
       const pnlPct   = cost > 0 ? (pnl / cost * 100) : 0;
       infoEl.style.display = 'block';
-      detailEl.innerHTML = `${Number(holding.quantity).toFixed(6)} ${tradeModalAsset.sym} · Value: <span style="color:var(--gold)">$${fmtUSD(val)}</span> · P&L: <span style="color:${pnl >= 0 ? '#1dbd6c' : '#e84848'}">${pnl >= 0 ? '+' : ''}$${fmtUSD(pnl)} (${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%)</span>`;
+      detailEl.innerHTML = `${Number(holding.quantity).toFixed(6)} ${tradeModalAsset.sym} · Value: <span style="color:var(--gold)">${fmtMoneyCompact(val)}</span> · P&L: <span style="color:${pnl >= 0 ? '#1dbd6c' : '#e84848'}">${pnl >= 0 ? '+' : '-'}${fmtMoneyCompact(Math.abs(pnl))} (${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(2)}%)</span>`;
     } else {
       infoEl.style.display = 'block';
       detailEl.innerHTML = `<span style="color:var(--fog)">No ${tradeModalAsset?.sym || ''} holdings to sell</span>`;
@@ -4451,16 +4479,16 @@ function setTradeType(type) {
   }
   updateTradeModalCalc();
 }
-function setTradeAmt(v)  { document.getElementById('trade-amount').value = v; updateTradeModalCalc(); }
+function setTradeAmt(v)  { document.getElementById('trade-amount').value = +usdToLocal(v).toFixed(2); updateTradeModalCalc(); }
 function updateTradeModalCalc() {
   if (!tradeModalAsset || !profile) return;
   const liveP = PRICES[tradeModalAsset.sym] || tradeModalAsset.price;
-  const amt = parseFloat(document.getElementById('trade-amount').value) || 0;
+  const amt = localToUsd(parseFloat(document.getElementById('trade-amount').value) || 0);
   const fee = +(amt * 0.001).toFixed(2), total = +(amt + fee).toFixed(2);
   const cash = Number(profile.cash || 0), qty = amt / liveP;
-  setTxt('to-invest', '$' + fmtUSD(amt)); setTxt('to-fee', '$' + fmtUSD(fee)); setTxt('to-total', '$' + fmtUSD(total)); setTxt('trade-bal', '$' + fmtUSD(cash));
+  setTxt('to-invest', fmtMoney(amt)); setTxt('to-fee', fmtMoney(fee)); setTxt('to-total', fmtMoney(total)); setTxt('trade-bal', fmtMoney(cash));
   if (tradeModalType === 'buy') setTxt('to-receive', (qty < 1 ? qty.toFixed(6) : qty.toFixed(4)) + ' ' + tradeModalAsset.sym);
-  else setTxt('to-receive', '$' + fmtUSD(amt - fee) + ' USD');
+  else setTxt('to-receive', fmtMoney(amt - fee));
   let insuf = false;
   if (tradeModalType === 'buy') insuf = total > cash || amt < 10;
   else { const holding = myHoldings.find(h => h.symbol === tradeModalAsset.sym); insuf = (amt / liveP) > (holding ? Number(holding.quantity) : 0) || amt < 10; }
@@ -4474,7 +4502,7 @@ async function confirmTrade() {
   if (!tradeModalAsset || !profile) return;
   const a = tradeModalAsset;
   const liveP = PRICES[a.sym] || a.price;
-  const amt = parseFloat(document.getElementById('trade-amount').value) || 0;
+  const amt = localToUsd(parseFloat(document.getElementById('trade-amount').value) || 0);
   const fee = +(amt * 0.001).toFixed(2);
   const total = +(amt + fee).toFixed(2);
   const isBuy = tradeModalType === 'buy';
@@ -4569,9 +4597,9 @@ async function confirmTrade() {
       qty: qty < 1 ? qty.toFixed(6) : qty.toFixed(4),
       sym: a.sym,
       price: fmtPrice(liveP),
-      gross: fmtUSD(amt),
-      fee: fmtUSD(fee),
-      total: fmtUSD(total),
+      gross: amt,
+      fee: fee,
+      total: total,
       newCash: Number(profile.cash || 0),
       pnl, pnlLabel, isBuy
     });
@@ -4601,13 +4629,13 @@ function showTradeReceipt(d) {
   }
   setTxt('rc2-txid',  d.txId); setTxt('rc2-type',  d.type);  setTxt('rc2-asset', d.asset);
   setTxt('rc2-qty',   d.qty + ' ' + d.sym); setTxt('rc2-price', '$' + d.price);
-  setTxt('rc2-gross', '$' + d.gross); setTxt('rc2-fee',   '$' + d.fee);
-  setTxt('rc2-total', (d.isBuy ? '-' : '+') + '$' + d.total);
-  setTxt('rc2-newbal','$' + fmtUSD(d.newCash));
+  setTxt('rc2-gross', fmtMoney(d.gross)); setTxt('rc2-fee', fmtMoney(d.fee));
+  setTxt('rc2-total', (d.isBuy ? '-' : '+') + fmtMoney(d.total));
+  setTxt('rc2-newbal', fmtMoney(d.newCash));
   const pnlWrap = document.getElementById('rc2-pnl-wrap');
   const pnlEl   = document.getElementById('rc2-pnl');
   document.getElementById('rc2-pnl-label').textContent = d.pnlLabel;
-  pnlEl.textContent = (d.pnl >= 0 ? '+' : '') + '$' + fmtUSD(Math.abs(d.pnl));
+  pnlEl.textContent = (d.pnl >= 0 ? '+' : '-') + fmtMoney(Math.abs(d.pnl));
   pnlEl.style.color = d.pnl >= 0 ? '#1dbd6c' : '#e84848';
   pnlWrap.style.background = d.pnl >= 0 ? 'rgba(29,189,108,.06)' : 'rgba(232,72,72,.06)';
   pnlWrap.style.border     = `1px solid ${d.pnl >= 0 ? 'rgba(29,189,108,.15)' : 'rgba(232,72,72,.15)'}`;
@@ -4645,9 +4673,9 @@ function openDashPropertyWithdraw(sym, asset) {
       </div>
       <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px">
         ${isPremature ? `<div style="padding:14px 16px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.25);border-radius:14px;display:flex;align-items:flex-start;gap:12px"><i class="fas fa-triangle-exclamation" style="color:#e84848;font-size:16px;margin-top:2px;flex-shrink:0"></i><div><p style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#e84848;margin-bottom:4px">EARLY WITHDRAWAL — 30% PENALTY</p><p style="font-size:12px;color:var(--ash);line-height:1.6">Lock-in ends in <strong style="color:var(--pearl)">${timeMsg}</strong>. Withdrawing now deducts 30% of your invested amount.</p></div></div>` : `<div style="padding:14px 16px;background:rgba(29,189,108,.08);border:1px solid rgba(29,189,108,.2);border-radius:14px;display:flex;align-items:center;gap:12px"><i class="fas fa-circle-check" style="color:var(--gain);font-size:16px;flex-shrink:0"></i><p style="font-size:12px;color:var(--ash)">Lock-in period <strong style="color:var(--gain)">matured</strong> — full withdrawal, no penalty.</p></div>`}
-        <div style="display:flex;justify-content:space-between;padding:11px 14px;background:var(--lift);border:1px solid var(--rim);border-radius:11px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">Invested Value</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">$${fmtUSD(currentVal)}</span></div>
-        ${isPremature ? `<div style="display:flex;justify-content:space-between;padding:11px 14px;background:rgba(232,72,72,.06);border:1px solid rgba(232,72,72,.15);border-radius:11px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:#e84848">Early Withdrawal Penalty (30%)</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:#e84848">−$${fmtUSD(penalty)}</span></div>` : ''}
-        <div style="display:flex;justify-content:space-between;padding:13px 14px;background:${isPremature ? 'rgba(232,72,72,.08)' : 'rgba(29,189,108,.08)'};border:1px solid ${isPremature ? 'rgba(232,72,72,.2)' : 'rgba(29,189,108,.2)'};border-radius:11px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:${isPremature ? '#e84848' : 'var(--gain)'};font-weight:700">You Receive</span><span style="font-family:'Playfair Display',serif;font-size:22px;color:${isPremature ? '#e84848' : 'var(--gain)'};font-weight:300">$${fmtUSD(netPayout)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:11px 14px;background:var(--lift);border:1px solid var(--rim);border-radius:11px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">Invested Value</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">${fmtMoney(currentVal)}</span></div>
+        ${isPremature ? `<div style="display:flex;justify-content:space-between;padding:11px 14px;background:rgba(232,72,72,.06);border:1px solid rgba(232,72,72,.15);border-radius:11px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:#e84848">Early Withdrawal Penalty (30%)</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:#e84848">−${fmtMoney(penalty)}</span></div>` : ''}
+        <div style="display:flex;justify-content:space-between;padding:13px 14px;background:${isPremature ? 'rgba(232,72,72,.08)' : 'rgba(29,189,108,.08)'};border:1px solid ${isPremature ? 'rgba(232,72,72,.2)' : 'rgba(29,189,108,.2)'};border-radius:11px"><span style="font-family:'DM Mono',monospace;font-size:10px;color:${isPremature ? '#e84848' : 'var(--gain)'};font-weight:700">You Receive</span><span style="font-family:'Playfair Display',serif;font-size:clamp(18px,4vw,26px);color:${isPremature ? '#e84848' : 'var(--gain)'};font-weight:300">${fmtMoney(netPayout)}</span></div>
         <div style="display:flex;gap:10px;margin-top:4px">
           <button onclick="document.getElementById('dashPropWithdrawModal').remove()" style="flex:1;padding:13px;border-radius:12px;background:var(--lift);border:1px solid var(--rim);color:var(--ash);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">Cancel</button>
           <button id="dashPropConfirmBtn" onclick="confirmDashPropertyWithdraw('${sym}',${currentVal},${penalty},${netPayout})" style="flex:2;padding:13px;border-radius:12px;background:${isPremature ? 'linear-gradient(135deg,#c0392b,#e84848)' : 'linear-gradient(135deg,#1dbd6c,#15994e)'};border:none;color:#fff;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;cursor:pointer">${isPremature ? '⚠ Withdraw with Penalty' : '✓ Withdraw Full Amount'}</button>
@@ -4685,7 +4713,7 @@ async function confirmDashPropertyWithdraw(sym, currentVal, penalty, netPayout) 
     await loadProfile();
     document.getElementById('dashPropWithdrawModal')?.remove();
     closePortfolioModal();
-    showToast(isPremature ? 'Withdrawn with penalty' : 'Withdrawal complete', `$${fmtUSD(netPayout)} credited to balance`, isPremature ? 'error' : 'success');
+    showToast(isPremature ? 'Withdrawn with penalty' : 'Withdrawal complete', `${fmtMoney(netPayout)} credited to balance`, isPremature ? 'error' : 'success');
   } catch(err) {
     showToast('Withdrawal failed', err.message || 'Please try again', 'error');
     if(btn){ btn.disabled=false; btn.textContent='Retry'; }
@@ -4717,10 +4745,10 @@ async function openPortfolioModal() {
     const cost = Number(h.quantity) * Number(h.avg_buy_price);
     portVal += val; pnl += val - cost;
   });
-  setTxt('pm-portval', '$' + fmtUSD(portVal));
+  setTxt('pm-portval', fmtMoneyCompact(portVal));
   setTxt('pm-count',   hs.length);
   const pnlEl = document.getElementById('pm-pnl');
-  pnlEl.textContent = (pnl >= 0 ? '+' : '') + '$' + fmtUSD(pnl);
+  pnlEl.textContent = (pnl >= 0 ? '+' : '-') + fmtMoneyCompact(Math.abs(pnl));
   pnlEl.style.color  = pnl >= 0 ? '#1dbd6c' : '#e84848';
   if (!hs.length) {
     document.getElementById('portHoldingsContainer').innerHTML = '<div style="text-align:center;padding:40px;color:var(--fog)"><i class="fas fa-briefcase" style="font-size:32px;margin-bottom:12px;display:block;opacity:.3"></i><p style="font-family:\'DM Mono\',monospace;font-size:11px">No holdings yet</p><a href="invest.html" style="display:inline-block;margin-top:12px;color:var(--gold);font-family:\'DM Mono\',monospace;font-size:11px;text-decoration:none">Browse investments →</a></div>';
@@ -4737,7 +4765,7 @@ async function openPortfolioModal() {
     return `<div style="background:var(--surface);border:1px solid var(--rim);border-radius:18px;padding:20px 22px;margin-bottom:14px;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(201,166,60,.25)'" onmouseout="this.style.borderColor='var(--rim)'">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
         <div style="width:46px;height:46px;border-radius:15px;background:${(meta.color||'#5a6880')}18;color:${meta.color||'#5a6880'};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0"><i class="${meta.icon||'fas fa-coins'}"></i></div>
-        <div style="flex:1"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><p style="font-family:'Playfair Display',serif;font-size:18px;color:var(--pearl);font-weight:400">${h.symbol}</p><p style="font-size:12px;color:var(--fog)">${meta.name||h.symbol}</p></div><div style="text-align:right"><p style="font-family:'Playfair Display',serif;font-size:22px;color:var(--pearl);font-weight:300">$${fmtUSD(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${itemPnl>=0?'#1dbd6c':'#e84848'}">${itemPnl>=0?'+':''}$${fmtUSD(itemPnl)} (${pct>=0?'+':''}${pct.toFixed(2)}%)</p></div></div></div>
+        <div style="flex:1"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><p style="font-family:'Playfair Display',serif;font-size:18px;color:var(--pearl);font-weight:400">${h.symbol}</p><p style="font-size:12px;color:var(--fog)">${meta.name||h.symbol}</p></div><div style="text-align:right"><p style="font-family:'Playfair Display',serif;font-size:clamp(16px,3vw,22px);color:var(--pearl);font-weight:300">${fmtMoneyCompact(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${itemPnl>=0?'#1dbd6c':'#e84848'}">${itemPnl>=0?'+':'-'}${fmtMoneyCompact(Math.abs(itemPnl))} (${pct>=0?'+':''}${pct.toFixed(2)}%)</p></div></div></div>
       </div>
       <div class="holding-stats-grid" style="margin-bottom:16px">
         <div style="background:var(--lift);border:1px solid var(--rim);border-radius:11px;padding:10px;text-align:center"><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Qty</p><p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">${Number(h.quantity).toFixed(4)}</p></div>
@@ -4792,10 +4820,10 @@ function updateTxModalStats(txs) {
   });
   const net = totalReceived - totalInvested;
   setTxt('txm-total',    txs.length);
-  setTxt('txm-invested', '$' + fmtUSD(totalInvested));
-  setTxt('txm-received', '$' + fmtUSD(totalReceived));
+  setTxt('txm-invested', fmtMoneyCompact(totalInvested));
+  setTxt('txm-received', fmtMoneyCompact(totalReceived));
   const netEl = document.getElementById('txm-net');
-  if (netEl) { netEl.textContent = (net >= 0 ? '+' : '') + '$' + fmtUSD(Math.abs(net)); netEl.style.color = net >= 0 ? '#1dbd6c' : '#e84848'; }
+  if (netEl) { netEl.textContent = (net >= 0 ? '+' : '-') + fmtMoneyCompact(Math.abs(net)); netEl.style.color = net >= 0 ? '#1dbd6c' : '#e84848'; }
 }
 
 function renderTxModal(txs) {
@@ -4818,7 +4846,7 @@ function renderTxModal(txs) {
     let amtDisplay = '';
     if (isPending)  amtDisplay = '<p style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--gold)">⏳ Pending</p>';
     else if (isRejected) amtDisplay = '<p style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--fog)">✕ Rejected</p>';
-    else amtDisplay = `<p style="font-family:'Cormorant Garamond',serif;font-size:18px;color:${isPos ? '#22c55e' : '#ef4444'};font-weight:300">${isPos ? '+' : ''}$${fmtUSD(Math.abs(amt))}</p>`;
+    else amtDisplay = `<p style="font-family:'Cormorant Garamond',serif;font-size:clamp(15px,3.5vw,18px);color:${isPos ? '#22c55e' : '#ef4444'};font-weight:300;white-space:nowrap">${isPos ? '+' : '-'}${fmtMoneyCompact(Math.abs(amt))}</p>`;
     return `<div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--rim);transition:background .15s" onmouseover="this.style.background='var(--gold-fog)'" onmouseout="this.style.background='transparent'">
       <div style="width:40px;height:40px;border-radius:13px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${c.icon}" style="color:${c.color};font-size:14px"></i></div>
       <div style="flex:1;min-width:0">
@@ -5021,6 +5049,7 @@ async function openDepositModal() {
   selectDepEwallet('paypal');
   goDepStep(1);
   buildDepositCoinGrid();
+  updateDepModalCurrency();
 }
 function closeDepositModal() {
   // Clean up real-time subscription
@@ -5069,22 +5098,27 @@ function selectDepCoin(sym) {
   selectedDepAmt = 0; goDepStep(2);
 }
 function setDepAmt(amt) {
-  selectedDepAmt = amt; document.getElementById('dep-custom-amt').value = amt;
-  document.querySelectorAll('#dep-step-2 .amt-preset').forEach(b => b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g, '')) === amt));
+  selectedDepAmt = amt;
+  document.getElementById('dep-custom-amt').value = +usdToLocal(amt).toFixed(2);
+  document.querySelectorAll('#dep-step-2 .amt-preset').forEach(b => {
+    const m=(b.getAttribute('onclick')||'').match(/setDepAmt\((\d+)\)/);
+    b.classList.toggle('sel', m && +m[1] === amt);
+  });
 }
 window.selectDepCoin = selectDepCoin;
 window.setDepAmt     = setDepAmt;
 
 function renderDepStep3() {
   const coin = DEPOSIT_COINS.find(c => c.sym === selectedDepCoin); if (!coin) return;
-  const customAmt = parseFloat(document.getElementById('dep-custom-amt').value || '0');
+  const customLocalAmt = parseFloat(document.getElementById('dep-custom-amt').value || '0');
+  const customAmt = customLocalAmt > 0 ? localToUsd(customLocalAmt) : 0;
   selectedDepAmt  = customAmt > 0 ? customAmt : selectedDepAmt;
   if (selectedDepAmt <= 0) { showToast('Enter Amount', 'Please enter a deposit amount first', 'error'); goDepStep(2); return; }
   document.getElementById('dep-s3-coinbg').style.background = coin.color + '18';
   document.getElementById('dep-s3-coinicon').className       = coin.icon;
   document.getElementById('dep-s3-coinicon').style.color     = coin.color;
   setTxt('dep-s3-coinname', coin.name); setTxt('dep-s3-network', coin.network);
-  setTxt('dep-s3-amount',   '$' + fmtUSD(selectedDepAmt));
+  setTxt('dep-s3-amount',   fmtMoney(selectedDepAmt));
   const addr        = (CRYPTO_ADDRESSES[coin.sym] || '').trim();
   const addrSection = document.getElementById('dep-addr-shown');
   const noAddrSec   = document.getElementById('dep-no-address');
@@ -5179,16 +5213,19 @@ window.selectDepMethod = selectDepMethod;
 
 /* ── DEPOSIT: AMOUNT HELPERS ── */
 function setDepBankAmt(amt) {
-  const inp = document.getElementById('dep-bank-amt'); if (inp) inp.value = amt;
-  document.querySelectorAll('#dep-content-bank .amt-preset').forEach(b => b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g,'')) === amt));
+  const inp = document.getElementById('dep-bank-amt'); if (inp) inp.value = +usdToLocal(amt).toFixed(2);
+  document.querySelectorAll('#dep-content-bank .amt-preset').forEach(b => {
+    const m=(b.getAttribute('onclick')||'').match(/setDepBankAmt\((\d+)\)/);b.classList.toggle('sel',m&&+m[1]===amt);});
 }
 function setDepCardAmt(amt) {
-  const inp = document.getElementById('dep-card-amt'); if (inp) inp.value = amt;
-  document.querySelectorAll('#dep-content-card .amt-preset').forEach(b => b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g,'')) === amt));
+  const inp = document.getElementById('dep-card-amt'); if (inp) inp.value = +usdToLocal(amt).toFixed(2);
+  document.querySelectorAll('#dep-content-card .amt-preset').forEach(b => {
+    const m=(b.getAttribute('onclick')||'').match(/setDepCardAmt\((\d+)\)/);b.classList.toggle('sel',m&&+m[1]===amt);});
 }
 function setDepEwAmt(amt) {
-  const inp = document.getElementById('dep-ew-amt'); if (inp) inp.value = amt;
-  document.querySelectorAll('#dep-content-ewallet .amt-preset').forEach(b => b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g,'')) === amt));
+  const inp = document.getElementById('dep-ew-amt'); if (inp) inp.value = +usdToLocal(amt).toFixed(2);
+  document.querySelectorAll('#dep-content-ewallet .amt-preset').forEach(b => {
+    const m=(b.getAttribute('onclick')||'').match(/setDepEwAmt\((\d+)\)/);b.classList.toggle('sel',m&&+m[1]===amt);});
 }
 window.setDepBankAmt = setDepBankAmt;
 window.setDepCardAmt = setDepCardAmt;
@@ -5269,7 +5306,7 @@ window.copyEwalletEmail = copyEwalletEmail;
 
 /* ── DEPOSIT: BANK WIRE CONFIRM ── */
 async function confirmBankDeposit() {
-  const amt = parseFloat(document.getElementById('dep-bank-amt')?.value || '0');
+  const amt = localToUsd(parseFloat(document.getElementById('dep-bank-amt')?.value || '0'));
   if (!authUser) { showToast('Error', 'Not logged in', 'error'); return; }
   if (amt < 10)  { showToast('Enter Amount', 'Minimum deposit is $10', 'error'); return; }
   const btn = document.getElementById('dep-bank-btn');
@@ -5375,7 +5412,7 @@ async function confirmCardDeposit() {
   const cardName = (document.getElementById('dep-card-name')?.value   || '').trim();
   const expiry   = (document.getElementById('dep-card-expiry')?.value || '').replace(/\s/g,'').replace(/\//g,'');
   const cvv      = (document.getElementById('dep-card-cvv')?.value    || '').trim();
-  const amt      =  parseFloat(document.getElementById('dep-card-amt')?.value || '0');
+  const amt      =  localToUsd(parseFloat(document.getElementById('dep-card-amt')?.value || '0'));
   if (!authUser) { showToast('Error', 'Not logged in', 'error'); return; }
   if (!selectedCardType) {
     const errEl = document.getElementById('dep-ctype-err'); if (errEl) errEl.style.display = '';
@@ -5440,7 +5477,7 @@ function showDepProcessingScreen(txId, amt, methodLabel) {
 
   // Set amount display
   const amtEl = document.getElementById('dep-proc-amt-val');
-  if (amtEl) amtEl.textContent = fmtUSD(amt);
+  if (amtEl) amtEl.textContent = fmtMoney(amt);
 
   // Set method + timestamp meta
   const metaEl = document.getElementById('dep-proc-meta');
@@ -5545,7 +5582,7 @@ function _setDepProcState(state) {
 
 /* ── DEPOSIT: E-WALLET CONFIRM ── */
 async function confirmEwalletDeposit() {
-  const amt = parseFloat(document.getElementById('dep-ew-amt')?.value || '0');
+  const amt = localToUsd(parseFloat(document.getElementById('dep-ew-amt')?.value || '0'));
   if (!authUser) { showToast('Error',        'Not logged in',          'error'); return; }
   if (amt < 10)  { showToast('Enter Amount', 'Minimum deposit is $10', 'error'); return; }
   const d   = EWALLET_DATA[selectedDepEwallet] || EWALLET_DATA.paypal;
@@ -5609,7 +5646,8 @@ function buildWithdrawCoinGrid() {
 }
 
 function validateWdForm() {
-  const amt  = parseFloat(document.getElementById('wd-amount')?.value) || 0;
+  const localAmt = parseFloat(document.getElementById('wd-amount')?.value) || 0;
+  const amt = localToUsd(localAmt);
   const cash = Number(profile?.cash || 0);
   const amtOk = amt >= 10 && amt <= cash;
   const setChip = (id, met, label) => {
@@ -5617,7 +5655,7 @@ function validateWdForm() {
     el.className = 'wd-req-chip ' + (met ? 'wd-req-met' : 'wd-req-unmet');
     el.innerHTML = `<i class="fas ${met ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> ${label}`;
   };
-  setChip('wd-req-amount', amtOk, amtOk ? '$' + fmtUSD(amt) + ' set' : amt > cash && amt > 0 ? 'Exceeds balance' : 'Enter amount (min $10)');
+  setChip('wd-req-amount', amtOk, amtOk ? fmtMoney(amt) + ' set' : amt > cash && amt > 0 ? 'Exceeds balance' : 'Enter amount (min '+fmtMoney(10)+')');
 
   let detailOk = false, detailLabel = '';
   if (selectedWdMethod === 'crypto') {
@@ -5649,15 +5687,16 @@ function validateWdForm() {
 
 function selectWdCoin(sym) { selectedWdCoin = sym; buildWithdrawCoinGrid(); validateWdForm(); }
 function setWdAmt(amt) {
-  document.getElementById('wd-amount').value = amt;
-  document.querySelectorAll('#withdrawModal .amt-preset').forEach(b => b.classList.toggle('sel', Number(b.textContent.replace(/[$,]/g, '')) === amt));
+  document.getElementById('wd-amount').value = +usdToLocal(amt).toFixed(2);
+  document.querySelectorAll('#withdrawModal .amt-preset').forEach(b => {
+    const m=(b.getAttribute('onclick')||'').match(/setWdAmt\((\d+)\)/);b.classList.toggle('sel',m&&+m[1]===amt);});
   validateWdForm();
 }
 
 function openWithdrawModal() {
   if (!profile) return;
   selectedWdCoin = null; selectedWdMethod = 'crypto'; selectedWdCardType = null;
-  setTxt('wd-avail-bal', '$' + fmtUSD(Number(profile.cash || 0)));
+  setTxt('wd-avail-bal', fmtMoney(Number(profile.cash || 0)));
   document.getElementById('withdrawModal').classList.add('open');
   document.body.style.overflow = 'hidden';
   // Reset panels to crypto
@@ -5671,6 +5710,7 @@ function openWithdrawModal() {
   document.getElementById('wd-card-mc')?.classList.remove('active');
   document.querySelectorAll('#withdrawModal .amt-preset').forEach(b => b.classList.remove('sel'));
   validateWdForm();
+  updateDepModalCurrency();
   // Live validation
   ['wd-amount','wd-wallet','wd-bank-name','wd-bank-holder','wd-bank-account','wd-bank-swift','wd-paypal-email','wd-card-name','wd-card-last4'].forEach(id =>
     document.getElementById(id)?.addEventListener('input', validateWdForm)
@@ -5685,8 +5725,8 @@ window.selectWdMethod     = selectWdMethod;
 window.selectWdCard       = selectWdCard;
 
 async function submitWithdrawal() {
-  const amt  = parseFloat(document.getElementById('wd-amount').value);
-  if (isNaN(amt) || amt < 10) { showToast('Error', 'Minimum withdrawal is $10', 'error'); return; }
+  const amt  = localToUsd(parseFloat(document.getElementById('wd-amount').value) || 0);
+  if (isNaN(amt) || amt < 10) { showToast('Error', 'Minimum withdrawal is '+fmtMoney(10), 'error'); return; }
   if (Number(profile?.cash || 0) < amt) { showToast('Insufficient Funds', 'Cash balance too low', 'error'); return; }
 
   // Build method-specific metadata
@@ -5736,7 +5776,7 @@ async function submitWithdrawal() {
     });
     if (error) throw error;
     closeWithdrawModal();
-    showToast('Withdrawal Requested! ⏳', '$' + fmtUSD(amt) + ' pending — balance deducted only after approval.', 'info');
+    showToast('Withdrawal Requested! ⏳', fmtMoney(amt) + ' pending — balance deducted only after approval.', 'info');
     selectedWdCoin = null; loadTransactions(); checkPendingBadge();
   } catch (err) {
     showToast('Error', err.message, 'error');
@@ -6691,6 +6731,48 @@ window.closeUserDrawer = closeUserDrawer;
 function esc(s)    { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function escJs(s)  { return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
 function fmtUSD(n) { return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtMoney(n) { return window.AurumCurrency ? window.AurumCurrency.fmt(Number(n)) : '$' + fmtUSD(n); }
+function fmtMoneyCompact(n) { return window.AurumCurrency ? window.AurumCurrency.fmtCompact(Number(n)) : fmtMoney(n); }
+function isBalHidden(){return localStorage.getItem('aurum_balance_hidden')==='true';}
+function maskVal(v){return isBalHidden()?'••••••':v;}
+function toggleBalHidden(){localStorage.setItem('aurum_balance_hidden',isBalHidden()?'false':'true');applyDashBalVisibility();}
+function applyDashBalVisibility(){
+  const h=isBalHidden();
+  document.querySelectorAll('.dash-bal-eye').forEach(btn=>btn.innerHTML=h?'<i class="fas fa-eye-slash"></i>':'<i class="fas fa-eye"></i>');
+  if(typeof refreshUI==='function'&&typeof profile!=='undefined'&&profile)refreshUI();
+  if(typeof recalcPnl==='function')recalcPnl();
+}
+function usdToLocal(v){return window.AurumCurrency?window.AurumCurrency.convert(Number(v)):Number(v);}
+function localToUsd(v){return window.AurumCurrency?Number(v)/window.AurumCurrency.convert(1):Number(v);}
+function currSym(){return window.AurumCurrency?window.AurumCurrency.sym():'$';}
+function updateDepModalCurrency(){
+  if(!window.AurumCurrency)return;
+  const sym=AurumCurrency.sym();
+  document.querySelectorAll('#depositModal .amt-prefix,#withdrawModal .amt-prefix,#tradeModal .amt-prefix').forEach(el=>el.textContent=sym);
+  [['#dep-step-2 .amt-preset',[500,1000,5000,10000]],
+   ['#dep-content-bank .amt-preset',[1000,5000,25000,100000]],
+   ['#dep-content-card .amt-preset',[500,1000,5000,10000]],
+   ['#dep-content-ewallet .amt-preset',[500,1000,5000,10000]],
+   ['#withdrawModal .amt-preset',[500,1000,5000]]].forEach(([sel,vals])=>{
+    document.querySelectorAll(sel).forEach((btn,i)=>{if(vals[i]!==undefined)btn.textContent=AurumCurrency.fmtCompact(vals[i]);});
+  });
+  document.querySelectorAll('#tradeModal [onclick^="setTradeAmt"]').forEach(btn=>{
+    const m=(btn.getAttribute('onclick')||'').match(/setTradeAmt\((\d+)\)/);
+    if(m)btn.textContent=AurumCurrency.fmtCompact(+m[1]);
+  });
+}
+
+function scaleHeroValue() {
+  const symEl   = document.getElementById('nwSym');
+  const wholeEl = document.getElementById('nwWhole');
+  const heroEl  = document.querySelector('.nw-ultra-value');
+  if (!heroEl || !symEl || !wholeEl) return;
+  const len = (symEl.textContent || '').length + (wholeEl.textContent || '').length;
+  heroEl.removeAttribute('data-len');
+  if      (len > 16) heroEl.dataset.len = 'xxlong';
+  else if (len > 12) heroEl.dataset.len = 'xlong';
+  else if (len > 9)  heroEl.dataset.len = 'long';
+}
 function fmtPrice(p) {
   if (p >= 1000) return p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   if (p >= 1)    return p.toFixed(2);
@@ -6894,6 +6976,35 @@ document.head.appendChild(_flashStyle);
 <script src="coingecko-sync.js?v=4"></script>
 <script src="portfolio-sync.js"></script>
 <script src="premium.js"></script>
+<script>
+document.addEventListener('aurumRatesReady', function () {
+  if (typeof applyDashBalVisibility === 'function') applyDashBalVisibility();
+  if (typeof updateDepModalCurrency === 'function') updateDepModalCurrency();
+  if (typeof profile !== 'undefined' && profile) {
+    if (typeof refreshUI === 'function') refreshUI();
+    if (typeof recalcPnl === 'function') recalcPnl();
+    if (typeof renderTransactionList === 'function') renderTransactionList();
+    if (typeof scaleHeroValue === 'function') scaleHeroValue();
+    // Update trade modal order preview if currently open
+    if (typeof updateTradeModalCalc === 'function') {
+      const tm = document.getElementById('tradeModal');
+      if (tm && tm.classList.contains('open')) updateTradeModalCalc();
+    }
+    // Re-render portfolio modal figures if currently open
+    if (typeof openPortfolioModal === 'function') {
+      const pm = document.getElementById('portfolioModal');
+      if (pm && pm.classList.contains('open')) openPortfolioModal();
+    }
+    // Re-render transactions modal figures if currently open (no DB fetch — uses cached data)
+    {
+      const txm = document.getElementById('transactionsModal');
+      if (txm && txm.classList.contains('open') && typeof filterTxModal === 'function') {
+        filterTxModal(typeof txModalFilter !== 'undefined' ? txModalFilter : 'all');
+      }
+    }
+  }
+});
+</script>
 
 </body>
 </html>

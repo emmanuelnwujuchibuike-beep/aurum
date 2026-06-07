@@ -2024,7 +2024,7 @@ function renderAll() {
     sbAv.style.background = c.grad; sbAv.style.color = c.txt;
   }
   setText('sidebarName', fullName);
-  setText('sidebarCash', '$' + fmtUSD(cash) + ' available');
+  setText('sidebarCash', fmtMoney(cash) + ' available');
 
   /* ACCOUNT INFO */
   setText('infoFullName',  fullName);
@@ -2178,7 +2178,7 @@ function renderTimeline(createdAt) {
     events.push({
       icon: cfg.icon, color: cfg.color, bg: cfg.bg,
       label: cfg.label,
-      sub: t.usd_amount != null ? (Number(t.usd_amount)>=0?'+':'')+' $'+fmtUSD(Math.abs(Number(t.usd_amount))) : '',
+      sub: t.usd_amount != null ? (Number(t.usd_amount)>=0?'+':'')+' '+fmtMoney(Math.abs(Number(t.usd_amount))) : '',
       time: timeAgo(t.created_at),
     });
   });
@@ -2420,7 +2420,11 @@ const SETTINGS_DEFAULTS = {
 };
 
 let _settings = { ...SETTINGS_DEFAULTS };
-let _fxRates   = { USD: 1 };
+let _fxRates = {
+  USD:1, EUR:0.92, GBP:0.79, JPY:149.5,
+  NGN:1620, CAD:1.36, AUD:1.53, CHF:0.88,
+  INR:83.5, BRL:4.97
+};
 let _saveTimer = null;
 
 const CURRENCIES = {
@@ -2453,7 +2457,11 @@ async function fetchFxRates() {
     const r = await fetch('https://open.er-api.com/v6/latest/USD', { signal: AbortSignal.timeout(5000) });
     if (!r.ok) return;
     const d = await r.json();
-    if (d.rates) { _fxRates = { ...d.rates, USD: 1 }; updateFxRateRow(); }
+    if (d.rates) {
+      _fxRates = { ...d.rates, USD: 1 };
+      updateFxRateRow();
+      renderAll();
+    }
   } catch {}
 }
 
@@ -2542,7 +2550,7 @@ window.onPrefChange = function(key, value) {
   if (key === 'digest')             document.getElementById('digestOptions').style.display    = value ? 'block' : 'none';
   if (key === 'alerts')             document.getElementById('priceAlertPanel').style.display  = value ? 'block' : 'none';
   if (key === 'profitAlertEnabled') document.getElementById('profitAlertPanel').style.display = value ? 'block' : 'none';
-  if (key === 'currency') { updateFxRateRow(); renderAlertsList(); }
+  if (key === 'currency') { updateFxRateRow(); renderAlertsList(); renderAll(); fetchFxRates(); }
   if (['profitAlertEnabled','profitThreshold','profitDir'].includes(key)) renderProfitAlertStatus();
   scheduleSave();
 };

@@ -476,12 +476,26 @@
 
     @keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
+    /* Desktop nav links */
+    nav.desk { display: flex; align-items: center; gap: 4px; }
+    nav.desk a {
+      font-family: var(--sans); font-size: 13px; font-weight: 400;
+      letter-spacing: .03em; color: var(--text-sec);
+      text-decoration: none; padding: 8px 14px; border-radius: 9px;
+      transition: color .2s, background .2s;
+    }
+    nav.desk a:hover { color: var(--text-prime); background: rgba(255,255,255,.05); }
+    nav.desk a.active { color: var(--gold); }
+    html[data-theme="light"] nav.desk a { color: var(--text-sec); }
+    html[data-theme="light"] nav.desk a:hover { color: var(--text-prime); background: rgba(0,0,0,.05); }
+
     /* Show toggle on mobile, hide desktop nav btns */
     @media (max-width: 1024px) {
       .lp-nav-toggle   { display: flex !important; }
       .lp-mobile-menu  { display: block !important; }
       .head-right .btn-outline-sm { display: none; }
       .head-right .btn-gold       { display: none; }
+      nav.desk { display: none !important; }
     }
     @media (min-width: 1025px) {
       .lp-nav-toggle  { display: none !important; }
@@ -1085,6 +1099,15 @@
       <div class="logo-mark">A</div>
       Aurum Capital
     </a>
+    <nav class="desk">
+      <a href="index.html#markets">Markets</a>
+      <a href="invest.html">Invest</a>
+      <a href="index.html#assets">Assets</a>
+      <a href="index.html#property">Property</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="margin-right:4px"><span class="theme-icon">☀</span></button><div class="head-right">
       <a href="signup.html" class="btn-outline-sm">Sign In</a>
       <a href="signup.html" class="btn-gold">Open Account</a>
