@@ -277,11 +277,206 @@
     .hero-title em { color: var(--gold); font-style: italic; }
     .hero-title strong { display: block; background: linear-gradient(135deg, var(--text-1) 0%, var(--gold-pale) 50%, var(--gold) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 500; }
     .hero-sub { font-size: 16px; color: var(--text-2); font-weight: 300; max-width: 480px; line-height: 1.75; margin-bottom: 40px; }
-    .hero-ctas { display: flex; align-items: center; gap: 14px; margin-bottom: 56px; }
-    .btn-hero-primary { display: inline-flex; align-items: center; gap: 9px; padding: 16px 32px; border-radius: 14px; background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: var(--ink); font-family: var(--ff-body); font-size: 14px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; box-shadow: 0 8px 32px rgba(201,168,76,0.25); transition: opacity .2s, transform .2s, box-shadow .2s; letter-spacing: .02em; }
-    .btn-hero-primary:hover { opacity: .88; transform: translateY(-2px); box-shadow: 0 14px 42px rgba(201,168,76,0.4); }
-    .btn-hero-ghost { display: inline-flex; align-items: center; gap: 9px; padding: 15px 28px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-2); font-family: var(--ff-body); font-size: 14px; font-weight: 400; text-decoration: none; cursor: pointer; transition: all .2s; letter-spacing: .02em; }
-    .btn-hero-ghost:hover { color: var(--text-1); border-color: rgba(255,255,255,0.15); background: var(--glass-hover); }
+    /* ══════════════════════════════════════════════
+       LUXURY HERO BUTTONS — responsive, animated
+    ══════════════════════════════════════════════ */
+    .hero-ctas {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      gap: 11px;
+      margin-bottom: 52px;
+      width: fit-content;
+    }
+
+    /* Staggered entrance slide-up */
+    @keyframes btnRise {
+      from { opacity: 0; transform: translateY(18px) scale(.96); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);   }
+    }
+    .btn-hero-primary  { animation: btnRise .65s cubic-bezier(.34,1.56,.64,1) .5s  both; }
+    .btn-hero-ghost    { animation: btnRise .65s cubic-bezier(.34,1.56,.64,1) .65s both; }
+    .btn-hero-property { animation: btnRise .65s cubic-bezier(.34,1.56,.64,1) .8s  both; }
+
+    /* Shared base */
+    .btn-hero-primary,
+    .btn-hero-ghost,
+    .btn-hero-property {
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      padding: clamp(13px,1.6vw,17px) clamp(20px,2.8vw,32px);
+      border-radius: 13px; overflow: hidden;
+      font-family: var(--ff-body);
+      font-size: clamp(11.5px,1.15vw,13px);
+      font-weight: 600;
+      text-decoration: none; cursor: pointer; white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      will-change: transform;
+    }
+
+    /* ── PRIMARY ─────────────────────────────────── */
+    .btn-hero-primary {
+      letter-spacing: .08em; text-transform: uppercase;
+      background: linear-gradient(150deg, #f8e27e 0%, #d8b254 32%, #aa7e2a 68%, #c9a84c 100%);
+      color: #020406; border: none;
+      box-shadow:
+        0 1px 0 rgba(0,0,0,.5),
+        0 4px 0 rgba(0,0,0,.35),
+        0 12px 40px rgba(201,168,76,.30),
+        inset 0 1px 0 rgba(255,255,255,.30),
+        inset 0 -1px 0 rgba(0,0,0,.18);
+      transition: transform .26s cubic-bezier(.34,1.56,.64,1), box-shadow .26s ease;
+    }
+    /* shimmer layer */
+    .btn-hero-primary::before {
+      content: ''; position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(108deg,
+        transparent 25%, rgba(255,255,255,.42) 48%, transparent 70%);
+      transform: translateX(-120%) skewX(-16deg);
+      pointer-events: none;
+    }
+    .btn-hero-primary:hover::before {
+      transition: transform .5s ease;
+      transform: translateX(180%) skewX(-16deg);
+    }
+    /* pulse ring */
+    .btn-hero-primary::after {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: 0;
+      box-shadow: 0 0 0 0 rgba(201,168,76,.52);
+      animation: goldRing 2.6s cubic-bezier(.4,0,.6,1) infinite;
+      pointer-events: none;
+    }
+    @keyframes goldRing {
+      0%   { box-shadow: 0 0 0 0   rgba(201,168,76,.52); }
+      60%  { box-shadow: 0 0 0 16px rgba(201,168,76,0);  }
+      100% { box-shadow: 0 0 0 0   rgba(201,168,76,0);   }
+    }
+    .btn-hero-primary > * { position: relative; z-index: 2; }
+    .btn-hero-primary:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow:
+        0 1px 0 rgba(0,0,0,.4),
+        0 10px 0 rgba(0,0,0,.22),
+        0 28px 56px rgba(201,168,76,.5),
+        inset 0 1px 0 rgba(255,255,255,.38),
+        inset 0 -1px 0 rgba(0,0,0,.12);
+    }
+    .btn-hero-primary:active {
+      transform: translateY(1px) scale(.985);
+      box-shadow: 0 1px 0 rgba(0,0,0,.5), 0 4px 14px rgba(201,168,76,.2),
+        inset 0 1px 0 rgba(255,255,255,.2), inset 0 2px 6px rgba(0,0,0,.15);
+    }
+
+    /* ── GHOST ───────────────────────────────────── */
+    .btn-hero-ghost {
+      letter-spacing: .04em;
+      background: rgba(255,255,255,.028);
+      color: var(--text-2);
+      border: 1px solid rgba(255,255,255,.09);
+      backdrop-filter: blur(14px);
+      transition: color .22s, background .22s, border-color .22s,
+                  transform .26s cubic-bezier(.34,1.56,.64,1);
+    }
+    /* animated gradient fill on hover */
+    .btn-hero-ghost::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit;
+      background: linear-gradient(135deg,
+        rgba(201,168,76,.0) 0%, rgba(201,168,76,.09) 50%, rgba(201,168,76,.0) 100%);
+      opacity: 0; transition: opacity .3s;
+    }
+    /* gradient border glow */
+    .btn-hero-ghost::after {
+      content: ''; position: absolute; inset: -1px; border-radius: 14px;
+      background: linear-gradient(135deg,
+        rgba(201,168,76,.0), rgba(201,168,76,.45), rgba(255,255,255,.05), rgba(201,168,76,.45), rgba(201,168,76,.0));
+      opacity: 0;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out; mask-composite: exclude;
+      padding: 1px; transition: opacity .3s;
+    }
+    .btn-hero-ghost:hover::before { opacity: 1; }
+    .btn-hero-ghost:hover::after  { opacity: 1; }
+    .btn-hero-ghost:hover {
+      color: var(--gold-pale);
+      background: rgba(201,168,76,.04);
+      border-color: rgba(201,168,76,.28);
+      transform: translateY(-3px);
+    }
+    .btn-hero-ghost:active { transform: translateY(0) scale(.978); }
+    .btn-hero-ghost .bh-icon {
+      display: inline-block;
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), color .22s;
+    }
+    .btn-hero-ghost:hover .bh-icon { transform: rotate(15deg) scale(1.2); color: var(--gold); }
+
+    /* ── PROPERTY ────────────────────────────────── */
+    .btn-hero-property {
+      letter-spacing: .05em;
+      background: linear-gradient(150deg, #0d1a27 0%, #060f18 100%);
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,.24);
+      box-shadow: 0 1px 0 rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.18),
+                  inset 0 1px 0 rgba(255,255,255,.035);
+      transition: color .22s, border-color .25s, box-shadow .28s,
+                  transform .26s cubic-bezier(.34,1.56,.64,1);
+    }
+    /* rising gold fill */
+    .btn-hero-property::before {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 0;
+      background: linear-gradient(to top,
+        rgba(201,168,76,.18) 0%, rgba(201,168,76,.06) 55%, transparent 100%);
+      transition: height .36s cubic-bezier(.25,.46,.45,.94);
+    }
+    /* radial floor glow */
+    .btn-hero-property::after {
+      content: ''; position: absolute; inset: 0; border-radius: inherit;
+      background: radial-gradient(ellipse at 50% 130%, rgba(201,168,76,.22) 0%, transparent 65%);
+      opacity: 0; transition: opacity .32s;
+    }
+    .btn-hero-property:hover::before { height: 100%; }
+    .btn-hero-property:hover::after  { opacity: 1; }
+    .btn-hero-property:hover {
+      color: #f8e07e;
+      border-color: rgba(201,168,76,.52);
+      box-shadow: 0 1px 0 rgba(0,0,0,.3), 0 8px 20px rgba(0,0,0,.28),
+                  0 0 14px rgba(201,168,76,.08),
+                  inset 0 1px 0 rgba(255,255,255,.05);
+      transform: translateY(-3px);
+    }
+    .btn-hero-property:active { transform: translateY(0) scale(.978); }
+    .btn-hero-property .bp-icon {
+      display: inline-block;
+      transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+    }
+    .btn-hero-property:hover .bp-icon { transform: translateY(-3px) scale(1.15); }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 560px) {
+      .hero-ctas {
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+      .btn-hero-primary {
+        grid-column: 1 / -1;
+        padding: 16px 24px;
+      }
+      .btn-hero-ghost,
+      .btn-hero-property {
+        padding: 14px 16px;
+        font-size: 12px;
+      }
+    }
+    @media (max-width: 360px) {
+      .hero-ctas { grid-template-columns: 1fr; }
+      .btn-hero-ghost,
+      .btn-hero-property { grid-column: auto; }
+    }
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      .btn-hero-primary, .btn-hero-ghost, .btn-hero-property { animation: none; }
+      .btn-hero-primary::after { animation: none; }
+    }
     .trust-row { display: flex; align-items: center; gap: 0; }
     .trust-item { padding-right: 32px; }
     .trust-item + .trust-item { padding-left: 32px; border-left: 1px solid rgba(255,255,255,0.07); }
@@ -387,7 +582,7 @@
     .vc-img-bg { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.25,.46,.45,.94); background-size: cover; background-position: center; }
     .vert-card:hover .vc-img-bg { transform: scale(1.06); }
     .vc-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, rgba(2,4,6,0.9) 100%); }
-    .vc-emoji { position: absolute; bottom: 18px; left: 20px; font-size: 32px; }
+    .vc-icon { position: absolute; bottom: 18px; left: 20px; width: 44px; height: 44px; border-radius: 14px; background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.35); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 18px; backdrop-filter: blur(8px); box-shadow: 0 4px 20px rgba(201,168,76,0.18); }
     .vc-badge { position: absolute; top: 16px; right: 16px; font-family: var(--ff-mono); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; padding: 5px 12px; border-radius: 8px; background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
     .vc-body { padding: 24px; }
     .vc-cat { font-family: var(--ff-mono); font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
@@ -490,9 +685,11 @@
     .cha-ohlcv { display: flex; gap: 18px; flex-wrap: wrap; padding: 8px 20px; border-bottom: 1px solid rgba(255,255,255,.04); min-height: 34px; flex-shrink: 0; }
     .cha-ov-item { font-family: var(--ff-mono); font-size: 10px; }
     .cha-ov-lbl { color: var(--text-3); margin-right: 4px; }
-    #cha-main { flex: 1; min-height: 280px; position: relative; }
+    #cha-main { flex: 1; min-height: 280px; position: relative; background: #060d14; }
     #cha-main > div { width: 100% !important; height: 100% !important; }
-    #cha-vol { height: 60px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,.04); }
+    #cha-vol { height: 60px; flex-shrink: 0; background: #060d14; border-top: 1px solid rgba(36,52,68,.8); }
+    html[data-theme="light"] #cha-main { background: #faf8f4; }
+    html[data-theme="light"] #cha-vol  { background: #faf8f4; border-top-color: rgba(0,0,0,.10); }
     .cha-foot { display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid rgba(255,255,255,.05); flex-shrink: 0; }
     .cha-foot-buy { flex: 1; padding: 13px; border-radius: 13px; border: none; background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; font-family: var(--ff-body); font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .2s; display: flex; align-items: center; justify-content: center; gap: 7px; }
     .cha-foot-buy:hover { opacity: .88; }
@@ -686,7 +883,7 @@
     .particle, .aurora-orb, .hero-orb-1, .hero-orb-2, .hero-orb-3,
     .hero-grid, .ticker-track, .mm-link, .mm-logo,
     .mm-close, .mm-cta, .mm-strip, .mm-coins, [class*="reveal"], .asset-card,
-    .btn-hero-primary, .btn-hero-ghost, .logo-mark, .market-card, .vert-card,
+    .btn-hero-primary, .btn-hero-ghost, .btn-hero-property, .logo-mark, .market-card, .vert-card,
     .prop-card, .social-btn, .ac-row, .ac-foot-btn, .theme-toggle, .theme-icon {
       transition-property: none;
     }
@@ -759,8 +956,10 @@
     html[data-theme="light"] .hero-sub { color: var(--text-2); }
     html[data-theme="light"] .trust-item + .trust-item { border-left-color: rgba(0,0,0,0.09); }
     html[data-theme="light"] .trust-lbl { color: var(--text-3); }
-    html[data-theme="light"] .btn-hero-ghost { border-color: rgba(0,0,0,0.12); color: var(--text-2); background: rgba(0,0,0,0.03); }
-    html[data-theme="light"] .btn-hero-ghost:hover { color: var(--text-1); border-color: rgba(0,0,0,0.22); background: rgba(0,0,0,0.06); }
+    html[data-theme="light"] .btn-hero-ghost { border-color: rgba(0,0,0,.12); color: var(--text-2); background: rgba(0,0,0,.03); }
+    html[data-theme="light"] .btn-hero-ghost:hover { color: #1a0e00; border-color: rgba(154,124,46,.45); background: rgba(154,124,46,.07); }
+    html[data-theme="light"] .btn-hero-property { background: linear-gradient(145deg,#f5f0e8,#ece6d8); color: var(--gold); border-color: rgba(154,124,46,.3); }
+    html[data-theme="light"] .btn-hero-property:hover { color: #7a5010; border-color: rgba(154,124,46,.6); }
     html[data-theme="light"] .hero-scan::after { background: linear-gradient(90deg, transparent, rgba(180,140,50,.2), transparent); }
 
     /* ── LIGHT ASSET CARD ── */
@@ -1149,12 +1348,12 @@
       </div>
 
       <div class="mm-strip">
-        <div class="mm-strip-label">// Live Prices</div>
+        <div class="mm-strip-label">◆ Live Prices</div>
         <div class="mm-coins" id="mmCoins"></div>
       </div>
 
       <nav class="mm-nav">
-        <div class="mm-sec-label">// Explore</div>
+        <div class="mm-sec-label">◆ Explore</div>
         <a href="#markets" class="mm-link active" onclick="closeMenu()">
           <div class="mm-link-inner">
             <div class="mm-link-icon"><i class="fas fa-chart-line"></i></div>
@@ -1192,7 +1391,7 @@
         </a>
 
         <div class="mm-divider"></div>
-        <div class="mm-sec-label">// Company</div>
+        <div class="mm-sec-label">◆ Company</div>
 
         <a href="about.html" class="mm-link">
           <div class="mm-link-inner">
@@ -1210,7 +1409,7 @@
         </a>
 
         <div class="mm-divider"></div>
-        <div class="mm-sec-label">// Account</div>
+        <div class="mm-sec-label">◆ Account</div>
 
         <a href="signup.html" class="mm-link" id="mm-signin-link">
           <div class="mm-link-inner">
@@ -1259,15 +1458,18 @@
           Invest where<br><em>precision</em> meets<br><strong>tomorrow's returns</strong>
         </h1>
         <p class="hero-sub">
-          Access crypto, equities, and prime real estate through a single precision platform.
-          Built for sophisticated investors who demand more.
+          Seamlessly invest across digital assets, global equities, and prime real estate — unified under one precision platform engineered for the world's most discerning investors.
         </p>
         <div class="hero-ctas">
           <a href="signup.html" class="btn-hero-primary">
-            <i class="fas fa-chart-line" style="font-size:12px;"></i> Start Investing
+            <i class="fas fa-chart-line" style="font-size:11px;position:relative;z-index:1"></i>
+            <span style="position:relative;z-index:1">Start Investing</span>
           </a>
           <a href="testimonial.html" class="btn-hero-ghost">
-            <i class="fas fa-play-circle" style="font-size:12px;"></i> Explore Testimonials
+            <i class="fas fa-user-tie bh-icon" style="font-size:12px"></i> Client Stories
+          </a>
+          <a href="#property" class="btn-hero-property">
+            <i class="fas fa-building bp-icon" style="font-size:12px"></i> Prime Real Estate
           </a>
         </div>
         <div class="trust-row">
@@ -1358,7 +1560,7 @@
     <div class="section-inner">
       <div class="section-label reveal">Live Markets</div>
       <h2 class="section-title reveal reveal-delay-1">Track the <em>Pulse</em> of Global Assets</h2>
-      <p class="section-sub reveal reveal-delay-2">Real-time market moves, curated insights, and asset classes across crypto, stocks, and commodities.</p>
+      <p class="section-sub reveal reveal-delay-2">Live market intelligence across crypto, global equities, and commodities — refreshed every 30 seconds directly from institutional-grade data feeds.</p>
       <div class="market-tabs reveal reveal-delay-2">
         <button class="tab-btn on" onclick="filterMarkets('all',this)">All</button>
         <button class="tab-btn" onclick="filterMarkets('crypto',this)">Crypto</button>
@@ -1374,13 +1576,13 @@
     <div class="section-inner">
       <div class="section-label reveal">Investment Verticals</div>
       <h2 class="section-title reveal reveal-delay-1">Diversified <em>Opportunity</em> Streams</h2>
-      <p class="section-sub reveal reveal-delay-2">Select from tailored verticals designed for growth, stability, or yield.</p>
+      <p class="section-sub reveal reveal-delay-2">Select from meticulously curated investment verticals — each engineered for a distinct objective: high-growth, capital preservation, or yield generation.</p>
       <div class="verticals-grid">
         <div class="vert-card reveal reveal-delay-1">
           <div class="vc-img">
             <div class="vc-img-bg" style="background-image:url(./image/asset.jpg);"></div>
             <div class="vc-img-overlay"></div>
-            <span class="vc-emoji">⟠</span>
+            <div class="vc-icon"><i class="fas fa-chart-line"></i></div>
             <span class="vc-badge">+23% YTD</span>
           </div>
           <div class="vc-body">
@@ -1395,7 +1597,7 @@
           <div class="vc-img">
             <div class="vc-img-bg" style="background-image:url(./image/trend.jpg);"></div>
             <div class="vc-img-overlay"></div>
-            <span class="vc-emoji">📈</span>
+            <div class="vc-icon"><i class="fas fa-arrow-trend-up"></i></div>
             <span class="vc-badge">+12% YTD</span>
           </div>
           <div class="vc-body">
@@ -1410,7 +1612,7 @@
           <div class="vc-img">
             <div class="vc-img-bg" style="background-image:url(./image/real.avif);"></div>
             <div class="vc-img-overlay"></div>
-            <span class="vc-emoji">🏘</span>
+            <div class="vc-icon"><i class="fas fa-building-columns"></i></div>
             <span class="vc-badge">+8% Yield</span>
           </div>
           <div class="vc-body">
@@ -1430,7 +1632,7 @@
     <div class="section-inner">
       <div class="section-label reveal">Featured Assets</div>
       <h2 class="section-title reveal reveal-delay-1">High-Conviction <em>Picks</em></h2>
-      <p class="section-sub reveal reveal-delay-2">Curated exposure to the most compelling assets monitored by our research team.</p>
+      <p class="section-sub reveal reveal-delay-2">A curated selection of the most compelling assets across every class — actively monitored by our proprietary research framework.</p>
       <div class="table-wrap reveal reveal-delay-3">
         <table class="assets-table">
           <thead>
@@ -1449,11 +1651,11 @@
     <div class="section-inner">
       <div class="section-label reveal">Property Spotlight</div>
       <h2 class="section-title reveal reveal-delay-1">Prime Real Estate <em>Exposure</em></h2>
-      <p class="section-sub reveal reveal-delay-2">Direct access to property investments across leading global markets.</p>
+      <p class="section-sub reveal reveal-delay-2">Direct fractional access to institutional-caliber properties across the world's most sought-after markets — from coastal retreats to city-centre commercial assets.</p>
       <div class="property-grid">
         <div class="prop-card reveal reveal-delay-1">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/frankfurt.jpg);"></div><div class="prop-img-overlay"></div><span class="prop-badge live">Live</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Frankfurt, Germany</span></div>
-          <div class="prop-body"><div class="prop-type">Mixed-Use Office</div><div class="prop-name">Nature Cabin</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$500K–$650K</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
+          <div class="prop-body"><div class="prop-type">Mixed-Use Office</div><div class="prop-name">The Rhine Pavilion</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$500K–$650K</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
         </div>
         <div class="prop-card reveal reveal-delay-2">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/furt.jpg);"></div><div class="prop-img-overlay"></div><span class="prop-badge live">Live</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Bodensee, Germany</span></div>
@@ -1461,7 +1663,7 @@
         </div>
         <div class="prop-card reveal reveal-delay-3">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/beach2.jpg);"></div><div class="prop-img-overlay"></div><span class="prop-badge live">Live</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Santa Monica, CA</span></div>
-          <div class="prop-body"><div class="prop-type">Beach House</div><div class="prop-name">Beach Side</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$25M–$30M</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
+          <div class="prop-body"><div class="prop-type">Beach House</div><div class="prop-name">Pacific Meridian</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$25M–$30M</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
         </div>
         <div class="prop-card reveal reveal-delay-1">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/dc.webp);"></div><div class="prop-img-overlay"></div><span class="prop-badge live">Live</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Washington DC</span></div>
@@ -1598,8 +1800,8 @@
   <section class="cta-band">
     <div class="cta-band-inner reveal">
       <div>
-        <h2 class="cta-title">Build a portfolio with <em>precision</em>, scale, and insight.</h2>
-        <p class="cta-sub">Join Aurum Capital for direct access to differentiated asset classes and proprietary allocation tools of institutional caliber.</p>
+        <h2 class="cta-title">Your capital deserves<br><em>institutional-grade</em> conviction.</h2>
+        <p class="cta-sub">Open your account and gain direct access to differentiated asset classes, real-time intelligence, and proprietary allocation tools — the same infrastructure trusted by the world's most discerning investors.</p>
       </div>
       <div class="cta-actions">
         <a href="signup.html" class="btn-hero-primary" style="justify-content:center;"><i class="fas fa-rocket" style="font-size:12px;"></i> Create Account</a>
@@ -1614,7 +1816,7 @@
       <div class="footer-grid">
         <div>
           <a href="index.html" class="logo-link"><div class="logo-mark">A</div><span class="logo-name">Aurum Capital</span></a>
-          <p class="footer-desc">Aurum Capital empowers investors with a modern, secure platform for crypto, stocks, and real estate investing at institutional scale.</p>
+          <p class="footer-desc">Aurum Capital is the private investment platform of choice for discerning investors seeking institutional-grade access to digital assets, global equities, and prime real estate — all in one place.</p>
         </div>
         <div class="footer-col"><div class="footer-col-title">Company</div><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Careers</a></li><li><a href="contact.html">Press</a></li></ul></div>
         <div class="footer-col"><div class="footer-col-title">Explore</div><ul><li><a href="#markets">Markets</a></li><li><a href="invest.html">Invest</a></li><li><a href="#assets">Assets</a></li></ul></div>

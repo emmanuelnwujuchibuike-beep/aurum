@@ -788,6 +788,82 @@ body::after {
 .tl-event { font-size: 13px; font-weight: 500; color: var(--snow); margin-bottom: 2px; }
 .tl-time { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--steel); }
 
+/* ── PREF SECTION LABEL ───────────────────────── */
+.pref-section-label {
+  font-family: var(--ff-mono); font-size: 9.5px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--steel);
+  margin-bottom: 10px;
+}
+/* FX rate hint row */
+.fx-rate-row {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.03); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 10px; margin-bottom: 12px;
+  margin-top: -4px;
+}
+
+/* ── ALERTS CARD LAYOUT ────────────────────────── */
+.a-alerts { grid-column: 1 / -1; }
+.alerts-body {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0;
+}
+.alerts-col { padding: 4px 6px; }
+.alerts-divider { background: rgba(255,255,255,.05); }
+@media (max-width: 700px) {
+  .alerts-body { grid-template-columns: 1fr; }
+  .alerts-divider { height: 1px; width: 100%; background: rgba(255,255,255,.05); }
+  .alerts-col { padding: 12px 0; }
+}
+
+/* Add-alert row */
+.alert-add-row {
+  display: flex; gap: 6px; align-items: center;
+  margin-bottom: 10px; flex-wrap: wrap;
+}
+.alert-sel { height: 34px; font-size: 12px; flex-shrink: 0; width: auto; }
+.alert-prefix {
+  position: absolute; left: 9px; top: 50%;
+  transform: translateY(-50%); font-size: 12px; color: var(--steel);
+  pointer-events: none;
+}
+
+/* Active alerts list */
+.alerts-list { display: flex; flex-direction: column; gap: 6px; }
+.alert-item {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid var(--border);
+  border-radius: 10px; padding: 9px 12px;
+}
+.alert-item-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gain); flex-shrink: 0;
+}
+.alert-item-dot.fired { background: var(--steel); }
+.alert-item-text { flex: 1; font-size: 12px; color: var(--snow); }
+.alert-item-sub { font-size: 10px; color: var(--steel); margin-top: 1px; }
+.alert-item-del {
+  width: 22px; height: 22px; border-radius: 6px; border: 1px solid transparent;
+  background: none; color: var(--steel); cursor: pointer; font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; flex-shrink: 0;
+}
+.alert-item-del:hover { background: rgba(240,74,74,.15); border-color: rgba(240,74,74,.3); color: var(--loss); }
+.alerts-empty {
+  text-align: center; padding: 20px 0; font-size: 11px; color: var(--steel);
+}
+
+/* Profit / status note */
+.alert-status-note {
+  font-size: 10px; color: var(--steel);
+  padding: 8px 10px; background: rgba(255,255,255,.03);
+  border-radius: 8px; border: 1px solid var(--border);
+  min-height: 32px; line-height: 1.5;
+  display: none;
+}
+.alert-status-note.visible { display: block; }
+
 /* ── PREFERENCES TOGGLES ──────────────────────── */
 .pref-toggle-row {
   display: flex; align-items: center;
@@ -1140,6 +1216,16 @@ body::after {
   html[data-theme="light"] .toggle-track{background:rgba(0,0,0,.08)!important;border-color:rgba(0,0,0,.12)!important}
   html[data-theme="light"] .toggle-thumb{background:#9a8878!important}
   html[data-theme="light"] .toggle-wrap input:checked ~ .toggle-track{background:rgba(154,124,46,.3)!important;border-color:rgba(154,124,46,.45)!important}
+  html[data-theme="light"] .pref-section-label{color:#9a7a50!important}
+  html[data-theme="light"] .fx-rate-row{background:rgba(0,0,0,.03)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .alerts-divider{background:rgba(0,0,0,.06)!important}
+  html[data-theme="light"] .alert-item{background:rgba(0,0,0,.03)!important;border-color:rgba(0,0,0,.08)!important}
+  html[data-theme="light"] .alert-item-text{color:#1a1008!important}
+  html[data-theme="light"] .alert-item-sub{color:#8a6a40!important}
+  html[data-theme="light"] .alert-item-del{color:#8a6a40!important}
+  html[data-theme="light"] .alert-item-del:hover{background:rgba(220,50,50,.1)!important;border-color:rgba(220,50,50,.25)!important;color:#c02020!important}
+  html[data-theme="light"] .alerts-empty{color:#9a7a50!important}
+  html[data-theme="light"] .alert-status-note{background:rgba(0,0,0,.03)!important;border-color:rgba(0,0,0,.08)!important;color:#6a5030!important}
 
   /* ── Upload zone ── */
   html[data-theme="light"] .upload-zone{border-color:rgba(154,124,46,.3)!important;background:rgba(154,124,46,.07)!important}
@@ -1509,59 +1595,75 @@ body::after {
             <div class="card-icon" style="background:rgba(29,214,115,.1);color:var(--gain)"><i class="fas fa-sliders"></i></div>
             <span class="card-title">Preferences</span>
           </div>
+          <div class="save-ind" id="prefSaveIndicator" style="opacity:0"><i class="fas fa-check-circle"></i> Saved</div>
         </div>
         <div class="card-body">
+
+          <div class="pref-section-label">Display</div>
           <div class="field">
-            <label class="field-label">Display Currency</label>
-            <select class="field-input" id="prefCurrency" onchange="savePref('currency',this.value)">
+            <label class="field-label">Currency</label>
+            <select class="field-input" id="prefCurrency" onchange="onPrefChange('currency',this.value)">
               <option value="USD">USD — US Dollar ($)</option>
               <option value="EUR">EUR — Euro (€)</option>
               <option value="GBP">GBP — British Pound (£)</option>
               <option value="JPY">JPY — Japanese Yen (¥)</option>
               <option value="NGN">NGN — Nigerian Naira (₦)</option>
+              <option value="CAD">CAD — Canadian Dollar (C$)</option>
+              <option value="AUD">AUD — Australian Dollar (A$)</option>
+              <option value="CHF">CHF — Swiss Franc (Fr)</option>
+              <option value="INR">INR — Indian Rupee (₹)</option>
+              <option value="BRL">BRL — Brazilian Real (R$)</option>
             </select>
           </div>
-          <div class="field" style="margin-bottom:6px">
+          <div class="field">
             <label class="field-label">Number Format</label>
-            <select class="field-input" id="prefFormat" onchange="savePref('format',this.value)">
-              <option value="us">1,234.56 (US)</option>
+            <select class="field-input" id="prefFormat" onchange="onPrefChange('format',this.value)">
+              <option value="us">1,234.56 (US / Default)</option>
               <option value="eu">1.234,56 (EU)</option>
             </select>
           </div>
-
-          <div class="pref-toggle-row">
-            <div class="pref-info">
-              <div class="pref-name">Price Alerts</div>
-              <div class="pref-desc">Notify on significant market moves</div>
-            </div>
-            <label class="toggle-wrap">
-              <input type="checkbox" id="togAlerts" onchange="savePref('alerts',this.checked)">
-              <span class="toggle-track"></span>
-              <span class="toggle-thumb"></span>
-            </label>
+          <div class="fx-rate-row" id="fxRateRow" style="display:none">
+            <i class="fas fa-arrow-right-arrow-left" style="font-size:9px;color:var(--steel)"></i>
+            <span id="fxRateLabel" style="font-size:10px;color:var(--steel)">1 USD = —</span>
+            <span id="fxRateTs" style="font-size:9px;color:var(--muted);margin-left:auto">live</span>
           </div>
+
+          <div class="pref-section-label" style="margin-top:14px">Notifications</div>
           <div class="pref-toggle-row">
             <div class="pref-info">
               <div class="pref-name">Trade Confirmations</div>
-              <div class="pref-desc">Show receipt after each order</div>
+              <div class="pref-desc">Receipt popup after each order</div>
             </div>
             <label class="toggle-wrap">
-              <input type="checkbox" id="togConfirm" onchange="savePref('confirm',this.checked)" checked>
-              <span class="toggle-track" style="background:rgba(200,168,75,.35);border-color:var(--gold-rim)"></span>
-              <span class="toggle-thumb" style="left:22px;background:var(--gold)"></span>
+              <input type="checkbox" id="togConfirm" onchange="onPrefChange('confirm',this.checked)">
+              <span class="toggle-track"></span><span class="toggle-thumb"></span>
             </label>
           </div>
-          <div class="pref-toggle-row">
+          <div class="pref-toggle-row" style="margin-bottom:0">
             <div class="pref-info">
               <div class="pref-name">Portfolio Digest</div>
-              <div class="pref-desc">Weekly performance summary emails</div>
+              <div class="pref-desc">Performance summary to your email</div>
             </div>
             <label class="toggle-wrap">
-              <input type="checkbox" id="togDigest" onchange="savePref('digest',this.checked)">
-              <span class="toggle-track"></span>
-              <span class="toggle-thumb"></span>
+              <input type="checkbox" id="togDigest" onchange="onPrefChange('digest',this.checked)">
+              <span class="toggle-track"></span><span class="toggle-thumb"></span>
             </label>
           </div>
+          <div id="digestOptions" style="display:none;padding:10px 0 4px">
+            <div class="field" style="margin-bottom:8px">
+              <label class="field-label" style="font-size:10px">Frequency</label>
+              <select class="field-input" id="prefDigestFreq" style="height:34px;font-size:12px" onchange="onPrefChange('digestFreq',this.value)">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="sendDigestNow()" style="width:100%;font-size:11px">
+              <i class="fas fa-paper-plane" style="font-size:10px"></i> Send Digest Now
+            </button>
+            <div id="lastDigestNote" style="margin-top:6px;font-size:10px;color:var(--steel);text-align:center"></div>
+          </div>
+
         </div>
       </div>
 
@@ -1584,6 +1686,96 @@ body::after {
         </div>
       </div>
 
+    </div>
+
+    <!-- ── ALERTS & NOTIFICATIONS ──────────────────── -->
+    <div class="card a-alerts">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="card-icon" style="background:rgba(242,54,69,.1);color:#f23645"><i class="fas fa-bell"></i></div>
+          <span class="card-title">Alerts &amp; Notifications</span>
+        </div>
+        <div class="save-ind" id="alertSaveIndicator" style="opacity:0"><i class="fas fa-check-circle"></i> Saved</div>
+      </div>
+      <div class="card-body alerts-body">
+
+        <!-- ── PRICE ALERTS ── -->
+        <div class="alerts-col">
+          <div class="pref-toggle-row" style="margin-bottom:10px">
+            <div class="pref-info">
+              <div class="pref-name">Price Alerts</div>
+              <div class="pref-desc">Email when an asset hits your target price</div>
+            </div>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="togAlerts" onchange="onPrefChange('alerts',this.checked)">
+              <span class="toggle-track"></span><span class="toggle-thumb"></span>
+            </label>
+          </div>
+
+          <div id="priceAlertPanel">
+            <div class="alert-add-row">
+              <select class="field-input alert-sel" id="alertSym">
+                <optgroup label="Crypto"><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>XRP</option><option>ADA</option><option>LTC</option></optgroup>
+                <optgroup label="Stocks"><option>TSLA</option><option>AAPL</option><option>NVDA</option><option>MSFT</option><option>AMZN</option><option>GOOGL</option></optgroup>
+                <optgroup label="Commodities"><option>GOLD</option><option>OIL</option><option>SILVER</option></optgroup>
+              </select>
+              <select class="field-input alert-sel" id="alertDir" style="width:90px">
+                <option value="above">Above</option>
+                <option value="below">Below</option>
+              </select>
+              <div style="position:relative;flex:1">
+                <span class="alert-prefix" id="alertCurrSym">$</span>
+                <input class="field-input" id="alertTarget" type="number" placeholder="0" step="any" style="padding-left:24px">
+              </div>
+              <button class="btn btn-gold btn-sm" onclick="addPriceAlert()" style="white-space:nowrap;flex-shrink:0">
+                <i class="fas fa-plus" style="font-size:10px"></i> Add
+              </button>
+            </div>
+            <div id="alertsList" class="alerts-list"></div>
+            <div id="alertsEmpty" class="alerts-empty" style="display:none">
+              <i class="fas fa-bell-slash" style="font-size:18px;opacity:.3;display:block;margin-bottom:6px"></i>
+              No active alerts. Add one above.
+            </div>
+          </div>
+        </div>
+
+        <div class="alerts-divider"></div>
+
+        <!-- ── PROFIT / LOSS ALERT ── -->
+        <div class="alerts-col">
+          <div class="pref-toggle-row" style="margin-bottom:10px">
+            <div class="pref-info">
+              <div class="pref-name">Profit / Loss Alert</div>
+              <div class="pref-desc">Email when portfolio P&amp;L crosses a threshold</div>
+            </div>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="togProfitAlert" onchange="onPrefChange('profitAlertEnabled',this.checked)">
+              <span class="toggle-track"></span><span class="toggle-thumb"></span>
+            </label>
+          </div>
+          <div id="profitAlertPanel">
+            <div style="display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:10px">
+              <div>
+                <label class="field-label" style="font-size:10px">Alert when P&amp;L reaches ±</label>
+                <div style="position:relative">
+                  <input class="field-input" id="profitThreshold" type="number" placeholder="10" min="0.1" max="9999" step="0.1" style="padding-right:28px" oninput="onPrefChange('profitThreshold',+this.value)">
+                  <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--steel)">%</span>
+                </div>
+              </div>
+              <div>
+                <label class="field-label" style="font-size:10px">Direction</label>
+                <select class="field-input" id="profitDir" style="height:38px;font-size:12px" onchange="onPrefChange('profitDir',this.value)">
+                  <option value="both">± Both</option>
+                  <option value="gain">↑ Gain only</option>
+                  <option value="loss">↓ Loss only</option>
+                </select>
+              </div>
+            </div>
+            <div id="profitAlertStatus" class="alert-status-note"></div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- ── DANGER ZONE ─────────────────────────────── -->
@@ -1730,7 +1922,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   authUser = session.user;
 
   await loadAll();
-  restorePrefs();
+  await loadSettings();
 
   /* Sign out */
   ['signOutBtn','signOutBtn2'].forEach(id => {
@@ -2216,24 +2408,293 @@ window.closeAvatarModal = () => {
   pendingPhotoBase64 = null;
 };
 
-/* ── PREFERENCES ─────────────────────────────────── */
-window.savePref = function(key, value) {
-  localStorage.setItem('aurum_pref_'+key, value);
-  toast('Preference Saved', key[0].toUpperCase()+key.slice(1)+' updated', 'info');
+/* ══════════════════════════════════════════════════
+   SETTINGS ENGINE
+══════════════════════════════════════════════════ */
+const SETTINGS_DEFAULTS = {
+  currency: 'USD', format: 'us',
+  confirm: true, digest: false, digestFreq: 'weekly',
+  alerts: false, priceAlerts: [],
+  profitAlertEnabled: false, profitThreshold: 10, profitDir: 'both',
+  lastDigestAt: null, profitAlertFiredAt: null,
 };
 
-function restorePrefs() {
-  ['alerts','confirm','digest'].forEach(k => {
-    const stored = localStorage.getItem('aurum_pref_'+k);
-    const cb = document.getElementById('tog'+k[0].toUpperCase()+k.slice(1));
-    if (cb && stored !== null) cb.checked = stored === 'true';
-  });
-  ['currency','format'].forEach(k => {
-    const stored = localStorage.getItem('aurum_pref_'+k);
-    const el = document.getElementById('pref'+k[0].toUpperCase()+k.slice(1));
-    if (el && stored) el.value = stored;
+let _settings = { ...SETTINGS_DEFAULTS };
+let _fxRates   = { USD: 1 };
+let _saveTimer = null;
+
+const CURRENCIES = {
+  USD: { sym: '$',  name: 'US Dollar' },
+  EUR: { sym: '€',  name: 'Euro' },
+  GBP: { sym: '£',  name: 'British Pound' },
+  JPY: { sym: '¥',  name: 'Japanese Yen' },
+  NGN: { sym: '₦',  name: 'Nigerian Naira' },
+  CAD: { sym: 'C$', name: 'Canadian Dollar' },
+  AUD: { sym: 'A$', name: 'Australian Dollar' },
+  CHF: { sym: 'Fr', name: 'Swiss Franc' },
+  INR: { sym: '₹',  name: 'Indian Rupee' },
+  BRL: { sym: 'R$', name: 'Brazilian Real' },
+};
+
+function toDisplayCurrency(usdAmount) {
+  return usdAmount * (_fxRates[_settings.currency] || 1);
+}
+function currSym() { return (CURRENCIES[_settings.currency] || CURRENCIES.USD).sym; }
+function fmtMoney(usdAmount) {
+  const val = toDisplayCurrency(usdAmount);
+  const sym = currSym();
+  if (_settings.format === 'eu')
+    return sym + val.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return sym + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+async function fetchFxRates() {
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/USD', { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.rates) { _fxRates = { ...d.rates, USD: 1 }; updateFxRateRow(); }
+  } catch {}
+}
+
+function updateFxRateRow() {
+  const cur = _settings.currency;
+  const row = document.getElementById('fxRateRow');
+  const lbl = document.getElementById('fxRateLabel');
+  if (!row || !lbl) return;
+  if (cur === 'USD') { row.style.display = 'none'; return; }
+  const rate = _fxRates[cur];
+  if (!rate) return;
+  row.style.display = 'flex';
+  const sym = (CURRENCIES[cur] || {}).sym || cur;
+  lbl.textContent = '1 USD = ' + sym + rate.toLocaleString('en-US', { maximumFractionDigits: 4 });
+  document.getElementById('fxRateTs').textContent = 'live';
+}
+
+function applySettingsToUI() {
+  const s = _settings;
+  const set = (id, val) => { const e = document.getElementById(id); if (e) e.value = val; };
+  const chk = (id, val) => { const e = document.getElementById(id); if (e) e.checked = !!val; };
+  set('prefCurrency',    s.currency);
+  set('prefFormat',      s.format);
+  chk('togConfirm',      s.confirm);
+  chk('togDigest',       s.digest);
+  chk('togAlerts',       s.alerts);
+  chk('togProfitAlert',  s.profitAlertEnabled);
+  set('prefDigestFreq',  s.digestFreq || 'weekly');
+  set('profitThreshold', s.profitThreshold || 10);
+  set('profitDir',       s.profitDir || 'both');
+  document.getElementById('digestOptions').style.display    = s.digest ? 'block' : 'none';
+  document.getElementById('priceAlertPanel').style.display  = s.alerts ? 'block' : 'none';
+  document.getElementById('profitAlertPanel').style.display = s.profitAlertEnabled ? 'block' : 'none';
+  if (s.lastDigestAt) {
+    const dn = document.getElementById('lastDigestNote');
+    if (dn) dn.textContent = 'Last sent: ' + new Date(s.lastDigestAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  renderAlertsList();
+  updateFxRateRow();
+  renderProfitAlertStatus();
+  localStorage.setItem('aurum_pref_currency', s.currency);
+  localStorage.setItem('aurum_pref_format',   s.format);
+  localStorage.setItem('aurum_pref_confirm',  s.confirm);
+  localStorage.setItem('aurum_pref_digest',   s.digest);
+  localStorage.setItem('aurum_pref_alerts',   s.alerts);
+  localStorage.setItem('aurum_pref_settings', JSON.stringify(s));
+}
+
+async function loadSettings() {
+  _settings = { ...SETTINGS_DEFAULTS, ...(profile?.settings || {}) };
+  applySettingsToUI();
+  fetchFxRates();
+}
+
+function scheduleSave() {
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(persistSettings, 800);
+}
+
+async function persistSettings() {
+  try {
+    await sb.from('profiles').update({ settings: _settings }).eq('id', authUser.id);
+    if (profile) profile.settings = { ..._settings };
+    flashSaveIndicator('prefSaveIndicator');
+    flashSaveIndicator('alertSaveIndicator');
+    localStorage.setItem('aurum_pref_currency', _settings.currency);
+    localStorage.setItem('aurum_pref_format',   _settings.format);
+    localStorage.setItem('aurum_pref_confirm',  _settings.confirm);
+    localStorage.setItem('aurum_pref_digest',   _settings.digest);
+    localStorage.setItem('aurum_pref_alerts',   _settings.alerts);
+    localStorage.setItem('aurum_pref_settings', JSON.stringify(_settings));
+  } catch(e) {
+    toast('Save Failed', 'Could not save settings — ' + e.message, 'error');
+  }
+}
+
+function flashSaveIndicator(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.opacity = '1';
+  setTimeout(() => { el.style.opacity = '0'; }, 2500);
+}
+
+window.onPrefChange = function(key, value) {
+  _settings[key] = value;
+  if (key === 'digest')             document.getElementById('digestOptions').style.display    = value ? 'block' : 'none';
+  if (key === 'alerts')             document.getElementById('priceAlertPanel').style.display  = value ? 'block' : 'none';
+  if (key === 'profitAlertEnabled') document.getElementById('profitAlertPanel').style.display = value ? 'block' : 'none';
+  if (key === 'currency') { updateFxRateRow(); renderAlertsList(); }
+  if (['profitAlertEnabled','profitThreshold','profitDir'].includes(key)) renderProfitAlertStatus();
+  scheduleSave();
+};
+
+/* ── PRICE ALERTS ─────────────────────────────── */
+function renderAlertsList() {
+  const list  = document.getElementById('alertsList');
+  const empty = document.getElementById('alertsEmpty');
+  if (!list) return;
+  const active = (_settings.priceAlerts || []).filter(a => a.active);
+  list.innerHTML = '';
+  if (!active.length) { if (empty) empty.style.display = 'block'; return; }
+  if (empty) empty.style.display = 'none';
+  const sym = currSym();
+  active.forEach((a, i) => {
+    const dispTarget = toDisplayCurrency(a.target);
+    const div = document.createElement('div');
+    div.className = 'alert-item';
+    div.innerHTML =
+      '<div class="alert-item-dot"></div>' +
+      '<div style="flex:1"><div class="alert-item-text"><strong>' + a.sym + '</strong> ' +
+      (a.dir === 'above' ? '↑ above' : '↓ below') + ' ' + sym + Number(dispTarget).toLocaleString('en-US') + '</div>' +
+      '<div class="alert-item-sub">Added ' + new Date(a.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) + '</div></div>' +
+      '<button class="alert-item-del" onclick="removePriceAlert(' + i + ')" title="Remove"><i class="fas fa-xmark"></i></button>';
+    list.appendChild(div);
   });
 }
+
+window.addPriceAlert = function() {
+  const sym = document.getElementById('alertSym').value;
+  const dir = document.getElementById('alertDir').value;
+  const raw = parseFloat(document.getElementById('alertTarget').value);
+  if (!sym || !dir || isNaN(raw) || raw <= 0) { toast('Invalid Alert', 'Enter a valid target price', 'error'); return; }
+  const targetUSD = raw / (_fxRates[_settings.currency] || 1);
+  _settings.priceAlerts = [...(_settings.priceAlerts || []),
+    { id: Date.now(), sym, dir, target: targetUSD, active: true, createdAt: new Date().toISOString() }];
+  document.getElementById('alertTarget').value = '';
+  renderAlertsList();
+  scheduleSave();
+  toast('Alert Added', sym + ' ' + dir + ' ' + currSym() + raw.toLocaleString() + ' — email on trigger', 'success');
+};
+
+window.removePriceAlert = function(idx) {
+  const active = (_settings.priceAlerts || []).filter(a => a.active);
+  const toRemove = active[idx];
+  if (!toRemove) return;
+  _settings.priceAlerts = _settings.priceAlerts.map(a => a.id === toRemove.id ? { ...a, active: false } : a);
+  renderAlertsList();
+  scheduleSave();
+};
+
+async function checkPriceAlerts(prices) {
+  if (!_settings.alerts || !_settings.priceAlerts?.length) return;
+  let fired = false;
+  _settings.priceAlerts = _settings.priceAlerts.map(a => {
+    if (!a.active) return a;
+    const p = prices[a.sym] || prices[a.sym + 'USDT'];
+    if (!p) return a;
+    const hit = (a.dir === 'above' && p >= a.target) || (a.dir === 'below' && p <= a.target);
+    if (!hit) return a;
+    fired = true;
+    sendAlertEmail('price_alert', { sym: a.sym, target: a.target, dir: a.dir, currentPrice: p });
+    toast('Price Alert!', a.sym + ' hit ' + a.dir + ' ' + currSym() + Number(toDisplayCurrency(a.target)).toLocaleString(), 'success');
+    return { ...a, active: false, firedAt: new Date().toISOString() };
+  });
+  if (fired) { renderAlertsList(); scheduleSave(); }
+}
+
+async function checkProfitAlert(prices) {
+  if (!_settings.profitAlertEnabled || !holdings.length) return;
+  const lastFired = _settings.profitAlertFiredAt ? new Date(_settings.profitAlertFiredAt).getTime() : 0;
+  if (Date.now() - lastFired < 6 * 3600 * 1000) return;
+  let totalValue = Number(profile?.cash || 0);
+  let totalCost  = 0;
+  holdings.forEach(h => {
+    const p = prices[h.symbol] || prices[h.symbol + 'USDT'] || 0;
+    totalValue += (h.quantity || 0) * p;
+    totalCost  += (h.quantity || 0) * (h.avg_buy_price || 0);
+  });
+  if (totalCost <= 0) return;
+  const pnlPct = ((totalValue - totalCost) / totalCost) * 100;
+  const thr = _settings.profitThreshold || 10;
+  const dir = _settings.profitDir || 'both';
+  const gainHit = dir !== 'loss' && pnlPct >= thr;
+  const lossHit = dir !== 'gain' && pnlPct <= -thr;
+  if (!gainHit && !lossHit) return;
+  _settings.profitAlertFiredAt = new Date().toISOString();
+  scheduleSave();
+  sendAlertEmail('profit_alert', { pnlPct, threshold: thr, portfolioValue: totalValue, type: gainHit ? 'gain' : 'loss' });
+  toast('Profit Alert!', 'Portfolio P&L is ' + (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(1) + '%', gainHit ? 'success' : 'error');
+  renderProfitAlertStatus();
+}
+
+function renderProfitAlertStatus() {
+  const el = document.getElementById('profitAlertStatus');
+  if (!el) return;
+  if (!_settings.profitAlertEnabled) { el.classList.remove('visible'); return; }
+  el.classList.add('visible');
+  const thr = _settings.profitThreshold || 10;
+  const dir = _settings.profitDir || 'both';
+  const dirLabel = dir === 'both' ? '\xb1' : dir === 'gain' ? '↑' : '↓';
+  let txt = 'Alert fires when portfolio P&L reaches ' + dirLabel + thr + '%.';
+  if (_settings.profitAlertFiredAt)
+    txt += ' Last triggered ' + new Date(_settings.profitAlertFiredAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) + '.';
+  el.textContent = txt;
+}
+
+/* ── PORTFOLIO DIGEST ─────────────────────────── */
+window.sendDigestNow = async function() {
+  const btn = document.querySelector('#digestOptions .btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  try {
+    let totalValue = Number(profile?.cash || 0);
+    let totalCost  = 0;
+    holdings.forEach(h => { totalCost += (h.quantity || 0) * (h.avg_buy_price || 0); });
+    await sendAlertEmail('digest', {
+      portfolioValue: totalValue, totalCost,
+      holdingsCount: holdings.length, txCount: txs.length,
+      topHoldings: holdings.slice(0, 5).map(h => ({ sym: h.symbol, qty: h.quantity, cost: h.avg_buy_price })),
+    });
+    _settings.lastDigestAt = new Date().toISOString();
+    scheduleSave();
+    const dn = document.getElementById('lastDigestNote');
+    if (dn) dn.textContent = 'Last sent: ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    toast('Digest Sent!', 'Check your email for the portfolio summary', 'success');
+  } catch(e) {
+    toast('Digest Failed', e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane" style="font-size:10px"></i> Send Digest Now'; }
+  }
+};
+
+/* ── EDGE FUNCTION CALLER ─────────────────────── */
+async function sendAlertEmail(type, data) {
+  const { data: { session } } = await sb.auth.getSession();
+  const res = await fetch('https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/send-user-alert', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session?.access_token },
+    body: JSON.stringify({ type, userId: authUser.id, email: authUser.email, firstName: profile?.first_name || '', data }),
+  });
+  if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Request failed'); }
+}
+
+/* Hook into the live price feed */
+window.onPriceUpdate = function(prices) {
+  checkPriceAlerts(prices);
+  checkProfitAlert(prices);
+};
+
+/* Legacy shim */
+window.savePref = function(key, value) { window.onPrefChange(key, value); };
+function restorePrefs() { /* replaced by loadSettings() */ }
 
 /* ── SIDEBAR MOBILE ──────────────────────────────── */
 window.openSidebar  = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); document.body.style.overflow='hidden'; };

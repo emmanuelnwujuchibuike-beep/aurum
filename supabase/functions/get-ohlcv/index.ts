@@ -32,26 +32,30 @@ const SYM_MAP: Record<string, string> = {
 
 /* Map from our TF codes → Twelve Data interval strings */
 const TF_INTERVAL: Record<string, string> = {
-  "5M": "5min",
-  "1H": "1h",
-  "4H": "4h",
-  "1D": "1day",
-  "1W": "1week",
-  "1M": "1month",
-  "3M": "1month",
-  "1Y": "1week",
+  "5M":  "5min",
+  "15M": "15min",
+  "30M": "30min",
+  "1H":  "1h",
+  "4H":  "4h",
+  "1D":  "1day",
+  "1W":  "1week",
+  "1M":  "1month",
+  "3M":  "1day",   // 3-month view using daily bars
+  "1Y":  "1day",   // 1-year view using daily bars
 };
 
 /* Number of bars to request per timeframe */
 const TF_SIZE: Record<string, number> = {
-  "5M":  288,  // ~24 hours of 5m bars
-  "1H":  168,  // 7 days of 1h bars
-  "4H":  180,  // ~30 days of 4h bars
-  "1D":  365,  // ~1 year of daily bars
-  "1W":  156,  // 3 years of weekly bars
-  "1M":  60,   // 5 years of monthly bars
-  "3M":  60,   // 5 years of monthly bars (used as 1month interval)
-  "1Y":  156,  // 3 years of weekly bars
+  "5M":  288,  // 24h of 5m bars
+  "15M": 192,  // 48h of 15m bars
+  "30M": 168,  // 3.5 days of 30m bars
+  "1H":  500,  // ~3 weeks of 1h bars
+  "4H":  365,  // ~2 months of 4h bars
+  "1D":  500,  // ~1.5 years of daily bars
+  "1W":  200,  // ~4 years of weekly bars
+  "1M":   60,  // 5 years of monthly bars
+  "3M":   90,  // 3 months of daily bars
+  "1Y":  365,  // 1 year of daily bars
 };
 
 serve(async (req) => {

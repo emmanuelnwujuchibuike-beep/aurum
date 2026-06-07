@@ -373,6 +373,49 @@ body.menu-open{overflow:hidden}
   .wd-field-input{padding:9px 12px!important;font-size:10.5px!important}
   .amt-preset{font-size:.65rem!important;padding:8px 0!important}
 }
+
+/* ── Transactions modal responsive ── */
+/* ≤ 640px — slides up as bottom sheet */
+@media(max-width:640px){
+  #transactionsModal{align-items:flex-end!important;padding:0!important}
+  .tx-modal-box{max-width:100%!important;max-height:92dvh!important;border-radius:22px 22px 0 0!important;border-bottom:none!important}
+  /* header: stacks — title row on top, filter+close row below */
+  #transactionsModal .modal-hdr{flex-direction:column!important;align-items:stretch!important;gap:10px!important;padding:16px 18px 14px!important}
+  #transactionsModal .modal-hdr h3{font-size:22px!important}
+  /* filter row: filter bar scrolls horizontally, close btn anchored right */
+  #transactionsModal .modal-hdr > div:last-child{width:100%!important;flex-wrap:nowrap!important;gap:8px!important}
+  .tx-modal-filters{flex:1!important;max-width:none!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important;flex-wrap:nowrap!important}
+  .tx-modal-filters::-webkit-scrollbar{display:none}
+  /* stats strip: 2×2 grid */
+  .tx-stats-strip{grid-template-columns:repeat(2,1fr)!important}
+  .tx-stats-strip > div{padding:13px 15px!important}
+  .tx-stats-strip > div:nth-child(2){border-right:none!important}
+  .tx-stats-strip > div:nth-child(3),.tx-stats-strip > div:nth-child(4){border-top:1px solid rgba(255,255,255,.06)!important}
+  .tx-stats-strip > div:nth-child(4){border-right:none!important}
+  /* transaction rows: tighter spacing */
+  #txModalList > div{padding:12px 16px!important;gap:12px!important}
+  #txModalList > div > div:first-child{width:36px!important;height:36px!important;border-radius:11px!important}
+  #txModalList > div > div:last-child > p:first-child{font-size:15px!important}
+}
+
+/* ≤ 480px — compact */
+@media(max-width:480px){
+  #transactionsModal .modal-hdr{padding:13px 15px 12px!important}
+  #transactionsModal .modal-hdr h3{font-size:20px!important}
+  .tx-stats-strip > div{padding:11px 12px!important}
+  #txm-total,#txm-invested,#txm-received,#txm-net{font-size:18px!important}
+  #txModalList > div{padding:11px 14px!important}
+  .tx-filter-btn{padding:5px 9px!important;font-size:9.5px!important}
+}
+
+/* ≤ 390px — very small screens */
+@media(max-width:390px){
+  .tx-stats-strip > div{padding:10px 11px!important}
+  #txm-total,#txm-invested,#txm-received,#txm-net{font-size:15px!important}
+  #txModalList > div{padding:10px 12px!important;gap:10px!important}
+  #txModalList > div > div:first-child{width:32px!important;height:32px!important;border-radius:10px!important}
+  #txModalList > div > div:last-child > p:first-child{font-size:14px!important}
+}
 .chart-modal-box{width:100%;max-width:700px;max-height:90vh;overflow-y:auto}
 
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;
@@ -3290,7 +3333,7 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
 
           <!-- Status heading -->
           <div class="dep-proc-status-h" id="dep-proc-status-h">Processing <em style="color:var(--gold)">Deposit</em></div>
-          <div class="dep-proc-status-s" id="dep-proc-status-s">awaiting administrator review</div>
+          <div class="dep-proc-status-s" id="dep-proc-status-s">awaiting approval</div>
 
           <!-- Amount pill -->
           <div class="dep-proc-amt">
@@ -5457,7 +5500,7 @@ function _setDepProcState(state) {
     if (wrap)    { wrap.className = 'dep-proc-wrap'; }
     if (icon)    { icon.className = 'fas fa-arrow-up-from-line'; icon.style.color = 'var(--gold)'; icon.style.animation = ''; }
     if (statusH) statusH.innerHTML = 'Processing <em style="color:var(--gold)">Deposit</em>';
-    if (statusS) statusS.textContent = 'awaiting administrator review';
+    if (statusS) statusS.textContent = 'awaiting approval';
     if (liveDot) { liveDot.style.background = 'var(--gold)'; liveDot.style.animation = 'depProcPulse 1.4s ease-in-out infinite'; }
     if (liveTxt) { liveTxt.textContent = 'Your deposit is being reviewed by our team'; liveTxt.style.color = ''; }
     if (dot2)    dot2.className = 'dep-proc-dot tl-active';

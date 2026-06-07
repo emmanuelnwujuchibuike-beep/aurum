@@ -28,7 +28,8 @@
       "Bash(npx tailwindcss *)",
       "Bash(curl -s \"https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/get-market-prices?symbols=TSLA,AAPL,XAUUSD,USOIL,XAGUSD,BTC,ETH\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w\")",
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(r['symbol'], r['price'], r['source']\\) for r in d.get\\('data',[]\\)]\")",
-      "WebFetch(domain:www.outdomode.com)"
+      "WebFetch(domain:www.outdomode.com)",
+      "Bash(del \"c:\\\\Users\\\\u\\\\OneDrive\\\\Documents\\\\Aurum capital\\\\src\\\\admin-support.html\")"
     ]
   }
 }

@@ -290,6 +290,16 @@ var _mainSer    = null;
 var _volSer     = null;
 var _chartBars  = [];
 var _lastBarTime = 0;
+var _buildGen   = 0;
+
+// Rebuild the chart whenever the page theme is toggled (dark ↔ light)
+new MutationObserver(function(muts) {
+  muts.forEach(function(m) {
+    if (m.attributeName !== 'data-theme' || !_chartSym) return;
+    var modal = document.getElementById('idx-chart-modal');
+    if (modal && modal.classList.contains('open')) buildChart(_chartSym, _chartType, _chartTF);
+  });
+}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 /* Track which symbols have received a confirmed live price (not just a seed) */
 var _livePriceTs = {};   /* sym → timestamp of last live price */
@@ -444,8 +454,66 @@ function pushLiveBarUpdate(sym, livePrice) {
 const EDGE_OHLCV_URL = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/get-ohlcv';
 const EDGE_ANON_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
 
+/* ── Binance direct fetch (crypto, no API key) ── */
+const _idxBinanceCache = {};
+const _idxTDCache = {};
+const IDX_BINANCE_SYMS = new Set(['BTC','ETH','SOL','BNB','XRP','ADA']);
+const IDX_BINANCE_CFG = {
+  '5M' :['5m',  1000, 300    ],
+  '1H' :['1h',  1000, 3600   ],
+  '4H' :['4h',  1000, 14400  ],
+  '1D' :['1d',  1000, 86400  ],
+  '1W' :['1w',   500, 604800 ],
+  '1M' :['1M',   120, 2592000],
+  '3M' :['1d',   180, 86400  ],
+  '1Y' :['1d',  1000, 86400  ],
+};
+const IDX_VIEW_BARS = {
+  '5M': 96,   // 8 h default, scroll back 3.5 days
+  '1H': 168,  // 7 days default, scroll back 42 days
+  '4H': 90,   // 15 days default, scroll back 167 days
+  '1D': 180,  // 6 months default, scroll back 2.7 years
+  '1W': 104,  // 2 years default
+  '1M': 60,   // 5 years default
+  '3M': 90,   // 6 months
+  '1Y': 365,  // 1 year
+};
+
+async function fetchIdxBinanceKlines(sym, tf) {
+  const ck = sym + '_' + tf;
+  const cc = _idxBinanceCache[ck];
+  if (cc && Date.now() - cc.ts < 60000) return cc.bars;
+  const cfg = IDX_BINANCE_CFG[tf];
+  if (!cfg) throw new Error('No Binance cfg for ' + tf);
+  const [interval, limit] = cfg;
+  const res = await fetch('https://api.binance.com/api/v3/klines?symbol=' + sym + 'USDT&interval=' + interval + '&limit=' + limit, { signal: AbortSignal.timeout(5000) });
+  if (!res.ok) throw new Error('Binance HTTP ' + res.status);
+  const raw = await res.json();
+  if (!Array.isArray(raw) || !raw.length) throw new Error('No data');
+  const seen = new Set();
+  const dec  = (IDX_P[sym] >= 1) ? 2 : 4;
+  const liveP = IDX_P[sym];
+  const bars = raw
+    .map(k => ({ time: Math.floor(k[0]/1000), open: +parseFloat(k[1]).toFixed(dec), high: +parseFloat(k[2]).toFixed(dec), low: +parseFloat(k[3]).toFixed(dec), close: +parseFloat(k[4]).toFixed(dec), volume: Math.floor(parseFloat(k[5])) }))
+    .filter(b => b.open > 0 && !seen.has(b.time) && seen.add(b.time))
+    .sort((a, b) => a.time - b.time);
+  if (bars.length && liveP > 0) {
+    const last = bars[bars.length-1];
+    last.close = +liveP.toFixed(dec);
+    last.high  = +Math.max(last.high, last.close).toFixed(dec);
+    last.low   = +Math.min(last.low,  last.close).toFixed(dec);
+  }
+  _lastBarTime = bars.length ? bars[bars.length-1].time : 0;
+  _idxBinanceCache[ck] = { bars, ts: Date.now() };
+  return bars;
+}
+
 /* ── Fetch OHLCV from the Twelve Data edge function ─────────────────────── */
 async function fetchTwelveDataOHLCV(sym, tf) {
+  const ck = sym + '_' + tf;
+  const cc = _idxTDCache[ck];
+  if (cc && Date.now() - cc.ts < 90000) return cc.bars;
+
   const url  = EDGE_OHLCV_URL
     + '?symbol=' + encodeURIComponent(sym)
     + '&tf='     + encodeURIComponent(tf);
@@ -483,6 +551,7 @@ async function fetchTwelveDataOHLCV(sym, tf) {
     _lastBarTime = last.time;
   }
   console.info('[chart] ✓ Twelve Data OHLCV ' + sym + '/' + tf + ': ' + bars.length + ' bars');
+  _idxTDCache[ck] = { bars, ts: Date.now() };
   return bars;
 }
 
@@ -500,13 +569,23 @@ const TF_TO_CG = {
 
 /**
  * fetchRealOHLCV — priority order:
- *   1. Twelve Data edge function (all symbols, including crypto)
- *   2. CoinGecko direct (crypto only — fallback if Twelve Data fails)
+ *   0. Binance (crypto — fast, no key, cached 60s)
+ *   1. Twelve Data edge function (all symbols, cached 90s)
+ *   2. CoinGecko direct (crypto only — fallback)
  *   3. Synthetic data (final fallback)
  */
 async function fetchRealOHLCV(sym, tf) {
 
-  /* ── 1. Twelve Data (primary source for all symbols) ── */
+  /* ── 0. Binance direct (crypto only) ── */
+  if (IDX_BINANCE_SYMS.has(sym)) {
+    try {
+      return await fetchIdxBinanceKlines(sym, tf);
+    } catch (err) {
+      console.warn('[chart] Binance failed for ' + sym + '/' + tf + ':', err.message);
+    }
+  }
+
+  /* ── 1. Twelve Data (primary source for non-crypto and Binance fallback) ── */
   try {
     return await fetchTwelveDataOHLCV(sym, tf);
   } catch (err) {
@@ -614,15 +693,15 @@ function genOHLCV(sym, tf) {
   const chgPct    = IDX_C[sym] || 0;  // 24h % change (negative = dropping)
   const cfg = {
     // No upward trend bias for intraday TFs — direction comes from starting price
-    '5M': { bars:200, step:300,      vol:0.0006, trend:0 },
-    '1H': { bars:60,  step:3600,     vol:0.0012, trend:0 },
-    '4H': { bars:72,  step:14400,    vol:0.0025, trend:0 },
-    '1D': { bars:90,  step:86400,    vol:0.018,  trend:0.0004  },
-    '1W': { bars:52,  step:604800,   vol:0.04,   trend:0.001   },
-    '1M': { bars:36,  step:2592000,  vol:0.08,   trend:0.002   },
-    '3M': { bars:90,  step:864000,   vol:0.09,   trend:0.0018  },
-    '1Y': { bars:52,  step:604800*2, vol:0.12,   trend:0.0025  },
-  }[tf] || { bars:90, step:86400, vol:0.018, trend:0.0004 };
+    '5M': { bars:1000, step:300,      vol:0.0006, trend:0 },
+    '1H': { bars:500,  step:3600,     vol:0.0012, trend:0 },
+    '4H': { bars:365,  step:14400,    vol:0.0025, trend:0 },
+    '1D': { bars:500,  step:86400,    vol:0.018,  trend:0.0004  },
+    '1W': { bars:200,  step:604800,   vol:0.04,   trend:0.001   },
+    '1M': { bars:60,   step:2592000,  vol:0.08,   trend:0.002   },
+    '3M': { bars:180, step:86400,    vol:0.09,   trend:0.0018  },
+    '1Y': { bars:365, step:86400,    vol:0.12,   trend:0.0025  },
+  }[tf] || { bars:200, step:86400, vol:0.018, trend:0.0004 };
 
   const now  = Math.floor(Date.now() / 1000);
   const t0   = now - cfg.bars * cfg.step;
@@ -805,40 +884,62 @@ function showChartLoading() {
     <style>@keyframes spin{to{transform:rotate(360deg)}}</style>`;
 }
 
-/**
- * buildChart — now async so it can await real OHLCV data.
- */
 async function buildChart(sym, type, tf) {
+  const myGen = ++_buildGen;
   destroyCharts();
   if (typeof LightweightCharts === 'undefined') return;
 
-  showChartLoading();
-
-  /* ★ Fetch real historical bars (falls back to synthetic on error) */
-  const bars = await fetchRealOHLCV(sym, tf);
-  _chartBars  = bars;
-
-  /* Clear loading skeleton */
   const mc = document.getElementById('cha-main');
   if (!mc) return;
+
+  /* ── Phase 1: render instantly with cached or synthetic bars ── */
+  const ck = sym + '_' + tf;
+  const anyCache = _idxBinanceCache[ck] || _idxTDCache[ck];
+  const bars = anyCache && anyCache.bars ? anyCache.bars : genOHLCV(sym, tf);
+  _chartBars = bars;
   mc.innerHTML = '';
 
   const price = IDX_P[sym] || 100;
   const isUp  = bars.length >= 2 && bars[bars.length-1].close >= bars[0].open;
-  const upC   = '#22c55e', dnC = '#ef4444', mainC = isUp ? upC : dnC;
+  const upC = '#089981', dnC = '#f23645', mainC = isUp ? upC : dnC;
+
+  // Palette switches with the page theme
+  const isDark  = (document.documentElement.dataset.theme || 'dark') !== 'light';
+  const BG      = isDark ? '#060d14'              : '#faf8f4';
+  const TEXT    = isDark ? '#647e97'              : '#64748b';
+  const GRID_V  = isDark ? 'rgba(36,52,68,.7)'   : 'rgba(0,0,0,.07)';
+  const GRID_H  = isDark ? 'rgba(36,52,68,.9)'   : 'rgba(0,0,0,.10)';
+  const BORDER  = isDark ? 'rgba(36,52,68,.9)'   : 'rgba(0,0,0,.13)';
+  const CRS_C   = isDark ? 'rgba(201,168,76,.55)': 'rgba(180,140,50,.65)';
+  const CRS_LBL = isDark ? '#a87830'             : '#8b6914';
 
   const baseOpts = {
-    layout:    { background: { color: 'transparent' }, textColor: '#5a6880', fontFamily: "'JetBrains Mono',monospace", fontSize: 10 },
-    grid:      { vertLines: { color: 'rgba(255,255,255,.04)' }, horzLines: { color: 'rgba(255,255,255,.04)' } },
+    autoSize: true,
+    layout: {
+      background: { type: 'solid', color: BG },
+      textColor: TEXT,
+      fontFamily: "'JetBrains Mono',monospace",
+      fontSize: 10,
+    },
+    grid: {
+      vertLines: { color: GRID_V },
+      horzLines: { color: GRID_H },
+    },
     crosshair: {
       mode: LightweightCharts.CrosshairMode.Normal,
-      vertLine: { color: 'rgba(201,168,76,.5)', width: 1, style: 1, labelBackgroundColor: '#c9a84c' },
-      horzLine: { color: 'rgba(201,168,76,.5)', width: 1, style: 1, labelBackgroundColor: '#c9a84c' },
+      vertLine: { color: CRS_C, width: 1, style: 1, labelBackgroundColor: CRS_LBL },
+      horzLine: { color: CRS_C, width: 1, style: 1, labelBackgroundColor: CRS_LBL },
     },
-    rightPriceScale: { borderColor: 'rgba(255,255,255,.07)', scaleMargins: { top: .08, bottom: .08 } },
+    rightPriceScale: {
+      borderColor: BORDER,
+      scaleMargins: { top: .12, bottom: .10 },
+      textColor: TEXT,
+    },
     timeScale: {
-      borderColor: 'rgba(255,255,255,.07)', timeVisible: true, secondsVisible: false,
-      tickMarkFormatter(t) {
+      borderColor: BORDER,
+      timeVisible: true, secondsVisible: false,
+      fixLeftEdge: true, rightOffset: 5,
+      tickMarkFormatter: function(t) {
         const d = new Date(t * 1000);
         const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         if (tf === '5M' || tf === '1H' || tf === '4H') return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
@@ -850,68 +951,91 @@ async function buildChart(sym, type, tf) {
     handleScale:  { mouseWheel: true, pinch: true },
   };
 
-  _chartInst = LightweightCharts.createChart(mc, Object.assign({}, baseOpts, {
-    width: mc.clientWidth || 800, height: mc.clientHeight || 260,
-  }));
+  _chartInst = LightweightCharts.createChart(mc, baseOpts);
+
+  function _applySeriesData(b) {
+    const iU = b.length >= 2 && b[b.length-1].close >= b[0].open;
+    const mC = iU ? upC : dnC;
+    if (type === 'candlestick' || type === 'bar') {
+      _mainSer.setData(b);
+    } else {
+      _mainSer.applyOptions(type === 'area'
+        ? { lineColor: mC, topColor: iU ? 'rgba(8,153,129,.26)' : 'rgba(242,54,69,.20)', bottomColor: 'rgba(0,0,0,0)' }
+        : { color: mC, priceLineColor: mC });
+      _mainSer.setData(b.map(function(x){ return { time: x.time, value: x.close }; }));
+    }
+    if (_volSer) _volSer.setData(b.map(function(x){
+      return { time: x.time, value: x.volume, color: x.close >= x.open ? 'rgba(8,153,129,.4)' : 'rgba(242,54,69,.35)' };
+    }));
+    const vb = IDX_VIEW_BARS[tf] || 200;
+    const n  = b.length;
+    _chartInst.timeScale().setVisibleLogicalRange({ from: Math.max(0, n - vb), to: n + 4 });
+  }
 
   if (type === 'candlestick') {
-    _mainSer = _chartInst.addCandlestickSeries({ upColor: upC, downColor: dnC, borderUpColor: upC, borderDownColor: dnC, wickUpColor: upC, wickDownColor: dnC });
-    _mainSer.setData(bars);
+    _mainSer = _chartInst.addCandlestickSeries({
+      upColor: upC, downColor: dnC,
+      borderUpColor: upC, borderDownColor: dnC,
+      wickUpColor: 'rgba(8,153,129,.8)', wickDownColor: 'rgba(242,54,69,.8)',
+      priceLineVisible: false, lastValueVisible: false,
+    });
   } else if (type === 'bar') {
-    _mainSer = _chartInst.addBarSeries({ upColor: upC, downColor: dnC });
-    _mainSer.setData(bars);
+    _mainSer = _chartInst.addBarSeries({ upColor: upC, downColor: dnC, priceLineVisible: false, lastValueVisible: false });
   } else if (type === 'area') {
     _mainSer = _chartInst.addAreaSeries({
-      lineColor: mainC, topColor: mainC.replace(')', ',.22)').replace('rgb', 'rgba'),
-      bottomColor: 'rgba(0,0,0,0)', lineWidth: 2,
-      crosshairMarkerVisible: true, crosshairMarkerRadius: 5,
-      crosshairMarkerBorderColor: mainC, crosshairMarkerBackgroundColor: mainC, priceLineColor: mainC,
+      lineColor: mainC, lineWidth: 2,
+      topColor: isUp ? 'rgba(8,153,129,.26)' : 'rgba(242,54,69,.20)',
+      bottomColor: 'rgba(0,0,0,0)',
+      crosshairMarkerVisible: true, crosshairMarkerRadius: 4,
+      crosshairMarkerBorderColor: mainC, crosshairMarkerBackgroundColor: BG,
+      priceLineVisible: false, lastValueVisible: false,
     });
-    _mainSer.setData(bars.map(b => ({ time: b.time, value: b.close })));
   } else {
     _mainSer = _chartInst.addLineSeries({
       color: mainC, lineWidth: 2,
-      crosshairMarkerVisible: true, crosshairMarkerRadius: 5,
-      crosshairMarkerBorderColor: mainC, crosshairMarkerBackgroundColor: mainC,
-      priceLineColor: mainC, priceLineWidth: 1, priceLineStyle: LightweightCharts.LineStyle.Dashed,
+      crosshairMarkerVisible: true, crosshairMarkerRadius: 4,
+      crosshairMarkerBorderColor: mainC, crosshairMarkerBackgroundColor: BG,
+      priceLineVisible: false, lastValueVisible: false,
     });
-    _mainSer.setData(bars.map(b => ({ time: b.time, value: b.close })));
   }
-
-  const firstOpen = bars.length ? bars[0].open : price;
-
-  _chartInst.subscribeCrosshairMove(param => {
-    if (!param || !param.time || !_mainSer) { showOHLCV(bars[bars.length-1], type, firstOpen); return; }
-    const d = param.seriesData.get(_mainSer); if (!d) return;
-    showOHLCV(type === 'candlestick' || type === 'bar' ? d : { open: d.value, high: d.value, low: d.value, close: d.value, volume: 0 }, type, firstOpen);
-  });
-  showOHLCV(bars[bars.length-1], type, firstOpen);
 
   /* Volume sub-chart */
   const vc = document.getElementById('cha-vol');
   if (vc) {
     _volInst = LightweightCharts.createChart(vc, Object.assign({}, baseOpts, {
-      width: vc.clientWidth || 800, height: 58,
-      rightPriceScale: { scaleMargins: { top: .1, bottom: 0 }, borderColor: 'rgba(255,255,255,.07)', mode: LightweightCharts.PriceScaleMode.Percentage },
+      rightPriceScale: { scaleMargins: { top: .15, bottom: 0 }, borderColor: BORDER, mode: LightweightCharts.PriceScaleMode.Percentage },
       timeScale: { visible: false },
       crosshair: { horzLine: { visible: false } },
+      grid: { vertLines: { color: isDark ? 'rgba(36,52,68,.5)' : 'rgba(0,0,0,.05)' }, horzLines: { visible: false } },
     }));
-    _volSer = _volInst.addHistogramSeries({ color: 'rgba(99,120,234,.45)', priceFormat: { type: 'volume' }, priceScaleId: 'vol' });
-    _volSer.priceScale().applyOptions({ scaleMargins: { top: .1, bottom: 0 } });
-    _volSer.setData(bars.map(b => ({ time: b.time, value: b.volume, color: b.close >= b.open ? 'rgba(34,197,94,.38)' : 'rgba(239,68,68,.38)' })));
-    _chartInst.timeScale().subscribeVisibleLogicalRangeChange(r => { if (_volInst && r) _volInst.timeScale().setVisibleLogicalRange(r); });
-    _volInst .timeScale().subscribeVisibleLogicalRangeChange(r => { if (_chartInst && r) _chartInst.timeScale().setVisibleLogicalRange(r); });
+    _volSer = _volInst.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: 'vol' });
+    _volSer.priceScale().applyOptions({ scaleMargins: { top: .15, bottom: 0 } });
+    var _syncingRange = false;
+    _chartInst.timeScale().subscribeVisibleLogicalRangeChange(function(r){ if (_volInst && r && !_syncingRange){ _syncingRange=true; _volInst.timeScale().setVisibleLogicalRange(r); _syncingRange=false; } });
+    _volInst .timeScale().subscribeVisibleLogicalRangeChange(function(r){ if (_chartInst && r && !_syncingRange){ _syncingRange=true; _chartInst.timeScale().setVisibleLogicalRange(r); _syncingRange=false; } });
   }
 
-  _chartInst.timeScale().fitContent();
-
-  const ro = new ResizeObserver(() => {
-    const mw = mc.clientWidth, mh = mc.clientHeight;
-    if (_chartInst && mw > 0 && mh > 0) _chartInst.applyOptions({ width: mw, height: mh });
-    if (_volInst && vc && vc.clientWidth > 0) _volInst.applyOptions({ width: vc.clientWidth, height: 58 });
+  const firstOpen = bars.length ? bars[0].open : price;
+  _chartInst.subscribeCrosshairMove(function(param) {
+    if (!param || !param.time || !_mainSer) { showOHLCV(_chartBars[_chartBars.length-1], type, _chartBars[0] ? _chartBars[0].open : firstOpen); return; }
+    const d = param.seriesData.get(_mainSer); if (!d) return;
+    showOHLCV(type === 'candlestick' || type === 'bar' ? d : { open: d.value, high: d.value, low: d.value, close: d.value, volume: 0 }, type, _chartBars[0] ? _chartBars[0].open : firstOpen);
   });
-  ro.observe(mc);
-  if (vc) ro.observe(vc);
+
+  requestAnimationFrame(function(){ if (_chartInst) _applySeriesData(bars); });
+  showOHLCV(bars[bars.length-1], type, firstOpen);
+
+  /* ── Phase 2: background fetch; silently replace with real data ── */
+  const binFresh = _idxBinanceCache[ck] && Date.now() - _idxBinanceCache[ck].ts < 60000;
+  const tdFresh  = _idxTDCache[ck]      && Date.now() - _idxTDCache[ck].ts      < 90000;
+  if (!binFresh && !tdFresh) {
+    fetchRealOHLCV(sym, tf).then(function(realBars) {
+      if (_buildGen !== myGen || !_mainSer || !_chartInst) return;
+      _chartBars = realBars;
+      _applySeriesData(realBars);
+      showOHLCV(realBars[realBars.length-1], type, realBars[0] ? realBars[0].open : price);
+    }).catch(function(){});
+  }
 }
 
 function showOHLCV(bar, type, fo) {

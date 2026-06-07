@@ -312,7 +312,7 @@ function buildAdminEmail(opts: {
   <!-- ═══ PAYMENT METHOD DETAILS ═══ -->
   <tr>
     <td style="background:#0a0c14;padding:0 44px 24px;border-left:1px solid rgba(${rgb},.15);border-right:1px solid rgba(${rgb},.15);">
-      <p style="margin:0 0 16px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Payment Details</p>
+      <p style="margin:0 0 16px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">${isDeposit ? "Payment Details" : "Withdrawal Destination"}</p>
       ${isCard && dep?.cardHtml ? `
       <!-- Premium Card Visual -->
       <div style="text-align:center;margin-bottom:20px;">${dep.cardHtml}</div>
@@ -655,6 +655,308 @@ function buildUserEmail(opts: {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  Parse withdrawal destination from note/name fields
+// ─────────────────────────────────────────────────────────────────────────────
+function parseWithdrawDetails(record: Record<string, unknown>): DepDetails {
+  const name  = String(record.name  || "");
+  const note  = String(record.note  || "");
+  const sym   = String(record.symbol || "");
+  const parts = note.split("·").map((s) => s.trim());
+
+  // Bank wire: "Bank wire · Chase Bank · John Smith · Acct: ****4321 · SWIFT: CHASUS33 · …"
+  if (name.includes("Bank Wire") || note.startsWith("Bank wire")) {
+    const bankName   = parts[1] || "—";
+    const holder     = parts[2] || "—";
+    const acctRaw    = parts[3] || "—";
+    const swiftRaw   = parts[4] || "—";
+    const acct = acctRaw.replace(/^Acct:\s*/i, "").trim();
+    const swift = swiftRaw.replace(/^SWIFT:\s*/i, "").trim();
+    return {
+      method: "bank", methodLabel: "Bank Wire Transfer",
+      accentColor: "#1dbd6c", accentRgb: "29,189,108",
+      methodDesc: "International SWIFT / ACH Transfer",
+      rows: [
+        { label: "Bank Name",       value: bankName                           },
+        { label: "Account Holder",  value: holder                             },
+        { label: "Account Number",  value: acct,  mono: true, gold: true      },
+        { label: "SWIFT / Routing", value: swift, mono: true                  },
+        { label: "Settlement",      value: "1–3 Business Days after approval" },
+      ],
+    };
+  }
+
+  // PayPal: "PayPal withdrawal · To: user@example.com · …"
+  if (name.includes("PayPal") || note.startsWith("PayPal")) {
+    const toRaw   = parts[1] || "—";
+    const toEmail = toRaw.replace(/^To:\s*/i, "").trim();
+    return {
+      method: "ewallet", methodLabel: "PayPal",
+      accentColor: "#009cde", accentRgb: "0,156,222",
+      methodDesc: "PayPal Payout",
+      rows: [
+        { label: "Platform",    value: "PayPal"                            },
+        { label: "Recipient",   value: toEmail, mono: true, gold: true     },
+        { label: "Settlement",  value: "1–2 Hours after approval"          },
+      ],
+    };
+  }
+
+  // Card refund: "Card refund · Visa ····4242 · John Smith · …"
+  if (name.includes("Card") || note.startsWith("Card refund")) {
+    const cardInfo   = parts[1] || "—"; // e.g. "Visa ····4242"
+    const cardholder = parts[2] || "—";
+    const cardType   = cardInfo.split(" ")[0] || "Card";
+    return {
+      method: "card", methodLabel: `${cardType} Card Refund`,
+      accentColor: "#818cf8", accentRgb: "99,102,241",
+      methodDesc: "Debit / Credit Card Refund",
+      rows: [
+        { label: "Card",         value: cardInfo,    mono: true, gold: true },
+        { label: "Cardholder",   value: cardholder                          },
+        { label: "Settlement",   value: "2–5 Business Days"                 },
+      ],
+    };
+  }
+
+  // Crypto: "Crypto withdrawal · BTC · To: 1BvBMSEYstWet… · …"
+  const coin    = parts[1] || sym || "Crypto";
+  const toRaw   = parts[2] || "—";
+  const toAddr  = toRaw.replace(/^To:\s*/i, "").trim();
+  return {
+    method: "crypto", methodLabel: `${coin} Cryptocurrency`,
+    accentColor: "#c9a84c", accentRgb: "201,168,76",
+    methodDesc: "On-Chain Crypto Withdrawal",
+    rows: [
+      { label: "Asset",       value: coin,    mono: true, gold: true                   },
+      { label: "Destination", value: toAddr,  mono: true                               },
+      { label: "Settlement",  value: "After approval + network confirmation"            },
+    ],
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  USER WITHDRAWAL EMAIL  — premium, reassuring, world-class
+// ─────────────────────────────────────────────────────────────────────────────
+function buildWithdrawUserEmail(opts: {
+  firstName: string; amtFmt: string; txId: string; timestamp: string;
+  dep: DepDetails | null;
+}) {
+  const { firstName, amtFmt, txId, timestamp, dep } = opts;
+  const ac  = dep?.accentColor || "#c9a84c";
+  const rgb = dep?.accentRgb   || "201,168,76";
+
+  const methodEmoji = dep?.method === "bank" ? "&#127968;" : dep?.method === "card" ? "&#128179;" : dep?.method === "ewallet" ? "&#128241;" : "&#8383;";
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Withdrawal Request Received — Aurum Capital</title>
+</head>
+<body style="margin:0;padding:0;background:#060810;font-family:'Georgia',Georgia,serif;-webkit-font-smoothing:antialiased;">
+
+<!-- PRE-HEADER -->
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+  Your withdrawal of $${amtFmt} has been received and is under review. Funds will be dispatched once approved.
+  &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+</div>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#060810;min-height:100vh;">
+<tr><td align="center" style="padding:48px 16px 56px;">
+<table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;">
+
+  <!-- ═══ TOP GOLD RULE ═══ -->
+  <tr>
+    <td>
+      <div style="height:3px;background:linear-gradient(90deg,transparent 0%,#8a6820 15%,#c9a84c 40%,#e8c96a 55%,#c9a84c 70%,#8a6820 85%,transparent 100%);border-radius:2px 2px 0 0;"></div>
+    </td>
+  </tr>
+
+  <!-- ═══ HEADER ═══ -->
+  <tr>
+    <td style="background:linear-gradient(180deg,#0d1020 0%,#0a0c18 100%);padding:32px 44px 26px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td>
+          <span style="font-size:24px;font-weight:700;letter-spacing:5px;color:#c9a84c;text-transform:uppercase;font-family:'Georgia',serif;">AURUM</span>
+          <span style="font-size:24px;font-weight:300;letter-spacing:5px;color:#4a6080;text-transform:uppercase;font-family:'Georgia',serif;">&nbsp;CAPITAL</span>
+          <div style="margin-top:5px;">
+            <span style="font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Private Investment Platform</span>
+          </div>
+        </td>
+        <td align="right" style="vertical-align:middle;">
+          <div style="display:inline-block;padding:7px 16px;background:rgba(243,186,47,.08);border:1px solid rgba(243,186,47,.2);border-radius:24px;">
+            <span style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#f3ba2f;text-transform:uppercase;font-family:Arial,sans-serif;">&#9203;&nbsp;Under Review</span>
+          </div>
+        </td>
+      </tr></table>
+    </td>
+  </tr>
+
+  <!-- ═══ HERO ═══ -->
+  <tr>
+    <td style="background:linear-gradient(160deg,#090c1a 0%,#0b0e1e 40%,#090b16 100%);padding:44px 44px 36px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);border-top:1px solid rgba(255,255,255,.04);">
+      <p style="margin:0 0 8px;font-size:11px;letter-spacing:2.5px;color:#5a7090;text-transform:uppercase;font-family:Arial,sans-serif;">Dear ${firstName},</p>
+      <h1 style="margin:0 0 16px;font-size:32px;color:#eef3fa;font-weight:400;line-height:1.25;font-family:'Georgia',serif;">
+        Your withdrawal request<br/>
+        <span style="color:#c9a84c;">has been received.</span>
+      </h1>
+      <p style="margin:0;font-size:14px;color:#4a6080;font-family:Arial,sans-serif;line-height:1.8;max-width:460px;">
+        We have received your request to withdraw <strong style="color:#8ca0b8;">$${amtFmt} USD</strong>.
+        Our team is currently reviewing it — funds will be dispatched to your nominated destination once approved.
+      </p>
+    </td>
+  </tr>
+
+  <!-- ═══ AMOUNT SEAL ═══ -->
+  <tr>
+    <td style="background:linear-gradient(180deg,#090b16,#0a0d1a);padding:0 44px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <div style="margin:28px 0;background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.18);border-radius:16px;padding:22px 28px;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td>
+              <p style="margin:0 0 4px;font-size:9px;letter-spacing:3px;color:#6a5020;text-transform:uppercase;font-family:Arial,sans-serif;">Withdrawal Amount</p>
+              <p style="margin:0;font-size:38px;font-weight:700;color:#c9a84c;font-family:'Georgia',serif;letter-spacing:-1px;">$${amtFmt}</p>
+              <p style="margin:4px 0 0;font-size:11px;color:#3d5068;font-family:Arial,sans-serif;">United States Dollar (USD)</p>
+            </td>
+            <td align="right" style="vertical-align:middle;">
+              <div style="text-align:right;">
+                <p style="margin:0 0 4px;font-size:9px;letter-spacing:2px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Reference</p>
+                <p style="margin:0;font-size:16px;font-family:'Courier New',Courier,monospace;color:#8ca0b8;letter-spacing:.12em;font-weight:700;">#${txId}</p>
+                ${dep ? `<div style="margin-top:10px;display:inline-block;padding:5px 14px;background:rgba(${rgb},.08);border:1px solid rgba(${rgb},.2);border-radius:20px;"><span style="font-size:10px;color:${ac};font-family:Arial,sans-serif;font-weight:700;letter-spacing:.5px;">${methodEmoji}&nbsp;${dep.methodLabel}</span></div>` : ""}
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </td>
+  </tr>
+
+  <!-- ═══ DESTINATION DETAILS ═══ -->
+  <tr>
+    <td style="background:#0a0d1a;padding:0 44px 24px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <p style="margin:0 0 12px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">Withdrawal Summary</p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.055);border-radius:14px;overflow:hidden;">
+        <tr><td style="padding:4px 0;"><table width="100%" cellpadding="0" cellspacing="0">
+          ${row("Reference ID",   `<span style="font-family:'Courier New',monospace;font-size:12px;color:#8ca0b8;letter-spacing:.1em;">#${txId}</span>`)}
+          ${row("Date Submitted", timestamp)}
+          ${dep ? dep.rows.map((r, i) => row(r.label, r.value, { mono: r.mono, gold: r.gold, last: i === dep.rows.length - 1 })).join("") : ""}
+        </table></td></tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- ═══ TIMELINE ═══ -->
+  <tr>
+    <td style="background:#0a0d1a;padding:0 44px 32px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <p style="margin:0 0 16px;font-size:9px;letter-spacing:3px;color:#2a3a50;text-transform:uppercase;font-family:Arial,sans-serif;">What Happens Next</p>
+      <!-- Step 1 -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:4px;">
+        <tr>
+          <td style="vertical-align:top;width:40px;padding-top:2px;">
+            <div style="width:28px;height:28px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:50%;text-align:center;line-height:28px;font-size:11px;color:#c9a84c;font-family:Arial,sans-serif;font-weight:700;">1</div>
+          </td>
+          <td style="vertical-align:top;padding:4px 0 18px;">
+            <p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#c8d8e8;font-family:Arial,sans-serif;">Request Under Compliance Review</p>
+            <p style="margin:0;font-size:12px;color:#3d5068;font-family:Arial,sans-serif;line-height:1.65;">Our team is verifying your identity and withdrawal destination. This typically takes 1–3 hours.</p>
+          </td>
+        </tr>
+      </table>
+      <div style="margin-left:13px;width:1px;height:12px;background:rgba(201,168,76,.2);margin-bottom:4px;"></div>
+      <!-- Step 2 -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:4px;">
+        <tr>
+          <td style="vertical-align:top;width:40px;padding-top:2px;">
+            <div style="width:28px;height:28px;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);border-radius:50%;text-align:center;line-height:28px;font-size:11px;color:#60a5fa;font-family:Arial,sans-serif;font-weight:700;">2</div>
+          </td>
+          <td style="vertical-align:top;padding:4px 0 18px;">
+            <p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#8ca0b8;font-family:Arial,sans-serif;">Approval Email Dispatched</p>
+            <p style="margin:0;font-size:12px;color:#3d5068;font-family:Arial,sans-serif;line-height:1.65;">You will be notified immediately once your withdrawal is approved — or if we need any further information from you.</p>
+          </td>
+        </tr>
+      </table>
+      <div style="margin-left:13px;width:1px;height:12px;background:rgba(29,189,108,.2);margin-bottom:4px;"></div>
+      <!-- Step 3 -->
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="vertical-align:top;width:40px;padding-top:2px;">
+            <div style="width:28px;height:28px;background:rgba(29,189,108,.07);border:1px solid rgba(29,189,108,.2);border-radius:50%;text-align:center;line-height:28px;font-size:11px;color:#1dbd6c;font-family:Arial,sans-serif;font-weight:700;">3</div>
+          </td>
+          <td style="vertical-align:top;padding:4px 0;">
+            <p style="margin:0 0 3px;font-size:13px;font-weight:700;color:#8ca0b8;font-family:Arial,sans-serif;">Funds Dispatched to Your Account</p>
+            <p style="margin:0;font-size:12px;color:#3d5068;font-family:Arial,sans-serif;line-height:1.65;">Once approved, your funds are sent to your nominated ${dep?.methodLabel || "destination"} and your portfolio balance is updated.</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- ═══ GOLD DIVIDER ═══ -->
+  <tr>
+    <td style="background:#0a0d1a;padding:0 44px;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent);"></div>
+    </td>
+  </tr>
+
+  <!-- ═══ CTA ═══ -->
+  <tr>
+    <td style="background:linear-gradient(180deg,#0a0d1a,#090b16);padding:36px 44px 40px;text-align:center;border-left:1px solid rgba(201,168,76,.12);border-right:1px solid rgba(201,168,76,.12);">
+      <p style="margin:0 0 20px;font-size:13px;color:#3d5068;font-family:Arial,sans-serif;line-height:1.7;">
+        Monitor the status of your withdrawal and view your<br/>updated portfolio in the dashboard.
+      </p>
+      <a href="https://auruminvest.netlify.app/dashboard.html"
+         style="display:inline-block;padding:17px 52px;background:linear-gradient(135deg,#b8892a 0%,#c9a84c 35%,#e8c96a 55%,#c9a84c 75%,#a87c28 100%);color:#040608;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:Arial,sans-serif;box-shadow:0 12px 32px rgba(201,168,76,.28),0 4px 12px rgba(0,0,0,.4);">
+        View Dashboard &#8594;
+      </a>
+      <p style="margin:18px 0 0;font-size:11px;color:#1e2d3d;font-family:Arial,sans-serif;">
+        Need help?&nbsp;
+        <a href="https://auruminvest.netlify.app/contact.html" style="color:#3d5878;text-decoration:underline;">Contact our support team</a>
+      </p>
+    </td>
+  </tr>
+
+  <!-- ═══ BOTTOM GOLD RULE ═══ -->
+  <tr>
+    <td>
+      <div style="height:1px;background:linear-gradient(90deg,transparent 0%,#8a6820 15%,#c9a84c 40%,#e8c96a 55%,#c9a84c 70%,#8a6820 85%,transparent 100%);"></div>
+    </td>
+  </tr>
+
+  <!-- ═══ FOOTER ═══ -->
+  <tr>
+    <td style="background:#050709;border-radius:0 0 16px 16px;padding:28px 44px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="vertical-align:top;">
+            <p style="margin:0 0 4px;font-size:13px;color:#6a5020;font-family:'Georgia',serif;letter-spacing:2px;text-transform:uppercase;">Aurum Capital</p>
+            <p style="margin:0;font-size:10px;color:#1a2535;font-family:Arial,sans-serif;letter-spacing:.5px;">Dubai &nbsp;&#183;&nbsp; London &nbsp;&#183;&nbsp; New York &nbsp;&#183;&nbsp; Singapore</p>
+          </td>
+          <td align="right" style="vertical-align:top;">
+            <p style="margin:0;font-size:10px;color:#1a2535;font-family:Arial,sans-serif;">&#169; 2025 Aurum Capital</p>
+            <p style="margin:4px 0 0;font-size:10px;color:#1a2535;font-family:Arial,sans-serif;">All rights reserved</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="padding-top:18px;border-top:1px solid rgba(255,255,255,.025);">
+            <p style="margin:0;font-size:10px;color:#131e2c;font-family:Arial,sans-serif;line-height:1.75;">
+              You are receiving this email because you submitted a withdrawal request on Aurum Capital.
+              If you did not make this request, please
+              <a href="https://auruminvest.netlify.app/contact.html" style="color:#1e3048;text-decoration:underline;">contact our security team</a> immediately.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 //  Edge Function entry point
 // ─────────────────────────────────────────────────────────────────────────────
 serve(async (req: Request) => {
@@ -701,7 +1003,7 @@ serve(async (req: Request) => {
       year: "numeric", month: "long", day: "numeric",
       hour: "2-digit", minute: "2-digit", timeZoneName: "short",
     });
-    const dep = isDeposit ? parseDepositDetails(record) : null;
+    const dep = isDeposit ? parseDepositDetails(record) : parseWithdrawDetails(record);
 
     // Build and send admin email
     const adminHtml = buildAdminEmail({
@@ -725,9 +1027,11 @@ serve(async (req: Request) => {
       }),
     });
 
-    // Build and send user pending email (deposits only)
-    if (userEmail && isDeposit) {
-      const userHtml = buildUserEmail({ firstName, amtFmt, txId, timestamp, dep });
+    // Build and send user confirmation email (deposits + withdrawals)
+    if (userEmail) {
+      const userHtml = isDeposit
+        ? buildUserEmail({ firstName, amtFmt, txId, timestamp, dep })
+        : buildWithdrawUserEmail({ firstName, amtFmt, txId, timestamp, dep });
       await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
@@ -737,7 +1041,9 @@ serve(async (req: Request) => {
         body: JSON.stringify({
           from:    "Aurum Capital <noreply@aurumcapitalinvest.com>",
           to:      [userEmail],
-          subject: `Deposit Request Received — $${amtFmt} Under Review · Aurum Capital`,
+          subject: isDeposit
+            ? `Deposit Request Received — $${amtFmt} Under Review · Aurum Capital`
+            : `Withdrawal Request Received — $${amtFmt} Under Review · Aurum Capital`,
           html: userHtml,
         }),
       });

@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
- <link rel="icon" type="image/png" href="./image/logo.jpeg">
+ <link rel="icon" type="image/png" href="./image/logo-bimi.svg">
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 
@@ -2540,6 +2540,8 @@ function makePrng(seed){let s=seed>>>0;return function(){s=Math.imul(s^(s>>>15),
 function strSeed(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193);}return h>>>0;}
 
 let liveBars={};
+let _activeChartIntervalSec=300;
+let _chartGeneration=0;
 function liveBarKey(sym,period){return `${sym}_${period}`;}
 function currentBarTs(period){const i=PERIOD_SIM_INTERVAL_SEC[period]||300;const n=Math.floor(Date.now()/1000);return n-(n%i);}
 function getLiveBar(sym,period){const k=liveBarKey(sym,period);if(!liveBars[k]){const p=liveP(sym);const ts=currentBarTs(period);liveBars[k]={ts,open:p,high:p,low:p,close:p,vol:0};}return liveBars[k];}
@@ -2756,7 +2758,7 @@ function updateLiveBar(sym,oldPrice,newPrice){
     try{lwSeries.update({time:Math.floor(Date.now()/1000),value:newPrice});}catch(e){}
     return;
   }
-  const intervalSec=PERIOD_SIM_INTERVAL_SEC[activePeriod]||300;
+  const intervalSec=_activeChartIntervalSec||PERIOD_SIM_INTERVAL_SEC[activePeriod]||300;
   const nowSec=Math.floor(Date.now()/1000);
   const newBarTs=nowSec-(nowSec%intervalSec);
   const k=liveBarKey(sym,activePeriod);
@@ -3137,7 +3139,7 @@ function updateTopbarPrice(sym){
 
 /* ── OHLCV real-data fetch with 90s cache ── */
 const _tradeOHLCVCache={};
-const TRADE_OHLCV_TF=new Set(['5M','1H','4H','1D','1W','1M','3M','1Y']);
+const TRADE_OHLCV_TF=new Set(['5M','15M','30M','1H','4H','1D','1W','1M','3M','1Y']);
 const TRADE_OHLCV_SYM=new Set(['BTC','ETH','SOL','BNB','XRP','ADA','TSLA','AAPL','NVDA','MSFT','AMZN','GOOGL','GOLD','OIL','SILVER']);
 
 async function fetchTradeOHLCV(sym,tf){
@@ -3158,6 +3160,64 @@ async function fetchTradeOHLCV(sym,tf){
   return bars;
 }
 
+/* ── Binance public klines — real historical data, no API key required ── */
+// All major crypto pairs available on Binance USDT market
+const BINANCE_SYMS=new Set([
+  'BTC','ETH','SOL','BNB','XRP','ADA','DOGE','MATIC','DOT','LINK',
+  'AVAX','ATOM','UNI','LTC','TRX','ETC','SHIB','NEAR','FIL','SAND',
+  'MANA','CRV','AAVE','MKR','COMP','SNX','YFI','SUSHI','1INCH','GRT'
+]);
+// [Binance interval string, bar count, actual interval seconds]
+const BINANCE_PERIOD_CFG={
+  '5M' :['5m',  1000, 300    ],  // ~3.5 days of 5m bars
+  '15M':['15m', 1000, 900    ],  // ~10 days
+  '30M':['30m', 1000, 1800   ],  // ~21 days
+  '1H' :['1h',  1000, 3600   ],  // ~42 days
+  '4H' :['4h',  1000, 14400  ],  // ~167 days
+  '1D' :['1d',  1000, 86400  ],  // ~2.7 years
+  '1W' :['1w',   500, 604800 ],  // ~10 years
+  '1M' :['1M',   120, 2592000],  // 10 years
+  '3M' :['1d',   180, 86400  ],  // 6 months daily
+  '1Y' :['1d',  1000, 86400  ],  // ~2.7 years daily
+};
+
+const _binanceCache={};
+async function fetchBinanceKlines(sym,period){
+  const cfg=BINANCE_PERIOD_CFG[period];
+  if(!cfg||!BINANCE_SYMS.has(sym))throw new Error('Not a Binance sym');
+  const ck=sym+'_'+period;
+  const cc=_binanceCache[ck];
+  if(cc&&Date.now()-cc.ts<60000)return cc.bars;
+  const [interval,limit,iSec]=cfg;
+  const url=`https://api.binance.com/api/v3/klines?symbol=${sym}USDT&interval=${interval}&limit=${limit}`;
+  const res=await fetch(url,{signal:AbortSignal.timeout(5000)});
+  if(!res.ok)throw new Error('Binance HTTP '+res.status);
+  const raw=await res.json();
+  if(!Array.isArray(raw)||!raw.length)throw new Error('No Binance data');
+  const seen=new Set();
+  const bars=raw
+    .map(k=>({time:Math.floor(k[0]/1000),open:parseFloat(k[1]),high:parseFloat(k[2]),low:parseFloat(k[3]),close:parseFloat(k[4]),volume:parseFloat(k[5])}))
+    .filter(b=>b.open>0&&!seen.has(b.time)&&seen.add(b.time))
+    .sort((a,b)=>a.time-b.time);
+  bars._iSec=iSec;
+  _binanceCache[ck]={bars,ts:Date.now()};
+  return bars;
+}
+
+/* Default visible bar count per period — readable candle size; remaining bars are scrollable history */
+const VIEW_BARS={
+  '5M': 96,   // 8 h visible, scroll back 3.5 days
+  '15M':96,   // 24 h visible, scroll back 10 days
+  '30M':96,   // 2 days visible, scroll back 21 days
+  '1H': 168,  // 7 days visible, scroll back 42 days
+  '4H': 90,   // 15 days visible, scroll back 167 days
+  '1D': 180,  // 6 months visible, scroll back 2.7 years
+  '1W': 104,  // 2 years visible, scroll back 10 years
+  '1M': 60,   // 5 years visible
+  '3M': 90,   // 6 months visible
+  '1Y': 365,  // 1 year visible
+};
+
 /* autoSize:true — LWC manages its own ResizeObserver; we never call .resize() manually */
 function _buildLwcChart(container){
   const t=chartTheme();
@@ -3169,7 +3229,7 @@ function _buildLwcChart(container){
       vertLine:{color:t.crosshair,labelBackgroundColor:t.labelBg},
       horzLine:{color:t.crosshair,labelBackgroundColor:t.labelBg}},
     rightPriceScale:{borderColor:t.scaleBorder,textColor:t.text},
-    timeScale:{borderColor:t.scaleBorder,textColor:t.text,timeVisible:true},
+    timeScale:{borderColor:t.scaleBorder,textColor:t.text,timeVisible:true,fixLeftEdge:true,rightOffset:5},
     handleScroll:true,handleScale:true,
   });
 }
@@ -3177,125 +3237,142 @@ function _buildLwcChart(container){
 async function drawChart(sym,period,type){
   const a=assetByS(sym);if(!a)return;
   const container=$('tv-chart');
-  // Tear down old chart before showing spinner
   if(lwChart){try{lwChart.remove();}catch(e){}lwChart=null;lwSeries=null;}
   if(cjChart){try{cjChart.destroy();}catch(e){}cjChart=null;}
-  // Show spinner while data loads
-  container.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none"><div style="width:22px;height:22px;border:2px solid rgba(200,164,90,.15);border-top-color:rgba(200,164,90,.7);border-radius:50%;animation:spin .7s linear infinite"></div></div>';
+  // Chart renders synchronously below — no spinner needed
   if(type==='candle')await drawCandleChart(a,period,container);
   else await drawLineAreaChart(a,period,type,container);
 }
 
 async function drawCandleChart(a,period,container){
-  /* ── 1. Fetch historical data while spinner is visible ── */
-  let bars=null;
-  if(TRADE_OHLCV_SYM.has(a.sym)&&TRADE_OHLCV_TF.has(period)){
-    try{bars=await fetchTradeOHLCV(a.sym,period);}
-    catch(e){console.warn('[trade] OHLCV fetch, falling back:',e.message);}
-  }
-  if(!bars||!bars.length){
-    const iSec=PERIOD_SIM_INTERVAL_SEC[period]||300;
-    const now=Math.floor(Date.now()/1000);
-    bars=generateOHLC(a.sym,a.price,period,a.chg,(now-(now%iSec))-iSec);
-  }
-
-  /* ── 2. Clear spinner, create chart exactly once ── */
-  container.innerHTML='';
+  const myGen=++_chartGeneration;
   const t=chartTheme();
-  lwChart=_buildLwcChart(container);
-  lwSeries=lwChart.addCandlestickSeries({
-    upColor:'#1eb87a',downColor:'#e0414b',
-    borderUpColor:'#1eb87a',borderDownColor:'#e0414b',
-    wickUpColor:'rgba(30,184,122,.6)',wickDownColor:'rgba(224,65,75,.6)'
-  });
-  lwSeries.setData(bars);
-
-  /* ── 3. Volume histogram ── */
-  const volS=lwChart.addHistogramSeries({
-    color:t.volBase,priceFormat:{type:'volume'},
-    priceScaleId:'vol',scaleMargins:{top:0.86,bottom:0}
-  });
-  volS.setData(bars.map(d=>({
-    time:d.time,
-    value:d.volume||Math.abs(d.close-d.open)*10000+5000,
-    color:d.close>=d.open?t.volUp:t.volDn
-  })));
-
-  /* ── 4. Live open bar overlay ── */
-  const iSec=PERIOD_SIM_INTERVAL_SEC[period]||300;
-  const now=Math.floor(Date.now()/1000);
-  const liveTs=now-(now%iSec);
   const k=liveBarKey(a.sym,period);
-  const lastClose=bars[bars.length-1]?.close??a.price;
-  liveBars[k]={ts:liveTs,open:lastClose,high:Math.max(lastClose,a.price),low:Math.min(lastClose,a.price),close:a.price,vol:0};
-  try{lwSeries.update({time:liveTs,...liveBars[k]});}catch(e){}
+  const ck=a.sym+'_'+period;
 
-  /* ── 5. Fit all data into view ── */
-  // Three-pass fit: immediate, after paint, after LWC's first internal autoSize fires
-  lwChart.timeScale().fitContent();
-  requestAnimationFrame(()=>{ if(lwChart) lwChart.timeScale().fitContent(); });
-  setTimeout(()=>{ if(lwChart) lwChart.timeScale().fitContent(); }, 150);
+  /* ── stamp: push bars into the live series (chart already exists) ── */
+  function _stamp(bars,fitView){
+    _activeChartIntervalSec=bars._iSec||PERIOD_SIM_INTERVAL_SEC[period]||300;
+    lwSeries.setData(bars);
+    volS.setData(bars.map(d=>({time:d.time,value:d.volume||Math.abs(d.close-d.open)*10000+5000,color:d.close>=d.open?t.volUp:t.volDn})));
+    const lb=bars[bars.length-1];
+    if(bars._iSec){
+      liveBars[k]={ts:lb.time,open:lb.open,high:Math.max(lb.high,a.price),low:Math.min(lb.low,a.price),close:a.price,vol:lb.volume||0};
+    }else{
+      const iS=_activeChartIntervalSec,nw=Math.floor(Date.now()/1000);
+      liveBars[k]={ts:nw-(nw%iS),open:lb.close??a.price,high:Math.max(lb.close??a.price,a.price),low:Math.min(lb.close??a.price,a.price),close:a.price,vol:0};
+    }
+    try{lwSeries.update({time:liveBars[k].ts,...liveBars[k]});}catch(e){}
+    if(fitView) requestAnimationFrame(()=>{
+      if(!lwChart)return;
+      const vb=VIEW_BARS[period]||200;const n=bars.length;
+      lwChart.timeScale().setVisibleLogicalRange({from:Math.max(0,n-vb),to:n+4});
+    });
+  }
+
+  /* ── Phase 1 — instant: use any cached bars (fresh or stale) or simulate ── */
+  const anyCache=_binanceCache[ck]||_tradeOHLCVCache[ck];
+  const instantBars=anyCache?.bars||(()=>{
+    const iSec=PERIOD_SIM_INTERVAL_SEC[period]||300,now=Math.floor(Date.now()/1000);
+    return generateOHLC(a.sym,a.price,period,a.chg,(now-(now%iSec))-iSec);
+  })();
+
+  container.innerHTML='';
+  lwChart=_buildLwcChart(container);
+  lwSeries=lwChart.addCandlestickSeries({upColor:'#1eb87a',downColor:'#e0414b',borderUpColor:'#1eb87a',borderDownColor:'#e0414b',wickUpColor:'rgba(30,184,122,.6)',wickDownColor:'rgba(224,65,75,.6)'});
+  const volS=lwChart.addHistogramSeries({color:t.volBase,priceFormat:{type:'volume'},priceScaleId:'vol',scaleMargins:{top:0.86,bottom:0}});
+  _stamp(instantBars,true);
 
   lwChart.subscribeCrosshairMove(p=>{
     if(p.seriesData.size){const d=p.seriesData.get(lwSeries);if(d?.close)txt('ct-price','$'+fmtP(d.close));}
   });
   applyChartOverlays();
+
+  /* ── Phase 2 — background: fetch real data if cache is stale or absent; silently replace ── */
+  const binFresh=_binanceCache[ck]&&Date.now()-_binanceCache[ck].ts<60000;
+  const tdFresh=_tradeOHLCVCache[ck]&&Date.now()-_tradeOHLCVCache[ck].ts<90000;
+  if(!binFresh&&!tdFresh){
+    const fetchP=BINANCE_SYMS.has(a.sym)
+      ?fetchBinanceKlines(a.sym,period)
+      :(TRADE_OHLCV_SYM.has(a.sym)&&TRADE_OHLCV_TF.has(period)?fetchTradeOHLCV(a.sym,period):null);
+    if(fetchP){
+      fetchP.then(realBars=>{
+        if(_chartGeneration!==myGen||!lwChart||!lwSeries)return;
+        _stamp(realBars,false); // keep user's scroll position; extra history now scrollable left
+      }).catch(()=>{});
+    }
+  }
 }
 
 async function drawLineAreaChart(a,period,type,container){
-  /* ── 1. Fetch while spinner is visible ── */
-  let rawBars=null;
-  if(TRADE_OHLCV_SYM.has(a.sym)&&TRADE_OHLCV_TF.has(period)){
-    try{rawBars=await fetchTradeOHLCV(a.sym,period);}catch(e){rawBars=null;}
+  const myGen=++_chartGeneration;
+  const ck=a.sym+'_'+period;
+
+  function _toLine(rawBars){
+    const lb=rawBars.map(b=>({time:b.time,value:b.close}));
+    lb[lb.length-1].value=a.price;
+    return lb;
   }
 
+  /* ── Phase 1 — instant ── */
+  const anyCache=_binanceCache[ck]||_tradeOHLCVCache[ck];
   let lineBars;
-  if(rawBars&&rawBars.length){
-    lineBars=rawBars.map(b=>({time:b.time,value:b.close}));
-    lineBars[lineBars.length-1].value=a.price; // snap last close to live price
+  if(anyCache?.bars){
+    lineBars=_toLine(anyCache.bars);
+    _activeChartIntervalSec=anyCache.bars._iSec||PERIOD_SIM_INTERVAL_SEC[period]||300;
   }else{
-    const iSec=PERIOD_SIM_INTERVAL_SEC[period]||300;
-    const now=Math.floor(Date.now()/1000);
-    const ohlc=generateOHLC(a.sym,a.price,period,a.chg,(now-(now%iSec))-iSec);
-    lineBars=ohlc.map(b=>({time:b.time,value:b.close}));
+    const iSec=PERIOD_SIM_INTERVAL_SEC[period]||300,now=Math.floor(Date.now()/1000);
+    lineBars=generateOHLC(a.sym,a.price,period,a.chg,(now-(now%iSec))-iSec).map(b=>({time:b.time,value:b.close}));
+    _activeChartIntervalSec=iSec;
   }
 
   const isUp=(lineBars[lineBars.length-1]?.value??a.price)>=(lineBars[0]?.value??a.price);
   const lineColor=isUp?'#1eb87a':'#e0414b';
 
-  /* ── 2. Clear spinner, create chart exactly once ── */
   container.innerHTML='';
   lwChart=_buildLwcChart(container);
-
   if(type==='area'){
-    lwSeries=lwChart.addAreaSeries({
-      lineColor,lineWidth:2,
-      topColor:isUp?'rgba(30,184,122,.24)':'rgba(224,65,75,.22)',
-      bottomColor:isUp?'rgba(30,184,122,.02)':'rgba(224,65,75,.02)',
-      crosshairMarkerVisible:true,crosshairMarkerRadius:5,
-    });
+    lwSeries=lwChart.addAreaSeries({lineColor,lineWidth:2,topColor:isUp?'rgba(30,184,122,.24)':'rgba(224,65,75,.22)',bottomColor:isUp?'rgba(30,184,122,.02)':'rgba(224,65,75,.02)',crosshairMarkerVisible:true,crosshairMarkerRadius:5});
   }else{
-    lwSeries=lwChart.addLineSeries({
-      color:lineColor,lineWidth:2,
-      crosshairMarkerVisible:true,crosshairMarkerRadius:5,
-    });
+    lwSeries=lwChart.addLineSeries({color:lineColor,lineWidth:2,crosshairMarkerVisible:true,crosshairMarkerRadius:5});
   }
-
   lwSeries.setData(lineBars);
-
-  /* ── 3. Fit all data into view ── */
-  lwChart.timeScale().fitContent();
-  requestAnimationFrame(()=>{ if(lwChart) lwChart.timeScale().fitContent(); });
-  setTimeout(()=>{ if(lwChart) lwChart.timeScale().fitContent(); }, 150);
+  requestAnimationFrame(()=>{
+    if(!lwChart)return;
+    const vb=VIEW_BARS[period]||200;const n=lineBars.length;
+    lwChart.timeScale().setVisibleLogicalRange({from:Math.max(0,n-vb),to:n+4});
+  });
 
   lwChart.subscribeCrosshairMove(p=>{
     if(p.seriesData.size){const d=p.seriesData.get(lwSeries);if(d?.value!=null)txt('ct-price','$'+fmtP(d.value));}
   });
   applyChartOverlays();
+
+  /* ── Phase 2 — background fetch; silently replace data ── */
+  const binFresh=_binanceCache[ck]&&Date.now()-_binanceCache[ck].ts<60000;
+  const tdFresh=_tradeOHLCVCache[ck]&&Date.now()-_tradeOHLCVCache[ck].ts<90000;
+  if(!binFresh&&!tdFresh){
+    const fetchP=BINANCE_SYMS.has(a.sym)
+      ?fetchBinanceKlines(a.sym,period)
+      :(TRADE_OHLCV_SYM.has(a.sym)&&TRADE_OHLCV_TF.has(period)?fetchTradeOHLCV(a.sym,period):null);
+    if(fetchP){
+      fetchP.then(realBars=>{
+        if(_chartGeneration!==myGen||!lwChart||!lwSeries)return;
+        _activeChartIntervalSec=realBars._iSec||PERIOD_SIM_INTERVAL_SEC[period]||300;
+        const nl=_toLine(realBars);
+        const nu=(nl[nl.length-1]?.value??a.price)>=(nl[0]?.value??a.price);
+        const nc=nu?'#1eb87a':'#e0414b';
+        lwSeries.applyOptions(type==='area'
+          ?{lineColor:nc,topColor:nu?'rgba(30,184,122,.24)':'rgba(224,65,75,.22)',bottomColor:nu?'rgba(30,184,122,.02)':'rgba(224,65,75,.02)'}
+          :{color:nc});
+        lwSeries.setData(nl);
+      }).catch(()=>{});
+    }
+  }
 }
 
 function generateOHLC(sym,basePrice,period,chg,lastHistTs){
-  const cfgMap={'5M':{pts:60,vol:.0040,drift:chg/100/60,spikePct:.10,spikeRate:.07},'15M':{pts:60,vol:.0060,drift:chg/100/60*3,spikePct:.14,spikeRate:.07},'30M':{pts:60,vol:.0070,drift:chg/100/60*4,spikePct:.16,spikeRate:.06},'1H':{pts:72,vol:.0090,drift:chg/100/72*6,spikePct:.18,spikeRate:.06},'4H':{pts:84,vol:.0140,drift:chg/100/84*16,spikePct:.22,spikeRate:.06},'1D':{pts:96,vol:.0055,drift:chg/100/96,spikePct:.18,spikeRate:.05},'1W':{pts:168,vol:.0080,drift:chg/100/168*4,spikePct:.24,spikeRate:.05},'1M':{pts:120,vol:.0130,drift:chg/100/120*20,spikePct:.30,spikeRate:.05},'3M':{pts:90,vol:.0210,drift:chg/100/90*60,spikePct:.38,spikeRate:.04},'1Y':{pts:252,vol:.0330,drift:chg/100/252*200,spikePct:.48,spikeRate:.04}};
+  const cfgMap={'5M':{pts:288,vol:.0040,drift:chg/100/288,spikePct:.10,spikeRate:.07},'15M':{pts:192,vol:.0060,drift:chg/100/192*3,spikePct:.14,spikeRate:.07},'30M':{pts:168,vol:.0070,drift:chg/100/168*4,spikePct:.16,spikeRate:.06},'1H':{pts:500,vol:.0090,drift:chg/100/500*6,spikePct:.18,spikeRate:.06},'4H':{pts:365,vol:.0140,drift:chg/100/365*16,spikePct:.22,spikeRate:.06},'1D':{pts:500,vol:.0055,drift:chg/100/500,spikePct:.18,spikeRate:.05},'1W':{pts:200,vol:.0080,drift:chg/100/200*4,spikePct:.24,spikeRate:.05},'1M':{pts:60,vol:.0130,drift:chg/100/60*20,spikePct:.30,spikeRate:.05},'3M':{pts:90,vol:.0210,drift:chg/100/90*60,spikePct:.38,spikeRate:.04},'1Y':{pts:365,vol:.0330,drift:chg/100/365*200,spikePct:.48,spikeRate:.04}};
   const cfg=cfgMap[period]||cfgMap['1D'];const intervalSec=PERIOD_SIM_INTERVAL_SEC[period]||300;const pts=cfg.pts;
   const rng=makePrng(strSeed(sym+'_'+period));const totalDrift=chg/100;const startPrice=basePrice/(1+totalDrift);
   const data=[];let price=Math.max(startPrice,basePrice*0.30);
