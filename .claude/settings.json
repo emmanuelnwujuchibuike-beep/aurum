@@ -32,7 +32,9 @@
       "Bash(del \"c:\\\\Users\\\\u\\\\OneDrive\\\\Documents\\\\Aurum capital\\\\src\\\\admin-support.html\")",
       "Read(//c/Users/u/.claude/projects/c--Users-u-OneDrive-Documents-Aurum-capital/7bc7c3ec-e564-49ff-8f59-9b4289bad165/tool-results/**)",
       "Bash(grep -n \"\\\\\\\\\\\\$.*fmtPrice\\\\|\\\\\\\\\\\\$.*fmtMoneyCompact\" \"c:\\\\Users\\\\u\\\\OneDrive\\\\Documents\\\\Aurum capital\\\\src\\\\dashboard.html\")",
-      "Read(//c/Users/u/.claude/projects/c--Users-u-OneDrive-Documents-Aurum-capital/memory/**)"
+      "Read(//c/Users/u/.claude/projects/c--Users-u-OneDrive-Documents-Aurum-capital/memory/**)",
+      "Bash(supabase db *)",
+      "Bash(grep -v \"//\\\\|CSS\\\\|color\\\\|rgba\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\u\\.claude\\projects\\c--Users-u-OneDrive-Documents-Aurum-capital\\memory"

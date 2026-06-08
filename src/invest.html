@@ -5,7 +5,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Aurum Capital — Invest</title>
-<link rel="icon" type="image/png" href="./image/logo-bimi.svg">
+<link rel="icon" href="./image/favicon.svg" type="image/svg+xml" sizes="any">
+<link rel="icon" href="./image/favicon.webp" type="image/webp" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.webp">
+<link rel="manifest" href="./site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -141,7 +144,7 @@ body.menu-open{overflow:hidden}
 .kpi-card{background:linear-gradient(150deg,rgba(14,20,30,.9),rgba(9,13,20,.9));border:1px solid var(--rim);border-radius:var(--r-card);padding:20px 22px;position:relative;overflow:hidden;cursor:pointer;transition:transform .4s,border-color .4s,box-shadow .4s;contain:layout style}
 .kpi-card:hover{border-color:rgba(201,166,60,.35);transform:translateY(-3px);box-shadow:0 28px 70px rgba(0,0,0,.7)}
 .kpi-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;color:var(--fog);text-transform:uppercase;margin-bottom:12px}
-.kpi-val{font-family:'Playfair Display',serif;font-size:clamp(22px,2.5vw,30px);font-weight:300;color:var(--pearl);line-height:1}
+.kpi-val{font-family:'Playfair Display',serif;font-size:clamp(26px,3vw,36px);font-weight:300;color:var(--pearl);line-height:1}
 .kpi-val .accent{color:var(--gold)}
 .kpi-sub{font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:9px;cursor:pointer;transition:color .2s}
 .kpi-sub:hover{color:var(--gold)}
@@ -804,7 +807,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     box-shadow:0 0 22px rgba(var(--sc-rgb),.5)}
   .kpi-label{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.2em;
     color:var(--fog);text-transform:uppercase;margin-bottom:12px;padding-right:52px;opacity:.85}
-  .kpi-val{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.8vw,38px);
+  .kpi-val{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3.2vw,44px);
     font-weight:300;color:var(--pearl);line-height:1;letter-spacing:-.022em;
     font-feature-settings:'kern' 1,'liga' 1;
     text-shadow:0 0 40px rgba(var(--sc-rgb),.22)}
@@ -873,21 +876,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     .invest-footer-right{justify-self:center!important;justify-content:center!important}
   }
   @media(max-width:640px){
-    .kpi-val{font-size:clamp(18px,3.4vw,26px)!important}
+    .kpi-val{font-size:clamp(20px,3.8vw,30px)!important}
     .kpi-card{padding:16px 16px 14px!important;border-radius:16px!important}
     .kpi-icon{width:34px!important;height:34px!important;font-size:13px!important;top:14px!important;right:14px!important}
     .kpi-label{margin-bottom:9px!important;padding-right:44px!important}
   }
   @media(max-width:480px){
     .hero h1{font-size:34px!important}
-    .kpi-val{font-size:clamp(15px,4vw,21px)!important}
+    .kpi-val{font-size:clamp(17px,4.4vw,24px)!important}
     .kpi-icon{width:30px!important;height:30px!important;font-size:12px!important;top:12px!important;right:12px!important}
     .kpi-label{font-size:6.5px!important;margin-bottom:7px!important;padding-right:38px!important}
     .kpi-sub{font-size:7.5px!important}
     .kpi-card{padding:12px 12px 11px!important;border-radius:14px!important}
   }
   @media(max-width:390px){
-    .kpi-val{font-size:clamp(13px,3.6vw,17px)!important}
+    .kpi-val{font-size:clamp(15px,4vw,20px)!important}
     .kpi-label{font-size:5.5px!important;letter-spacing:.14em!important}
     .kpi-card{padding:10px 10px 9px!important;border-radius:12px!important}
     .kpi-icon{width:26px!important;height:26px!important;font-size:10px!important;top:10px!important;right:10px!important}
@@ -2540,7 +2543,7 @@ function renderPortfolioPanel() {
   }
   const liveMap={}; ALL_ASSETS.forEach(a=>liveMap[a.sym]=a.price);
   let total=0,cryptoV=0,stocksV=0,commodV=0,propV=0,pnl=0,costBasis=0;
-  myHoldings.forEach(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);total+=val;pnl+=val-cost;costBasis+=cost;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol);if(asset?.cat==='crypto')cryptoV+=val;else if(asset?.cat==='stocks')stocksV+=val;else if(asset?.cat==='commodities')commodV+=val;else propV+=val;});
+  myHoldings.forEach(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);total+=val;pnl+=(h.pnl_override!=null)?Number(h.pnl_override):val-cost;costBasis+=cost;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol);if(asset?.cat==='crypto')cryptoV+=val;else if(asset?.cat==='stocks')stocksV+=val;else if(asset?.cat==='commodities')commodV+=val;else propV+=val;});
   const totalPct=costBasis>0?(pnl/costBasis*100):0;
   txt('pf-total',fmtMoney(total));
   const pnlEl=document.getElementById('pf-pnl-badge'); pnlEl.textContent=(pnl>=0?'+':'-')+' '+fmtMoney(Math.abs(pnl))+' ('+(totalPct>=0?'+':'')+totalPct.toFixed(2)+'%)'; pnlEl.style.color=pnl>=0?'var(--gain)':'var(--loss)'; pnlEl.style.background=pnl>=0?'var(--gain-bg)':'var(--loss-bg)';
@@ -2563,7 +2566,7 @@ function openSellModal(sym) {
   const qty     = Number(holding.quantity);
   const cost    = qty * Number(holding.avg_buy_price);
   const val     = qty * liveP;
-  const pnl     = val - cost;
+  const pnl     = (holding.pnl_override != null) ? Number(holding.pnl_override) : val - cost;
   const pnlPct  = cost > 0 ? (pnl / cost * 100) : 0;
   const maxAmt  = +val.toFixed(2);
 
@@ -2650,7 +2653,7 @@ async function confirmSellHolding(sym) {
 
   const fee       = +(amt * 0.001).toFixed(2);
   const netUSD    = +(amt - fee).toFixed(2);
-  const realizedPnl = (liveP - Number(holding.avg_buy_price)) * qty;
+  const realizedPnl = (holding.pnl_override != null) ? Number(holding.pnl_override) : (liveP - Number(holding.avg_buy_price)) * qty;
 
   const lbl  = document.getElementById('sell-confirm-lbl');
   const spin = document.getElementById('sell-spin');

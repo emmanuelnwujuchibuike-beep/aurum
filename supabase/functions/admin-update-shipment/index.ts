@@ -256,6 +256,7 @@ serve(async (req: Request) => {
         .update({
           avg_buy_price: parsedAvg,
           quantity: parsedQty,
+          pnl_override: null,   // clear any admin override — manual avg takes effect
           updated_at: new Date().toISOString(),
         })
         .eq("id", holdingId)
@@ -289,6 +290,9 @@ serve(async (req: Request) => {
       const hs = holdings || []
       if (!hs.length) throw new Error("User has no holdings")
 
+      // Distribute target P&L across holdings by portfolio weight.
+      // Uses pnl_override column so ANY amount can be stored — no avg_buy_price math,
+      // no clamping, no upper limit on profit.
       const totalVal = hs.reduce((s: number, h: Record<string, unknown>) => {
         const livePrice = Number((prices as Record<string, number>)[h.symbol as string])
           || Number(h.avg_buy_price)
@@ -305,43 +309,25 @@ serve(async (req: Request) => {
         const live   = Number((prices as Record<string, number>)[sym]) || Number(h.avg_buy_price)
         const qty    = Number(h.quantity)
         const weight = (live * qty) / totalVal
-        const newAvg = Math.max(live - (parsedTarget * weight / qty), 0.0001)
-        const prevAvg = Number(h.avg_buy_price)
-
-        console.log(`[apply_target_pnl] ${sym}: prevAvg=${prevAvg} newAvg=${Number(newAvg.toFixed(8))} live=${live} qty=${qty} target=${parsedTarget}`)
+        // Store exact target P&L share — no minimum, no maximum, any value works
+        const pnlShare = Number((parsedTarget * weight).toFixed(2))
 
         const { data: updRow, error: updErr } = await svc
           .from("holdings")
           .update({
-            avg_buy_price: Number(newAvg.toFixed(8)),
+            pnl_override: pnlShare,
             updated_at: new Date().toISOString(),
           })
           .eq("user_id", userId as string)
           .eq("symbol", sym)
           .select()
 
-        console.log(`[apply_target_pnl] ${sym}: updErr=${updErr?.message ?? 'none'} updRow=${JSON.stringify(updRow)}`)
-
         if (updErr) {
           failed.push(`${sym}: ${updErr.message}`)
         } else if (!updRow || updRow.length === 0) {
           failed.push(`${sym}: update matched 0 rows`)
         } else {
-          // Verify the write actually persisted (catches silent trigger reverts)
-          const { data: verify } = await svc
-            .from("holdings")
-            .select("avg_buy_price")
-            .eq("user_id", userId as string)
-            .eq("symbol", sym)
-            .single()
-          const actual = Number(verify?.avg_buy_price)
-          const expected = Number(newAvg.toFixed(8))
-          console.log(`[apply_target_pnl] ${sym}: verify actual=${actual} expected=${expected} match=${Math.abs(actual-expected)<0.000001}`)
-          if (Math.abs(actual - expected) > 0.000001) {
-            failed.push(`${sym}: write reverted (got ${actual}, expected ${expected})`)
-          } else {
-            updated.push(updRow[0])
-          }
+          updated.push(updRow[0])
         }
       }
 

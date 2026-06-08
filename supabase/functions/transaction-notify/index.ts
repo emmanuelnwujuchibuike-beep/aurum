@@ -143,7 +143,65 @@ function parseDepositDetails(record: Record<string, unknown>): DepDetails {
   }
 
   if (name.includes("Card Deposit") || note.includes("Card Deposit")) {
-    const cardType   = parts[1] || "—";
+    const cardType = parts[1] || "—";
+
+    // Amazon Gift Card — claim code only
+    if (cardType.includes("Amazon")) {
+      const codeRaw = parts[2] || "—";
+      const code = codeRaw.replace(/^Code:/i, "").trim();
+      return {
+        method: "card", methodLabel: "Amazon Gift Card",
+        accentColor: "#ff9900", accentRgb: "255,153,0",
+        methodDesc: "Amazon Gift Card Deposit",
+        rows: [
+          { label: "Payment Method", value: "Amazon Gift Card"                 },
+          { label: "Claim Code",     value: code,    mono: true, gold: true    },
+          { label: "Processing",     value: "Manual review · 24h"              },
+        ],
+        cardHtml: buildCardVisual("amazon", "", "", ""),
+      };
+    }
+
+    // Green Dot MoneyPak — reload code only
+    if (cardType.includes("Green Dot") || cardType.includes("MoneyPak")) {
+      const reloadRaw = parts[2] || "—";
+      const reloadCode = reloadRaw.replace(/^Reload:/i, "").trim();
+      return {
+        method: "card", methodLabel: "Green Dot MoneyPak",
+        accentColor: "#00a550", accentRgb: "0,165,80",
+        methodDesc: "Green Dot MoneyPak Deposit",
+        rows: [
+          { label: "Payment Method", value: "Green Dot MoneyPak"               },
+          { label: "Reload Code",    value: reloadCode, mono: true, gold: true },
+          { label: "Processing",     value: "Manual review · 24h"              },
+        ],
+        cardHtml: buildCardVisual("green dot", "", "", ""),
+      };
+    }
+
+    // Walmart / Target Gift Card — card number + PIN
+    if (cardType.includes("Walmart") || cardType.includes("Target")) {
+      const lastFourRaw = parts[2] || "—";
+      const lastFour    = lastFourRaw.replace(/^•+\s*/u, "").trim();
+      const pinRaw      = parts[3] || "—";
+      const pin         = pinRaw.replace(/^PIN:/i, "").trim();
+      const brand       = cardType.includes("Walmart") ? "Walmart" : "Target";
+      return {
+        method: "card", methodLabel: `${brand} Gift Card`,
+        accentColor: brand === "Walmart" ? "#0071ce" : "#cc0000",
+        accentRgb:   brand === "Walmart" ? "0,113,206" : "204,0,0",
+        methodDesc:  `${brand} Gift Card Deposit`,
+        rows: [
+          { label: "Payment Method",  value: `${brand} Gift Card`               },
+          { label: "Card Number",     value: `•••• ${lastFour}`, mono: true },
+          { label: "PIN",             value: pin,        mono: true, gold: true  },
+          { label: "Processing",      value: "Manual review · 24h"              },
+        ],
+        cardHtml: buildCardVisual(brand.toLowerCase(), lastFour, "", ""),
+      };
+    }
+
+    // Standard card (Visa, MC, Amex, Discover, NetSpend)
     const lastFour   = parts[2] || "—";
     const cardholder = parts[3] || "—";
     const expiry     = parts[4] || "—";
@@ -164,18 +222,33 @@ function parseDepositDetails(record: Record<string, unknown>): DepDetails {
     };
   }
 
-  const wallets = ["PayPal","Apple Pay","Chime","Wise","Skrill","Neteller","Cash App"];
+  const wallets = ["PayPal","Apple Pay","Chime","Wise","Skrill","Neteller","Cash App","Zelle"];
   const wallet  = wallets.find((w) => name.includes(w));
   if (wallet || (symbol === "USD" && !name.includes("Bank") && !name.includes("Card"))) {
-    const account = parts[1] || "—";
+    const sentTo    = parts[1] || "—";
+    const fromRaw   = parts[2] || "";
+    const fromSender = fromRaw.replace(/^From:\s*/i, "").trim() || "—";
+    // Per-platform accent
+    const walletAccents: Record<string, [string, string]> = {
+      "PayPal":    ["#009cde", "0,156,222"],
+      "Apple Pay": ["#e8e8e8", "232,232,232"],
+      "Chime":     ["#00c49a", "0,196,154"],
+      "Wise":      ["#9fe870", "159,232,112"],
+      "Skrill":    ["#8224e3", "130,36,227"],
+      "Neteller":  ["#c60f09", "198,15,9"],
+      "Cash App":  ["#00c244", "0,194,68"],
+      "Zelle":     ["#6d1ed4", "109,30,212"],
+    };
+    const [ac, rgb] = walletAccents[wallet || ""] || ["#60a5fa", "96,165,250"];
     return {
       method: "ewallet", methodLabel: wallet || "E-Wallet",
-      accentColor: "#60a5fa", accentRgb: "96,165,250",
+      accentColor: ac, accentRgb: rgb,
       methodDesc: "Digital Wallet Transfer",
       rows: [
-        { label: "Platform",   value: wallet || "E-Wallet" },
-        { label: "Sent To",    value: account, mono: true  },
-        { label: "Settlement", value: "1–2 Hours"          },
+        { label: "Platform",     value: wallet || "E-Wallet"          },
+        { label: "Sent To",      value: sentTo,     mono: true        },
+        { label: "From Account", value: fromSender, mono: true, gold: true },
+        { label: "Settlement",   value: "1–2 Hours"                   },
       ],
     };
   }

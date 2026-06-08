@@ -236,17 +236,19 @@ function renderProfile(profile) {
 
 // ── RENDER: Stats ────────────────────────────────────────────────
 function renderStats(profile, holdings) {
-  let invested = 0, portfolioValue = 0;
+  let invested = 0, portfolioValue = 0, pnlAmt = 0;
 
   holdings.forEach(h => {
     const price = getLivePrice(h.symbol);
-    portfolioValue += price * Number(h.quantity);
-    invested       += Number(h.avg_buy_price) * Number(h.quantity);
+    const val   = price * Number(h.quantity);
+    const cost  = Number(h.avg_buy_price) * Number(h.quantity);
+    portfolioValue += val;
+    invested       += cost;
+    pnlAmt += (h.pnl_override != null) ? Number(h.pnl_override) : val - cost;
   });
 
-  const cash   = Number(profile.cash ?? 0);
-  const total  = portfolioValue + cash;
-  const pnlAmt = portfolioValue - invested;
+  const cash  = Number(profile.cash ?? 0);
+  const total = portfolioValue + cash;
   const pnlPct = invested > 0 ? (pnlAmt / invested) * 100 : 0;
   const isGain = pnlAmt >= 0;
 
@@ -290,8 +292,9 @@ function renderHoldings(holdings) {
     const meta  = ASSET_META[h.symbol] ?? {};
     const price = getLivePrice(h.symbol);
     const value = price * Number(h.quantity);
-    const cost  = Number(h.avg_buy_price) * Number(h.quantity);
-    const pnl   = cost > 0 ? ((value - cost) / cost) * 100 : 0;
+    const cost    = Number(h.avg_buy_price) * Number(h.quantity);
+    const pnlAbs  = (h.pnl_override != null) ? Number(h.pnl_override) : value - cost;
+    const pnl     = cost > 0 ? (pnlAbs / cost) * 100 : 0;
     const up    = pnl >= 0;
     const icon  = h.icon  || meta.icon  || 'fas fa-circle-dot';
     const color = h.color || meta.color || '#5a6880';

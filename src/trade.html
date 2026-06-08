@@ -10,7 +10,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
- <link rel="icon" type="image/png" href="./image/logo-bimi.svg">
+ <link rel="icon" href="./image/favicon.svg" type="image/svg+xml" sizes="any">
+ <link rel="icon" href="./image/favicon.webp" type="image/webp" sizes="any">
+ <link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.webp">
+ <link rel="manifest" href="./site.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <script src="currency-utils.js"></script>
@@ -3833,7 +3836,7 @@ function renderPortfolioInPanel(){
     if(!holdings.length){list.innerHTML='<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);padding:4px 0">No holdings yet</div>';return;}
     list.innerHTML=holdings.map(h=>{
       const a=ASSETS.find(x=>x.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};
-      const cur=liveP(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const pnl=(cur-+h.avg_buy_price)*+h.quantity;const up=pnl>=0;
+      const cur=liveP(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const pnl=(h.pnl_override!=null)?+h.pnl_override:(cur-+h.avg_buy_price)*+h.quantity;const up=pnl>=0;
       return `<div class="pf-holding" data-sym="${h.symbol}">
         <div style="width:24px;height:24px;border-radius:6px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0"><i class="${a.icon}"></i></div>
         <div style="flex:1;min-width:0"><p style="font-size:11px;font-weight:600;color:var(--text1);font-family:var(--font-mono)">${h.symbol}</p><p style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${+h.quantity<1?(+h.quantity).toFixed(6):(+h.quantity).toFixed(4)}</p></div>
@@ -3874,7 +3877,7 @@ function renderMobPortfolio(){
     if(!holdings.length){body.innerHTML='<div style="text-align:center;padding:20px;font-family:var(--font-mono);font-size:11px;color:var(--text3)">No holdings yet</div>';return;}
     body.innerHTML=holdings.map(h=>{
       const a=ASSETS.find(x=>x.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};
-      const cur=liveP(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const pnl=(cur-+h.avg_buy_price)*+h.quantity;const up=pnl>=0;
+      const cur=liveP(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const pnl=(h.pnl_override!=null)?+h.pnl_override:(cur-+h.avg_buy_price)*+h.quantity;const up=pnl>=0;
       return `<div class="pf-holding" data-sym="${h.symbol}">
         <div style="width:36px;height:36px;border-radius:9px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="${a.icon}"></i></div>
         <div style="flex:1;min-width:0"><p style="font-size:13px;font-weight:600;color:var(--text1);font-family:var(--font-mono)">${h.symbol}</p><p style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${+h.quantity<1?(+h.quantity).toFixed(6):(+h.quantity).toFixed(4)} · avg $${fmtP(+h.avg_buy_price)}</p></div>
@@ -3924,7 +3927,7 @@ function renderPositionsStrip(){
     if(!holdings.length){tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:16px;color:var(--text3)">No holdings</td></tr>`;return;}
     tbody.innerHTML=holdings.map(h=>{
       const a=ASSETS.find(x=>x.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};
-      const cur=liveP(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const cost=+h.quantity*+h.avg_buy_price;const pnl=val-cost;const pct=cost>0?(pnl/cost*100):0;const up=pnl>=0;
+      const cur=liveP(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const cost=+h.quantity*+h.avg_buy_price;const pnl=(h.pnl_override!=null)?+h.pnl_override:val-cost;const pct=cost>0?(pnl/cost*100):0;const up=pnl>=0;
       return `<tr><td><div style="display:flex;align-items:center;gap:6px"><div style="width:18px;height:18px;border-radius:5px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:9px"><i class="${a.icon}"></i></div><span style="font-weight:600;font-family:var(--font-mono)">${h.symbol}</span></div></td><td style="color:var(--text2)">${+h.quantity<1?(+h.quantity).toFixed(6):(+h.quantity).toFixed(4)}</td><td style="color:var(--text2)">$${fmtP(+h.avg_buy_price)}</td><td id="strip-pr-${h.symbol}">$${fmtP(cur)}</td><td>${maskVal(fmtMoney(val))}</td><td style="color:${up?'var(--green2)':'var(--red2)'}">${up?'+':''}${maskVal(fmtMoney(pnl))}</td><td style="color:${up?'var(--green2)':'var(--red2)'}">${up?'+':''}${pct.toFixed(2)}%</td><td><div style="display:flex;gap:3px"><button data-buy-sym="${h.symbol}" style="padding:2px 6px;border-radius:4px;border:none;background:var(--green-dim);color:var(--green2);font-family:var(--font-mono);font-size:8px;cursor:pointer">Buy</button><button data-sell-sym="${h.symbol}" style="padding:2px 6px;border-radius:4px;border:none;background:var(--red-dim);color:var(--red2);font-family:var(--font-mono);font-size:8px;cursor:pointer">Sell</button></div></td></tr>`;
     }).join('');
     tbody.querySelectorAll('[data-buy-sym]').forEach(btn=>btn.addEventListener('click',()=>{selectAsset(btn.dataset.buySym);setDir('buy');}));

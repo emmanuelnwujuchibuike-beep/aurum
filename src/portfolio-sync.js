@@ -756,7 +756,7 @@ html[data-theme="light"] #ps-trade-launch-btn.open:hover .fab-chevron{color:rgba
   function _refreshPanelStats(){
     const cash=+(_profile?.cash||0);
     let portVal=0,pnl=0;
-    _holdings.forEach(h=>{const cur=livePrice(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const cost=+h.quantity*+h.avg_buy_price;portVal+=val;pnl+=val-cost;});
+    _holdings.forEach(h=>{const cur=livePrice(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const cost=+h.quantity*+h.avg_buy_price;portVal+=val;pnl+=(h.pnl_override!=null)?+h.pnl_override:val-cost;});
     let tradePnl=0;_openTrades.forEach(t=>{tradePnl+=calcPnl(t);});
     const totalPnl=pnl+tradePnl,netWorth=cash+portVal;
     txt('ps-cash-display','$'+fmt(cash));txt('ps-networth-display','$'+fmt(netWorth));
@@ -785,7 +785,8 @@ html[data-theme="light"] #ps-trade-launch-btn.open:hover .fab-chevron{color:rgba
         const meta=ASSET_REGISTRY[h.symbol]||{icon:'fas fa-circle',color:'#5a6880'};
         const cur=livePrice(h.symbol)||+h.avg_buy_price;
         const val=+h.quantity*cur,cost=+h.quantity*+h.avg_buy_price;
-        const chgPct=cost>0?((val-cost)/cost*100):0,up=chgPct>=0;
+        const holdPnl=(h.pnl_override!=null)?+h.pnl_override:val-cost;
+        const chgPct=cost>0?(holdPnl/cost*100):0,up=chgPct>=0;
         const qty=+h.quantity,qStr=qty<1?qty.toFixed(6):qty.toFixed(4);
         html+=`<div class="ps-hrow">
           <div style="width:38px;height:38px;border-radius:12px;background:${meta.color}18;color:${meta.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${meta.icon}"></i></div>

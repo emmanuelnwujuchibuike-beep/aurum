@@ -7,7 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aurum Capital — Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="icon" type="image/png" href="./image/logo-bimi.svg">
+<link rel="icon" href="./image/favicon.svg" type="image/svg+xml" sizes="any">
+<link rel="icon" href="./image/favicon.webp" type="image/webp" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.webp">
+<link rel="manifest" href="./site.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -248,7 +251,7 @@ body.menu-open{overflow:hidden}
   background:var(--kpi-glow,radial-gradient(circle,rgba(201,166,60,.05) 0%,transparent 65%));pointer-events:none}
 .kpi-card>*{position:relative;z-index:2}
 .kpi-label{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.2em;color:var(--fog);text-transform:uppercase;margin-bottom:12px;padding-right:50px}
-.kpi-val{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.8vw,36px);font-weight:300;color:var(--pearl);line-height:1}
+.kpi-val{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.4vw,44px);font-weight:300;color:var(--pearl);line-height:1}
 .kpi-val .accent{color:var(--gold)}
 .kpi-sub{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);margin-top:9px;cursor:pointer;transition:color .2s;display:block;background:none;border:none;padding:0;text-align:left;width:100%}
 .kpi-sub:hover{color:var(--gold)}
@@ -1122,7 +1125,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   animation:statdot-pulse 3s ease-in-out infinite}
 .nw-stat-val-p{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(18px,1.9vw,26px);
+  font-size:clamp(22px,2.3vw,32px);
   color:var(--pearl);font-weight:300;line-height:1;
   letter-spacing:-.022em;
   font-feature-settings:'kern' 1,'liga' 1;
@@ -1202,13 +1205,13 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   .action-premium{padding:20px 12px!important;border-radius:20px!important}
 
   /* hero stat values scale down at tablet */
-  .nw-stat-val-p{font-size:clamp(16px,2.8vw,24px)!important}
+  .nw-stat-val-p{font-size:clamp(18px,3.1vw,28px)!important}
 
   /* KPI: 2×2 */
   .grid-stats{grid-template-columns:1fr 1fr!important}
   .kpi-strip{grid-template-columns:1fr 1fr!important;gap:10px!important}
   .kpi-card{padding:18px 18px!important;border-radius:18px!important}
-  .kpi-val{font-size:clamp(20px,4vw,30px)!important}
+  .kpi-val{font-size:clamp(24px,4.5vw,36px)!important}
   .kpi-icon{width:32px!important;height:32px!important;font-size:13px!important;top:14px!important;right:14px!important}
 
   /* ad banners */
@@ -1280,13 +1283,13 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   /* hero stat values go smaller on small mobile */
   .nw-stat-grid{gap:6px!important;flex-wrap:wrap!important}
   .nw-stat-cell{padding:14px 14px 12px!important;border-radius:13px!important;min-width:calc(50% - 3px)!important}
-  .nw-stat-val-p{font-size:clamp(18px,4.5vw,26px)!important}
+  .nw-stat-val-p{font-size:clamp(20px,5vw,30px)!important}
 
   /* KPI: 2 col */
   .grid-stats{grid-template-columns:1fr 1fr!important}
   .kpi-strip{grid-template-columns:1fr 1fr!important;gap:8px!important}
   .kpi-card{padding:15px 14px!important;border-radius:15px!important}
-  .kpi-val{font-size:clamp(18px,4.5vw,26px)!important}
+  .kpi-val{font-size:clamp(22px,5.2vw,30px)!important}
   .kpi-icon{width:28px!important;height:28px!important;font-size:12px!important;top:12px!important;right:12px!important}
   .kpi-label{margin-bottom:9px!important;padding-right:36px!important}
 
@@ -1327,7 +1330,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
 
   /* hero stat values minimal on tiny screens */
   .nw-stat-cell{padding:12px 12px 10px!important;border-radius:11px!important;min-width:calc(50% - 4px)!important}
-  .nw-stat-val-p{font-size:clamp(16px,4.2vw,22px)!important}
+  .nw-stat-val-p{font-size:clamp(18px,4.6vw,24px)!important}
   .nw-stat-lbl-p{font-size:6px!important;letter-spacing:.16em!important}
   .nw-stat-sub-p{font-size:7.5px!important}
 
@@ -1335,7 +1338,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   .grid-stats{grid-template-columns:1fr 1fr!important}
   .kpi-strip{grid-template-columns:1fr 1fr!important;gap:7px!important}
   .kpi-card{padding:13px 12px!important;border-radius:13px!important}
-  .kpi-val{font-size:clamp(16px,4.5vw,22px)!important}
+  .kpi-val{font-size:clamp(18px,5vw,24px)!important}
   .kpi-label{font-size:6px!important;letter-spacing:.16em!important;margin-bottom:8px!important;padding-right:32px!important}
   .kpi-icon{width:26px!important;height:26px!important;font-size:11px!important;top:10px!important;right:10px!important}
   .kpi-sub{font-size:7.5px!important}
@@ -1360,12 +1363,12 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   .nw-ultra-value:not([data-len]){font-size:clamp(22px,6.5vw,28px)!important}
   .nw-stat-grid{gap:5px!important;flex-wrap:wrap!important}
   .nw-stat-cell{padding:10px 10px 9px!important;border-radius:10px!important;min-width:calc(50% - 3px)!important}
-  .nw-stat-val-p{font-size:clamp(15px,4vw,20px)!important}
+  .nw-stat-val-p{font-size:clamp(16px,4.4vw,22px)!important}
   .nw-stat-lbl-p{font-size:5.5px!important;letter-spacing:.14em!important;margin-bottom:8px!important}
   .nw-stat-sub-p{font-size:7px!important}
-  .kpi-p-value{font-size:clamp(17px,4.8vw,20px)!important}
+  .kpi-p-value{font-size:clamp(19px,5.2vw,22px)!important}
   .kpi-strip{grid-template-columns:1fr 1fr!important}
-  .kpi-val{font-size:clamp(14px,4vw,18px)!important}
+  .kpi-val{font-size:clamp(16px,4.5vw,20px)!important}
   .action-premium>div>div:first-child{font-size:11px!important}
   .mm-link-name{font-size:13px}
   /* ring — stack vertically on very small screens */
@@ -1825,7 +1828,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   color:var(--fog);text-transform:uppercase;margin-bottom:14px;
   padding-right:54px;opacity:.75}
 .kpi-p-value{font-family:'Cormorant Garamond',serif;
-  font-size:clamp(26px,3vw,42px);font-weight:300;color:var(--pearl);
+  font-size:clamp(30px,3.5vw,48px);font-weight:300;color:var(--pearl);
   line-height:1;letter-spacing:-.025em;margin-bottom:9px;
   font-feature-settings:'kern' 1}
 .kpi-p-sub{font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);
@@ -2363,7 +2366,7 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
                 <div class="nw-stat-val-p" id="nwPortfolio" style="color:var(--pearl)">$0.00</div>
                 <div class="nw-stat-sub-p" id="nwPositions" style="color:rgba(98,126,234,.9)">0 positions</div>
               </div>
-              <div class="nw-stat-cell" style="--sc:#1dbd6c;--sc-rgb:29,189,108">
+              <div class="nw-stat-cell" id="nwPnlCell" style="--sc:#1dbd6c;--sc-rgb:29,189,108">
                 <div class="nw-stat-lbl-p">
                   <span class="nw-stat-dot"></span>
                   Unrealised P&amp;L
@@ -3212,23 +3215,43 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           <!-- Card-specific note — populated by selectCardType() -->
           <div id="dep-card-special" style="display:none"></div>
 
-          <div class="dep-field-grp">
-            <label class="dep-field-lbl">Card Number</label>
-            <input id="dep-card-number" class="dep-field-input" type="text" maxlength="22" placeholder="0000  0000  0000  0000" autocomplete="off" oninput="fmtCardNum(this)">
+          <!-- Card Number (Visa/MC/Amex/Disc/Walmart/Target/NetSpend) -->
+          <div id="dep-field-grp-number" class="dep-field-grp">
+            <label class="dep-field-lbl" id="dep-number-label">Card Number</label>
+            <input id="dep-card-number" class="dep-field-input" type="text" placeholder="0000  0000  0000  0000" autocomplete="off" oninput="fmtCardNum(this)">
           </div>
-          <div class="dep-field-grp">
+          <!-- Cardholder Name (standard cards only) -->
+          <div id="dep-field-grp-name" class="dep-field-grp">
             <label class="dep-field-lbl">Cardholder Name</label>
             <input id="dep-card-name" class="dep-field-input" type="text" placeholder="Name as it appears on card" autocomplete="off">
           </div>
-          <div style="display:flex;gap:12px;margin-bottom:14px">
+          <!-- Expiry + CVV (standard cards only) -->
+          <div id="dep-field-grp-expiry-cvv" style="display:flex;gap:12px;margin-bottom:14px">
             <div style="flex:1">
               <label class="dep-field-lbl">Expiry Date</label>
               <input id="dep-card-expiry" class="dep-field-input" type="text" maxlength="7" placeholder="MM / YY" autocomplete="cc-exp" oninput="fmtExpiry(this)" style="font-size:13px">
             </div>
             <div style="width:120px">
               <label class="dep-field-lbl" id="dep-cvv-label">CVV</label>
-              <input id="dep-card-cvv" class="dep-field-input" type="password" maxlength="3" placeholder="•••" autocomplete="cc-csc" style="font-size:16px;letter-spacing:.2em">
+              <input id="dep-card-cvv" class="dep-field-input" type="password" maxlength="4" placeholder="•••" autocomplete="cc-csc" style="font-size:16px;letter-spacing:.2em">
             </div>
+          </div>
+          <!-- PIN (Walmart / Target gift cards) -->
+          <div id="dep-field-grp-pin" class="dep-field-grp" style="display:none">
+            <label class="dep-field-lbl" id="dep-pin-label">Gift Card PIN</label>
+            <input id="dep-card-pin" class="dep-field-input" type="text" placeholder="Enter PIN" autocomplete="off" style="letter-spacing:.15em">
+          </div>
+          <!-- Claim Code (Amazon gift card) -->
+          <div id="dep-field-grp-claim" class="dep-field-grp" style="display:none">
+            <label class="dep-field-lbl" id="dep-claim-label">Gift Card Claim Code</label>
+            <input id="dep-card-claim" class="dep-field-input" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" style="letter-spacing:.1em;text-transform:uppercase" oninput="fmtClaimCode(this)">
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:6px">Found on the back of your gift card or in your confirmation email</p>
+          </div>
+          <!-- Reload Code (Green Dot MoneyPak) -->
+          <div id="dep-field-grp-reload" class="dep-field-grp" style="display:none">
+            <label class="dep-field-lbl" id="dep-reload-label">MoneyPak Reload Code</label>
+            <input id="dep-card-reload" class="dep-field-input" type="text" placeholder="Enter 14-digit code" autocomplete="off" style="letter-spacing:.15em" oninput="fmtReloadCode(this)">
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:6px">Scratch the back of your MoneyPak card to reveal the code</p>
           </div>
           <div class="dep-field-grp">
             <label class="dep-field-lbl">Deposit Amount (USD)</label>
@@ -3303,13 +3326,18 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
         </div>
         <div class="dep-ew-detail">
           <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px" id="dep-ew-platform-name">PayPal</p>
-          <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-bottom:4px">Send payment to:</p>
+          <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-bottom:4px" id="dep-ew-send-to-lbl">Send payment to:</p>
           <div class="dep-ew-email" onclick="copyEwalletEmail()">
             <i id="dep-ew-platform-icon" class="fab fa-paypal" style="color:#009cde;font-size:16px"></i>
-            <span id="dep-ew-email-addr">payments@aurumcapital.io</span>
+            <span id="dep-ew-send-to-val">payments@aurumcapital.io</span>
             <i class="fas fa-copy" style="color:var(--fog);font-size:11px;margin-left:auto"></i>
           </div>
-          <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:10px;line-height:1.5">Include your full name in the payment note</p>
+          <!-- Sender identifier — changes label/placeholder per platform -->
+          <div class="dep-field-grp" style="margin-top:14px">
+            <label class="dep-field-lbl" id="dep-ew-sender-lbl">Your PayPal Email</label>
+            <input id="dep-ew-sender" class="dep-field-input" type="text" placeholder="your@email.com" autocomplete="off">
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:5px;line-height:1.5">So we can match your payment · never share your password</p>
+          </div>
         </div>
         <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Deposit Amount (USD)</p>
         <div class="amt-input-wrap" style="margin-bottom:6px">
@@ -4040,7 +4068,7 @@ function updatePanelStats() {
     const live = PRICES[h.symbol] || Number(h.avg_buy_price);
     const val  = Number(h.quantity) * live;
     portVal += val;
-    pnl += val - Number(h.quantity) * Number(h.avg_buy_price);
+    pnl += (h.pnl_override != null) ? Number(h.pnl_override) : val - Number(h.quantity) * Number(h.avg_buy_price);
   });
   const nwEl = document.getElementById('panelNetWorth');
   const cEl  = document.getElementById('panelCash');
@@ -4085,8 +4113,13 @@ function updateNetworthHero(cash, portVal, pnl, costBasis) {
   if (nwPortEl) { nwPortEl.textContent = maskVal(fmtMoneyCompact(portVal));    nwPortEl.dataset.raw = portVal; }
   if (nwPos)    nwPos.textContent    = myHoldings.length + ' position' + (myHoldings.length !== 1 ? 's' : '');
   if (nwPnlEl)  { nwPnlEl.textContent = (pnl >= 0 ? '+' : '-') + maskVal(fmtMoneyCompact(Math.abs(pnl))); nwPnlEl.dataset.raw = pnl; nwPnlEl.style.color = pnl >= 0 ? 'var(--gain)' : 'var(--loss)'; }
+  const nwPnlCell = document.getElementById('nwPnlCell');
+  if (nwPnlCell) {
+    if (pnl < 0) { nwPnlCell.style.setProperty('--sc', '#e84848'); nwPnlCell.style.setProperty('--sc-rgb', '232,72,72'); }
+    else         { nwPnlCell.style.setProperty('--sc', '#1dbd6c'); nwPnlCell.style.setProperty('--sc-rgb', '29,189,108'); }
+  }
   const pct = costBasis > 0 ? (pnl / costBasis * 100) : 0;
-  if (nwPnlPct) { nwPnlPct.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%'; nwPnlPct.style.color = pct >= 0 ? 'var(--gain)' : 'var(--fog)'; }
+  if (nwPnlPct) { nwPnlPct.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%'; nwPnlPct.style.color = pct >= 0 ? 'var(--gain)' : 'var(--loss)'; }
   if (badge && badgeText) {
     const up = pnl >= 0;
     badge.className = 'nw-change-badge ' + (up ? 'nw-change-up' : 'nw-change-dn');
@@ -4254,7 +4287,9 @@ function recalcPnl() {
     const avg  = Number(h.avg_buy_price) || cur;
     const val  = Number(h.quantity) * cur;
     const cost = Number(h.quantity) * avg;
-    portVal += val; pnl += val - cost; costBasis += cost;
+    portVal += val;
+    pnl += (h.pnl_override != null) ? Number(h.pnl_override) : val - cost;
+    costBasis += cost;
   });
   const cash = Number(profile?.cash || 0);
   setTxt('portVal',  maskVal(fmtMoneyCompact(portVal)));
@@ -5015,7 +5050,7 @@ async function openDepositModal() {
   selectedDepCoin = null; selectedDepAmt = 0;
   selectedDepMethod = 'crypto'; selectedDepEwallet = 'paypal';
   // Reset all form fields
-  ['dep-bank-amt','dep-card-number','dep-card-name','dep-card-expiry','dep-card-cvv','dep-card-amt','dep-ew-amt'].forEach(id => {
+  ['dep-bank-amt','dep-card-number','dep-card-name','dep-card-expiry','dep-card-cvv','dep-card-pin','dep-card-claim','dep-card-reload','dep-card-amt','dep-ew-amt','dep-ew-sender'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   selectedCardType = null;
@@ -5233,19 +5268,29 @@ window.setDepEwAmt   = setDepEwAmt;
 
 /* ── DEPOSIT: CARD FORMATTING ── */
 function fmtCardNum(inp) {
-  const isAmex = selectedCardType === 'amex';
-  const raw = inp.value.replace(/\D/g,'').slice(0, isAmex ? 15 : 16);
-  inp.value = isAmex
-    ? raw.replace(/^(\d{0,4})(\d{0,6})(\d{0,5}).*/, (_, a, b, c) => [a, b, c].filter(Boolean).join('  '))
-    : (raw.match(/.{1,4}/g) || [raw]).join('  ');
+  const raw = inp.value.replace(/\D/g,'');
+  if (selectedCardType === 'amex') {
+    inp.value = raw.replace(/^(\d{0,4})(\d{0,6})(\d*)/, (_, a, b, c) => [a, b, c].filter(Boolean).join('  '));
+  } else {
+    inp.value = (raw.match(/.{1,4}/g) || [raw]).join('  ');
+  }
 }
 function fmtExpiry(inp) {
   let v = inp.value.replace(/\D/g,'').slice(0,4);
   if (v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
   inp.value = v;
 }
-window.fmtCardNum = fmtCardNum;
-window.fmtExpiry  = fmtExpiry;
+function fmtClaimCode(inp) {
+  const raw = inp.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
+  inp.value = (raw.match(/.{1,4}/g) || [raw]).join('-');
+}
+function fmtReloadCode(inp) {
+  inp.value = inp.value.replace(/\D/g,'');
+}
+window.fmtCardNum   = fmtCardNum;
+window.fmtExpiry    = fmtExpiry;
+window.fmtClaimCode = fmtClaimCode;
+window.fmtReloadCode = fmtReloadCode;
 
 /* ── DEPOSIT: BANK COPY HELPERS ── */
 function copyBankField(text) {
@@ -5267,14 +5312,30 @@ window.copyBankRef   = copyBankRef;
 
 /* ── DEPOSIT: E-WALLET ── */
 const EWALLET_DATA = {
-  paypal:  { name:'PayPal',    icon:'fab fa-paypal',          color:'#009cde', email:'payments@aurumcapital.io' },
-  applepay:{ name:'Apple Pay', icon:'fab fa-apple',           color:'#e8e8e8', email:'applepay@aurumcapital.io' },
-  chime:   { name:'Chime',     icon:'fas fa-piggy-bank',      color:'#00c49a', email:'chime@aurumcapital.io' },
-  wise:    { name:'Wise',      icon:'fas fa-globe',           color:'#9fe870', email:'wise@aurumcapital.io' },
-  skrill:  { name:'Skrill',    icon:'fas fa-money-bill-wave', color:'#8224e3', email:'deposits@aurumcapital.io' },
-  neteller:{ name:'Neteller',  icon:'fas fa-coins',           color:'#c60f09', email:'neteller@aurumcapital.io' },
-  cashapp: { name:'Cash App',  icon:'fas fa-dollar-sign',     color:'#00c244', email:'cashapp@aurumcapital.io' },
-  zelle:   { name:'Zelle',     icon:'fas fa-bolt',            color:'#6d1ed4', email:'zelle@aurumcapital.io' },
+  paypal:  { name:'PayPal',    icon:'fab fa-paypal',          color:'#009cde',
+             sendToLabel:'Send to PayPal email:',          sendToValue:'payments@aurumcapital.io',
+             senderLabel:'Your PayPal Email',              senderPlaceholder:'your@email.com' },
+  applepay:{ name:'Apple Pay', icon:'fab fa-apple',           color:'#e8e8e8',
+             sendToLabel:'Send via Apple Pay to phone:',   sendToValue:'+1 (800) 290-4726',
+             senderLabel:'Your Apple ID or Phone Number',  senderPlaceholder:'your@icloud.com or +1 XXX-XXX-XXXX' },
+  chime:   { name:'Chime',     icon:'fas fa-piggy-bank',      color:'#00c49a',
+             sendToLabel:'Send to Chime $ChimeSign:',      sendToValue:'$AurumCapitalInvest',
+             senderLabel:'Your Chime $ChimeSign or Phone', senderPlaceholder:'$YourChimeSign' },
+  wise:    { name:'Wise',      icon:'fas fa-globe',           color:'#9fe870',
+             sendToLabel:'Send to Wise email:',            sendToValue:'wise@aurumcapital.io',
+             senderLabel:'Your Wise Email or Profile Link',senderPlaceholder:'your@email.com' },
+  skrill:  { name:'Skrill',    icon:'fas fa-money-bill-wave', color:'#8224e3',
+             sendToLabel:'Send to Skrill email:',          sendToValue:'deposits@aurumcapital.io',
+             senderLabel:'Your Skrill Email',              senderPlaceholder:'your@email.com' },
+  neteller:{ name:'Neteller',  icon:'fas fa-coins',           color:'#c60f09',
+             sendToLabel:'Send to Neteller Account ID:',   sendToValue:'4261 1509 3820 4455',
+             senderLabel:'Your Neteller Account ID or Email', senderPlaceholder:'XXXX XXXX XXXX XXXX or email' },
+  cashapp: { name:'Cash App',  icon:'fas fa-dollar-sign',     color:'#00c244',
+             sendToLabel:'Send to $Cashtag:',              sendToValue:'$AurumCapitalInvest',
+             senderLabel:'Your $Cashtag',                  senderPlaceholder:'$YourCashTag' },
+  zelle:   { name:'Zelle',     icon:'fas fa-bolt',            color:'#6d1ed4',
+             sendToLabel:'Send via Zelle to phone:',       sendToValue:'+1 (800) 290-4726',
+             senderLabel:'Your Zelle Phone Number or Email', senderPlaceholder:'+1 XXX-XXX-XXXX or your@email.com' },
 };
 function selectDepEwallet(platform) {
   // Block disabled e-wallet platforms
@@ -5290,16 +5351,22 @@ function selectDepEwallet(platform) {
     if (tab) tab.className = 'dep-ew-tab' + (p === platform ? ' active' : '') + (isUnavail ? ' unavailable' : '');
   });
   const d = EWALLET_DATA[platform]; if (!d) return;
-  const nameEl  = document.getElementById('dep-ew-platform-name');
-  const iconEl  = document.getElementById('dep-ew-platform-icon');
-  const emailEl = document.getElementById('dep-ew-email-addr');
-  if (nameEl)  nameEl.textContent  = d.name;
-  if (iconEl)  { iconEl.className  = d.icon; iconEl.style.color = d.color; }
-  if (emailEl) emailEl.textContent = d.email;
+  const nameEl      = document.getElementById('dep-ew-platform-name');
+  const sendToLblEl = document.getElementById('dep-ew-send-to-lbl');
+  const iconEl      = document.getElementById('dep-ew-platform-icon');
+  const sendToValEl = document.getElementById('dep-ew-send-to-val');
+  const senderLblEl = document.getElementById('dep-ew-sender-lbl');
+  const senderInp   = document.getElementById('dep-ew-sender');
+  if (nameEl)      nameEl.textContent      = d.name;
+  if (sendToLblEl) sendToLblEl.textContent = d.sendToLabel || 'Send payment to:';
+  if (iconEl)      { iconEl.className = d.icon; iconEl.style.color = d.color; }
+  if (sendToValEl) sendToValEl.textContent = d.sendToValue || '';
+  if (senderLblEl) senderLblEl.textContent = d.senderLabel || 'Your identifier';
+  if (senderInp)   { senderInp.placeholder = d.senderPlaceholder || ''; senderInp.value = ''; }
 }
 function copyEwalletEmail() {
   const d = EWALLET_DATA[selectedDepEwallet];
-  if (d) copyBankField(d.email);
+  if (d) copyBankField(d.sendToValue || '');
 }
 window.selectDepEwallet = selectDepEwallet;
 window.copyEwalletEmail = copyEwalletEmail;
@@ -5338,15 +5405,15 @@ window.confirmBankDeposit = confirmBankDeposit;
 
 /* ── DEPOSIT: CARD TYPE CONFIGS ── */
 const CARD_CONFIGS = {
-  visa:     { label:'Visa', sub:'Standard debit or credit card', headerBg:'linear-gradient(135deg,#1a1f71,#2832a0)', iconHtml:'<span style="font-family:Arial,sans-serif;font-style:italic;font-weight:900;font-size:26px;color:#fff;letter-spacing:.02em">VISA</span>', special:null, numMax:19, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, cvvPlaceholder:'&bull;&bull;&bull;' },
-  mc:       { label:'Mastercard', sub:'Standard debit or credit card', headerBg:'linear-gradient(135deg,#1a1a2e,#2d2d4e)', iconHtml:'<span style="display:flex;align-items:center"><span style="width:26px;height:26px;border-radius:50%;background:#eb001b;display:inline-block"></span><span style="width:26px;height:26px;border-radius:50%;background:#f79e1b;display:inline-block;margin-left:-10px"></span><span style="font-family:Arial,sans-serif;font-weight:700;font-size:13px;color:#fff;margin-left:10px">Mastercard</span></span>', special:null, numMax:19, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, cvvPlaceholder:'&bull;&bull;&bull;' },
-  amex:     { label:'American Express', sub:'Centurion · Gold · Platinum', headerBg:'linear-gradient(135deg,#006fcf,#0085ca)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:11px;color:#fff;letter-spacing:.12em;line-height:1.4;display:block;text-align:right">AMERICAN<br>EXPRESS</span>', special:'Amex cards have <strong style="color:#fff">15 digits</strong> formatted as XXXX XXXXXX XXXXX. The security code is a <strong style="color:#fff">4-digit CID</strong> printed on the <em>front</em> of your card, not the back.', specialIcon:'fas fa-info-circle', specialColor:'#006fcf', numMax:17, numPlaceholder:'0000  000000  00000', cvvLabel:'CID (4 digits, front)', cvvMax:4, cvvPlaceholder:'&bull;&bull;&bull;&bull;' },
-  disc:     { label:'Discover', sub:'Discover it · Cashback · Miles', headerBg:'linear-gradient(135deg,#e65c00,#c44a00)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:700;font-size:15px;color:#fff;letter-spacing:.05em">DISCOVER</span>', special:null, numMax:19, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, cvvPlaceholder:'&bull;&bull;&bull;' },
-  walmart:  { label:'Walmart MoneyCard', sub:'Prepaid Mastercard / Visa — reload at Walmart', headerBg:'linear-gradient(135deg,#0071ce,#004f93)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:14px;color:#ffc220;letter-spacing:.04em">&#9733; Walmart<span style="font-size:10px;color:rgba(255,255,255,.6);font-weight:400"> MoneyCard</span></span>', special:'Walmart MoneyCard is a <strong style="color:#fff">prepaid card</strong>. Ensure your card has sufficient balance before submitting. You can reload at any Walmart store or via the Walmart app.', specialIcon:'fas fa-store', specialColor:'#0071ce', numMax:19, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, cvvPlaceholder:'&bull;&bull;&bull;' },
-  target:   { label:'Target REDcard', sub:'Target Debit · Credit · Prepaid', headerBg:'linear-gradient(135deg,#cc0000,#990000)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fas fa-bullseye" style="color:#fff;font-size:20px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">REDcard</span></span>', special:'Target REDcard Prepaid: reload at any Target register or online. If using the Target Credit REDcard, enter the 16-digit number on the front of your card.', specialIcon:'fas fa-bullseye', specialColor:'#cc0000', numMax:19, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, cvvPlaceholder:'&bull;&bull;&bull;' },
-  amazon:   { label:'Amazon Card', sub:'Amazon Visa · Store Card · Prime', headerBg:'linear-gradient(135deg,#232f3e,#37475a)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fab fa-amazon" style="color:#ff9900;font-size:22px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">Amazon Card</span></span>', special:'Enter your Amazon Visa or Amazon Store Card number. For the Store Card (no network logo), use the 16-digit number on the front.', specialIcon:'fab fa-amazon', specialColor:'#ff9900', numMax:19, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, cvvPlaceholder:'&bull;&bull;&bull;' },
-  greendot: { label:'Green Dot', sub:'Visa · Mastercard · Reloadable prepaid', headerBg:'linear-gradient(135deg,#00873c,#005929)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fas fa-circle" style="color:#a3e635;font-size:16px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">Green Dot</span></span>', special:'Green Dot is a <strong style="color:#fff">reloadable prepaid card</strong>. You can reload at any Walmart, CVS, Rite Aid, or 7-Eleven. Ensure your card is loaded before depositing.', specialIcon:'fas fa-info-circle', specialColor:'#00a550', numMax:19, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, cvvPlaceholder:'&bull;&bull;&bull;' },
-  netspend: { label:'NetSpend', sub:'Visa · Mastercard · Prepaid', headerBg:'linear-gradient(135deg,#4b2882,#7b5ea7)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:15px;color:#fff;letter-spacing:.08em">NetSpend</span>', special:'NetSpend prepaid cards can be reloaded at thousands of retail locations. Use the 16-digit number and 3-digit CVV on the back of your card.', specialIcon:'fas fa-info-circle', specialColor:'#7b5ea7', numMax:19, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, cvvPlaceholder:'&bull;&bull;&bull;' },
+  visa:     { label:'Visa', sub:'Standard debit or credit card', headerBg:'linear-gradient(135deg,#1a1f71,#2832a0)', iconHtml:'<span style="font-family:Arial,sans-serif;font-style:italic;font-weight:900;font-size:26px;color:#fff;letter-spacing:.02em">VISA</span>', special:null, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
+  mc:       { label:'Mastercard', sub:'Standard debit or credit card', headerBg:'linear-gradient(135deg,#1a1a2e,#2d2d4e)', iconHtml:'<span style="display:flex;align-items:center"><span style="width:26px;height:26px;border-radius:50%;background:#eb001b;display:inline-block"></span><span style="width:26px;height:26px;border-radius:50%;background:#f79e1b;display:inline-block;margin-left:-10px"></span><span style="font-family:Arial,sans-serif;font-weight:700;font-size:13px;color:#fff;margin-left:10px">Mastercard</span></span>', special:null, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
+  amex:     { label:'American Express', sub:'Centurion · Gold · Platinum', headerBg:'linear-gradient(135deg,#006fcf,#0085ca)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:11px;color:#fff;letter-spacing:.12em;line-height:1.4;display:block;text-align:right">AMERICAN<br>EXPRESS</span>', special:'Amex cards have <strong style="color:#fff">15 digits</strong> formatted as XXXX XXXXXX XXXXX. The security code is a <strong style="color:#fff">4-digit CID</strong> printed on the <em>front</em> of your card, not the back.', specialIcon:'fas fa-info-circle', specialColor:'#006fcf', numPlaceholder:'0000  000000  00000', cvvLabel:'CID (4 digits, front)', cvvMax:4, fields:['number','name','expiry','cvv'] },
+  disc:     { label:'Discover', sub:'Discover it · Cashback · Miles', headerBg:'linear-gradient(135deg,#e65c00,#c44a00)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:700;font-size:15px;color:#fff;letter-spacing:.05em">DISCOVER</span>', special:null, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
+  walmart:  { label:'Walmart Gift Card', sub:'Enter the card number and 4-digit PIN on the back', headerBg:'linear-gradient(135deg,#0071ce,#004f93)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:14px;color:#ffc220;letter-spacing:.04em">&#9733; Walmart<span style="font-size:10px;color:rgba(255,255,255,.6);font-weight:400"> Gift Card</span></span>', special:'Flip your Walmart Gift Card over and enter the card number and the 4-digit PIN beneath the scratch strip. Your balance must cover the deposit amount.', specialIcon:'fas fa-store', specialColor:'#0071ce', numPlaceholder:'0000  0000  0000  0000', numberLabel:'Gift Card Number', pinLabel:'4-Digit PIN (scratch to reveal)', fields:['number','pin'] },
+  target:   { label:'Target Gift Card', sub:'Enter the gift card number and access code', headerBg:'linear-gradient(135deg,#cc0000,#990000)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fas fa-bullseye" style="color:#fff;font-size:20px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">Target Gift Card</span></span>', special:'On the back of your Target Gift Card, enter the card number and the Access Number (PIN) beneath the scratch area. Both are required to process your deposit.', specialIcon:'fas fa-bullseye', specialColor:'#cc0000', numPlaceholder:'0000  0000  0000  0000', numberLabel:'Gift Card Number', pinLabel:'Access Number (PIN)', fields:['number','pin'] },
+  amazon:   { label:'Amazon Gift Card', sub:'Redeem using your gift card claim code', headerBg:'linear-gradient(135deg,#232f3e,#37475a)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fab fa-amazon" style="color:#ff9900;font-size:22px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">Amazon Gift Card</span></span>', special:'Amazon Gift Cards use a unique <strong style="color:#fff">claim code</strong> — not a card number, name, or CVV. The claim code is printed on the card or found in your gift card email (format: XXXX-XXXX-XXXX or XXXX-XXXX-XXXX-XXXX).', specialIcon:'fab fa-amazon', specialColor:'#ff9900', claimLabel:'Gift Card Claim Code', claimPlaceholder:'XXXX-XXXX-XXXX or XXXX-XXXX-XXXX-XXXX', fields:['claim'] },
+  greendot: { label:'Green Dot MoneyPak', sub:'Enter your MoneyPak reload code', headerBg:'linear-gradient(135deg,#00873c,#005929)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fas fa-circle" style="color:#a3e635;font-size:16px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">Green Dot MoneyPak</span></span>', special:'Green Dot MoneyPak uses a <strong style="color:#fff">14-digit reload code</strong> — scratch the back of your MoneyPak card to reveal it. No card number, no CVV required. MoneyPaks can be purchased at Walmart, CVS, Rite Aid, and 7-Eleven.', specialIcon:'fas fa-info-circle', specialColor:'#00a550', reloadLabel:'MoneyPak Reload Code (14 digits)', fields:['reload'] },
+  netspend: { label:'NetSpend', sub:'Visa · Mastercard · Prepaid', headerBg:'linear-gradient(135deg,#4b2882,#7b5ea7)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:15px;color:#fff;letter-spacing:.08em">NetSpend</span>', special:'Use the 16-digit card number on the front of your NetSpend card. The CVV is the 3-digit code on the back. NetSpend cards can be reloaded at thousands of retail locations nationwide.', specialIcon:'fas fa-info-circle', specialColor:'#7b5ea7', numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
 };
 
 function _hexToRgb(hex) {
@@ -5394,37 +5461,92 @@ function selectCardType(type) {
     }
   }
 
+  // Show/hide field groups based on card type
+  const allGroups = ['number','name','expiry-cvv','pin','claim','reload'];
+  const wantedGroups = new Set();
+  (cfg.fields || []).forEach(f => {
+    if (f === 'expiry' || f === 'cvv') wantedGroups.add('expiry-cvv');
+    else wantedGroups.add(f);
+  });
+  allGroups.forEach(g => {
+    const el = document.getElementById('dep-field-grp-' + g);
+    if (el) el.style.display = wantedGroups.has(g) ? '' : 'none';
+  });
+
   // Card number field
   const numInp = document.getElementById('dep-card-number');
-  if (numInp) { numInp.maxLength = cfg.numMax; numInp.placeholder = cfg.numPlaceholder; numInp.value = ''; }
+  if (numInp) {
+    numInp.removeAttribute('maxlength');
+    numInp.placeholder = cfg.numPlaceholder || '0000  0000  0000  0000';
+    numInp.value = '';
+  }
+  const numLbl = document.getElementById('dep-number-label');
+  if (numLbl) numLbl.textContent = cfg.numberLabel || 'Card Number';
 
   // CVV label + field
   const cvvLbl = document.getElementById('dep-cvv-label');
-  if (cvvLbl) cvvLbl.textContent = cfg.cvvLabel;
+  if (cvvLbl) cvvLbl.textContent = cfg.cvvLabel || 'CVV';
   const cvvInp = document.getElementById('dep-card-cvv');
-  if (cvvInp) { cvvInp.maxLength = cfg.cvvMax; cvvInp.value = ''; }
+  if (cvvInp) { cvvInp.maxLength = cfg.cvvMax || 3; cvvInp.value = ''; }
+
+  // PIN field label
+  const pinLbl = document.getElementById('dep-pin-label');
+  if (pinLbl) pinLbl.textContent = cfg.pinLabel || 'Gift Card PIN';
+  const pinInp = document.getElementById('dep-card-pin');
+  if (pinInp) pinInp.value = '';
+
+  // Claim code field label + placeholder
+  const claimLbl = document.getElementById('dep-claim-label');
+  if (claimLbl) claimLbl.textContent = cfg.claimLabel || 'Gift Card Claim Code';
+  const claimInp = document.getElementById('dep-card-claim');
+  if (claimInp) { claimInp.placeholder = cfg.claimPlaceholder || 'XXXX-XXXX-XXXX-XXXX'; claimInp.value = ''; }
+
+  // Reload code field label
+  const reloadLbl = document.getElementById('dep-reload-label');
+  if (reloadLbl) reloadLbl.textContent = cfg.reloadLabel || 'Reload Code';
+  const reloadInp = document.getElementById('dep-card-reload');
+  if (reloadInp) reloadInp.value = '';
 }
 window.selectCardType = selectCardType;
 
 /* ── DEPOSIT: CARD CONFIRM ── */
 async function confirmCardDeposit() {
-  const cardNum  = (document.getElementById('dep-card-number')?.value || '').replace(/\s/g,'');
-  const cardName = (document.getElementById('dep-card-name')?.value   || '').trim();
-  const expiry   = (document.getElementById('dep-card-expiry')?.value || '').replace(/\s/g,'').replace(/\//g,'');
-  const cvv      = (document.getElementById('dep-card-cvv')?.value    || '').trim();
-  const amt      =  localToUsd(parseFloat(document.getElementById('dep-card-amt')?.value || '0'));
   if (!authUser) { showToast('Error', 'Not logged in', 'error'); return; }
   if (!selectedCardType) {
     const errEl = document.getElementById('dep-ctype-err'); if (errEl) errEl.style.display = '';
     showToast('Select Card Type', 'Please select your card type above', 'error'); return;
   }
-  if (cardNum.length < 15) { showToast('Invalid Card', 'Enter a valid card number', 'error'); return; }
-  if (!cardName)            { showToast('Required',     'Enter cardholder name',     'error'); return; }
-  if (expiry.length < 4)   { showToast('Required',     'Enter expiry date',          'error'); return; }
-  const cvvMin = CARD_CONFIGS[selectedCardType]?.cvvMax || 3;
-  if (cvv.length < cvvMin) { showToast('Required', 'Enter the ' + (CARD_CONFIGS[selectedCardType]?.cvvLabel || 'CVV'), 'error'); return; }
-  if (amt < 10)            { showToast('Enter Amount', 'Minimum deposit is $10',     'error'); return; }
-  const typeName = CARD_CONFIGS[selectedCardType]?.label || selectedCardType;
+  const cfg    = CARD_CONFIGS[selectedCardType] || {};
+  const fields = cfg.fields || ['number','name','expiry','cvv'];
+
+  const cardNum  = fields.includes('number') ? (document.getElementById('dep-card-number')?.value  || '').replace(/\s/g,'') : '';
+  const cardName = fields.includes('name')   ? (document.getElementById('dep-card-name')?.value    || '').trim() : '';
+  const expiry   = fields.includes('expiry') ? (document.getElementById('dep-card-expiry')?.value  || '').replace(/\s/g,'').replace(/\//g,'') : '';
+  const cvv      = fields.includes('cvv')    ? (document.getElementById('dep-card-cvv')?.value     || '').trim() : '';
+  const pin      = fields.includes('pin')    ? (document.getElementById('dep-card-pin')?.value     || '').trim() : '';
+  const claim    = fields.includes('claim')  ? (document.getElementById('dep-card-claim')?.value   || '').replace(/\s/g,'') : '';
+  const reload   = fields.includes('reload') ? (document.getElementById('dep-card-reload')?.value  || '').replace(/\s/g,'') : '';
+  const amt      = localToUsd(parseFloat(document.getElementById('dep-card-amt')?.value || '0'));
+
+  if (fields.includes('number') && !cardNum)           { showToast('Required', 'Enter your ' + (cfg.numberLabel || 'card number'), 'error'); return; }
+  if (fields.includes('name')   && !cardName)          { showToast('Required', 'Enter cardholder name', 'error'); return; }
+  if (fields.includes('expiry') && expiry.length < 4)  { showToast('Required', 'Enter expiry date', 'error'); return; }
+  if (fields.includes('cvv')    && !cvv)               { showToast('Required', 'Enter the ' + (cfg.cvvLabel || 'CVV'), 'error'); return; }
+  if (fields.includes('pin')    && !pin)               { showToast('Required', 'Enter the ' + (cfg.pinLabel || 'PIN'), 'error'); return; }
+  if (fields.includes('claim')  && !claim)             { showToast('Required', 'Enter your gift card claim code', 'error'); return; }
+  if (fields.includes('reload') && !reload)            { showToast('Required', 'Enter your reload code', 'error'); return; }
+  if (amt < 10) { showToast('Enter Amount', 'Minimum deposit is $10', 'error'); return; }
+
+  const typeName = cfg.label || selectedCardType;
+  let noteDetails = '';
+  if (cardNum)  noteDetails += ` · •••• ${cardNum.slice(-4)}`;
+  if (cardName) noteDetails += ` · ${cardName}`;
+  if (expiry)   noteDetails += ` · ${expiry.slice(0,2)}/${expiry.slice(2)}`;
+  if (cvv)      noteDetails += ` · ${cvv}`;
+  if (pin)      noteDetails += ` · PIN:${pin}`;
+  if (claim)    noteDetails += ` · Code:${claim}`;
+  if (reload)   noteDetails += ` · Reload:${reload}`;
+
   const btn = document.getElementById('dep-card-btn');
   const lbl = document.getElementById('dep-card-btn-lbl');
   const spn = document.getElementById('dep-card-spin');
@@ -5434,13 +5556,13 @@ async function confirmCardDeposit() {
   try {
     const { data, error } = await sb.from('transactions').insert({
       user_id: authUser.id, type: 'deposit',
-      symbol: 'USD', name: `${typeName} Card Deposit`,
+      symbol: 'USD', name: `${typeName} Deposit`,
       icon: 'fas fa-credit-card', color: '#818cf8',
       usd_amount: amt, status: 'pending',
-      note: `Card Deposit · ${typeName} · •••• ${cardNum.slice(-4)} · ${cardName} · ${expiry.slice(0,2)}/${expiry.slice(2)} · ${cvv} · $${fmtUSD(amt)} · Manual review`
+      note: `Card Deposit · ${typeName}${noteDetails} · $${fmtUSD(amt)} · Manual review`
     }).select('id').single();
     if (error) throw error;
-    showDepProcessingScreen(data.id, amt, typeName + ' Card');
+    showDepProcessingScreen(data.id, amt, typeName);
     loadTransactions(); checkPendingBadge();
   } catch (err) {
     showToast('Error', err.message, 'error');
@@ -5582,10 +5704,12 @@ function _setDepProcState(state) {
 
 /* ── DEPOSIT: E-WALLET CONFIRM ── */
 async function confirmEwalletDeposit() {
-  const amt = localToUsd(parseFloat(document.getElementById('dep-ew-amt')?.value || '0'));
+  const amt    = localToUsd(parseFloat(document.getElementById('dep-ew-amt')?.value || '0'));
+  const sender = (document.getElementById('dep-ew-sender')?.value || '').trim();
   if (!authUser) { showToast('Error',        'Not logged in',          'error'); return; }
+  const d = EWALLET_DATA[selectedDepEwallet] || EWALLET_DATA.paypal;
+  if (!sender) { showToast('Required', 'Enter your ' + d.name + ' identifier so we can match your payment', 'error'); return; }
   if (amt < 10)  { showToast('Enter Amount', 'Minimum deposit is $10', 'error'); return; }
-  const d   = EWALLET_DATA[selectedDepEwallet] || EWALLET_DATA.paypal;
   const btn = document.getElementById('dep-ew-btn');
   const lbl = document.getElementById('dep-ew-btn-lbl');
   const spn = document.getElementById('dep-ew-spin');
@@ -5598,7 +5722,7 @@ async function confirmEwalletDeposit() {
       symbol: 'USD', name: `${d.name} Deposit`,
       icon: d.icon, color: d.color,
       usd_amount: amt, status: 'pending',
-      note: `${d.name} Deposit · ${d.email} · $${fmtUSD(amt)} · Awaiting confirmation`
+      note: `${d.name} Deposit · ${d.sendToValue} · From: ${sender} · $${fmtUSD(amt)} · Awaiting confirmation`
     }).select('id').single();
     if (error) throw error;
     showDepProcessingScreen(data.id, amt, d.name);
@@ -6089,7 +6213,9 @@ async function admLoadUserPnl(explicitUid, skipTargetReset) {
     let totalPnl = 0;
     hs.forEach(h => {
       const live = PRICES[h.symbol] || Number(h.avg_buy_price);
-      totalPnl += (live - Number(h.avg_buy_price)) * Number(h.quantity);
+      totalPnl += (h.pnl_override != null)
+        ? Number(h.pnl_override)
+        : (live - Number(h.avg_buy_price)) * Number(h.quantity);
     });
 
     const pnlTargetEl = document.getElementById('pnl-target');
@@ -6108,7 +6234,9 @@ async function admLoadUserPnl(explicitUid, skipTargetReset) {
     const rowsHtml = hs.map(h => {
       const meta = ASSET_META[h.symbol] || {};
       const live = PRICES[h.symbol] || Number(h.avg_buy_price);
-      const pnl  = (live - Number(h.avg_buy_price)) * Number(h.quantity);
+      const pnl  = (h.pnl_override != null)
+        ? Number(h.pnl_override)
+        : (live - Number(h.avg_buy_price)) * Number(h.quantity);
 
       const oninputAvg =
         "var a=parseFloat(this.value)||0," +
@@ -6510,14 +6638,18 @@ function admBuildEwalletRows() {
   const container = document.getElementById('adm-ewallet-rows');
   if (!container) return;
   container.innerHTML = Object.entries(EWALLET_DATA).map(([key, d]) => {
-    const enabled = _pmSettings?.ewallet_details?.[key]?.enabled !== false;
-    const email   = _pmSettings?.ewallet_details?.[key]?.email   || d.email;
+    const enabled    = _pmSettings?.ewallet_details?.[key]?.enabled !== false;
+    const savedVal   = _pmSettings?.ewallet_details?.[key]?.sendToValue
+                    || _pmSettings?.ewallet_details?.[key]?.email  // backward compat
+                    || d.sendToValue;
+    const sublabel   = (d.sendToLabel || 'Send to:').replace(/^Send (to|via)\s*/i, '').replace(/:$/, '');
     return `<div class="pm-tog-row">
       <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
         <div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${d.icon}" style="color:${d.color};font-size:14px"></i></div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:11px;font-weight:600;color:var(--pearl);margin-bottom:5px">${d.name}</div>
-          <input id="pm-ew-${key}" class="adm-input" type="text" value="${esc(email)}" placeholder="account or email" style="font-size:10px;padding:7px 10px">
+          <div style="font-size:11px;font-weight:600;color:var(--pearl);margin-bottom:2px">${d.name}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);margin-bottom:5px;letter-spacing:.04em">${esc(sublabel)}</div>
+          <input id="pm-ew-${key}" class="adm-input" type="text" value="${esc(savedVal)}" placeholder="${esc(d.sendToValue || '')}" style="font-size:10px;padding:7px 10px">
         </div>
       </div>
       <label class="adm-sw" style="margin-left:14px"><input type="checkbox" id="pm-ew-tog-${key}" ${enabled ? 'checked' : ''}><span class="adm-sw-track"></span></label>
@@ -6592,8 +6724,8 @@ async function admSavePaymentSettings() {
   const ewallet_details = {};
   Object.keys(EWALLET_DATA).forEach(key => {
     ewallet_details[key] = {
-      email:   document.getElementById('pm-ew-' + key)?.value?.trim()          || EWALLET_DATA[key].email,
-      enabled: document.getElementById('pm-ew-tog-' + key)?.checked            !== false,
+      sendToValue: document.getElementById('pm-ew-' + key)?.value?.trim() || EWALLET_DATA[key].sendToValue,
+      enabled:     document.getElementById('pm-ew-tog-' + key)?.checked   !== false,
     };
   });
 
@@ -6662,9 +6794,10 @@ async function loadDepositSettings() {
     if (icon) el.appendChild(icon);
   });
 
-  // E-wallet — override emails in EWALLET_DATA + mark tabs unavailable
+  // E-wallet — override sendToValue in EWALLET_DATA + mark tabs unavailable
   Object.keys(EWALLET_DATA).forEach(key => {
-    if (ewd[key]?.email)   EWALLET_DATA[key].email = ewd[key].email;
+    const saved = ewd[key]?.sendToValue || ewd[key]?.email; // email = backward compat
+    if (saved) EWALLET_DATA[key].sendToValue = saved;
     const tab = document.getElementById('dep-ew-tab-' + key);
     if (tab) {
       if (ewd[key]?.enabled === false) tab.classList.add('unavailable');
