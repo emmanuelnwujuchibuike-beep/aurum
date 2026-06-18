@@ -14,7 +14,7 @@
       "purpose": "any maskable"
     },
     {
-      "src": "/image/favicon.webp",
+      "src": "/image/favicon.svg",
       "sizes": "192x192",
       "type": "image/webp"
     }
