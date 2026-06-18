@@ -1,12 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <script>(function(){var t=localStorage.getItem("aurum_theme");if(!t)t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Aurum Capital — Invest</title>
-<link rel="icon" href="./image/favicon.svg" type="image/svg+xml" sizes="any">
-<link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.svg">
+<title>Aurum Capital � Invest</title>
+<link rel="icon" href="./image/favicon.png" type="image/png" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.png">
 <link rel="manifest" href="./site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -16,12 +16,12 @@
 <meta property="og:title" content="Invest - Aurum Capital">
 <meta property="og:description" content="Start investing in crypto, stocks, commodities, and real estate with Aurum Capital.">
 <meta property="og:url" content="https://aurumcapitalinvest.com/invest.html">
-<meta property="og:image" content="https://aurumcapitalinvest.com/image/favicon.svg">
-<meta property="og:image:type" content="image/svg+xml">
+<meta property="og:image" content="https://aurumcapitalinvest.com/image/favicon.png">
+<meta property="og:image:type" content="image/png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Invest - Aurum Capital">
 <meta name="twitter:description" content="Start investing in crypto, stocks, commodities, and real estate.">
-<meta name="twitter:image" content="https://aurumcapitalinvest.com/image/favicon.svg">
+<meta name="twitter:image" content="https://aurumcapitalinvest.com/image/favicon.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
@@ -180,11 +180,11 @@ main{padding:0 64px 0;max-width:1600px;width:100%;margin:0 auto;position:relativ
 .live-pill{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:8px;color:var(--gain);letter-spacing:.1em;padding:5px 13px;border-radius:var(--r-pill);background:var(--gain-bg);border:1px solid rgba(29,189,108,.18)}
 .live-dot{width:5px;height:5px;border-radius:50%;background:var(--gain);animation:livePulse 1.6s infinite}
 .gold-sep{height:1px;margin:64px 0;background:linear-gradient(90deg,transparent,rgba(201,166,60,.2),transparent);position:relative}
-.gold-sep::after{content:'◆';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--gold);font-size:7px;background:var(--void);padding:0 14px;opacity:.6}
+.gold-sep::after{content:'?';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--gold);font-size:7px;background:var(--void);padding:0 14px;opacity:.6}
 
-/* ══════════════════════════════════════════════════
-   PREMIUM ASSET CARD — NEW DESIGN
-══════════════════════════════════════════════════ */
+/* --------------------------------------------------
+   PREMIUM ASSET CARD � NEW DESIGN
+-------------------------------------------------- */
 .asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
 
 .asset-card {
@@ -391,9 +391,9 @@ html[data-theme="light"] .chart-lwc-outer { background: #faf8f4; }
 .icon-btn{width:40px;height:40px;border-radius:10px;flex-shrink:0;background:rgba(255,255,255,.04);border:1px solid var(--rim);color:var(--fog);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .2s}
 .icon-btn:hover{border-color:var(--rim-gold);color:var(--gold);background:var(--gold-fog)}
 
-/* ══════════════════════════════════════════════════
-   PROPERTY CARDS — NEW DESIGN
-══════════════════════════════════════════════════ */
+/* --------------------------------------------------
+   PROPERTY CARDS � NEW DESIGN
+-------------------------------------------------- */
 .prop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
 .prop-card-new {
   background: linear-gradient(170deg, rgba(12,18,28,.98) 0%, rgba(8,12,20,.98) 100%);
@@ -460,7 +460,7 @@ html[data-theme="light"] .prop-chart-canvas-wrap { background:#faf8f4; }
 .prop-invest-btn { width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:13px;font-size:13px;font-weight:600;color:var(--void);background:linear-gradient(135deg,var(--gold-hi),var(--gold),var(--gold-lo));background-size:200% 100%;background-position:100% 0;border:none;cursor:pointer;transition:all .4s;box-shadow:0 4px 20px rgba(201,166,60,.22); }
 .prop-invest-btn:hover { background-position:0 0;transform:translateY(-2px);box-shadow:0 12px 36px rgba(201,166,60,.45); }
 
-/* MODALS — unchanged styling */
+/* MODALS � unchanged styling */
 .modal-veil{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:16px}
 .modal-veil.open{display:flex}
 .modal-box{background:linear-gradient(150deg,#0c1521,#080d18);border:1px solid rgba(255,255,255,.07);border-radius:24px;width:100%;max-width:620px;max-height:94vh;overflow-y:auto;box-shadow:0 80px 160px rgba(0,0,0,.95),0 0 0 1px rgba(201,166,60,.06)}
@@ -578,11 +578,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 @media(max-width:480px){.kpi-strip{grid-template-columns:1fr 1fr}.hero h1{font-size:38px}.nav-btn span.btn-text{display:none}}
 @media(max-height:620px){.mm-strip{display:none}.mm-link{padding:10px 12px}.mm-link-icon{width:30px;height:30px;font-size:10px}.mm-cta{padding:10px 14px 16px}}
 
-  /* ═══════════════════════════════════════════════════════════════
-     LIGHT MODE — INVEST.HTML  (comprehensive premium overhaul)
-  ═══════════════════════════════════════════════════════════════ */
+  /* ---------------------------------------------------------------
+     LIGHT MODE � INVEST.HTML  (comprehensive premium overhaul)
+  --------------------------------------------------------------- */
 
-  /* ── 1. CSS variable re-map ── */
+  /* -- 1. CSS variable re-map -- */
   html[data-theme="light"] {
     --void:#faf8f4; --abyss:#f4f0e8; --surface:#ffffff; --lift:#ede8de;
     --rim:rgba(0,0,0,.08); --rim-gold:rgba(159,122,30,.30);
@@ -592,16 +592,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     --gain-bg:rgba(22,163,74,.10); --loss-bg:rgba(220,38,38,.08);
   }
 
-  /* ── 2. Page & ambient ── */
+  /* -- 2. Page & ambient -- */
   html[data-theme="light"] body{background:#faf8f4!important;color:#0f0d0a!important}
   html[data-theme="light"] .ambient{background:radial-gradient(ellipse 80% 50% at 30% -10%,rgba(159,122,30,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(29,100,200,.03) 0%,transparent 55%)!important}
   html[data-theme="light"] .grain{opacity:.018!important}
 
-  /* ── 4. Ticker ── */
+  /* -- 4. Ticker -- */
   html[data-theme="light"] .ticker-wrap{background:rgba(240,236,226,.98)!important;border-top-color:rgba(0,0,0,.08)!important;border-bottom-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] .ticker-item{border-right-color:rgba(0,0,0,.06)!important}
 
-  /* ── 5. Nav ── */
+  /* -- 5. Nav -- */
   html[data-theme="light"] nav{background:rgba(250,248,244,.97)!important;border-bottom-color:rgba(0,0,0,.09)!important}
   html[data-theme="light"] nav::after{background:linear-gradient(90deg,transparent,rgba(159,122,30,.14),rgba(159,122,30,.14),transparent)!important}
   html[data-theme="light"] .nav-wordmark{color:#0f0d0a!important}
@@ -612,7 +612,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .nav-cash-val{color:#0f0d0a!important}
   html[data-theme="light"] .nav-cash{border-right-color:rgba(0,0,0,.1)!important}
 
-  /* ── 6. Mobile menu ── */
+  /* -- 6. Mobile menu -- */
   html[data-theme="light"] .mm-panel{background:linear-gradient(160deg,#f5f0e8 0%,#f0ebe0 50%,#ede7d8 100%)!important;border-left-color:rgba(159,122,30,.15)!important}
   html[data-theme="light"] .mm-head{border-bottom-color:rgba(0,0,0,.07)!important}
   html[data-theme="light"] .mm-logo-word{color:#0f0d0a!important}
@@ -636,20 +636,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .mm-cta-secondary{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important;color:#3d2c1a!important}
   html[data-theme="light"] .mm-status-text{color:#7a5c38!important}
 
-  /* ── 7. Hero ── */
+  /* -- 7. Hero -- */
   html[data-theme="light"] .hero h1{color:#0f0d0a!important}
   html[data-theme="light"] .hero-sub{color:#3d2c1a!important}
   html[data-theme="light"] .hero-eyebrow{background:rgba(159,122,30,.1)!important;border-color:rgba(159,122,30,.28)!important}
   html[data-theme="light"] .hero-rule{background:linear-gradient(90deg,#9f7a1e,transparent)!important}
 
-  /* ── 8. KPI strip ── */
+  /* -- 8. KPI strip -- */
   html[data-theme="light"] .kpi-card{background:linear-gradient(150deg,rgba(255,255,255,.97),rgba(248,244,236,.95))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 14px rgba(0,0,0,.06)!important}
   html[data-theme="light"] .kpi-card:hover{border-color:rgba(159,122,30,.35)!important;box-shadow:0 10px 40px rgba(0,0,0,.13)!important}
   html[data-theme="light"] .kpi-label{color:#7a5c38!important}
   html[data-theme="light"] .kpi-val{color:#0f0d0a!important}
   html[data-theme="light"] .kpi-sub{color:#7a5c38!important}
 
-  /* ── 9. Filter bar ── */
+  /* -- 9. Filter bar -- */
   html[data-theme="light"] .chip{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.1)!important;color:#3d2c1a!important}
   html[data-theme="light"] .chip:hover{color:#0f0d0a!important;border-color:rgba(0,0,0,.18)!important;background:rgba(0,0,0,.07)!important}
   html[data-theme="light"] .chip.on{background:rgba(159,122,30,.12)!important;color:#9f7a1e!important;border-color:rgba(159,122,30,.3)!important}
@@ -659,7 +659,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .search-box input{color:#0f0d0a!important}
   html[data-theme="light"] .search-box input::placeholder{color:rgba(0,0,0,.3)!important}
 
-  /* ── 10. Section headers ── */
+  /* -- 10. Section headers -- */
   html[data-theme="light"] .sec-title{color:#0f0d0a!important}
   html[data-theme="light"] .sec-eyebrow{color:#9f7a1e!important}
   html[data-theme="light"] .sec-line{background:linear-gradient(90deg,#9f7a1e,transparent)!important}
@@ -667,7 +667,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .gold-sep{background:linear-gradient(90deg,transparent,rgba(159,122,30,.2),transparent)!important}
   html[data-theme="light"] .gold-sep::after{background:#faf8f4!important;color:#9f7a1e!important}
 
-  /* ── 11. Asset cards ── */
+  /* -- 11. Asset cards -- */
   html[data-theme="light"] .asset-card{background:linear-gradient(170deg,rgba(255,255,255,.98),rgba(250,246,240,.97))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 18px rgba(0,0,0,.06)!important}
   html[data-theme="light"] .asset-card:hover{border-color:rgba(159,122,30,.45)!important;box-shadow:0 24px 70px rgba(0,0,0,.14)!important}
   html[data-theme="light"] .card-icon-inner{background:rgba(255,255,255,.92)!important}
@@ -689,7 +689,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .icon-btn{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important;color:#7a5c38!important}
   html[data-theme="light"] .icon-btn:hover{border-color:rgba(159,122,30,.3)!important;color:#9f7a1e!important;background:rgba(159,122,30,.08)!important}
 
-  /* ── 12. Property cards ── */
+  /* -- 12. Property cards -- */
   html[data-theme="light"] .prop-card-new{background:linear-gradient(170deg,rgba(255,255,255,.98),rgba(250,246,240,.97))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 2px 18px rgba(0,0,0,.06)!important}
   html[data-theme="light"] .prop-card-new:hover{border-color:rgba(159,122,30,.45)!important;box-shadow:0 24px 70px rgba(0,0,0,.14)!important}
   html[data-theme="light"] .prop-title-new{color:#0f0d0a!important}
@@ -700,7 +700,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .prop-chart-zone{background:rgba(0,0,0,.025)!important;border-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] .type-pill{background:rgba(255,255,255,.88)!important;border-color:rgba(0,0,0,.12)!important;color:#3d2c1a!important;backdrop-filter:blur(8px)}
 
-  /* ── 13. Side panel ── */
+  /* -- 13. Side panel -- */
   html[data-theme="light"] .side-panel{background:linear-gradient(180deg,#f8f4ee 0%,#f2ece2 100%)!important;border-left-color:rgba(0,0,0,.09)!important}
   html[data-theme="light"] .panel-backdrop{background:rgba(200,190,175,.5)!important;backdrop-filter:blur(6px)}
   html[data-theme="light"] .ptab{color:#7a5c38!important}
@@ -709,7 +709,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .tx-row{border-bottom-color:rgba(0,0,0,.06)!important}
   html[data-theme="light"] .tx-row:hover{background:rgba(0,0,0,.04)!important}
 
-  /* ── 14. Modals ── */
+  /* -- 14. Modals -- */
   html[data-theme="light"] .modal-veil{background:rgba(220,210,195,.72)!important;backdrop-filter:blur(20px)}
   html[data-theme="light"] .modal-box{background:linear-gradient(150deg,#ffffff,#f8f4ee)!important;border-color:rgba(0,0,0,.1)!important;box-shadow:0 40px 100px rgba(0,0,0,.18)!important}
   html[data-theme="light"] .modal-head{border-bottom-color:rgba(0,0,0,.08)!important}
@@ -735,21 +735,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] #sw-from,html[data-theme="light"] #sw-to{background:#f5f0e8!important;color:#0f0d0a!important;border-color:rgba(0,0,0,.12)!important}
   html[data-theme="light"] #mi-durations .period-btn div{color:inherit!important}
 
-  /* ── 15. Receipt ── */
+  /* -- 15. Receipt -- */
   html[data-theme="light"] .receipt-veil{background:rgba(220,210,195,.78)!important;backdrop-filter:blur(24px)}
   html[data-theme="light"] .receipt-box{background:linear-gradient(150deg,#ffffff,#f8f4ee)!important;border-color:rgba(159,122,30,.35)!important;box-shadow:0 40px 100px rgba(0,0,0,.16)!important}
   html[data-theme="light"] .receipt-row{border-bottom-color:rgba(0,0,0,.06)!important}
 
-  /* ── 16. Toast ── */
+  /* -- 16. Toast -- */
   html[data-theme="light"] #toast{background:linear-gradient(145deg,#ffffff,#f5f0e8)!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 20px 60px rgba(0,0,0,.16)!important}
 
-  /* ── 17. Footer ── */
+  /* -- 17. Footer -- */
   html[data-theme="light"] main>footer{border-top-color:rgba(0,0,0,.09)!important}
 
-  /* ── 18. Scrollbars ── */
+  /* -- 18. Scrollbars -- */
   html[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(159,122,30,.2)!important}
 
-  /* ── 19. Deposit modal extras ── */
+  /* -- 19. Deposit modal extras -- */
   html[data-theme="light"] .dep-coin-btn{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important}
   html[data-theme="light"] .dep-coin-btn:hover{border-color:rgba(159,122,30,.3)!important;background:rgba(159,122,30,.07)!important}
   html[data-theme="light"] .dep-coin-btn.selected{background:rgba(159,122,30,.12)!important;border-color:rgba(159,122,30,.45)!important}
@@ -759,12 +759,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   html[data-theme="light"] .prop-yield-box{background:linear-gradient(135deg,rgba(22,163,74,.07),rgba(159,122,30,.05))!important;border-color:rgba(22,163,74,.18)!important}
   html[data-theme="light"] .prop-yield-label{color:#7a5c38!important}
 
-  /* ── 20. Admin overlay ── */
+  /* -- 20. Admin overlay -- */
   html[data-theme="light"] .admin-overlay{background:rgba(250,248,244,.98)!important;backdrop-filter:blur(24px)}
 
-  /* ════════════════════════════════════════════════
-     PREMIUM UPGRADE — INVEST.HTML
-  ════════════════════════════════════════════════ */
+  /* ------------------------------------------------
+     PREMIUM UPGRADE � INVEST.HTML
+  ------------------------------------------------ */
 
   /* Mesh grid overlay */
   .invest-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.014;
@@ -787,9 +787,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   /* Hero eyebrow upgrade */
   .hero-eyebrow{letter-spacing:.32em;font-size:9px}
 
-  /* ═══════════════════════════════════════════════════
-     KPI CARDS — ultra premium, color-coded via --sc-rgb
-  ═══════════════════════════════════════════════════ */
+  /* ---------------------------------------------------
+     KPI CARDS � ultra premium, color-coded via --sc-rgb
+  --------------------------------------------------- */
   @keyframes kpiIconPulse{0%,100%{box-shadow:0 0 8px rgba(var(--sc-rgb),.4)}50%{box-shadow:0 0 18px rgba(var(--sc-rgb),.75)}}
   .kpi-card{
     background:linear-gradient(150deg,rgba(var(--sc-rgb),.032) 0%,rgba(0,0,0,.06) 100%);
@@ -848,7 +848,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     background:linear-gradient(90deg,transparent,rgba(201,166,60,.22),transparent)}
   .gold-sep::before{content:'';position:absolute;left:0;right:0;top:0;
     background:linear-gradient(90deg,transparent,rgba(201,166,60,.08),transparent);height:1px}
-  .gold-sep::after{content:'◆';position:absolute;left:50%;top:50%;
+  .gold-sep::after{content:'?';position:absolute;left:50%;top:50%;
     transform:translate(-50%,-50%);color:var(--gold);font-size:7px;
     background:var(--void);padding:0 18px;opacity:.7;letter-spacing:.05em}
 
@@ -905,7 +905,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     .kpi-icon{width:26px!important;height:26px!important;font-size:10px!important;top:10px!important;right:10px!important}
   }
 
-  /* ── Light theme overrides for new premium classes ── */
+  /* -- Light theme overrides for new premium classes -- */
   html[data-theme="light"] .invest-mesh{opacity:.01}
   html[data-theme="light"] .hero{background:linear-gradient(155deg,#f5f0e8 0%,#ede8de 40%,#f0ebe0 100%)!important;border-bottom-color:rgba(159,122,30,.18)!important}
   html[data-theme="light"] .hero::before{background:radial-gradient(ellipse 65% 90% at 5% -10%,rgba(159,122,30,.06) 0%,transparent 55%),radial-gradient(ellipse 50% 60% at 95% 110%,rgba(29,100,200,.03) 0%,transparent 50%)!important}
@@ -934,7 +934,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <!-- NAV -->
 <nav>
   <div style="display:flex;align-items:center;gap:10px">
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="margin-right:6px"><span class="theme-icon">☀</span></button><button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="margin-right:6px"><span class="theme-icon">?</span></button><button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
       <span class="bar"></span><span class="bar"></span><span class="bar"></span>
     </button>
     <a href="index.html" class="nav-brand">
@@ -984,10 +984,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <a href="dashboard.html" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-gauge-high"></i></div><div><div class="mm-link-name">Dashboard</div><div class="mm-link-desc">Portfolio overview</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></a>
       <a href="invest.html" class="mm-link active"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-chart-line"></i></div><div><div class="mm-link-name">Invest</div><div class="mm-link-desc">Explore markets</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></a>
       <a href="trade.html" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-arrow-right-arrow-left"></i></div><div><div class="mm-link-name">Trade</div><div class="mm-link-desc">Live execution</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></a>
-      <button onclick="closeMenu();setFilter('crypto',document.querySelector('[data-f=crypto]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-bitcoin-sign"></i></div><div><div class="mm-link-name">Cryptocurrency</div><div class="mm-link-desc">BTC · ETH · SOL · more</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
-      <button onclick="closeMenu();setFilter('stocks',document.querySelector('[data-f=stocks]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-building-columns"></i></div><div><div class="mm-link-name">Global Equities</div><div class="mm-link-desc">TSLA · AAPL · NVDA · more</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
-      <button onclick="closeMenu();setFilter('commodities',document.querySelector('[data-f=commodities]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-coins"></i></div><div><div class="mm-link-name">Commodities</div><div class="mm-link-desc">GOLD · OIL · SILVER</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
-      <button onclick="closeMenu();setFilter('property',document.querySelector('[data-f=property]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-building"></i></div><div><div class="mm-link-name">Real Estate</div><div class="mm-link-desc">Tokenized · From $500</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
+      <button onclick="closeMenu();setFilter('crypto',document.querySelector('[data-f=crypto]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-bitcoin-sign"></i></div><div><div class="mm-link-name">Cryptocurrency</div><div class="mm-link-desc">BTC � ETH � SOL � more</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
+      <button onclick="closeMenu();setFilter('stocks',document.querySelector('[data-f=stocks]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-building-columns"></i></div><div><div class="mm-link-name">Global Equities</div><div class="mm-link-desc">TSLA � AAPL � NVDA � more</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
+      <button onclick="closeMenu();setFilter('commodities',document.querySelector('[data-f=commodities]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-coins"></i></div><div><div class="mm-link-name">Commodities</div><div class="mm-link-desc">GOLD � OIL � SILVER</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
+      <button onclick="closeMenu();setFilter('property',document.querySelector('[data-f=property]'))" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-building"></i></div><div><div class="mm-link-name">Real Estate</div><div class="mm-link-desc">Tokenized � From $500</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
       <div class="mm-divider"></div>
       <div class="mm-sec-label">// Account</div>
       <button onclick="closeMenu();openPanel('portfolio')" class="mm-link"><div class="mm-link-inner"><div class="mm-link-icon"><i class="fas fa-briefcase"></i></div><div><div class="mm-link-name">Portfolio</div><div class="mm-link-desc">Your holdings</div></div></div><i class="fas fa-chevron-right mm-link-arrow"></i></button>
@@ -1000,14 +1000,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="mm-cta">
       <button onclick="closeMenu();openDepositModal()" class="mm-cta-btn mm-cta-primary"><i class="fas fa-plus" style="font-size:11px"></i>Deposit Funds</button>
       <a href="dashboard.html" class="mm-cta-btn mm-cta-secondary"><i class="fas fa-gauge-high" style="font-size:11px"></i>View Dashboard</a>
-      <div class="mm-status"><div class="mm-status-dot"></div><span class="mm-status-text">All systems operational · 99.9% uptime</span></div>
+      <div class="mm-status"><div class="mm-status-dot"></div><span class="mm-status-text">All systems operational � 99.9% uptime</span></div>
     </div>
   </div>
 </div>
 
 <!-- HERO -->
 <section class="hero" style="position:relative;z-index:2">
-  <div class="hero-eyebrow"><div class="dot"></div>Live Markets · Multi-Asset Platform</div>
+  <div class="hero-eyebrow"><div class="dot"></div>Live Markets � Multi-Asset Platform</div>
   <h1>Deploy <em>capital.</em><br>Build <em>wealth.</em></h1>
   <div class="hero-rule"></div>
   <p class="hero-sub">Institutional-grade execution across crypto, global equities and tokenized prime real estate. All in one seamless experience.</p>
@@ -1016,13 +1016,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="kpi-icon"><i class="fas fa-wallet"></i></div>
       <div class="kpi-label" style="display:flex;align-items:center;gap:6px">Cash Available<button class="invest-bal-eye" onclick="toggleBalHidden()" style="background:none;border:none;color:var(--ash);cursor:pointer;font-size:11px;padding:0 2px;line-height:1;flex-shrink:0"><i class="fas fa-eye"></i></button></div>
       <div class="kpi-val" id="kpi-cash-val">$0.00</div>
-      <div class="kpi-sub" onclick="openDepositModal()">+ Add funds →</div>
+      <div class="kpi-sub" onclick="openDepositModal()">+ Add funds ?</div>
     </div>
     <div class="kpi-card" onclick="openPanel('portfolio')" style="--sc:#627eea;--sc-rgb:98,126,234">
       <div class="kpi-icon"><i class="fas fa-briefcase"></i></div>
       <div class="kpi-label">Portfolio Value</div>
       <div class="kpi-val" id="kpi-pv">$0.00</div>
-      <div class="kpi-sub" id="kpi-pv-chg">View holdings →</div>
+      <div class="kpi-sub" id="kpi-pv-chg">View holdings ?</div>
     </div>
     <div class="kpi-card" onclick="openPanel('portfolio')" style="--sc:#1dbd6c;--sc-rgb:29,189,108">
       <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
@@ -1034,7 +1034,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="kpi-icon"><i class="fas fa-clock-rotate-left"></i></div>
       <div class="kpi-label">All-time Trades</div>
       <div class="kpi-val" id="kpi-tx">0</div>
-      <div class="kpi-sub">View history →</div>
+      <div class="kpi-sub">View history ?</div>
     </div>
   </div>
   <div class="filter-bar">
@@ -1048,7 +1048,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="filter-right">
       <div class="search-box">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input id="searchInput" type="text" placeholder="Search assets…" oninput="renderAll()">
+        <input id="searchInput" type="text" placeholder="Search assets�" oninput="renderAll()">
       </div>
       <button onclick="openSwapModal()" style="display:flex;align-items:center;gap:7px;padding:8px 18px;border-radius:12px;background:var(--gold-fog);border:1px solid var(--rim-gold);color:var(--gold);font-family:'DM Mono',monospace;font-size:9.5px;cursor:pointer;transition:all .25s;white-space:nowrap" onmouseover="this.style.background='rgba(201,166,60,.18)'" onmouseout="this.style.background='var(--gold-fog)'"><i class="fas fa-arrow-right-arrow-left" style="font-size:10px"></i>Swap</button>
     </div>
@@ -1089,7 +1089,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <section id="sec-property" class="reveal" style="margin-bottom:64px">
     <div class="sec-head">
       <div><div class="sec-eyebrow">// Tokenized Real Estate</div><div class="sec-line"></div><h2 class="sec-title">Prime <em>Properties</em></h2></div>
-      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);background:var(--gold-fog);border:1px solid var(--rim-gold);padding:6px 16px;border-radius:var(--r-pill)">Tokenized · From $500</span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);background:var(--gold-fog);border:1px solid var(--rim-gold);padding:6px 16px;border-radius:var(--r-pill)">Tokenized � From $500</span>
     </div>
     <div class="prop-grid" id="propertyGrid">
       <div class="skeleton" style="height:520px"></div><div class="skeleton" style="height:520px"></div><div class="skeleton" style="height:520px"></div>
@@ -1100,12 +1100,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--gold-hi),var(--gold),var(--gold-lo));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--void);font-size:11px">A</div>
       <div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--pearl);letter-spacing:.08em">Aurum Capital</div>
-        <div style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.12em;margin-top:1px">©2026 · ALL RIGHTS RESERVED</div>
+        <div style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.12em;margin-top:1px">�2026 � ALL RIGHTS RESERVED</div>
       </div>
     </div>
     <div class="invest-footer-center">
-      <p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase">Dubai · London · New York · Singapore</p>
-      <p style="font-family:'DM Mono',monospace;font-size:7px;color:var(--fog);margin-top:5px;opacity:.6">Regulated · Secure · Trusted · ISO 27001</p>
+      <p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase">Dubai � London � New York � Singapore</p>
+      <p style="font-family:'DM Mono',monospace;font-size:7px;color:var(--fog);margin-top:5px;opacity:.6">Regulated � Secure � Trusted � ISO 27001</p>
     </div>
     <div class="invest-footer-right">
       <a href="about.html" style="font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--fog)'">About</a>
@@ -1141,7 +1141,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
     <div style="padding:16px 0">
       <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;padding:0 20px">Holdings</p>
-      <div id="holdings-list"><div style="padding:32px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--fog)">Loading…</div></div>
+      <div id="holdings-list"><div style="padding:32px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--fog)">Loading�</div></div>
     </div>
   </div>
   <div id="pane-transactions" style="flex:1;overflow-y:auto;display:none">
@@ -1153,7 +1153,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <button onclick="filterTx('swap')" class="chip" id="txf-swap" style="padding:5px 12px;font-size:.65rem">Swaps</button>
       </div>
     </div>
-    <div id="tx-list-panel"><div style="padding:32px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--fog)">Loading…</div></div>
+    <div id="tx-list-panel"><div style="padding:32px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--fog)">Loading�</div></div>
   </div>
 </div>
 
@@ -1164,16 +1164,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div style="display:flex;align-items:center;gap:14px;min-width:0">
         <div id="mi-icon" style="width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"></div>
         <div style="min-width:0">
-          <p id="mi-sym" style="font-family:'Playfair Display',serif;font-size:24px;color:var(--pearl);font-weight:400">—</p>
-          <p id="mi-name" style="font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog)">—</p>
+          <p id="mi-sym" style="font-family:'Playfair Display',serif;font-size:24px;color:var(--pearl);font-weight:400">�</p>
+          <p id="mi-name" style="font-family:'DM Mono',monospace;font-size:8.5px;color:var(--fog)">�</p>
         </div>
       </div>
-      <button class="modal-close" onclick="closeInvestModal()">✕</button>
+      <button class="modal-close" onclick="closeInvestModal()">?</button>
     </div>
     <div class="modal-body">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(255,255,255,.022);border:1px solid var(--rim);border-radius:13px;flex-wrap:wrap;gap:10px">
-        <div><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px">Live Price</p><p id="mi-price" style="font-family:'Playfair Display',serif;font-size:24px;color:var(--pearl)">—</p></div>
-        <div style="text-align:right"><p id="mi-chg" style="font-family:'DM Mono',monospace;font-size:11.5px;padding:4px 11px;border-radius:8px">—</p><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);margin-top:3px">24h change</p></div>
+        <div><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px">Live Price</p><p id="mi-price" style="font-family:'Playfair Display',serif;font-size:24px;color:var(--pearl)">�</p></div>
+        <div style="text-align:right"><p id="mi-chg" style="font-family:'DM Mono',monospace;font-size:11.5px;padding:4px 11px;border-radius:8px">�</p><p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);margin-top:3px">24h change</p></div>
       </div>
       <div id="mi-chart-wrap" class="modal-chart-section" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px">
@@ -1194,10 +1194,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
           </div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--rim);margin-bottom:8px" id="mi-chart-stats">
-          <div style="padding:8px 12px;border-right:1px solid var(--rim)"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">24H High</div><p id="mi-stat-high" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gain)">—</p></div>
-          <div style="padding:8px 12px;border-right:1px solid var(--rim)"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">24H Low</div><p id="mi-stat-low" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--loss)">—</p></div>
-          <div style="padding:8px 12px;border-right:1px solid var(--rim)"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Mkt Cap</div><p id="mi-stat-mcap" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">—</p></div>
-          <div style="padding:8px 12px"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Volume 24H</div><p id="mi-stat-vol" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">—</p></div>
+          <div style="padding:8px 12px;border-right:1px solid var(--rim)"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">24H High</div><p id="mi-stat-high" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gain)">�</p></div>
+          <div style="padding:8px 12px;border-right:1px solid var(--rim)"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">24H Low</div><p id="mi-stat-low" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--loss)">�</p></div>
+          <div style="padding:8px 12px;border-right:1px solid var(--rim)"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Mkt Cap</div><p id="mi-stat-mcap" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">�</p></div>
+          <div style="padding:8px 12px"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);text-transform:uppercase;margin-bottom:4px">Volume 24H</div><p id="mi-stat-vol" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pearl)">�</p></div>
         </div>
         <div class="chart-lwc-outer" style="height:260px;position:relative;border-radius:10px;overflow:hidden">
           <div id="modalChartLwc" style="height:100%;width:100%"></div>
@@ -1265,40 +1265,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
           <span id="rd-dy-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">Day</span>
           <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-align:right">20%</span>
-          <span id="rd-dy-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">—</span>
-          <span id="rd-dy-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">—</span>
+          <span id="rd-dy-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">�</span>
+          <span id="rd-dy-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">�</span>
 
           <span id="rd-wk-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">Week</span>
           <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-align:right">140%</span>
-          <span id="rd-wk-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">—</span>
-          <span id="rd-wk-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">—</span>
+          <span id="rd-wk-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">�</span>
+          <span id="rd-wk-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">�</span>
 
           <span id="rd-mt-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">Month</span>
           <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-align:right">600%</span>
-          <span id="rd-mt-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">—</span>
-          <span id="rd-mt-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">—</span>
+          <span id="rd-mt-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">�</span>
+          <span id="rd-mt-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">�</span>
 
           <span id="rd-yr-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">Year</span>
           <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-align:right">7,300%</span>
-          <span id="rd-yr-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">—</span>
-          <span id="rd-yr-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">—</span>
+          <span id="rd-yr-profit" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gain);text-align:right">�</span>
+          <span id="rd-yr-total" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--pearl);text-align:right">�</span>
         </div>
       </div>
       <div id="os-prop-yield-block" style="display:none">
         <div class="prop-yield-box">
-          <div class="prop-yield-row"><span class="prop-yield-label">Weekly Income (20%)</span><span class="prop-yield-val" id="os-annual-yield">—</span></div>
-          <div class="prop-yield-row"><span class="prop-yield-label">Daily Income</span><span class="prop-yield-val gold" id="os-monthly-yield">—</span></div>
-          <div class="prop-yield-row"><span class="prop-yield-label">Hourly Income</span><span class="prop-yield-val white" id="os-weekly-yield">—</span></div>
+          <div class="prop-yield-row"><span class="prop-yield-label">Weekly Income (20%)</span><span class="prop-yield-val" id="os-annual-yield">�</span></div>
+          <div class="prop-yield-row"><span class="prop-yield-label">Daily Income</span><span class="prop-yield-val gold" id="os-monthly-yield">�</span></div>
+          <div class="prop-yield-row"><span class="prop-yield-label">Hourly Income</span><span class="prop-yield-val white" id="os-weekly-yield">�</span></div>
           <div style="height:1px;background:rgba(255,255,255,.06);margin:2px 0"></div>
-          <div class="prop-yield-row"><span class="prop-yield-label">5-Year Projected Capital</span><span class="prop-yield-val" id="os-5yr-yield">—</span></div>
-          <div class="prop-yield-row"><span class="prop-yield-label">Share of Property</span><span class="prop-yield-val gold" id="os-ownership">—</span></div>
+          <div class="prop-yield-row"><span class="prop-yield-label">5-Year Projected Capital</span><span class="prop-yield-val" id="os-5yr-yield">�</span></div>
+          <div class="prop-yield-row"><span class="prop-yield-label">Share of Property</span><span class="prop-yield-val gold" id="os-ownership">�</span></div>
         </div>
       </div>
       <div class="sum-box">
         <p style="font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.15em;color:var(--fog);text-transform:uppercase;margin-bottom:5px">Order Summary</p>
         <div class="sum-row"><span class="sum-lbl">You invest</span><span id="os-invest" class="sum-val">$0.00</span></div>
-        <div id="os-receive-row" style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px"><span class="sum-lbl">You receive</span><span id="os-get" class="sum-val" style="color:var(--gold)">—</span></div>
-        <div class="sum-row"><span id="os-profit-lbl" class="sum-lbl" style="color:var(--gain)">Projected Profit (20% · 1W)</span><span id="os-profit" class="sum-val" style="color:var(--gain)">+$0.00</span></div>
+        <div id="os-receive-row" style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px"><span class="sum-lbl">You receive</span><span id="os-get" class="sum-val" style="color:var(--gold)">�</span></div>
+        <div class="sum-row"><span id="os-profit-lbl" class="sum-lbl" style="color:var(--gain)">Projected Profit (20% � 1W)</span><span id="os-profit" class="sum-val" style="color:var(--gain)">+$0.00</span></div>
         <div class="sum-row"><span class="sum-lbl" style="color:var(--gold);font-weight:600">Total Return</span><span id="os-return" class="sum-val" style="color:var(--gold);font-size:13px;font-weight:600">$0.00</span></div>
         <div class="sum-row"><span class="sum-lbl">Platform fee (0.1%)</span><span id="os-fee" class="sum-val">$0.00</span></div>
         <div class="sum-row"><span class="sum-lbl">Slippage (0.05%)</span><span id="os-slip" class="sum-val">$0.00</span></div>
@@ -1306,9 +1306,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div class="sum-row"><span class="sum-lbl" style="color:var(--pearl)">Total debited</span><span id="os-total" class="sum-val" style="font-size:13px;color:var(--pearl)">$0.00</span></div>
         <div class="sum-row"><span class="sum-lbl">Remaining balance</span><span id="os-remain" class="sum-val" style="color:var(--gold)">$0.00</span></div>
       </div>
-      <div class="insuf-warn" id="mi-insuf"><p>⚠ Insufficient balance. <button onclick="closeInvestModal();openDepositModal()" style="background:none;border:none;color:var(--loss);font-family:'DM Mono',monospace;font-size:9.5px;cursor:pointer;text-decoration:underline">Add funds →</button></p></div>
+      <div class="insuf-warn" id="mi-insuf"><p>? Insufficient balance. <button onclick="closeInvestModal();openDepositModal()" style="background:none;border:none;color:var(--loss);font-family:'DM Mono',monospace;font-size:9.5px;cursor:pointer;text-decoration:underline">Add funds ?</button></p></div>
       <button class="confirm-btn" id="mi-confirm" onclick="confirmInvest()">
-        <span id="mi-lbl">⚡ Confirm Investment</span>
+        <span id="mi-lbl">? Confirm Investment</span>
         <div id="mi-spin" style="display:none;width:16px;height:16px;border:2px solid rgba(5,6,8,.2);border-top-color:var(--void);border-radius:50%;margin:0 auto" class="spinner"></div>
       </button>
       <p style="text-align:center;font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.07em">Orders execute instantly at market price</p>
@@ -1322,20 +1322,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div style="padding:32px 24px 18px;text-align:center;border-bottom:1px solid var(--rim)">
       <div style="position:relative;width:68px;height:68px;margin:0 auto 18px">
         <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(29,189,108,.2);animation:ldBreath 2.4s ease-in-out infinite"></div>
-        <div style="position:absolute;inset:8px;border-radius:50%;background:var(--gain-bg);border:1px solid rgba(29,189,108,.28);display:flex;align-items:center;justify-content:center"><span style="color:var(--gain);font-size:24px">✓</span></div>
+        <div style="position:absolute;inset:8px;border-radius:50%;background:var(--gain-bg);border:1px solid rgba(29,189,108,.28);display:flex;align-items:center;justify-content:center"><span style="color:var(--gain);font-size:24px">?</span></div>
       </div>
       <p style="font-family:'Playfair Display',serif;font-size:26px;color:var(--pearl);font-weight:300;margin-bottom:3px">Order Executed</p>
       <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);letter-spacing:.14em">TRANSACTION CONFIRMED</p>
     </div>
     <div style="padding:18px 22px">
       <div style="background:rgba(255,255,255,.02);border:1px solid var(--rim);border-radius:14px;padding:14px;margin-bottom:14px">
-        <div class="receipt-row"><span class="rlbl">Transaction ID</span><span class="rval" style="font-size:9px;color:var(--fog)" id="rc-txid">—</span></div>
-        <div class="receipt-row"><span class="rlbl">Timestamp (UTC)</span><span class="rval" id="rc-time">—</span></div>
-        <div class="receipt-row"><span class="rlbl">Asset</span><span class="rval" id="rc-asset">—</span></div>
-        <div class="receipt-row"><span class="rlbl">Quantity</span><span class="rval gold" id="rc-qty">—</span></div>
-        <div class="receipt-row"><span class="rlbl">Execution Price</span><span class="rval" id="rc-price">—</span></div>
-        <div class="receipt-row"><span class="rlbl">Fee + Slippage</span><span class="rval" id="rc-fee">—</span></div>
-        <div class="receipt-row" style="border:none;padding-top:10px"><span class="rlbl" style="font-size:11px;color:var(--pearl)">Total Debited</span><span class="rval loss" style="font-size:13px" id="rc-total">—</span></div>
+        <div class="receipt-row"><span class="rlbl">Transaction ID</span><span class="rval" style="font-size:9px;color:var(--fog)" id="rc-txid">�</span></div>
+        <div class="receipt-row"><span class="rlbl">Timestamp (UTC)</span><span class="rval" id="rc-time">�</span></div>
+        <div class="receipt-row"><span class="rlbl">Asset</span><span class="rval" id="rc-asset">�</span></div>
+        <div class="receipt-row"><span class="rlbl">Quantity</span><span class="rval gold" id="rc-qty">�</span></div>
+        <div class="receipt-row"><span class="rlbl">Execution Price</span><span class="rval" id="rc-price">�</span></div>
+        <div class="receipt-row"><span class="rlbl">Fee + Slippage</span><span class="rval" id="rc-fee">�</span></div>
+        <div class="receipt-row" style="border:none;padding-top:10px"><span class="rlbl" style="font-size:11px;color:var(--pearl)">Total Debited</span><span class="rval loss" style="font-size:13px" id="rc-total">�</span></div>
       </div>
       <div style="background:var(--gain-bg);border:1px solid rgba(29,189,108,.16);border-radius:12px;padding:12px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
         <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-transform:uppercase;letter-spacing:.1em">New Cash Balance</span>
@@ -1357,15 +1357,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <p style="font-family:'Playfair Display',serif;font-size:24px;color:var(--pearl);font-weight:300">Swap <em style="font-style:italic;color:var(--gold)">Assets</em></p>
         <p style="color:var(--ash);font-size:12px;margin-top:3px">Convert your holdings instantly at market price</p>
       </div>
-      <button class="modal-close" onclick="closeSwapModal()">✕</button>
+      <button class="modal-close" onclick="closeSwapModal()">?</button>
     </div>
     <div class="modal-body">
       <div>
         <p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">From</p>
         <div class="swap-box">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px">
-            <select id="sw-from" onchange="updateSwapCalc()" style="background:#080c12;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--pearl);font-family:'DM Mono',monospace;font-size:13px;padding:8px 12px;outline:none;cursor:pointer;flex:1"><option value="">Select asset…</option></select>
-            <div style="text-align:right;flex-shrink:0"><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)">Balance</p><p id="sw-from-bal" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold)">—</p></div>
+            <select id="sw-from" onchange="updateSwapCalc()" style="background:#080c12;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--pearl);font-family:'DM Mono',monospace;font-size:13px;padding:8px 12px;outline:none;cursor:pointer;flex:1"><option value="">Select asset�</option></select>
+            <div style="text-align:right;flex-shrink:0"><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)">Balance</p><p id="sw-from-bal" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold)">�</p></div>
           </div>
           <div class="amt-input-wrap"><span class="amt-prefix" style="font-size:13px">$</span><input type="number" id="sw-from-amt" placeholder="0.00" oninput="updateSwapCalc()" style="flex:1;background:transparent;border:none;padding:12px;color:var(--pearl);font-family:'DM Mono',monospace;font-size:20px;outline:none"></div>
           <div style="display:flex;gap:5px;margin-top:9px">
@@ -1380,16 +1380,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div>
         <p style="font-family:'DM Mono',monospace;font-size:7.5px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">To</p>
         <div class="swap-box">
-          <select id="sw-to" onchange="updateSwapCalc()" style="width:100%;background:#080c12;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--pearl);font-family:'DM Mono',monospace;font-size:13px;padding:8px 12px;outline:none;cursor:pointer;margin-bottom:12px"><option value="">Select target…</option></select>
+          <select id="sw-to" onchange="updateSwapCalc()" style="width:100%;background:#080c12;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--pearl);font-family:'DM Mono',monospace;font-size:13px;padding:8px 12px;outline:none;cursor:pointer;margin-bottom:12px"><option value="">Select target�</option></select>
           <div style="background:rgba(255,255,255,.03);border:1px solid var(--rim);border-radius:12px;padding:14px 16px">
-            <p id="sw-receive" style="font-family:'DM Mono',monospace;font-size:22px;color:var(--gold)">—</p>
+            <p id="sw-receive" style="font-family:'DM Mono',monospace;font-size:22px;color:var(--gold)">�</p>
             <p id="sw-rate" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog);margin-top:4px">Select assets to see rate</p>
           </div>
         </div>
       </div>
       <div class="sum-box">
-        <div class="sum-row"><span class="sum-lbl">Swap fee (0.3%)</span><span id="sw-fee" class="sum-val">—</span></div>
-        <div class="sum-row"><span class="sum-lbl">Net received</span><span id="sw-net" class="sum-val" style="color:var(--gold)">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">Swap fee (0.3%)</span><span id="sw-fee" class="sum-val">�</span></div>
+        <div class="sum-row"><span class="sum-lbl">Net received</span><span id="sw-net" class="sum-val" style="color:var(--gold)">�</span></div>
       </div>
       <div id="sw-insuf" style="display:none;padding:10px 13px;background:var(--loss-bg);border:1px solid rgba(232,72,72,.22);border-radius:10px"><p style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--loss)"><i class="fas fa-triangle-exclamation" style="margin-right:6px"></i>Insufficient balance</p></div>
       <button id="sw-confirm" onclick="confirmSwap()" class="confirm-btn">
@@ -1406,9 +1406,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="modal-head">
       <div>
         <h3 style="font-family:'Playfair Display',serif;font-size:24px;color:var(--pearl);font-weight:300">Deposit <em style="color:var(--gold);font-style:italic">Funds</em></h3>
-        <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);margin-top:4px;letter-spacing:.08em">REQUIRES APPROVAL · BALANCE CREDITED AFTER REVIEW</p>
+        <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);margin-top:4px;letter-spacing:.08em">REQUIRES APPROVAL � BALANCE CREDITED AFTER REVIEW</p>
       </div>
-      <button class="modal-close" onclick="closeDepositModal()">✕</button>
+      <button class="modal-close" onclick="closeDepositModal()">?</button>
     </div>
     <div style="display:flex;align-items:center;padding:16px 24px 0;gap:6px">
       <div style="display:flex;align-items:center;gap:6px"><div class="dep-step-num active" id="dep-step-1-num">1</div><span id="dep-step-1-lbl" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.06em">COIN</span></div>
@@ -1424,8 +1424,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div id="dep-step-2" style="display:none" class="modal-body">
       <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid var(--rim);border-radius:14px">
         <div id="dep-s2-coinbg" style="width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i id="dep-s2-coinicon" style="font-size:18px"></i></div>
-        <div><p id="dep-s2-coinname" style="font-size:14px;font-weight:600;color:var(--pearl)">—</p><p id="dep-s2-network" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">—</p></div>
-        <button onclick="goDepStep(1)" style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);background:none;border:none;cursor:pointer">← Change</button>
+        <div><p id="dep-s2-coinname" style="font-size:14px;font-weight:600;color:var(--pearl)">�</p><p id="dep-s2-network" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">�</p></div>
+        <button onclick="goDepStep(1)" style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);background:none;border:none;cursor:pointer">? Change</button>
       </div>
       <p style="font-size:13px;color:var(--ash)">How much USD value are you depositing?</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1435,41 +1435,41 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <button class="amt-preset" onclick="setDepAmt(10000)">$10,000</button>
         <button class="amt-preset" onclick="setDepAmt(50000)">$50,000</button>
       </div>
-      <div class="amt-input-wrap"><span class="amt-prefix">$</span><input type="number" id="dep-custom-amt" placeholder="Enter amount…" min="10" step="10" class="amt-input"></div>
+      <div class="amt-input-wrap"><span class="amt-prefix">$</span><input type="number" id="dep-custom-amt" placeholder="Enter amount�" min="10" step="10" class="amt-input"></div>
       <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--gold-fog);border:1px solid var(--rim-gold);border-radius:12px">
         <i class="fas fa-clock" style="color:var(--gold);font-size:12px;margin-top:2px;flex-shrink:0"></i>
-        <p style="font-size:12px;color:var(--ash);line-height:1.5">Your deposit will be reviewed by our team. Balance is credited only after approval — usually within 30 minutes.</p>
+        <p style="font-size:12px;color:var(--ash);line-height:1.5">Your deposit will be reviewed by our team. Balance is credited only after approval � usually within 30 minutes.</p>
       </div>
-      <button onclick="goDepStep(3)" class="confirm-btn">Continue →</button>
+      <button onclick="goDepStep(3)" class="confirm-btn">Continue ?</button>
     </div>
     <div id="dep-step-3" style="display:none" class="modal-body">
       <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid var(--rim);border-radius:14px">
         <div id="dep-s3-coinbg" style="width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i id="dep-s3-coinicon" style="font-size:18px"></i></div>
-        <div><p id="dep-s3-coinname" style="font-size:14px;font-weight:600;color:var(--pearl)">—</p><p id="dep-s3-network" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">—</p></div>
-        <div style="margin-left:auto;text-align:right"><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)">Amount</p><p id="dep-s3-amount" style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gain);font-weight:300">—</p></div>
+        <div><p id="dep-s3-coinname" style="font-size:14px;font-weight:600;color:var(--pearl)">�</p><p id="dep-s3-network" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">�</p></div>
+        <div style="margin-left:auto;text-align:right"><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)">Amount</p><p id="dep-s3-amount" style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gain);font-weight:300">�</p></div>
       </div>
       <div id="dep-addr-section">
         <div style="display:flex;gap:16px;align-items:flex-start">
           <div id="dep-qr-canvas" style="background:#fff;padding:8px;border-radius:10px;flex-shrink:0;width:116px;height:116px;display:flex;align-items:center;justify-content:center"></div>
           <div style="flex:1;min-width:0">
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Send only <span id="dep-warn-coin" style="color:var(--gold)">—</span> to this address</p>
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Send only <span id="dep-warn-coin" style="color:var(--gold)">�</span> to this address</p>
             <div style="background:rgba(255,255,255,.04);border:1px solid var(--rim);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:border-color .2s" onclick="copyDepAddress()" title="Click to copy">
-              <p id="dep-address-text" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--pearl);word-break:break-all;line-height:1.5">—</p>
+              <p id="dep-address-text" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--pearl);word-break:break-all;line-height:1.5">�</p>
             </div>
             <button onclick="copyDepAddress()" style="display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);background:none;border:none;cursor:pointer;padding:0"><i class="fas fa-copy"></i>Copy Address</button>
           </div>
         </div>
         <div style="padding:10px 14px;background:var(--loss-bg);border:1px solid rgba(232,72,72,.18);border-radius:10px">
-          <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--loss)"><i class="fas fa-triangle-exclamation" style="margin-right:6px"></i>Only send <span id="dep-warn-coin2">—</span> on the correct network. Wrong network = lost funds.</p>
+          <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--loss)"><i class="fas fa-triangle-exclamation" style="margin-right:6px"></i>Only send <span id="dep-warn-coin2">�</span> on the correct network. Wrong network = lost funds.</p>
         </div>
       </div>
       <div id="dep-no-address" style="display:none;padding:16px;background:var(--loss-bg);border:1px solid rgba(232,72,72,.2);border-radius:12px">
         <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--loss)"><i class="fas fa-circle-xmark" style="margin-right:8px"></i>No deposit address configured for this coin. Please contact support.</p>
       </div>
       <div style="display:flex;gap:10px">
-        <button onclick="goDepStep(2)" style="flex:1;padding:12px;border-radius:11px;border:1px solid var(--rim);background:rgba(255,255,255,.04);color:var(--ash);font-family:'Instrument Sans',sans-serif;font-size:13px;cursor:pointer">← Back</button>
+        <button onclick="goDepStep(2)" style="flex:1;padding:12px;border-radius:11px;border:1px solid var(--rim);background:rgba(255,255,255,.04);color:var(--ash);font-family:'Instrument Sans',sans-serif;font-size:13px;cursor:pointer">? Back</button>
         <button id="dep-confirm-btn" onclick="confirmCryptoDeposit()" class="confirm-btn" style="flex:2;border-radius:11px;padding:12px">
-          <span id="dep-confirm-label"><i class="fas fa-check" style="font-size:12px"></i> I've Sent — Notify Admin</span>
+          <span id="dep-confirm-label"><i class="fas fa-check" style="font-size:12px"></i> I've Sent � Notify Admin</span>
           <div id="dep-confirm-spin" style="display:none;width:16px;height:16px;border:2px solid rgba(5,6,8,.2);border-top-color:var(--void);border-radius:50%;margin:0 auto" class="spinner"></div>
         </button>
       </div>
@@ -1485,7 +1485,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-lo));display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-weight:700;color:var(--void);font-size:14px">A</div>
         <div><p style="font-family:'Playfair Display',serif;font-size:22px;color:var(--pearl);font-weight:300">Admin <em style="color:var(--gold);font-style:italic">Panel</em></p><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);letter-spacing:.1em">RESTRICTED ACCESS</p></div>
       </div>
-      <button onclick="closeAdminPanel()" style="padding:8px 18px;border-radius:10px;background:var(--loss-bg);border:1px solid rgba(232,72,72,.25);color:var(--loss);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">✕ Close</button>
+      <button onclick="closeAdminPanel()" style="padding:8px 18px;border-radius:10px;background:var(--loss-bg);border:1px solid rgba(232,72,72,.25);color:var(--loss);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">? Close</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:28px">
       <div style="background:var(--surface);border:1px solid var(--rim);border-radius:14px;padding:14px"><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Users</p><p id="adm-userCount" style="font-family:'Playfair Display',serif;font-size:26px;color:var(--pearl)">0</p></div>
@@ -1507,13 +1507,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div style="background:var(--surface);border:1px solid var(--rim);border-radius:16px;overflow:hidden">
       <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:12px;align-items:center;flex-wrap:wrap">
         <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--ash);text-transform:uppercase;flex:1">User Accounts</p>
-        <input type="text" placeholder="Search users…" oninput="adminFilterUsers(this.value)" style="flex:1;min-width:160px;background:rgba(255,255,255,.04);border:1px solid var(--rim);border-radius:10px;padding:9px 14px;color:var(--pearl);font-family:'DM Mono',monospace;font-size:12px;outline:none">
-        <button onclick="adminLoadUsers()" style="padding:9px 16px;border-radius:10px;background:var(--gold-fog);border:1px solid var(--rim-gold);color:var(--gold);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">↻ Refresh</button>
+        <input type="text" placeholder="Search users�" oninput="adminFilterUsers(this.value)" style="flex:1;min-width:160px;background:rgba(255,255,255,.04);border:1px solid var(--rim);border-radius:10px;padding:9px 14px;color:var(--pearl);font-family:'DM Mono',monospace;font-size:12px;outline:none">
+        <button onclick="adminLoadUsers()" style="padding:9px 16px;border-radius:10px;background:var(--gold-fog);border:1px solid var(--rim-gold);color:var(--gold);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">? Refresh</button>
       </div>
       <div style="overflow-x:auto"><table class="admin-tbl"><thead><tr><th>Name</th><th>Email</th><th>Cash Balance</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="adminUsersTbody"></tbody></table></div>
     </div>
     <div id="adminCashEdit" style="display:none;margin-top:16px;background:var(--surface);border:1px solid var(--rim-gold);border-radius:16px;padding:20px;flex-direction:column;gap:12px">
-      <p style="font-family:'Playfair Display',serif;font-size:18px;color:var(--pearl)">Edit balance for <em style="color:var(--gold);font-style:italic" id="adminEditName">—</em></p>
+      <p style="font-family:'Playfair Display',serif;font-size:18px;color:var(--pearl)">Edit balance for <em style="color:var(--gold);font-style:italic" id="adminEditName">�</em></p>
       <input type="hidden" id="adminEditUserId">
       <div style="display:flex;gap:10px;align-items:center">
         <span style="font-family:'DM Mono',monospace;color:var(--ash)">$</span>
@@ -1530,13 +1530,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <div id="toast-icon"></div>
   <div style="min-width:0"><p id="toast-title" style="font-size:12.5px;font-weight:600;color:var(--pearl)"></p><p id="toast-sub" style="font-size:10.5px;color:var(--ash);margin-top:1px"></p></div>
 </div>
-<div id="kHint" style="position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:8px;color:rgba(201,166,60,0);letter-spacing:.14em;pointer-events:none;transition:color .6s;white-space:nowrap">↑ ↑ ↓ ↓ ← → ← → B A · ADMIN</div>
+<div id="kHint" style="position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:8px;color:rgba(201,166,60,0);letter-spacing:.14em;pointer-events:none;transition:color .6s;white-space:nowrap">? ? ? ? ? ? ? ? B A � ADMIN</div>
 
 <script src="coingecko-sync.js?v=4"></script>
 <script>
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  CONFIG & SUPABASE
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 const SUPABASE_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
 const EDGE_FN_URL   = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/admin-update-shipment';
@@ -1557,9 +1557,9 @@ async function callAdmin(action, params = {}) {
   return result.data;
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  STATE
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 let authUser = null, profile = null, myHoldings = [], modalAsset = null;
 let liveFilter = 'all', allTransactions = [], txFilter = 'all', adminUsers = [];
 let activePanelTab = 'portfolio', adminPriceTab = 'crypto';
@@ -1580,11 +1580,11 @@ let CRYPTO_ADDRESSES = {};
 // Per-card chart instances: { sym: { instance, type, period } }
 const cardCharts = {};
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  ASSET DATA
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 const CRYPTO=[
-  {sym:'BTC',name:'Bitcoin',cat:'crypto',icon:'fab fa-bitcoin',color:'#f7931a',price:67430,chg:+2.14,desc:'The original decentralised digital currency — digital gold and sovereign store of value.',vol24h:38.4e9,mktcap:1920e9},
+  {sym:'BTC',name:'Bitcoin',cat:'crypto',icon:'fab fa-bitcoin',color:'#f7931a',price:67430,chg:+2.14,desc:'The original decentralised digital currency � digital gold and sovereign store of value.',vol24h:38.4e9,mktcap:1920e9},
   {sym:'ETH',name:'Ethereum',cat:'crypto',icon:'fab fa-ethereum',color:'#627eea',price:3280,chg:+1.87,desc:'Smart contract platform powering the decentralised web and DeFi ecosystem.',vol24h:18.2e9,mktcap:395e9},
   {sym:'SOL',name:'Solana',cat:'crypto',icon:'fas fa-sun',color:'#9945ff',price:188,chg:+4.32,desc:'High-throughput Layer-1 blockchain built for institutional-grade scale.',vol24h:4.8e9,mktcap:82e9},
   {sym:'BNB',name:'BNB Chain',cat:'crypto',icon:'fas fa-coins',color:'#f3ba2f',price:612,chg:-1.22,desc:'Binance ecosystem utility token powering DeFi, NFTs, and cross-chain bridging.',vol24h:2.1e9,mktcap:90e9},
@@ -1610,7 +1610,7 @@ const PROPERTY=[
   {sym:'NYC',name:'One Manhattan West',cat:'property',icon:'fas fa-building-columns',color:'#a0c0e8',price:500,yield_:20,location:'Hudson Yards, NY 10001',type:'Residential',valuation:'$8.7M',valuationNum:8700000,funded:91,minEntry:500,img:'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=600&q=80',desc:'Prime Manhattan real estate in the Hudson Yards development. Capitalize on NYC\'s perennial demand.'},
   {sym:'DXB2',name:'Palm Jumeirah Villa',cat:'property',icon:'fas fa-umbrella-beach',color:'#f3ba2f',price:2000,yield_:20,location:'Palm Jumeirah, Dubai',type:'Luxury Villa',valuation:'$12.1M',valuationNum:12100000,funded:35,minEntry:2000,img:'./image/palm.jpg',desc:'Exclusive beachfront villa on the world-famous Palm Jumeirah. Ultra-luxury vacation rental income.'},
   {sym:'SGP',name:'Marina Bay Tower',cat:'property',icon:'fas fa-water',color:'#3cc8c8',price:500,yield_:20,location:'Marina Bay, Singapore',type:'Commercial',valuation:'$3.8M',valuationNum:3800000,funded:60,minEntry:500,img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&q=80',desc:'Strategic office tower in Singapore\'s premier financial district with AAA corporate tenants.'},
-  {sym:'PAR',name:'Champs-Élysées Office',cat:'property',icon:'fas fa-tower-broadcast',color:'#627eea',price:1000,yield_:20,location:'8th Arrondissement, Paris',type:'Office',valuation:'$6.2M',valuationNum:6200000,funded:55,minEntry:1000,img:'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80',desc:'Prestigious address on Paris\'s most famous boulevard, with high-demand corporate office tenants.'},
+  {sym:'PAR',name:'Champs-�lys�es Office',cat:'property',icon:'fas fa-tower-broadcast',color:'#627eea',price:1000,yield_:20,location:'8th Arrondissement, Paris',type:'Office',valuation:'$6.2M',valuationNum:6200000,funded:55,minEntry:1000,img:'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&q=80',desc:'Prestigious address on Paris\'s most famous boulevard, with high-demand corporate office tenants.'},
 ];
 const ALL_ASSETS = [...CRYPTO, ...STOCKS, ...COMMODITIES, ...PROPERTY];
 const MCAP = {BTC:1920e9,ETH:395e9,SOL:82e9,BNB:90e9,XRP:38e9,ADA:17e9,TSLA:790e9,AAPL:2900e9,NVDA:2160e9,MSFT:3070e9,AMZN:2050e9,GOOGL:2230e9};
@@ -1626,9 +1626,9 @@ const DEPOSIT_COINS = [
   {sym:'LTC',name:'Litecoin',icon:'fas fa-coins',color:'#bfbbbb',network:'LTC Network',min:'0.01 LTC'},
 ];
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  PARTICLES
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 (function(){
   const cv=document.getElementById('particleCanvas'),ctx=cv.getContext('2d');
   const mobile=window.matchMedia('(pointer:coarse)').matches;
@@ -1664,9 +1664,9 @@ const DEPOSIT_COINS = [
   requestAnimationFrame(draw);
 })();
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  PROPERTY YIELD
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function computePropYield(amt, asset) {
   const annual = amt * PROPERTY_YIELD_RATE;
   return {
@@ -1676,9 +1676,9 @@ function computePropYield(amt, asset) {
   };
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  CHART DATA GENERATION
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function genHistory(basePrice, period, assetChg) {
   const cfgs = {
     '1D':{n:96,vol:.0018,drift:assetChg/100/96},
@@ -1725,9 +1725,9 @@ function genPropertyHistory(baseVal, period) {
   return { prices, labels: prices.map((_,i)=>(i%Math.ceil(n/6)===0?'W'+(i+1):'')) };
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  OHLCV FETCH + FALLBACK
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function getChartTheme() {
   const light = document.documentElement.dataset.theme === 'light';
   return {
@@ -1848,20 +1848,20 @@ function genPropertyOHLCV(price, yieldPct, tf) {
 
   // 3 complete zig-zag waves + small random noise on top
   const waveCount = 2.8 + Math.random() * 0.5;  // ~3 waves, varies per render
-  const waveAmp   = 0.024;                        // ±2.4% swing
-  const noiseAmp  = 0.005;                        // ±0.5% random micro-noise
+  const waveAmp   = 0.024;                        // �2.4% swing
+  const noiseAmp  = 0.005;                        // �0.5% random micro-noise
 
   const bars = [];
 
   for (let i = 0; i < n; i++) {
-    const t = i / Math.max(n - 1, 1);  // 0 → 1
+    const t = i / Math.max(n - 1, 1);  // 0 ? 1
 
     // Curved exponential trend: slow early, fast finish
     const trendCurve = Math.pow(t, 0.6);
     const lateSurge  = t > 0.65 ? Math.pow((t - 0.65) / 0.35, 1.4) * lateBoost : 0;
     const trendVal   = startPrice * (1 + (baseRise + lateSurge) * trendCurve);
 
-    // Zig-zag sine wave — amplitude widens in late phase
+    // Zig-zag sine wave � amplitude widens in late phase
     const ampScale = 1 + (t > 0.65 ? (t - 0.65) * 2.2 : 0);
     const osc   = Math.sin(t * waveCount * 2 * Math.PI) * waveAmp * ampScale * trendVal;
     const noise = (Math.random() - 0.5) * noiseAmp * trendVal;
@@ -1888,9 +1888,9 @@ function genPropertyOHLCV(price, yieldPct, tf) {
   return bars;
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  CARD CHART RENDERING
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 const CHART_DEFAULTS = {
   responsive: true,
   maintainAspectRatio: false,
@@ -2022,9 +2022,9 @@ function switchCardChart(sym, chartType, period, ctBtn, cpBtn) {
   buildCardChart(divEl, asset, resolvedType, resolvedPeriod);
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  INIT / AUTH
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 window.addEventListener('DOMContentLoaded', async () => {
   // Build ticker immediately with default prices so it's visible during load
   buildTicker();
@@ -2080,7 +2080,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   sb.channel('tx-status').on('postgres_changes', {event:'UPDATE',schema:'public',table:'transactions',filter:`user_id=eq.${authUser.id}`}, ({new:row,old:oldRow}) => {
     if(!oldRow || row.status===oldRow.status) return;
     const amt = Math.abs(Number(row.usd_amount||0));
-    if(row.status==='approved'&&row.type==='deposit'){showToast('Deposit Approved! ✅',fmtMoney(amt)+' credited.','success');loadProfile();loadTransactions();}
+    if(row.status==='approved'&&row.type==='deposit'){showToast('Deposit Approved! ?',fmtMoney(amt)+' credited.','success');loadProfile();loadTransactions();}
     else if(row.status==='rejected'&&row.type==='deposit'){showToast('Deposit Rejected','Your '+fmtMoney(amt)+' deposit was not approved.','error');loadTransactions();}
   }).subscribe();
 
@@ -2088,9 +2088,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   setInterval(tickPrices, 3000);
 });
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  DATA LOADING
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 async function loadPricesFromDB() {
   try {
     const { data } = await sb.from('asset_prices').select('*');
@@ -2156,9 +2156,9 @@ function refreshUI() {
 }
 async function doSignOut() { await sb.auth.signOut(); window.location.href = 'signup.html'; }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  APPLY LIVE PRICE UPDATE
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function applyPriceUpdate(sym, newPrice, newChg) {
   const asset = ALL_ASSETS.find(a => a.sym===sym); if(!asset) return;
   const oldPrice = asset.price; asset.price = newPrice; _priceUpdatedAt[sym] = Date.now();
@@ -2183,9 +2183,9 @@ function applyPriceUpdate(sym, newPrice, newChg) {
   txt('kpi-pv', maskVal(fmtMoney(pv)));
 }
 
-// ══════════════════════════════════════════════════
-//  MODAL CHART — Lightweight Charts + real OHLCV
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
+//  MODAL CHART � Lightweight Charts + real OHLCV
+// --------------------------------------------------
 function destroyModalLwcChart() {
   if (modalLwcChart) { try { modalLwcChart.remove(); } catch(e){} modalLwcChart = null; modalLwcSeries = null; }
 }
@@ -2274,9 +2274,9 @@ function setModalChartType(type, btn) {
   if (modalAsset) renderModalChart(modalAsset.sym, investChartPeriod);
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  ASSET CARD HTML (new design with real chart)
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 let _cardAnimIdx = 0; // for staggered entrance
 function assetCard(a) {
   const up = a.chg >= 0;
@@ -2307,7 +2307,7 @@ function assetCard(a) {
         <div class="card-price-new" id="card-pr-${a.sym}">${fmtMoney(a.price)}</div>
       </div>
       <div style="text-align:right;max-width:140px">
-        <div style="font-size:10.5px;color:var(--fog);line-height:1.55">${a.desc.slice(0,60)}…</div>
+        <div style="font-size:10.5px;color:var(--fog);line-height:1.55">${a.desc.slice(0,60)}�</div>
       </div>
     </div>
 
@@ -2377,7 +2377,7 @@ function propCard(p) {
         <span class="type-pill">${p.type}</span>
         <div style="display:flex;gap:6px;align-items:center">
           ${owned?`<span style="font-family:'DM Mono',monospace;font-size:7.5px;padding:4px 10px;border-radius:var(--r-pill);background:rgba(201,166,60,.2);backdrop-filter:blur(8px);border:1px solid rgba(201,166,60,.4);color:var(--gold)">OWNED</span>`:''}
-          <span class="yield-pill">✦ ${p.yield_}% APY</span>
+          <span class="yield-pill">? ${p.yield_}% APY</span>
         </div>
       </div>
       <div class="prop-img-bottom">
@@ -2427,16 +2427,16 @@ function propCard(p) {
 
     <div class="prop-footer" style="display:flex;gap:8px">
       <button class="prop-invest-btn" style="flex:1" onclick="event.stopPropagation();openInvestModal('${p.sym}')">
-        🏛 Invest in Property
+        ?? Invest in Property
       </button>
       ${owned ? `<button onclick="event.stopPropagation();openPropertyWithdraw('${p.sym}')" style="padding:10px 16px;border-radius:12px;background:rgba(232,72,72,.1);border:1px solid rgba(232,72,72,.2);color:#e84848;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s" onmouseover="this.style.background='rgba(232,72,72,.2)'" onmouseout="this.style.background='rgba(232,72,72,.1)'">Withdraw</button>` : ''}
     </div>
   </div>`;
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  RENDER ALL  (with staggered chart init)
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function renderAll() {
   _cardAnimIdx = 0;
   const q = (document.getElementById('searchInput').value||'').toLowerCase();
@@ -2484,9 +2484,9 @@ function setFilter(f, btn) {
   if(f!=='all') setTimeout(()=>document.getElementById('sec-'+f)?.scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  TICKER
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function buildTicker() {
   const all = [...CRYPTO, ...STOCKS, ...COMMODITIES];
   // Duplicate for seamless CSS loop; only first set gets IDs to avoid duplicates
@@ -2502,9 +2502,9 @@ function buildTicker() {
   }).join('');
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  MOBILE MENU
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function openMenu() {
   document.getElementById('mobileMenu').classList.add('open');
   document.getElementById('navToggle').classList.add('open');
@@ -2530,9 +2530,9 @@ function buildMenuCoins() {
   }).join('');
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  SIDE PANEL
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function openPanel(tab) { document.getElementById('panelBackdrop').classList.add('open'); document.getElementById('sidePanel').classList.add('open'); switchPanelTab(tab||activePanelTab); }
 function closePanel() { document.getElementById('panelBackdrop').classList.remove('open'); document.getElementById('sidePanel').classList.remove('open'); }
 function switchPanelTab(tab) {
@@ -2546,7 +2546,7 @@ function switchPanelTab(tab) {
 function renderPortfolioPanel() {
   if(!myHoldings.length) {
     txt('pf-total','$0.00'); txt('pf-pnl-badge','+$0.00'); txt('pf-pos-badge','0 positions');
-    document.getElementById('holdings-list').innerHTML='<div style="padding:32px;text-align:center;font-family:\'DM Mono\',monospace;font-size:11px;color:var(--fog)">No holdings yet.<br><button onclick="closePanel()" style="margin-top:10px;color:var(--gold);background:none;border:none;cursor:pointer;font-family:\'DM Mono\',monospace;font-size:11px">Browse assets →</button></div>';
+    document.getElementById('holdings-list').innerHTML='<div style="padding:32px;text-align:center;font-family:\'DM Mono\',monospace;font-size:11px;color:var(--fog)">No holdings yet.<br><button onclick="closePanel()" style="margin-top:10px;color:var(--gold);background:none;border:none;cursor:pointer;font-family:\'DM Mono\',monospace;font-size:11px">Browse assets ?</button></div>';
     document.getElementById('alloc-bar').innerHTML='<div style="flex:1;background:rgba(255,255,255,.06);border-radius:6px"></div>';
     document.getElementById('alloc-legend').innerHTML=''; return;
   }
@@ -2563,9 +2563,9 @@ function renderPortfolioPanel() {
   document.getElementById('holdings-list').innerHTML=myHoldings.map(h=>{const cur=liveMap[h.symbol]||Number(h.avg_buy_price);const val=Number(h.quantity)*cur;const cost=Number(h.quantity)*Number(h.avg_buy_price);const chg=cost>0?((val-cost)/cost*100):0;const up=chg>=0;const asset=ALL_ASSETS.find(a=>a.sym===h.symbol)||{icon:'fas fa-circle',color:'#5a6880'};const isProp=asset.cat==='property';const actionBtn=isProp?`<button onclick="event.stopPropagation();openPropertyWithdraw('${h.symbol}')" style="margin-top:6px;width:100%;padding:6px;border-radius:8px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.18);color:#e84848;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;cursor:pointer">Withdraw Investment</button>`:`<button onclick="event.stopPropagation();openSellModal('${h.symbol}')" style="margin-top:6px;width:100%;padding:6px;border-radius:8px;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.18);color:#e84848;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;cursor:pointer">Sell Position</button>`;return`<div class="holding-row" onclick="${isProp?'':'openInvestModal(\''+h.symbol+'\')'}"><div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0"><div style="width:36px;height:36px;border-radius:12px;background:${asset.color}16;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${asset.icon}"></i></div><div style="min-width:0"><p style="font-weight:600;color:var(--pearl);font-size:13px">${h.symbol}</p><p style="color:var(--fog);font-size:11px;font-family:'DM Mono',monospace">${Number(h.quantity)<1?Number(h.quantity).toFixed(6):Number(h.quantity).toFixed(4)} units</p></div></div><div style="text-align:right"><p style="font-family:'DM Mono',monospace;font-size:13px;color:var(--pearl)">${fmtMoney(val)}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:${up?'var(--gain)':'var(--loss)'}">${up?'+':''}${chg.toFixed(2)}%</p></div></div>${actionBtn}`;}).join('');
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  SELL POSITION MODAL
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function openSellModal(sym) {
   const holding = myHoldings.find(h => h.symbol === sym);
   const asset   = ALL_ASSETS.find(a => a.sym === sym);
@@ -2588,9 +2588,9 @@ function openSellModal(sym) {
       <div class="modal-head" style="padding:22px 24px 16px">
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:42px;height:42px;border-radius:13px;background:${asset.color}16;color:${asset.color};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0"><i class="${asset.icon}"></i></div>
-          <div><p style="font-size:16px;font-weight:600;color:var(--pearl)">${asset.name}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">${qty < 1 ? qty.toFixed(6) : qty.toFixed(4)} ${sym} · ${fmtMoney(liveP)} live</p></div>
+          <div><p style="font-size:16px;font-weight:600;color:var(--pearl)">${asset.name}</p><p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">${qty < 1 ? qty.toFixed(6) : qty.toFixed(4)} ${sym} � ${fmtMoney(liveP)} live</p></div>
         </div>
-        <button onclick="document.getElementById('investSellModal').remove()" class="modal-close-btn">✕</button>
+        <button onclick="document.getElementById('investSellModal').remove()" class="modal-close-btn">?</button>
       </div>
       <div style="padding:0 24px 8px">
         <div style="display:flex;gap:8px;margin-bottom:16px">
@@ -2615,7 +2615,7 @@ function openSellModal(sym) {
           <div style="display:flex;justify-content:space-between"><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">Fee (0.1%)</span><span id="sell-fee-out" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ash)">-${fmtMoney(maxAmt*0.001)}</span></div>
           <div style="display:flex;justify-content:space-between"><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--pearl);font-weight:600">You receive</span><span id="sell-net-out" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gain);font-weight:600">+${fmtMoney(maxAmt*0.999)}</span></div>
         </div>
-        <div id="sell-insuf" style="display:none;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-family:'DM Mono',monospace;font-size:10px;color:#e84848">⚠ Amount exceeds holding value</div>
+        <div id="sell-insuf" style="display:none;background:rgba(232,72,72,.08);border:1px solid rgba(232,72,72,.2);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-family:'DM Mono',monospace;font-size:10px;color:#e84848">? Amount exceeds holding value</div>
         <button id="sell-confirm-btn" onclick="confirmSellHolding('${sym}')"
           style="width:100%;padding:13px;border-radius:13px;border:none;background:linear-gradient(135deg,rgba(232,72,72,.85),rgba(200,30,30,.7));color:#fff;font-family:'Instrument Sans',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
           <i class="fas fa-arrow-trend-down" style="font-size:12px"></i>
@@ -2696,7 +2696,7 @@ async function confirmSellHolding(sym) {
     await loadPortfolioStats();
     await loadTransactions();
 
-    showToast('Sold ✓', `${sym} · +${fmtMoney(netUSD)} added to cash`, 'success');
+    showToast('Sold ?', `${sym} � +${fmtMoney(netUSD)} added to cash`, 'success');
   } catch (err) {
     showToast('Sell failed', err.message || 'Please try again', 'error');
   } finally {
@@ -2715,12 +2715,12 @@ function renderTxPanel() {
   const filtered = txFilter==='all' ? allTransactions : allTransactions.filter(t=>t.type===txFilter);
   if(!filtered.length){document.getElementById('tx-list-panel').innerHTML='<div style="padding:32px;text-align:center;font-family:\'DM Mono\',monospace;font-size:11px;color:var(--fog)">No transactions found</div>';return;}
   const cfg={buy:{icon:'fa-arrow-trend-up',color:'var(--gain)',bg:'var(--gain-bg)',label:'Buy'},deposit:{icon:'fa-arrow-down-to-line',color:'var(--gold)',bg:'var(--gold-fog)',label:'Deposit'},swap:{icon:'fa-arrow-right-arrow-left',color:'#627eea',bg:'rgba(98,126,234,.1)',label:'Swap'},sell:{icon:'fa-arrow-trend-down',color:'var(--loss)',bg:'var(--loss-bg)',label:'Sell'},withdraw:{icon:'fa-arrow-up-from-line',color:'var(--loss)',bg:'var(--loss-bg)',label:'Withdraw'}};
-  document.getElementById('tx-list-panel').innerHTML=filtered.map(tx=>{let c=cfg[tx.type]||{icon:'fa-circle',color:'var(--fog)',bg:'rgba(61,80,96,.1)',label:tx.type};if(tx.status==='pending')c={...c,icon:'fa-clock',color:'var(--gold)',bg:'var(--gold-fog)'};if(tx.status==='rejected')c={...c,icon:'fa-ban',color:'var(--fog)',bg:'rgba(61,80,96,.1)'};const amt=Number(tx.usd_amount||0);const isPos=amt>0;const date=new Date(tx.created_at);const badge=tx.status==='pending'?`<span style="font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:5px;background:var(--gold-fog);color:var(--gold);border:1px solid var(--rim-gold)">PENDING</span>`:tx.status==='rejected'?`<span style="font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:5px;background:rgba(61,80,96,.1);color:var(--fog)">REJECTED</span>`:'';return`<div class="tx-row"><div style="width:36px;height:36px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${c.icon}" style="color:${c.color};font-size:13px"></i></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><p style="font-size:13px;font-weight:500;color:var(--pearl)">${c.label} ${tx.symbol||''}</p>${badge}</div><p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">${date.toLocaleDateString()} · ${date.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}</p></div><div style="text-align:right">${tx.status==='pending'?`<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold)">⏳ Pending</p>`:tx.status==='rejected'?`<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fog);text-decoration:line-through">Rejected</p>`:`<p style="font-family:'DM Mono',monospace;font-size:13px;color:${isPos?'var(--gain)':'var(--loss)'}">${isPos?'+':'-'}${fmtMoney(Math.abs(amt))}</p>`}</div></div>`;}).join('');
+  document.getElementById('tx-list-panel').innerHTML=filtered.map(tx=>{let c=cfg[tx.type]||{icon:'fa-circle',color:'var(--fog)',bg:'rgba(61,80,96,.1)',label:tx.type};if(tx.status==='pending')c={...c,icon:'fa-clock',color:'var(--gold)',bg:'var(--gold-fog)'};if(tx.status==='rejected')c={...c,icon:'fa-ban',color:'var(--fog)',bg:'rgba(61,80,96,.1)'};const amt=Number(tx.usd_amount||0);const isPos=amt>0;const date=new Date(tx.created_at);const badge=tx.status==='pending'?`<span style="font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:5px;background:var(--gold-fog);color:var(--gold);border:1px solid var(--rim-gold)">PENDING</span>`:tx.status==='rejected'?`<span style="font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:5px;background:rgba(61,80,96,.1);color:var(--fog)">REJECTED</span>`:'';return`<div class="tx-row"><div style="width:36px;height:36px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${c.icon}" style="color:${c.color};font-size:13px"></i></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><p style="font-size:13px;font-weight:500;color:var(--pearl)">${c.label} ${tx.symbol||''}</p>${badge}</div><p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">${date.toLocaleDateString()} � ${date.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}</p></div><div style="text-align:right">${tx.status==='pending'?`<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold)">? Pending</p>`:tx.status==='rejected'?`<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fog);text-decoration:line-through">Rejected</p>`:`<p style="font-family:'DM Mono',monospace;font-size:13px;color:${isPos?'var(--gain)':'var(--loss)'}">${isPos?'+':'-'}${fmtMoney(Math.abs(amt))}</p>`}</div></div>`;}).join('');
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  INVEST MODAL
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function openInvestModal(sym) {
   modalAsset = ALL_ASSETS.find(a => a.sym===sym); if(!modalAsset||!profile) return;
   const a = modalAsset, isProp = a.cat==='property';
@@ -2793,8 +2793,8 @@ function calcModal() {
   const durRateEl = document.getElementById('mi-dur-rate');
   if (durRateEl) durRateEl.textContent = '20% / day';
   const profitLblEl = document.getElementById('os-profit-lbl');
-  if (profitLblEl) profitLblEl.textContent = 'Projected Profit (' + activePct + '% · ' + dur.label + ')';
-  // breakdown card — all four periods
+  if (profitLblEl) profitLblEl.textContent = 'Projected Profit (' + activePct + '% � ' + dur.label + ')';
+  // breakdown card � all four periods
   const bk = { '1D':1, '1W':7, '1M':30, '1Y':365 };
   const ids = { '1D':'dy', '1W':'wk', '1M':'mt', '1Y':'yr' };
   Object.entries(bk).forEach(([key, days]) => {
@@ -2880,20 +2880,20 @@ async function confirmInvest() {
     txt('rc-price',fmtMoney(a.price)); txt('rc-fee',fmtMoney(fee+slip));
     txt('rc-total','-'+fmtMoney(total)); txt('rc-newbal',fmtMoney(newCash));
     document.getElementById('receiptModal').classList.add('open');
-    showToast('Order Executed ✓',`${a.sym} investment confirmed`,'success');
+    showToast('Order Executed ?',`${a.sym} investment confirmed`,'success');
   } catch(err) {
     showToast('Transaction failed', err.message||'Please try again', 'error');
   } finally {
     document.getElementById('mi-spin').style.display='none';
-    txt('mi-lbl','⚡ Confirm Investment');
+    txt('mi-lbl','? Confirm Investment');
     document.getElementById('mi-confirm').disabled=false;
   }
 }
 function closeReceipt(){ document.getElementById('receiptModal').classList.remove('open'); }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  PROPERTY EARLY WITHDRAWAL
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 const PROPERTY_EARLY_PENALTY = 0.30; // 30% deducted if withdrawn before maturity
 
 function getPropLock(sym) {
@@ -2946,7 +2946,7 @@ function openPropertyWithdraw(sym) {
             <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);margin-top:2px;letter-spacing:.14em;text-transform:uppercase">Property Investment</p>
           </div>
         </div>
-        <button class="modal-close" onclick="document.getElementById('propWithdrawModal').remove()">✕</button>
+        <button class="modal-close" onclick="document.getElementById('propWithdrawModal').remove()">?</button>
       </div>
 
       <div class="modal-body">
@@ -2958,7 +2958,7 @@ function openPropertyWithdraw(sym) {
             ${isPremature
               ? `<p style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:#e84848;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Early Withdrawal Penalty</p>
                  <p style="font-size:12px;color:var(--ash);line-height:1.55">Lock-in ends in <strong style="color:var(--pearl)">${timeMsg}</strong>. A <strong style="color:#e84848">30% penalty</strong> applies if you withdraw now.</p>`
-              : `<p style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--gain);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Matured — No Penalty</p>
+              : `<p style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--gain);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Matured � No Penalty</p>
                  <p style="font-size:12px;color:var(--ash);line-height:1.55">Your lock-in period has <strong style="color:var(--gain)">matured</strong>. Withdraw the full amount with no deductions.</p>`
             }
           </div>
@@ -2973,7 +2973,7 @@ function openPropertyWithdraw(sym) {
           ${isPremature ? `
           <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(232,72,72,.12);background:rgba(232,72,72,.04)">
             <span style="font-family:'DM Mono',monospace;font-size:10px;color:#e84848;letter-spacing:.06em">Early Penalty (30%)</span>
-            <span style="font-family:'DM Mono',monospace;font-size:13px;color:#e84848;font-weight:600">−${fmtMoney(penalty)}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:13px;color:#e84848;font-weight:600">-${fmtMoney(penalty)}</span>
           </div>` : ''}
           <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 16px;background:${accentBg}">
             <span style="font-family:'DM Mono',monospace;font-size:10px;color:${accentColor};letter-spacing:.06em;font-weight:700;text-transform:uppercase">You Receive</span>
@@ -3007,7 +3007,7 @@ async function confirmPropertyWithdraw(sym, currentVal, penalty, netPayout) {
   if(!holding || !asset || !profile) return;
 
   const btn = document.getElementById('propWithdrawConfirmBtn');
-  if(btn){ btn.disabled = true; btn.style.opacity='.6'; btn.innerHTML='<i class="fas fa-spinner" style="animation:spin .7s linear infinite;display:inline-block"></i> Processing…'; }
+  if(btn){ btn.disabled = true; btn.style.opacity='.6'; btn.innerHTML='<i class="fas fa-spinner" style="animation:spin .7s linear infinite;display:inline-block"></i> Processing�'; }
 
   try {
     const isPremature = penalty > 0;
@@ -3046,9 +3046,9 @@ async function confirmPropertyWithdraw(sym, currentVal, penalty, netPayout) {
   }
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  DEPOSIT MODAL
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function openDepositModal(){ depCoin=null; depAmt=0; goDepStep(1); buildDepositCoinGrid(); document.getElementById('depositModal').classList.add('open'); updateInvestDepCurrency(); }
 function closeDepositModal(){ document.getElementById('depositModal').classList.remove('open'); }
 function goDepStep(n){
@@ -3057,7 +3057,7 @@ function goDepStep(n){
 }
 function buildDepositCoinGrid(){
   const grid=document.getElementById('dep-coin-grid');if(!grid)return;
-  grid.innerHTML=DEPOSIT_COINS.map(c=>{const hasAddr=!!(CRYPTO_ADDRESSES[c.sym]&&CRYPTO_ADDRESSES[c.sym].trim());return`<button class="dep-coin-btn${depCoin===c.sym?' selected':''}" onclick="selectDepCoin('${c.sym}')"><div style="width:32px;height:32px;border-radius:10px;background:${c.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${c.icon}" style="color:${c.color};font-size:15px"></i></div><div style="flex:1;text-align:left;min-width:0"><p style="font-size:13px;font-weight:600;color:var(--pearl)">${c.sym}</p><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)">${c.name} · ${c.network}</p></div>${hasAddr?'<i class="fas fa-circle-check" style="color:var(--gain);font-size:11px;flex-shrink:0"></i>':'<i class="fas fa-circle-xmark" style="color:var(--fog);font-size:11px;flex-shrink:0;opacity:.4"></i>'}</button>`;}).join('');
+  grid.innerHTML=DEPOSIT_COINS.map(c=>{const hasAddr=!!(CRYPTO_ADDRESSES[c.sym]&&CRYPTO_ADDRESSES[c.sym].trim());return`<button class="dep-coin-btn${depCoin===c.sym?' selected':''}" onclick="selectDepCoin('${c.sym}')"><div style="width:32px;height:32px;border-radius:10px;background:${c.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${c.icon}" style="color:${c.color};font-size:15px"></i></div><div style="flex:1;text-align:left;min-width:0"><p style="font-size:13px;font-weight:600;color:var(--pearl)">${c.sym}</p><p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)">${c.name} � ${c.network}</p></div>${hasAddr?'<i class="fas fa-circle-check" style="color:var(--gain);font-size:11px;flex-shrink:0"></i>':'<i class="fas fa-circle-xmark" style="color:var(--fog);font-size:11px;flex-shrink:0;opacity:.4"></i>'}</button>`;}).join('');
 }
 function selectDepCoin(sym){
   depCoin=sym;buildDepositCoinGrid();
@@ -3083,14 +3083,14 @@ function renderDepStep3(){
   txt('dep-s3-coinname',coin.name);txt('dep-s3-network',coin.network);txt('dep-s3-amount',fmtMoney(depAmt));
   const addr=(CRYPTO_ADDRESSES[coin.sym]||'').trim();
   txt('dep-warn-coin',coin.sym);txt('dep-warn-coin2',coin.sym);
-  document.getElementById('dep-address-text').textContent=addr||'—';
+  document.getElementById('dep-address-text').textContent=addr||'�';
   if(!addr){document.getElementById('dep-addr-section').style.display='none';document.getElementById('dep-no-address').style.display='block';document.getElementById('dep-confirm-btn').disabled=true;return;}
   document.getElementById('dep-addr-section').style.display='block';document.getElementById('dep-no-address').style.display='none';document.getElementById('dep-confirm-btn').disabled=false;
   const qrContainer=document.getElementById('dep-qr-canvas');qrContainer.innerHTML='';
   try{new QRCode(qrContainer,{text:addr,width:100,height:100,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});}
-  catch(e){qrContainer.innerHTML=`<div style="font-size:9px;color:var(--fog);text-align:center;word-break:break-all;font-family:monospace;padding:4px">${addr.slice(0,24)}…</div>`;}
+  catch(e){qrContainer.innerHTML=`<div style="font-size:9px;color:var(--fog);text-align:center;word-break:break-all;font-family:monospace;padding:4px">${addr.slice(0,24)}�</div>`;}
 }
-function copyDepAddress(){const addr=document.getElementById('dep-address-text').textContent;if(!addr||addr==='—')return;navigator.clipboard.writeText(addr).then(()=>showToast('Address Copied!',addr.slice(0,20)+'…','success')).catch(()=>showToast('Copy failed','','error'));}
+function copyDepAddress(){const addr=document.getElementById('dep-address-text').textContent;if(!addr||addr==='�')return;navigator.clipboard.writeText(addr).then(()=>showToast('Address Copied!',addr.slice(0,20)+'�','success')).catch(()=>showToast('Copy failed','','error'));}
 async function confirmCryptoDeposit(){
   if(!depCoin||!authUser){showToast('Error','Select a coin first','error');return;}
   if(depAmt<=0){showToast('Error','Enter deposit amount','error');return;}
@@ -3098,19 +3098,19 @@ async function confirmCryptoDeposit(){
   const btn=document.getElementById('dep-confirm-btn'),lbl=document.getElementById('dep-confirm-label'),spin=document.getElementById('dep-confirm-spin');
   if(btn)btn.disabled=true;if(lbl)lbl.style.display='none';if(spin)spin.style.display='block';
   try{
-    const{error}=await sb.from('transactions').insert({user_id:authUser.id,type:'deposit',symbol:depCoin,name:(coin?coin.name:depCoin)+' Crypto Deposit',icon:coin?coin.icon:'fas fa-coins',color:coin?coin.color:'#c9a63c',usd_amount:Math.abs(depAmt),status:'pending',note:`Deposit: ${depCoin} · $${fmtU(depAmt)} · Awaiting approval`});
+    const{error}=await sb.from('transactions').insert({user_id:authUser.id,type:'deposit',symbol:depCoin,name:(coin?coin.name:depCoin)+' Crypto Deposit',icon:coin?coin.icon:'fas fa-coins',color:coin?coin.color:'#c9a63c',usd_amount:Math.abs(depAmt),status:'pending',note:`Deposit: ${depCoin} � $${fmtU(depAmt)} � Awaiting approval`});
     if(error)throw error;
-    closeDepositModal();showToast('Deposit Submitted! ⏳',fmtMoney(depAmt)+' pending — balance credited after approval.','info');
+    closeDepositModal();showToast('Deposit Submitted! ?',fmtMoney(depAmt)+' pending � balance credited after approval.','info');
     depCoin=null;depAmt=0;await loadTransactions();
   }catch(err){showToast('Error',err.message,'error');}
   finally{if(btn)btn.disabled=false;if(lbl)lbl.style.display='flex';if(spin)spin.style.display='none';}
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  SWAP MODAL
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function buildSwapSelects(){
-  const opts=[...CRYPTO,...STOCKS].map(a=>`<option value="${a.sym}">${a.sym} — ${a.name}</option>`).join('');
+  const opts=[...CRYPTO,...STOCKS].map(a=>`<option value="${a.sym}">${a.sym} � ${a.name}</option>`).join('');
   ['sw-from','sw-to'].forEach(id=>{const el=document.getElementById(id);if(el){const first=el.innerHTML.split('</option>')[0]+'</option>';el.innerHTML=first+opts;}});
 }
 function openSwapModal(){document.getElementById('swapModal').classList.add('open');}
@@ -3123,7 +3123,7 @@ function updateSwapCalc(){
   const amt=parseFloat(document.getElementById('sw-from-amt').value)||0;
   const fa=ALL_ASSETS.find(a=>a.sym===fromSym),ta=ALL_ASSETS.find(a=>a.sym===toSym);
   const h=myHoldings.find(x=>x.symbol===fromSym);
-  if(!fa||!ta||!amt){txt('sw-receive','—');txt('sw-rate','Select assets to see rate');txt('sw-fee','—');txt('sw-net','—');document.getElementById('sw-insuf').style.display='none';return;}
+  if(!fa||!ta||!amt){txt('sw-receive','�');txt('sw-rate','Select assets to see rate');txt('sw-fee','�');txt('sw-net','�');document.getElementById('sw-insuf').style.display='none';return;}
   const usdVal=amt*fa.price,fee=+(usdVal*0.003).toFixed(2),netUSD=usdVal-fee,receive=netUSD/ta.price;
   const avail=h?Number(h.quantity):0,insuf=amt>avail;
   document.getElementById('sw-insuf').style.display=insuf?'block':'none';
@@ -3149,16 +3149,16 @@ async function confirmSwap(){
     const th=myHoldings.find(h=>h.symbol===toSym);
     if(th){const nq=Number(th.quantity)+receive,na=(Number(th.avg_buy_price)*Number(th.quantity)+ta.price*receive)/nq;await sb.from('holdings').update({quantity:nq,avg_buy_price:+na.toFixed(6),updated_at:new Date().toISOString()}).eq('id',th.id);}
     else{await sb.from('holdings').insert({user_id:authUser.id,symbol:toSym,name:ta.name,icon:ta.icon,color:ta.color,quantity:receive,avg_buy_price:ta.price});}
-    await sb.from('transactions').insert({user_id:authUser.id,type:'swap',symbol:toSym,name:`Swap ${fromSym}→${toSym}`,icon:ta.icon,color:ta.color,quantity:receive,price_at_tx:ta.price,usd_amount:0,status:'approved',note:`Swapped ${amt.toFixed(6)} ${fromSym} → ${receive.toFixed(6)} ${toSym} | Fee: $${fee.toFixed(2)}`});
+    await sb.from('transactions').insert({user_id:authUser.id,type:'swap',symbol:toSym,name:`Swap ${fromSym}?${toSym}`,icon:ta.icon,color:ta.color,quantity:receive,price_at_tx:ta.price,usd_amount:0,status:'approved',note:`Swapped ${amt.toFixed(6)} ${fromSym} ? ${receive.toFixed(6)} ${toSym} | Fee: $${fee.toFixed(2)}`});
     await loadPortfolioStats();await loadTransactions();closeSwapModal();
-    showToast('Swap Complete',`${amt.toFixed(4)} ${fromSym} → ${receive.toFixed(4)} ${toSym}`,'success');
+    showToast('Swap Complete',`${amt.toFixed(4)} ${fromSym} ? ${receive.toFixed(4)} ${toSym}`,'success');
   }catch(err){showToast('Swap failed',err.message,'error');}
   finally{document.getElementById('sw-spin').style.display='none';txt('sw-label','<i class="fas fa-arrow-right-arrow-left" style="font-size:12px;margin-right:4px"></i>Confirm Swap');document.getElementById('sw-confirm').disabled=false;}
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  PRICE TICK
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function tickPrices(){
   const FREEZE_MS=8000,now=Date.now();
   [...CRYPTO,...STOCKS].forEach(a=>{
@@ -3172,13 +3172,13 @@ function tickPrices(){
   if(profile){const liveMap={};ALL_ASSETS.forEach(a=>liveMap[a.sym]=a.price);const pv=myHoldings.reduce((s,h)=>s+Number(h.quantity)*(liveMap[h.symbol]||Number(h.avg_buy_price)),0);txt('kpi-pv',maskVal(fmtMoney(pv)));}
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  ADMIN PANEL
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function openAdminPanel(){document.getElementById('adminOverlay').classList.add('open');adminLoadUsers();adminPriceTabShow('crypto');}
 function closeAdminPanel(){document.getElementById('adminOverlay').classList.remove('open');}
 async function adminLoadUsers(){
-  document.getElementById('adminUsersTbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--fog)">Loading…</td></tr>';
+  document.getElementById('adminUsersTbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--fog)">Loading�</td></tr>';
   try{
     const users=await callAdmin('get_all_users');adminUsers=users||[];
     const hc=(await sb.from('holdings').select('*',{count:'exact',head:true})).count;
@@ -3191,7 +3191,7 @@ async function adminLoadUsers(){
 }
 function adminRenderUsers(users){
   if(!users.length){document.getElementById('adminUsersTbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--fog)">No users</td></tr>';return;}
-  document.getElementById('adminUsersTbody').innerHTML=users.map(u=>`<tr><td style="color:var(--pearl);font-weight:500">${(u.first_name||'')} ${(u.last_name||'')}</td><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fog)">${u.email||'—'}</td><td><span style="font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;border-radius:6px;background:var(--gold-fog);color:var(--gold);border:1px solid var(--rim-gold)">${fmtMoney(Number(u.cash||0))}</span></td><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fog)">${new Date(u.created_at).toLocaleDateString()}</td><td><button onclick="adminOpenEdit('${u.id}','${(u.first_name||'')+' '+(u.last_name||'')}',${u.cash||0})" style="padding:4px 10px;background:var(--gold-fog);border:1px solid var(--rim-gold);border-radius:7px;color:var(--gold);font-size:11px;cursor:pointer">Edit Cash</button></td></tr>`).join('');
+  document.getElementById('adminUsersTbody').innerHTML=users.map(u=>`<tr><td style="color:var(--pearl);font-weight:500">${(u.first_name||'')} ${(u.last_name||'')}</td><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fog)">${u.email||'�'}</td><td><span style="font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;border-radius:6px;background:var(--gold-fog);color:var(--gold);border:1px solid var(--rim-gold)">${fmtMoney(Number(u.cash||0))}</span></td><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fog)">${new Date(u.created_at).toLocaleDateString()}</td><td><button onclick="adminOpenEdit('${u.id}','${(u.first_name||'')+' '+(u.last_name||'')}',${u.cash||0})" style="padding:4px 10px;background:var(--gold-fog);border:1px solid var(--rim-gold);border-radius:7px;color:var(--gold);font-size:11px;cursor:pointer">Edit Cash</button></td></tr>`).join('');
 }
 function adminFilterUsers(q){const f=q.toLowerCase();adminRenderUsers(adminUsers.filter(u=>(u.email||'').toLowerCase().includes(f)||((u.first_name||'')+' '+(u.last_name||'')).toLowerCase().includes(f)));}
 function adminOpenEdit(id,name,cash){document.getElementById('adminCashEdit').style.display='flex';txt('adminEditName',name.trim());document.getElementById('adminEditUserId').value=id;document.getElementById('adminEditCash').value=Number(cash).toFixed(2);}
@@ -3200,8 +3200,8 @@ async function adminPushPrice(sym){
   const pe=document.getElementById('adm-price-'+sym),ce=document.getElementById('adm-chg-'+sym),be=document.getElementById('adm-push-btn-'+sym);
   if(!pe)return;const price=parseFloat(pe.value),chg=parseFloat(ce?ce.value:'0')||0;
   if(isNaN(price)||price<=0){showToast('Invalid price','Enter a positive number','error');return;}
-  if(be){be.textContent='…';be.disabled=true;}
-  try{await callAdmin('save_price',{sym,price,chg});applyPriceUpdate(sym,price,chg);showToast('Price Updated ✓',`${sym} → $${fmtP(price)}`,'success');}
+  if(be){be.textContent='�';be.disabled=true;}
+  try{await callAdmin('save_price',{sym,price,chg});applyPriceUpdate(sym,price,chg);showToast('Price Updated ?',`${sym} ? $${fmtP(price)}`,'success');}
   catch(err){showToast('Push failed',err.message,'error');}
   finally{if(be){be.textContent='Push';be.disabled=false;}}
 }
@@ -3209,7 +3209,7 @@ async function adminSaveAllPrices(){
   const assets=adminPriceTab==='crypto'?CRYPTO:STOCKS;const rows=[];
   for(const a of assets){const inp=document.getElementById('adm-price-'+a.sym);const chgI=document.getElementById('adm-chg-'+a.sym);if(!inp)continue;const price=parseFloat(inp.value),chg=parseFloat(chgI?chgI.value:'0')||0;if(!isNaN(price)&&price>0)rows.push({sym:a.sym,price,chg});}
   if(!rows.length){showToast('Nothing to save','','error');return;}
-  try{await callAdmin('save_prices_batch',{rows});rows.forEach(r=>applyPriceUpdate(r.sym,r.price,r.chg));showToast('All Prices Saved ✓',`${rows.length} prices synced`,'success');setTimeout(adminRenderPriceGrid,200);}
+  try{await callAdmin('save_prices_batch',{rows});rows.forEach(r=>applyPriceUpdate(r.sym,r.price,r.chg));showToast('All Prices Saved ?',`${rows.length} prices synced`,'success');setTimeout(adminRenderPriceGrid,200);}
   catch(err){showToast('Batch push failed',err.message,'error');}
 }
 function adminPriceTabShow(tab){
@@ -3222,9 +3222,9 @@ function adminRenderPriceGrid(){
   document.getElementById('admin-price-grid').innerHTML=assets.map(a=>{const up=a.chg>=0;return`<div class="adm-price-row"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div style="width:36px;height:36px;border-radius:11px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0"><i class="${a.icon}"></i></div><div style="min-width:0"><p style="font-weight:600;color:var(--pearl);font-size:13px">${a.sym}</p><p style="color:var(--fog);font-size:10px">${a.name}</p></div><span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:6px;background:${up?'var(--gain-bg)':'var(--loss-bg)'};color:${up?'var(--gain)':'var(--loss)'};white-space:nowrap;flex-shrink:0">${up?'+':''}${a.chg.toFixed(2)}%</span></div><input class="adm-input-price" id="adm-price-${a.sym}" type="number" value="${a.price.toFixed(a.price>=1?2:6)}" step="${a.price>=1000?10:a.price>=1?0.01:0.0001}" onkeydown="if(event.key==='Enter'){event.preventDefault();adminPushPrice('${a.sym}');}"><input class="adm-input-chg" id="adm-chg-${a.sym}" type="number" value="${a.chg.toFixed(2)}" step="0.01" placeholder="chg%" onkeydown="if(event.key==='Enter'){event.preventDefault();adminPushPrice('${a.sym}');}"><button class="adm-push-btn" id="adm-push-btn-${a.sym}" onclick="adminPushPrice('${a.sym}')">Push</button></div>`;}).join('');
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  KONAMI / ADMIN TRIGGER
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function setupAdminTrigger(){
   const seq=[38,38,40,40,37,39,37,39,66,65];let pos=0;
   document.addEventListener('keydown',e=>{if(e.keyCode===seq[pos]){pos++;if(pos===1){document.getElementById('kHint').style.color='rgba(201,166,60,.4)';}}else pos=0;if(pos===seq.length){pos=0;openAdminPanel();}});
@@ -3232,30 +3232,30 @@ function setupAdminTrigger(){
   document.getElementById('topLogoMark')?.addEventListener('click',()=>{clicks++;clearTimeout(ct);ct=setTimeout(()=>clicks=0,600);if(clicks>=3){clicks=0;openAdminPanel();}});
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  TOAST
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 let _tt;
 function showToast(title, sub, type='info'){
   const t=document.getElementById('toast'),ti=document.getElementById('toast-icon');
   txt('toast-title',title);txt('toast-sub',sub||'');
-  const cfg={success:{i:'✓',c:'var(--gain)',b:'var(--gain-bg)',br:'rgba(29,189,108,.22)'},error:{i:'⚠',c:'var(--loss)',b:'var(--loss-bg)',br:'rgba(232,72,72,.22)'},info:{i:'ℹ',c:'var(--gold)',b:'var(--gold-fog)',br:'var(--rim-gold)'}}[type]||{};
+  const cfg={success:{i:'?',c:'var(--gain)',b:'var(--gain-bg)',br:'rgba(29,189,108,.22)'},error:{i:'?',c:'var(--loss)',b:'var(--loss-bg)',br:'rgba(232,72,72,.22)'},info:{i:'?',c:'var(--gold)',b:'var(--gold-fog)',br:'var(--rim-gold)'}}[type]||{};
   ti.innerHTML=`<span style="font-size:12px">${cfg.i}</span>`;
   ti.style.cssText=`width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${cfg.b};border:1px solid ${cfg.br};color:${cfg.c}`;
   t.style.borderColor=cfg.br;t.classList.add('show');
   clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),4200);
 }
 
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 //  HELPERS
-// ══════════════════════════════════════════════════
+// --------------------------------------------------
 function txt(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function fmtP(p){return p>=1000?p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):p>=1?p.toFixed(2):p.toFixed(4);}
 function fmtU(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtMoney(n){return window.AurumCurrency?window.AurumCurrency.fmt(Number(n)):'$'+fmtU(n);}
 function fmtMoneyCompact(n){return window.AurumCurrency?window.AurumCurrency.fmtCompact(Number(n)):fmtLarge(n);}
 function isBalHidden(){return localStorage.getItem('aurum_balance_hidden')==='true';}
-function maskVal(v){return isBalHidden()?'••••••':v;}
+function maskVal(v){return isBalHidden()?'������':v;}
 function toggleBalHidden(){localStorage.setItem('aurum_balance_hidden',isBalHidden()?'false':'true');applyInvestBalVisibility();}
 function applyInvestBalVisibility(){
   const h=isBalHidden();
@@ -3312,3 +3312,4 @@ document.addEventListener('aurumRatesReady', function () {
 </script>
 </body>
 </html>
+

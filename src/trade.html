@@ -1,17 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <script>(function(){var t=localStorage.getItem("aurum_theme");if(!t)t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.dataset.theme=t;})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Aurum — Trading Terminal</title>
+<title>Aurum � Trading Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
- <link rel="icon" href="./image/favicon.svg" type="image/svg+xml" sizes="any">
- <link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.svg">
+ <link rel="icon" href="./image/favicon.png" type="image/png" sizes="any">
+ <link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.png">
  <link rel="manifest" href="./site.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
@@ -20,12 +20,12 @@
 <meta property="og:title" content="Trading Terminal - Aurum Capital">
 <meta property="og:description" content="Advanced trading terminal with real-time market data on Aurum Capital.">
 <meta property="og:url" content="https://aurumcapitalinvest.com/trade.html">
-<meta property="og:image" content="https://aurumcapitalinvest.com/image/favicon.svg">
-<meta property="og:image:type" content="image/svg+xml">
+<meta property="og:image" content="https://aurumcapitalinvest.com/image/favicon.png">
+<meta property="og:image:type" content="image/png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Trading Terminal - Aurum Capital">
 <meta name="twitter:description" content="Advanced trading terminal with real-time market data.">
-<meta name="twitter:image" content="https://aurumcapitalinvest.com/image/favicon.svg">
+<meta name="twitter:image" content="https://aurumcapitalinvest.com/image/favicon.png">
 <meta property="og:title" content="Aurum Invest">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -199,7 +199,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 /* absolute fill so clientWidth/Height are always the full container size */
 #tv-chart{position:absolute;inset:0}
 
-/* FLOATING OPEN TRADES — legacy panel always hidden; replaced by float-pos-btn */
+/* FLOATING OPEN TRADES � legacy panel always hidden; replaced by float-pos-btn */
 #floating-trades-panel{display:none!important}
 
 /* POSITIONS FLOATING TRIGGER BUTTON */
@@ -354,9 +354,9 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 .cfd-pos-row{padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.02);border-left:2px solid var(--green);margin-bottom:5px;}
 .cfd-pos-row.short{border-left-color:var(--red)}
 
-/* ══════════════════════════════════
-   MOBILE TOPBAR — PREMIUM
-══════════════════════════════════ */
+/* ----------------------------------
+   MOBILE TOPBAR � PREMIUM
+---------------------------------- */
 #mob-topbar{
   display:none;
   height:calc(var(--topbar-h) + var(--safe-top));
@@ -392,11 +392,11 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 .mob-stat span{color:var(--text2)}
 
 
-/* ═══════════════════════════════════════════════════════
-   ULTRA PREMIUM MOBILE BOTTOM NAV — REDESIGNED
-   Full gold visibility · Floating pill design · 
-   Premium animations · Magnetic press effects
-═══════════════════════════════════════════════════════ */
+/* -------------------------------------------------------
+   ULTRA PREMIUM MOBILE BOTTOM NAV � REDESIGNED
+   Full gold visibility � Floating pill design � 
+   Premium animations � Magnetic press effects
+------------------------------------------------------- */
 
 #mobile-bottom-nav{
   display:none;
@@ -450,7 +450,7 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
   z-index:1;
 }
 
-/* ── Nav button base ── */
+/* -- Nav button base -- */
 .mob-nav-btn{
   flex:1;
   display:flex;
@@ -474,7 +474,7 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
   transition:transform .08s ease;
 }
 
-/* ── Icon container ── */
+/* -- Icon container -- */
 .mob-nav-icon-wrap{
   position:relative;
   display:flex;
@@ -577,7 +577,7 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 .mob-nav-pill.show{display:flex}
 @keyframes badgePop{from{transform:scale(0)}to{transform:scale(1)}}
 
-/* ── Active state base ── */
+/* -- Active state base -- */
 .mob-nav-btn.active .mob-nav-icon-wrap{
   transform:translateY(-5px) scale(1.06);
 }
@@ -588,11 +588,11 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
   transform:translateY(-3px);
 }
 
-/* ═══════════════════════════
+/* ---------------------------
    PER-TAB ACTIVE COLORS
-═══════════════════════════ */
+--------------------------- */
 
-/* CHART — Electric Blue */
+/* CHART � Electric Blue */
 #mbn-chart.active .mob-nav-icon-wrap{
   background:linear-gradient(145deg,rgba(78,127,255,.30),rgba(40,80,200,.15));
   border-color:rgba(78,127,255,.65);
@@ -614,7 +614,7 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 }
 #mbn-chart.active span.mob-nav-label{color:#90bbff}
 
-/* PORTFOLIO — Vivid Violet */
+/* PORTFOLIO � Vivid Violet */
 #mbn-portfolio.active .mob-nav-icon-wrap{
   background:linear-gradient(145deg,rgba(139,92,246,.30),rgba(100,60,200,.15));
   border-color:rgba(139,92,246,.65);
@@ -636,7 +636,7 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 }
 #mbn-portfolio.active span.mob-nav-label{color:#c4b0ff}
 
-/* TRADE — Pure Blazing Gold (center hero button) */
+/* TRADE � Pure Blazing Gold (center hero button) */
 #mbn-trade{
   flex:1.3;
   z-index:3;
@@ -710,7 +710,7 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
   color:#f5e6b8;
 }
 
-/* ALERTS — Warm Amber */
+/* ALERTS � Warm Amber */
 #mbn-alerts.active .mob-nav-icon-wrap{
   background:linear-gradient(145deg,rgba(245,158,11,.30),rgba(180,110,0,.15));
   border-color:rgba(245,158,11,.65);
@@ -732,7 +732,7 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 }
 #mbn-alerts.active span.mob-nav-label{color:#ffd060}
 
-/* MARKETS — Aqua Cyan */
+/* MARKETS � Aqua Cyan */
 #mbn-assets.active .mob-nav-icon-wrap{
   background:linear-gradient(145deg,rgba(6,182,212,.30),rgba(0,130,160,.15));
   border-color:rgba(6,182,212,.65);
@@ -777,9 +777,9 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 }
 
 
-/* ══════════════════════════════════
+/* ----------------------------------
    PREMIUM LIVE MARKET TICKER STRIP
-══════════════════════════════════ */
+---------------------------------- */
 #market-nav-strip{
   position:fixed;
   bottom:calc(var(--bottombar-h) + var(--safe-bottom));
@@ -858,10 +858,10 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 #sheet-overlay.open{display:block;pointer-events:all}
 
 
-/* ══════════════════════════════════════════
-   IN-APP NOTIFICATION SYSTEM — PREMIUM
+/* ------------------------------------------
+   IN-APP NOTIFICATION SYSTEM � PREMIUM
    Replaces all browser Notification API calls
-══════════════════════════════════════════ */
+------------------------------------------ */
 
 /* Notification container */
 #notif-container{
@@ -1063,7 +1063,7 @@ body.fullscreen-chart #fs-exit-btn{display:flex!important}
 .ccm-btn-close.profit-close:hover{box-shadow:0 6px 28px rgba(30,184,122,.5)}
 .ccm-autoclose-warn{margin:0 26px 18px;padding:10px 14px;background:linear-gradient(135deg,rgba(200,164,90,.08),rgba(200,164,90,.03));border:1px solid rgba(200,164,90,.2);border-radius:12px;display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:10px;color:var(--gold);}
 
-/* FULLSCREEN — FULL VIEWPORT CHART */
+/* FULLSCREEN � FULL VIEWPORT CHART */
 body.fullscreen-chart #mob-chart-info{display:none!important}
 body.fullscreen-chart #topbar{display:none!important}
 body.fullscreen-chart #mob-topbar{display:none!important}
@@ -1110,12 +1110,12 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   .mob-top-sym{font-size:12px}
 }
 
-  /* ══════════════════════════════════════════════════
-     PREMIUM LIGHT MODE — TRADE TERMINAL
-     Warm ivory canvas · Dark gold accents · Full coverage
-  ══════════════════════════════════════════════════ */
+  /* --------------------------------------------------
+     PREMIUM LIGHT MODE � TRADE TERMINAL
+     Warm ivory canvas � Dark gold accents � Full coverage
+  -------------------------------------------------- */
 
-  /* ── Override all trade-page CSS variables ──
+  /* -- Override all trade-page CSS variables --
      Fixes inline styles, dynamic HTML, and all var() references
      throughout the page including the price alerts sheet. */
   html[data-theme="light"]{
@@ -1157,12 +1157,12 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
     --border3:rgba(0,0,0,.1);
   }
 
-  /* ── Body & Shell ── */
+  /* -- Body & Shell -- */
   html[data-theme="light"] body{background:#f0ece2!important;color:#1a1410!important}
   html[data-theme="light"] body::before{opacity:.12!important}
   html[data-theme="light"] body::after{opacity:.008!important}
 
-  /* ── Desktop Topbar ── */
+  /* -- Desktop Topbar -- */
   html[data-theme="light"] #topbar{background:linear-gradient(180deg,rgba(250,246,240,.99),rgba(244,239,229,.97))!important;border-bottom-color:rgba(0,0,0,.09)!important;box-shadow:0 1px 18px rgba(0,0,0,.06)!important}
   html[data-theme="light"] #topbar::after{background:linear-gradient(90deg,transparent,rgba(159,122,30,.28),transparent)!important}
   html[data-theme="light"] .tb-logo{background:linear-gradient(135deg,#9f7a1e,#c9a84c)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
@@ -1179,11 +1179,11 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .tb-cash span{color:#9f7a1e!important}
   html[data-theme="light"] .tb-avatar{background:linear-gradient(135deg,#9f7a1e,#7a5e15)!important;color:#fff!important;box-shadow:0 0 10px rgba(159,122,30,.2)!important}
 
-  /* ── Theme Toggle Button — light-mode indicator ── */
+  /* -- Theme Toggle Button � light-mode indicator -- */
   html[data-theme="light"] .theme-toggle{background:rgba(159,122,30,.12)!important;border-color:rgba(159,122,30,.32)!important;color:#9f7a1e!important;box-shadow:0 0 8px rgba(159,122,30,.15)!important}
   html[data-theme="light"] .theme-toggle:hover{background:rgba(159,122,30,.22)!important;border-color:rgba(159,122,30,.5)!important;box-shadow:0 0 16px rgba(159,122,30,.25)!important}
 
-  /* ── Asset Sidebar ── */
+  /* -- Asset Sidebar -- */
   html[data-theme="light"] #asset-sidebar{background:linear-gradient(180deg,#f5f1e8,#f0ece2)!important;border-right-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] #asset-sidebar::after{background:linear-gradient(180deg,transparent,rgba(159,122,30,.1) 30%,rgba(159,122,30,.1) 70%,transparent)!important}
   html[data-theme="light"] .sb-search-wrap{border-bottom-color:rgba(0,0,0,.07)!important}
@@ -1200,7 +1200,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .sb-item-name{color:#8a7060!important}
   html[data-theme="light"] .sb-item-price{color:#1a1410!important}
 
-  /* ── Chart Topbar ── */
+  /* -- Chart Topbar -- */
   html[data-theme="light"] #chart-topbar{background:linear-gradient(180deg,rgba(248,244,238,.95),rgba(244,239,230,.85))!important;border-bottom-color:rgba(0,0,0,.07)!important}
   html[data-theme="light"] .ct-sym{background:linear-gradient(135deg,#1a1410,#4a3520)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
   html[data-theme="light"] .ct-price{color:#1a1410!important}
@@ -1208,7 +1208,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .ct-stat span{color:#5a4830!important}
   html[data-theme="light"] .ct-sep{background:linear-gradient(180deg,transparent,rgba(0,0,0,.1),transparent)!important}
 
-  /* ── Chart Toolbar ── */
+  /* -- Chart Toolbar -- */
   html[data-theme="light"] #chart-toolbar{background:linear-gradient(180deg,rgba(245,240,232,.98),rgba(240,235,226,.96))!important;border-bottom-color:rgba(0,0,0,.07)!important}
   html[data-theme="light"] #chart-toolbar::after{background:linear-gradient(90deg,transparent,rgba(159,122,30,.1),transparent)!important}
   html[data-theme="light"] .ct-period-btn{color:#5a4830!important}
@@ -1223,10 +1223,10 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .live-badge{background:rgba(21,128,61,.08)!important;border-color:rgba(21,128,61,.2)!important;color:#15803d!important}
   html[data-theme="light"] .live-dot{background:#15803d!important;box-shadow:none!important}
 
-  /* ── Chart Container ── */
+  /* -- Chart Container -- */
   html[data-theme="light"] #chart-container{background:#fff!important}
 
-  /* ── Positions Strip ── */
+  /* -- Positions Strip -- */
   html[data-theme="light"] #positions-strip{background:linear-gradient(180deg,#f5f1e8,#f0ece2)!important;border-top-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] #positions-strip::before{background:linear-gradient(90deg,transparent,rgba(159,122,30,.15),transparent)!important}
   html[data-theme="light"] #pos-tabs{border-bottom-color:rgba(0,0,0,.07)!important}
@@ -1236,7 +1236,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] #pos-table td{color:#1a1410!important;border-bottom-color:rgba(0,0,0,.04)!important}
   html[data-theme="light"] #pos-table tr:hover td{background:rgba(0,0,0,.025)!important}
 
-  /* ── Order Panel ── */
+  /* -- Order Panel -- */
   html[data-theme="light"] #order-panel{background:linear-gradient(180deg,#f5f1e8,#f0ece2)!important;border-left-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] #order-panel::before{background:linear-gradient(180deg,transparent,rgba(159,122,30,.08) 30%,rgba(159,122,30,.08) 70%,transparent)!important}
   html[data-theme="light"] .op-section{border-bottom-color:rgba(0,0,0,.07)!important}
@@ -1271,7 +1271,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .pf-holding:hover{border-color:rgba(159,122,30,.2)!important;background:rgba(159,122,30,.04)!important}
   html[data-theme="light"] .cfd-pos-row{background:rgba(255,255,255,.6)!important}
 
-  /* ── Mobile Topbar ── */
+  /* -- Mobile Topbar -- */
   html[data-theme="light"] #mob-topbar{background:linear-gradient(180deg,rgba(250,246,240,.99),rgba(244,239,230,.97))!important;border-bottom-color:rgba(0,0,0,.09)!important}
   html[data-theme="light"] #mob-topbar::after{background:linear-gradient(90deg,transparent 0%,rgba(159,122,30,.4) 30%,rgba(180,148,48,.65) 50%,rgba(159,122,30,.4) 70%,transparent 100%)!important}
   html[data-theme="light"] .mob-back-btn{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important;color:#5a4830!important}
@@ -1281,12 +1281,12 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .mob-icon-btn{background:rgba(0,0,0,.04)!important;border-color:rgba(0,0,0,.09)!important;color:#5a4830!important}
   html[data-theme="light"] .mob-icon-btn:active{background:rgba(0,0,0,.08)!important}
 
-  /* ── Mobile Chart Info ── */
+  /* -- Mobile Chart Info -- */
   html[data-theme="light"] #mob-chart-info{background:linear-gradient(180deg,rgba(248,244,238,.95),transparent)!important;border-bottom-color:rgba(0,0,0,.07)!important}
   html[data-theme="light"] .mob-stat{color:#8a7060!important}
   html[data-theme="light"] .mob-stat span{color:#5a4830!important}
 
-  /* ── Mobile Bottom Nav ── */
+  /* -- Mobile Bottom Nav -- */
   html[data-theme="light"] #mobile-bottom-nav::before{background:linear-gradient(0deg,rgba(245,241,233,1) 0%,rgba(242,237,228,.99) 30%,rgba(240,235,225,.97) 70%,rgba(238,232,220,.9) 100%)!important;backdrop-filter:blur(24px) saturate(1.2)!important;-webkit-backdrop-filter:blur(24px) saturate(1.2)!important}
   html[data-theme="light"] #mobile-bottom-nav::after{background:linear-gradient(90deg,transparent 0%,rgba(159,122,30,.12) 5%,rgba(159,122,30,.42) 20%,rgba(178,142,46,.68) 38%,rgba(190,154,56,.82) 50%,rgba(178,142,46,.68) 62%,rgba(159,122,30,.42) 80%,rgba(159,122,30,.12) 95%,transparent 100%)!important}
   html[data-theme="light"] .mob-nav-icon-wrap{background:linear-gradient(145deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.03) 100%)!important;border-color:rgba(0,0,0,.12)!important;box-shadow:0 2px 8px rgba(0,0,0,.07),inset 0 1px 0 rgba(255,255,255,.88),inset 0 -1px 0 rgba(0,0,0,.04)!important}
@@ -1306,7 +1306,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] #mbn-trade span.mob-nav-label{color:rgba(159,122,30,.8)!important}
   html[data-theme="light"] #mbn-trade.active .mob-nav-icon-wrap,html[data-theme="light"] #mbn-trade:active .mob-nav-icon-wrap{background:linear-gradient(145deg,rgba(159,122,30,.3) 0%,rgba(138,105,18,.22) 100%)!important;border-color:rgba(159,122,30,.65)!important;box-shadow:0 0 0 1px rgba(159,122,30,.15),0 10px 32px rgba(159,122,30,.3),inset 0 1px 0 rgba(255,255,255,.9)!important}
 
-  /* ── Market Ticker Strip ── */
+  /* -- Market Ticker Strip -- */
   html[data-theme="light"] .market-ticker-bg{background:linear-gradient(180deg,rgba(245,241,233,0),rgba(245,241,233,.95))!important;border-top-color:rgba(0,0,0,.07)!important}
   html[data-theme="light"] .market-ticker-bg::before{background:linear-gradient(90deg,transparent,rgba(159,122,30,.22) 30%,rgba(159,122,30,.36) 50%,rgba(159,122,30,.22) 70%,transparent)!important}
   html[data-theme="light"] .market-ticker-fade-l{background:linear-gradient(90deg,rgba(245,241,233,.98),transparent)!important}
@@ -1314,7 +1314,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .ticker-sym{color:#5a4830!important}
   html[data-theme="light"] .ticker-price{color:#1a1410!important}
 
-  /* ── Floating Trades Panel ── */
+  /* -- Floating Trades Panel -- */
   html[data-theme="light"] .float-trade-card{background:linear-gradient(135deg,rgba(255,252,248,.99),rgba(252,248,242,.97))!important;border-color:rgba(0,0,0,.1)!important;box-shadow:0 8px 28px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,1)!important}
   html[data-theme="light"] .float-trade-card.long-card{box-shadow:0 8px 28px rgba(0,0,0,.09),2px 0 10px rgba(21,128,61,.09),inset 0 1px 0 rgba(255,255,255,1)!important}
   html[data-theme="light"] .float-trade-card.short-card{box-shadow:0 8px 28px rgba(0,0,0,.09),2px 0 10px rgba(185,28,28,.09),inset 0 1px 0 rgba(255,255,255,1)!important}
@@ -1322,7 +1322,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .ftc-label{color:#8a7060!important}
   html[data-theme="light"] .ftc-val{color:#5a4830!important}
 
-  /* ── Mobile Sheets ── */
+  /* -- Mobile Sheets -- */
   html[data-theme="light"] .mob-sheet-base{background:linear-gradient(180deg,#f8f4ee,#f3ede3)!important;border-top-color:rgba(159,122,30,.16)!important;box-shadow:0 -18px 56px rgba(0,0,0,.11),0 -1px 0 rgba(159,122,30,.1)!important}
   html[data-theme="light"] .mob-sheet-base::before{background:linear-gradient(90deg,transparent,rgba(159,122,30,.4) 40%,rgba(178,145,48,.65) 50%,rgba(159,122,30,.4) 60%,transparent)!important}
   html[data-theme="light"] .mob-sheet-handle{background:linear-gradient(90deg,transparent,rgba(0,0,0,.18),transparent)!important}
@@ -1330,21 +1330,21 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .mob-sheet-title{color:#1a1410!important}
   html[data-theme="light"] .mob-sheet-close{border-color:rgba(0,0,0,.09)!important;background:rgba(0,0,0,.04)!important;color:#5a4830!important}
 
-  /* ── Mobile Asset Drawer ── */
+  /* -- Mobile Asset Drawer -- */
   html[data-theme="light"] #mob-asset-overlay{background:rgba(175,160,135,.55)!important}
   html[data-theme="light"] #mob-asset-drawer{background:linear-gradient(180deg,#f8f4ee,#f3ede3)!important;border-right-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] .mob-drawer-header{border-bottom-color:rgba(0,0,0,.07)!important;color:#1a1410!important}
   html[data-theme="light"] .mob-drawer-close{border-color:rgba(0,0,0,.09)!important;background:rgba(0,0,0,.04)!important;color:#5a4830!important}
 
-  /* ── Sheet Overlay ── */
+  /* -- Sheet Overlay -- */
   html[data-theme="light"] #sheet-overlay{background:rgba(175,160,135,.5)!important}
 
-  /* ── Receipt Modal ── */
+  /* -- Receipt Modal -- */
   html[data-theme="light"] #receipt-modal{background:rgba(175,160,135,.65)!important}
   html[data-theme="light"] #receipt-box{background:linear-gradient(155deg,#faf8f4,#f5f0e8)!important;border-color:rgba(159,122,30,.18)!important;box-shadow:0 0 50px rgba(0,0,0,.09),0 24px 54px rgba(0,0,0,.08)!important}
   html[data-theme="light"] #receipt-box::before{background:linear-gradient(90deg,transparent,rgba(159,122,30,.28),transparent)!important}
 
-  /* ── Close Confirm Modal ── */
+  /* -- Close Confirm Modal -- */
   html[data-theme="light"] #close-confirm-modal{background:rgba(175,160,135,.7)!important}
   html[data-theme="light"] #close-confirm-box{background:linear-gradient(145deg,#faf8f4,#f5f0e8)!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 0 50px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.85)!important}
   html[data-theme="light"] #close-confirm-box::before{background:linear-gradient(90deg,transparent,rgba(159,122,30,.45) 30%,rgba(178,145,48,.72) 50%,rgba(159,122,30,.45) 70%,transparent)!important}
@@ -1357,7 +1357,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .ccm-btn-cancel:hover{background:rgba(0,0,0,.08)!important;border-color:rgba(0,0,0,.16)!important;color:#1a1410!important}
   html[data-theme="light"] .ccm-autoclose-warn{background:linear-gradient(135deg,rgba(159,122,30,.07),rgba(159,122,30,.02))!important;border-color:rgba(159,122,30,.2)!important}
 
-  /* ── Notification Cards ── */
+  /* -- Notification Cards -- */
   html[data-theme="light"] .notif-card{background:linear-gradient(135deg,rgba(250,248,244,.99),rgba(245,240,232,.97))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 14px 44px rgba(0,0,0,.1),0 4px 14px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,1)!important}
   html[data-theme="light"] .notif-card::before{background:linear-gradient(90deg,transparent,rgba(0,0,0,.05),transparent)!important}
   html[data-theme="light"] .notif-title{color:#1a1410!important}
@@ -1370,21 +1370,21 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   html[data-theme="light"] .notif-card.notif-warning .notif-icon{background:rgba(180,100,0,.08)!important;border-color:rgba(180,100,0,.16)!important}
   html[data-theme="light"] .notif-card.notif-alert .notif-icon{background:rgba(52,72,160,.08)!important;border-color:rgba(52,72,160,.16)!important}
 
-  /* ── Legacy Toast ── */
+  /* -- Legacy Toast -- */
   html[data-theme="light"] #tr-toast{background:linear-gradient(135deg,rgba(250,248,244,.99),rgba(245,240,232,.97))!important;border-color:rgba(0,0,0,.09)!important;box-shadow:0 14px 44px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,1)!important}
 
-  /* ── Inputs global ── */
+  /* -- Inputs global -- */
   html[data-theme="light"] .op-input::placeholder{color:#a09080!important}
   html[data-theme="light"] input[type=number]:focus{outline:none}
 
-  /* ── Price Alerts Sheet ── */
+  /* -- Price Alerts Sheet -- */
   html[data-theme="light"] #mob-alerts-sheet .mob-sheet-handle{background:linear-gradient(90deg,transparent,rgba(0,0,0,.18),transparent)!important}
   html[data-theme="light"] .alert-item{border-bottom-color:rgba(0,0,0,.07)!important}
   html[data-theme="light"] .alert-del-btn{border-color:rgba(185,28,28,.2)!important;background:rgba(185,28,28,.06)!important;color:#b91c1c!important}
   html[data-theme="light"] .alert-del-btn:hover{background:rgba(185,28,28,.12)!important;border-color:rgba(185,28,28,.35)!important}
   html[data-theme="light"] #mob-alerts-sheet .mob-sheet-body{background:transparent}
 
-  /* ── Ultra-premium enhancement: light mode overrides ── */
+  /* -- Ultra-premium enhancement: light mode overrides -- */
   html[data-theme="light"] .ct-fs-btn{border-color:rgba(159,122,30,.3)!important;background:linear-gradient(135deg,rgba(159,122,30,.09),rgba(159,122,30,.04))!important;color:#9f7a1e!important}
   html[data-theme="light"] .ct-fs-btn:hover{background:linear-gradient(135deg,rgba(159,122,30,.18),rgba(159,122,30,.09))!important;border-color:rgba(159,122,30,.52)!important;box-shadow:0 0 14px rgba(159,122,30,.18)!important}
   html[data-theme="light"] .ct-stat{background:rgba(0,0,0,.03)!important;border-color:rgba(0,0,0,.06)!important}
@@ -1418,9 +1418,9 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
 </style>
 
 <style>
-/* ═══════════════════════════════════════════════════════
-   AURUM TRADE — ULTRA-PREMIUM ENHANCEMENT LAYER
-═══════════════════════════════════════════════════════ */
+/* -------------------------------------------------------
+   AURUM TRADE � ULTRA-PREMIUM ENHANCEMENT LAYER
+------------------------------------------------------- */
 
 /* === TOPBAR REFINEMENTS === */
 #topbar{
@@ -1649,9 +1649,9 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
 .op-section{
   padding:14px 16px!important;
 }
-/* ══════════════════════════════════════════
+/* ------------------------------------------
    ULTRA-PREMIUM TRADE EXECUTE BUTTON
-══════════════════════════════════════════ */
+------------------------------------------ */
 .op-confirm-btn{
   width:100%!important;
   min-height:64px!important;
@@ -1670,7 +1670,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   isolation:isolate;
   transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s cubic-bezier(.16,1,.3,1),opacity .2s!important;
 }
-/* Top glass arc — inner highlight */
+/* Top glass arc � inner highlight */
 .op-confirm-btn::before{
   content:'';
   position:absolute;
@@ -1734,7 +1734,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
 .op-confirm-btn:hover:not(:disabled) .op-btn-chevron{transform:translateX(5px);opacity:.9}
 [data-op="op-confirm-lbl"]{flex:1!important;display:flex!important;align-items:center!important;}
 
-/* ── BUY: Aurum Gold ── */
+/* -- BUY: Aurum Gold -- */
 .op-confirm-btn.buy{
   background:linear-gradient(150deg,#f5e07c 0%,#d4a430 22%,#c09030 48%,#9a6e18 72%,#6a4808 100%)!important;
   color:#1a0e00!important;
@@ -1757,7 +1757,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
     0 0 110px rgba(200,164,90,.2)!important;
 }
 
-/* ── SELL: Premium Crimson ── */
+/* -- SELL: Premium Crimson -- */
 .op-confirm-btn.sell{
   background:linear-gradient(150deg,#ff8282 0%,#e84040 22%,#cf2030 48%,#9e1020 72%,#5e0810 100%)!important;
   color:#fff!important;
@@ -1780,7 +1780,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
     0 0 110px rgba(224,65,75,.14)!important;
 }
 
-/* ── CFD LONG: Emerald ── */
+/* -- CFD LONG: Emerald -- */
 .op-confirm-btn.cfd-long{
   background:linear-gradient(150deg,#42f2a4 0%,#1ec872 22%,#14a058 48%,#0c7840 72%,#084820 100%)!important;
   color:#001a0a!important;
@@ -1803,7 +1803,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
     0 0 110px rgba(30,184,122,.12)!important;
 }
 
-/* ── CFD SHORT: Crimson ── */
+/* -- CFD SHORT: Crimson -- */
 .op-confirm-btn.cfd-short{
   background:linear-gradient(150deg,#ff8282 0%,#e84040 22%,#cf2030 48%,#9e1020 72%,#5e0810 100%)!important;
   color:#fff!important;
@@ -1908,11 +1908,11 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
 ::-webkit-scrollbar-thumb{background:rgba(200,164,90,.18)!important;border-radius:4px!important}
 ::-webkit-scrollbar-thumb:hover{background:rgba(200,164,90,.32)!important}
 
-/* ═══════════════════════════════════════════════════
+/* ---------------------------------------------------
    FLOATING PILL NAV REDESIGN
-═══════════════════════════════════════════════════ */
+--------------------------------------------------- */
 
-/* Container — floating pill that lifts off the safe area */
+/* Container � floating pill that lifts off the safe area */
 #mobile-bottom-nav{
   bottom:calc(10px + var(--safe-bottom))!important;
   left:12px!important;
@@ -1957,7 +1957,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   box-shadow:none!important;
 }
 
-/* Buttons — equal flex, more compact */
+/* Buttons � equal flex, more compact */
 .mob-nav-btn{
   flex:1!important;
   padding:6px 2px 5px!important;
@@ -1966,7 +1966,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
 }
 .mob-nav-btn:active{transform:scale(.88)!important}
 
-/* Icon wraps — slightly smaller, tighter radius */
+/* Icon wraps � slightly smaller, tighter radius */
 .mob-nav-icon-wrap{
   width:42px!important;
   height:42px!important;
@@ -1989,13 +1989,13 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
 .mob-nav-icon-wrap::before{border-radius:14px 14px 0 0!important}
 .mob-nav-icon-wrap i{font-size:17px!important}
 
-/* Label — smaller to fit pill */
+/* Label � smaller to fit pill */
 .mob-nav-btn span.mob-nav-label{
   font-size:6.5px!important;
   letter-spacing:.12em!important;
 }
 
-/* Active lift — less dramatic, cleaner */
+/* Active lift � less dramatic, cleaner */
 .mob-nav-btn.active .mob-nav-icon-wrap{
   transform:translateY(-3px) scale(1.05)!important;
 }
@@ -2003,7 +2003,7 @@ body.fullscreen-chart #chart-toolbar{display:none!important}
   transform:translateY(-2px)!important;
 }
 
-/* Trade hero button — slightly bigger than siblings */
+/* Trade hero button � slightly bigger than siblings */
 #mbn-trade{flex:1.2!important}
 #mbn-trade .mob-nav-icon-wrap{
   width:48px!important;
@@ -2093,13 +2093,13 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
     <div class="tb-asset-pill" id="tb-asset-pill">
       <div id="tb-icon" style="font-size:14px"></div>
       <span id="tb-sym-label" style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text1)">BTC</span>
-      <span class="tb-price" id="tb-price">—</span>
-      <span class="tb-chg"   id="tb-chg">—</span>
+      <span class="tb-price" id="tb-price">�</span>
+      <span class="tb-chg"   id="tb-chg">�</span>
     </div>
     <div class="tb-spacer"></div>
-    <div class="tb-cash" style="display:flex;align-items:center;gap:6px">Cash: <span id="topbar-cash">—</span><button id="bal-eye-btn" onclick="toggleBalHidden()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:2px 3px;line-height:1;transition:color .2s" title="Hide/show balances"><i class="fas fa-eye"></i></button></div>
+    <div class="tb-cash" style="display:flex;align-items:center;gap:6px">Cash: <span id="topbar-cash">�</span><button id="bal-eye-btn" onclick="toggleBalHidden()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:2px 3px;line-height:1;transition:color .2s" title="Hide/show balances"><i class="fas fa-eye"></i></button></div>
     <div class="tb-sep"></div>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><span class="theme-icon">☀</span></button><div class="tb-avatar" id="tb-avatar">?</div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><span class="theme-icon">?</span></button><div class="tb-avatar" id="tb-avatar">?</div>
   </div>
 
   <!-- MOBILE TOPBAR -->
@@ -2108,11 +2108,11 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
     <div class="mob-top-asset">
       <div id="mob-ct-icon" style="font-size:13px"></div>
       <span class="mob-top-sym" id="mob-sym">BTC</span>
-      <span class="mob-top-price" id="mob-price">—</span>
-      <span class="mob-top-chg" id="mob-chg">—</span>
+      <span class="mob-top-price" id="mob-price">�</span>
+      <span class="mob-top-chg" id="mob-chg">�</span>
     </div>
     <div style="display:flex;gap:6px">
-      <button class="theme-toggle mob-icon-btn" onclick="toggleTheme()" aria-label="Toggle theme"><span class="theme-icon">☀</span></button>
+      <button class="theme-toggle mob-icon-btn" onclick="toggleTheme()" aria-label="Toggle theme"><span class="theme-icon">?</span></button>
       <button class="mob-icon-btn" id="mob-trade-quick-btn" style="background:var(--gold-dim);border-color:rgba(200,164,90,.3);color:var(--gold)"><i class="fas fa-bolt"></i></button>
     </div>
   </div>
@@ -2125,7 +2125,7 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
       <div class="sb-search-wrap">
         <div class="sb-search-rel">
           <i class="fas fa-magnifying-glass sb-search-ico"></i>
-          <input class="sb-search" id="sb-search" placeholder="Search markets…">
+          <input class="sb-search" id="sb-search" placeholder="Search markets�">
         </div>
       </div>
       <div class="sb-cat-tabs">
@@ -2142,25 +2142,25 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
     <div id="chart-area">
       <div id="chart-topbar">
         <div id="ct-icon" style="width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"></div>
-        <span class="ct-sym" id="ct-sym">—</span>
+        <span class="ct-sym" id="ct-sym">�</span>
         <div class="ct-sep"></div>
-        <span class="ct-price" id="ct-price">—</span>
-        <span class="ct-chg"   id="ct-chg">—</span>
+        <span class="ct-price" id="ct-price">�</span>
+        <span class="ct-chg"   id="ct-chg">�</span>
         <div class="ct-sep"></div>
         <div class="ct-stats-group">
-          <div class="ct-stat">O: <span id="ct-open">—</span></div>
-          <div class="ct-stat">H: <span id="ct-high">—</span></div>
-          <div class="ct-stat">L: <span id="ct-low">—</span></div>
-          <div class="ct-stat">Vol: <span id="ct-vol">—</span></div>
+          <div class="ct-stat">O: <span id="ct-open">�</span></div>
+          <div class="ct-stat">H: <span id="ct-high">�</span></div>
+          <div class="ct-stat">L: <span id="ct-low">�</span></div>
+          <div class="ct-stat">Vol: <span id="ct-vol">�</span></div>
         </div>
       </div>
 
       <div id="mob-chart-info">
         <div class="mob-info-row">
-          <div class="mob-stat">O: <span id="mob-ct-open">—</span></div>
-          <div class="mob-stat">H: <span id="mob-ct-high">—</span></div>
-          <div class="mob-stat">L: <span id="mob-ct-low">—</span></div>
-          <div class="mob-stat">Vol: <span id="mob-ct-vol">—</span></div>
+          <div class="mob-stat">O: <span id="mob-ct-open">�</span></div>
+          <div class="mob-stat">H: <span id="mob-ct-high">�</span></div>
+          <div class="mob-stat">L: <span id="mob-ct-low">�</span></div>
+          <div class="mob-stat">Vol: <span id="mob-ct-vol">�</span></div>
           <div class="live-badge"><span class="live-dot"></span>LIVE</div>
         </div>
       </div>
@@ -2186,7 +2186,7 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
         <button class="ct-fs-btn" id="btn-fullscreen" title="Fullscreen Chart"><i class="fas fa-expand" style="font-size:9px"></i></button>
         <button id="btn-clear-markers"><i class="fas fa-eraser" style="font-size:9px"></i><span>Clear</span></button>
         <div style="flex:1;min-width:8px"></div>
-        <div id="candle-timer-badge"><i class="fas fa-clock" style="font-size:8px;opacity:.6"></i><span>Next:</span><span class="ct-countdown" id="candle-countdown">—</span></div>
+        <div id="candle-timer-badge"><i class="fas fa-clock" style="font-size:8px;opacity:.6"></i><span>Next:</span><span class="ct-countdown" id="candle-countdown">�</span></div>
         <div style="width:8px"></div>
         <div class="live-badge" id="chart-live-badge"><span class="live-dot"></span>LIVE</div>
       </div>
@@ -2225,11 +2225,11 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
 
   </div>
 
-  <!-- ════════════════════════════════════════════════
-       ULTRA PREMIUM MOBILE BOTTOM NAV — REDESIGNED
+  <!-- ------------------------------------------------
+       ULTRA PREMIUM MOBILE BOTTOM NAV � REDESIGNED
        Gold-visible floating pill buttons
        Per-tab accent glow system
-  ════════════════════════════════════════════════ -->
+  ------------------------------------------------ -->
   <div id="mobile-bottom-nav">
 
     <!-- CHART -->
@@ -2302,7 +2302,7 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
   <div class="sb-search-wrap" style="flex-shrink:0">
     <div class="sb-search-rel">
       <i class="fas fa-magnifying-glass sb-search-ico"></i>
-      <input class="sb-search" id="mob-sb-search" placeholder="Search markets…">
+      <input class="sb-search" id="mob-sb-search" placeholder="Search markets�">
     </div>
   </div>
   <div class="sb-cat-tabs" style="flex-shrink:0">
@@ -2331,7 +2331,7 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
   <div class="mob-sheet-header">
     <div>
       <div class="mob-sheet-title">Portfolio</div>
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:2px">Net Worth: <span id="mob-networth" style="color:var(--gold)">—</span></div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:2px">Net Worth: <span id="mob-networth" style="color:var(--gold)">�</span></div>
     </div>
     <button class="mob-sheet-close" id="btn-close-portfolio"><i class="fas fa-xmark"></i></button>
   </div>
@@ -2364,8 +2364,8 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px">
       <div style="font-family:var(--font-mono);font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">New Alert</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <button class="op-type-btn on" id="alert-dir-above" style="min-height:38px">▲ Above</button>
-        <button class="op-type-btn"    id="alert-dir-below" style="min-height:38px">▼ Below</button>
+        <button class="op-type-btn on" id="alert-dir-above" style="min-height:38px">? Above</button>
+        <button class="op-type-btn"    id="alert-dir-below" style="min-height:38px">? Below</button>
       </div>
       <div class="op-input-wrap" style="margin-bottom:10px">
         <span class="op-input-pfx">$</span>
@@ -2449,7 +2449,7 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
     <div class="ccm-pnl-bar"><div class="ccm-pnl-fill" id="ccm-pnl-fill" style="width:0%"></div></div>
     <div id="ccm-autoclose-warn" class="ccm-autoclose-warn" style="display:none">
       <i class="fas fa-shield-exclamation"></i>
-      <span>Auto-close triggered — loss exceeded 90% of cash balance</span>
+      <span>Auto-close triggered � loss exceeded 90% of cash balance</span>
     </div>
     <div class="ccm-stats" id="ccm-stats"></div>
     <div class="ccm-btns">
@@ -2478,8 +2478,8 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
       <button class="lot-mode-btn"    data-op="mode-cfd">CFD / Lots</button>
     </div>
     <div class="op-dir-grid">
-      <button class="op-dir-btn buy-on" data-op="dir-buy">▲ BUY</button>
-      <button class="op-dir-btn"        data-op="dir-sell">▼ SELL</button>
+      <button class="op-dir-btn buy-on" data-op="dir-buy">? BUY</button>
+      <button class="op-dir-btn"        data-op="dir-sell">? SELL</button>
     </div>
     <div data-op="order-type-row" class="op-type-row">
       <button class="op-type-btn on" data-op="ot-market">Market</button>
@@ -2504,13 +2504,13 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
     </div>
     <div data-op="cfd-lot-section" style="display:none">
       <div class="op-field">
-        <div class="op-field-label"><span>Lot Size</span><span data-op="cfd-notional-label" style="color:var(--gold)">—</span></div>
+        <div class="op-field-label"><span>Lot Size</span><span data-op="cfd-notional-label" style="color:var(--gold)">�</span></div>
         <div class="lot-wrap" data-op="lot-chips"></div>
         <div class="op-input-wrap" style="margin-top:6px"><span class="op-input-pfx">Lots</span><input type="number" class="op-input" data-op="cfd-lots-inp" value="1" min="0.01" step="0.01"></div>
       </div>
       <div class="op-dir-grid" style="margin-bottom:10px">
-        <button class="op-dir-btn buy-on" data-op="cfd-long-btn">▲ LONG</button>
-        <button class="op-dir-btn"        data-op="cfd-short-btn">▼ SHORT</button>
+        <button class="op-dir-btn buy-on" data-op="cfd-long-btn">? LONG</button>
+        <button class="op-dir-btn"        data-op="cfd-short-btn">? SHORT</button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
         <div>
@@ -2524,12 +2524,12 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
       </div>
     </div>
     <div class="op-summary" data-op="op-summary">
-      <div class="op-sum-row"><span class="op-sum-label">Asset</span><span class="op-sum-val" data-op="os-asset">—</span></div>
-      <div class="op-sum-row"><span class="op-sum-label">Price</span><span class="op-sum-val" data-op="os-price">—</span></div>
-      <div class="op-sum-row"><span class="op-sum-label">Quantity</span><span class="op-sum-val" data-op="os-qty">—</span></div>
-      <div class="op-sum-row" data-op="os-margin-row" style="display:none"><span class="op-sum-label">Margin (10%)</span><span class="op-sum-val" data-op="os-margin">—</span></div>
-      <div class="op-sum-row"><span class="op-sum-label">Fee (0.1%)</span><span class="op-sum-val" data-op="os-fee">—</span></div>
-      <div class="op-sum-row"><span class="op-sum-label" style="color:var(--gold);font-weight:600">Total</span><span class="op-sum-val" data-op="os-total" style="color:var(--gold);font-weight:600">—</span></div>
+      <div class="op-sum-row"><span class="op-sum-label">Asset</span><span class="op-sum-val" data-op="os-asset">�</span></div>
+      <div class="op-sum-row"><span class="op-sum-label">Price</span><span class="op-sum-val" data-op="os-price">�</span></div>
+      <div class="op-sum-row"><span class="op-sum-label">Quantity</span><span class="op-sum-val" data-op="os-qty">�</span></div>
+      <div class="op-sum-row" data-op="os-margin-row" style="display:none"><span class="op-sum-label">Margin (10%)</span><span class="op-sum-val" data-op="os-margin">�</span></div>
+      <div class="op-sum-row"><span class="op-sum-label">Fee (0.1%)</span><span class="op-sum-val" data-op="os-fee">�</span></div>
+      <div class="op-sum-row"><span class="op-sum-label" style="color:var(--gold);font-weight:600">Total</span><span class="op-sum-val" data-op="os-total" style="color:var(--gold);font-weight:600">�</span></div>
     </div>
     <div class="op-insuf" data-op="op-insuf"><i class="fas fa-triangle-exclamation" style="margin-right:7px"></i><span data-op="op-insuf-msg">Insufficient balance</span></div>
     <button class="op-confirm-btn buy" data-op="op-confirm-btn">
@@ -2548,19 +2548,19 @@ html[data-theme="light"] #mbn-trade .mob-nav-icon-wrap{
 </template>
 
 <script>
-/* ═══════════════════════════════════════════
-   AURUM TRADING TERMINAL — FULL JS
+/* -------------------------------------------
+   AURUM TRADING TERMINAL � FULL JS
    + Premium In-App Notification System
    + Redesigned Mobile Bottom Nav
-═══════════════════════════════════════════ */
+------------------------------------------- */
 const SUPA_URL  = 'https://ttwwthfeordsojmcjwxn.supabase.co';
-// ── Currency + balance helpers ──────────────────────────────────────────────
+// -- Currency + balance helpers ----------------------------------------------
 function fmtMoney(n){return window.AurumCurrency?window.AurumCurrency.fmt(Number(n)):('$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}));}
 function currSym(){return window.AurumCurrency?window.AurumCurrency.sym():'$';}
 function usdToLocal(v){return window.AurumCurrency?window.AurumCurrency.convert(Number(v)):Number(v);}
 function localToUsd(v){return window.AurumCurrency?Number(v)/window.AurumCurrency.convert(1):Number(v);}
 function isBalHidden(){return localStorage.getItem('aurum_balance_hidden')==='true';}
-function maskVal(v){return isBalHidden()?'••••••':v;}
+function maskVal(v){return isBalHidden()?'������':v;}
 function applyBalVisibility(){
   const h=isBalHidden();
   const updateEyeBtn=id=>{const btn=$(id);if(btn)btn.innerHTML=h?'<i class="fas fa-eye-slash"></i>':'<i class="fas fa-eye"></i>';};
@@ -2568,7 +2568,7 @@ function applyBalVisibility(){
   refreshCash();refreshBalanceBar();
 }
 function toggleBalHidden(){localStorage.setItem('aurum_balance_hidden',isBalHidden()?'false':'true');applyBalVisibility();}
-// ────────────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------------
 const SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
 const sb = supabase.createClient(SUPA_URL, SUPA_ANON);
 
@@ -2692,7 +2692,7 @@ const ASSETS=[
   {sym:'NYC', name:'One Manhattan West',  icon:'fas fa-building-columns',color:'#a0c0e8',cat:'property',price:500, chg:0.2,  open24h:0},
   {sym:'DXB2',name:'Palm Jumeirah Villa', icon:'fas fa-umbrella-beach',  color:'#f3ba2f',cat:'property',price:2000,chg:0.8,  open24h:0},
   {sym:'SGP', name:'Marina Bay Tower',    icon:'fas fa-water',           color:'#3cc8c8',cat:'property',price:500, chg:0.4,  open24h:0},
-  {sym:'PAR',    name:"Champs-Élysées Off.", icon:'fas fa-tower-broadcast', color:'#627eea',cat:'property', price:1000, chg:0.6,  open24h:0},
+  {sym:'PAR',    name:"Champs-�lys�es Off.", icon:'fas fa-tower-broadcast', color:'#627eea',cat:'property', price:1000, chg:0.6,  open24h:0},
   {sym:'GOLD',   name:'Gold Spot',          icon:'fas fa-gem',             color:'#c9a84c',cat:'commodity',price:3200, chg:0.1,  open24h:0},
   {sym:'OIL',    name:'Brent Crude Oil',    icon:'fas fa-oil-well',        color:'#8b6914',cat:'commodity',price:70,   chg:-0.2, open24h:0},
   {sym:'SILVER', name:'Silver Spot',        icon:'fas fa-coins',           color:'#a8a8b0',cat:'commodity',price:32,   chg:0.05, open24h:0},
@@ -2714,10 +2714,10 @@ const opVal=(key,v)=>opAll(key).forEach(el=>el.value=v);
 
 let liveDataInterval=null;
 
-/* ═══════════════════════════════════════
+/* ---------------------------------------
    IN-APP NOTIFICATION SYSTEM
    Replaces browser Notification API
-═══════════════════════════════════════ */
+--------------------------------------- */
 const NOTIF_ICONS = {
   success: 'fa-circle-check',
   error:   'fa-triangle-exclamation',
@@ -2796,7 +2796,7 @@ function showPriceAlertNotif(sym, dir, price) {
   const a = assetByS(sym);
   const color = a?.color || '#c8a45a';
   showInAppNotif(
-    `🔔 ${sym} Price Alert`,
+    `?? ${sym} Price Alert`,
     `${sym} is ${dir} $${fmtP(price)}`,
     'alert',
     6000,
@@ -2909,7 +2909,7 @@ function updateTickerPrices(){
       const up=a.chg>=0;
       chgEl.style.background=up?'rgba(30,184,122,.12)':'rgba(224,65,75,.12)';
       chgEl.style.color=up?'var(--green2)':'var(--red2)';
-      arrowEl.textContent=up?'▲':'▼';
+      arrowEl.textContent=up?'?':'?';
       const nodes=[...chgEl.childNodes];
       nodes.forEach(n=>{if(n.nodeType===3&&n.textContent.trim())n.textContent=(up?'+':'')+a.chg.toFixed(2)+'%';});
     }
@@ -2930,7 +2930,7 @@ function refreshBalanceBar(){
 
 function startCandleCountdown(){if(candleTimer)clearInterval(candleTimer);candleTimer=setInterval(updateCandleCountdown,500);updateCandleCountdown();}
 function updateCandleCountdown(){
-  if(activeChartType!=='candle'){txt('candle-countdown','—');return;}
+  if(activeChartType!=='candle'){txt('candle-countdown','�');return;}
   const i=PERIOD_SIM_INTERVAL_SEC[activePeriod]||300;const n=Math.floor(Date.now()/1000);const bt=n-(n%i);const sl=(bt+i)-n;
   const el=$('candle-countdown');if(!el)return;
   let d='';
@@ -2995,7 +2995,7 @@ function buildMarketTicker(){
       <span class="ticker-sym">${a.sym}</span>
       <span class="ticker-price">$${fmtP(a.price)}</span>
       <span class="ticker-chg" style="background:${up?'rgba(30,184,122,.12)':'rgba(224,65,75,.12)'};color:${up?'var(--green2)':'var(--red2)'}">
-        <span class="ticker-arrow">${up?'▲':'▼'}</span>${(up?'+':'')+a.chg.toFixed(2)+'%'}
+        <span class="ticker-arrow">${up?'?':'?'}</span>${(up?'+':'')+a.chg.toFixed(2)+'%'}
       </span>
     </div>`;
   }).join('');
@@ -3018,7 +3018,7 @@ function openCloseConfirm(id,isAutoClose=false){
   const fill=$('ccm-pnl-fill');fill.className='ccm-pnl-fill '+(isProfit?'profit':'loss');setTimeout(()=>fill.style.width=Math.min(pnlPct,100)+'%',100);
   $('ccm-autoclose-warn').style.display=isAutoClose?'flex':'none';
   $('ccm-stats').innerHTML=`
-    <div class="ccm-stat-row"><span class="ccm-stat-label">Asset</span><span class="ccm-stat-val" style="display:flex;align-items:center;gap:6px"><span style="color:${a.color};font-size:11px"><i class="${a.icon}"></i></span>${t.sym} · ${t.direction.toUpperCase()} · ${t.lots}L</span></div>
+    <div class="ccm-stat-row"><span class="ccm-stat-label">Asset</span><span class="ccm-stat-val" style="display:flex;align-items:center;gap:6px"><span style="color:${a.color};font-size:11px"><i class="${a.icon}"></i></span>${t.sym} � ${t.direction.toUpperCase()} � ${t.lots}L</span></div>
     <div class="ccm-stat-row"><span class="ccm-stat-label">Entry Price</span><span class="ccm-stat-val">$${fmtP(entry)}</span></div>
     <div class="ccm-stat-row"><span class="ccm-stat-label">Close Price</span><span class="ccm-stat-val neutral">$${fmtP(cur)}</span></div>
     <div class="ccm-stat-row"><span class="ccm-stat-label">Notional</span><span class="ccm-stat-val">$${fmt(notional)}</span></div>
@@ -3063,7 +3063,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
   sb.channel('trade-prices').on('postgres_changes',{event:'*',schema:'public',table:'asset_prices'},({new:row})=>{
     if(!row||!row.sym)return;
-    // LIVE_PRICE_SYMS prices come from edge function — don't let stale DB rows override them
+    // LIVE_PRICE_SYMS prices come from edge function � don't let stale DB rows override them
     if(LIVE_PRICE_SYMS.has(row.sym))return;
     const a=assetByS(row.sym);
     if(a){const old=a.price;a.price=+row.price;if(row.chg!==undefined)a.chg=+row.chg;window.ALL_ASSETS=ASSETS;updateSidebarItem(row.sym,old);if(activeSym===row.sym)updateTopbarPrice(row.sym);updateOrderCalc();}
@@ -3072,7 +3072,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
 });
 
 async function loadPricesFromDB(){
-  // DB asset_prices table may have stale admin-set values — skip for live-fetched symbols
+  // DB asset_prices table may have stale admin-set values � skip for live-fetched symbols
   try{const{data}=await sb.from('asset_prices').select('*');(data||[]).forEach(row=>{
     if(!row.sym)return;
     if(LIVE_PRICE_SYMS.has(row.sym))return; // edge function is authoritative for these
@@ -3118,10 +3118,10 @@ function applyChartOverlays(){
   lwChart._aurumPriceLines=[];
   openTrades.filter(t=>t.sym===sym).forEach(t=>{
     const entry=+(t.entry_price||0);if(!entry)return;const isLong=t.direction==='long';
-    try{const pl=lwSeries.createPriceLine({price:entry,color:isLong?'rgba(30,184,122,.8)':'rgba(224,65,75,.8)',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:true,title:`${isLong?'▲ LONG':'▼ SHORT'} ${t.lots}L`});lwChart._aurumPriceLines.push(pl);}catch(e){}
+    try{const pl=lwSeries.createPriceLine({price:entry,color:isLong?'rgba(30,184,122,.8)':'rgba(224,65,75,.8)',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:true,title:`${isLong?'? LONG':'? SHORT'} ${t.lots}L`});lwChart._aurumPriceLines.push(pl);}catch(e){}
   });
   (chartAlertLines[sym]||[]).forEach(al=>{
-    try{const pl=lwSeries.createPriceLine({price:al.price,color:'rgba(200,164,90,.65)',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dotted,axisLabelVisible:true,title:`🔔 ${al.dir==='above'?'▲':'▼'} $${fmtP(al.price)}`});lwChart._aurumPriceLines.push(pl);}catch(e){}
+    try{const pl=lwSeries.createPriceLine({price:al.price,color:'rgba(200,164,90,.65)',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dotted,axisLabelVisible:true,title:`?? ${al.dir==='above'?'?':'?'} $${fmtP(al.price)}`});lwChart._aurumPriceLines.push(pl);}catch(e){}
   });
 }
 
@@ -3164,14 +3164,14 @@ function renderTradeInfoContent(){
   cont.innerHTML=st.map(t=>{
     const pnl=calcTradePnl(t);const up=pnl>=0;const cur=liveP(t.sym);const entry=+(t.entry_price||0);
     const pnlPct=entry>0?((cur-entry)/entry*100*(t.direction==='long'?1:-1)):0;const isLong=t.direction==='long';
-    const opened=t.created_at?new Date(t.created_at).toLocaleString():'—';
+    const opened=t.created_at?new Date(t.created_at).toLocaleString():'�';
     return `<div class="ti-trade-card ${isLong?'long-card':'short-card'}">
       <div class="ti-tc-head">
         <div class="ti-sym-wrap">
           <span class="ti-sym">${t.sym}</span>
           <span class="ti-lots">${t.lots} Lots</span>
         </div>
-        <span class="ti-dir ${isLong?'long':'short'}">${isLong?'▲ LONG':'▼ SHORT'}</span>
+        <span class="ti-dir ${isLong?'long':'short'}">${isLong?'? LONG':'? SHORT'}</span>
       </div>
       <div class="ti-pnl-row">
         <span class="ti-pnl ${up?'up':'dn'}" id="ti-pnl-${t.id}">${up?'+':''}${fmtMoney(pnl)}</span>
@@ -3273,7 +3273,7 @@ function assetItemHTML(a,ctx){
   return `<div class="sb-item${activeSym===a.sym?' active':''}" data-sym="${a.sym}">
     <div class="sb-item-icon" style="background:${a.color}18;color:${a.color}"><i class="${a.icon}"></i></div>
     <div style="flex:1;min-width:0"><div class="sb-item-sym">${a.sym}</div><div class="sb-item-name">${a.name}</div></div>
-    <div><div class="sb-item-price" id="sb-pr-${a.sym}-${ctx}">$${fmtP(a.price)}</div><div class="sb-item-chg" style="color:${up?'var(--green2)':'var(--red2)'}">${up?'▲ +':'▼ '}${a.chg.toFixed(2)}%</div></div>
+    <div><div class="sb-item-price" id="sb-pr-${a.sym}-${ctx}">$${fmtP(a.price)}</div><div class="sb-item-chg" style="color:${up?'var(--green2)':'var(--red2)'}">${up?'? +':'? '}${a.chg.toFixed(2)}%</div></div>
   </div>`;
 }
 function updateSidebarItem(sym,oldPrice){
@@ -3284,7 +3284,7 @@ function updateSidebarItem(sym,oldPrice){
   });
   document.querySelectorAll('.sb-item-chg').forEach(el=>{
     const row=el.closest('[data-sym]');if(!row||row.dataset.sym!==sym)return;
-    const up=a.chg>=0;el.textContent=(up?'▲ +':'▼ ')+a.chg.toFixed(2)+'%';el.style.color=up?'var(--green2)':'var(--red2)';
+    const up=a.chg>=0;el.textContent=(up?'? +':'? ')+a.chg.toFixed(2)+'%';el.style.color=up?'var(--green2)':'var(--red2)';
   });
 }
 
@@ -3310,7 +3310,7 @@ function selectAsset(sym){
 
 function updateTopbarPrice(sym){
   const a=assetByS(sym);if(!a)return;
-  const up=a.chg>=0;const p='$'+fmtP(a.price),c=(up?'▲ +':'▼ ')+Math.abs(a.chg).toFixed(2)+'%';
+  const up=a.chg>=0;const p='$'+fmtP(a.price),c=(up?'? +':'? ')+Math.abs(a.chg).toFixed(2)+'%';
   txt('tb-price',p);txt('ct-price',p);txt('mob-price',p);
   ['tb-chg','ct-chg','mob-chg'].forEach(id=>{
     const el=$(id);if(!el)return;
@@ -3320,7 +3320,7 @@ function updateTopbarPrice(sym){
   });
 }
 
-/* ── OHLCV real-data fetch with 90s cache ── */
+/* -- OHLCV real-data fetch with 90s cache -- */
 const _tradeOHLCVCache={};
 const TRADE_OHLCV_TF=new Set(['5M','15M','30M','1H','4H','1D','1W','1M','3M','1Y']);
 const TRADE_OHLCV_SYM=new Set(['BTC','ETH','SOL','BNB','XRP','ADA','TSLA','AAPL','NVDA','MSFT','AMZN','GOOGL','GOLD','OIL','SILVER']);
@@ -3343,7 +3343,7 @@ async function fetchTradeOHLCV(sym,tf){
   return bars;
 }
 
-/* ── Binance public klines — real historical data, no API key required ── */
+/* -- Binance public klines � real historical data, no API key required -- */
 // All major crypto pairs available on Binance USDT market
 const BINANCE_SYMS=new Set([
   'BTC','ETH','SOL','BNB','XRP','ADA','DOGE','MATIC','DOT','LINK',
@@ -3387,7 +3387,7 @@ async function fetchBinanceKlines(sym,period){
   return bars;
 }
 
-/* Default visible bar count per period — readable candle size; remaining bars are scrollable history */
+/* Default visible bar count per period � readable candle size; remaining bars are scrollable history */
 const VIEW_BARS={
   '5M': 96,   // 8 h visible, scroll back 3.5 days
   '15M':96,   // 24 h visible, scroll back 10 days
@@ -3401,7 +3401,7 @@ const VIEW_BARS={
   '1Y': 365,  // 1 year visible
 };
 
-/* autoSize:true — LWC manages its own ResizeObserver; we never call .resize() manually */
+/* autoSize:true � LWC manages its own ResizeObserver; we never call .resize() manually */
 function _buildLwcChart(container){
   const t=chartTheme();
   return LightweightCharts.createChart(container,{
@@ -3422,7 +3422,7 @@ async function drawChart(sym,period,type){
   const container=$('tv-chart');
   if(lwChart){try{lwChart.remove();}catch(e){}lwChart=null;lwSeries=null;}
   if(cjChart){try{cjChart.destroy();}catch(e){}cjChart=null;}
-  // Chart renders synchronously below — no spinner needed
+  // Chart renders synchronously below � no spinner needed
   if(type==='candle')await drawCandleChart(a,period,container);
   else await drawLineAreaChart(a,period,type,container);
 }
@@ -3433,7 +3433,7 @@ async function drawCandleChart(a,period,container){
   const k=liveBarKey(a.sym,period);
   const ck=a.sym+'_'+period;
 
-  /* ── stamp: push bars into the live series (chart already exists) ── */
+  /* -- stamp: push bars into the live series (chart already exists) -- */
   function _stamp(bars,fitView){
     _activeChartIntervalSec=bars._iSec||PERIOD_SIM_INTERVAL_SEC[period]||300;
     lwSeries.setData(bars);
@@ -3453,7 +3453,7 @@ async function drawCandleChart(a,period,container){
     });
   }
 
-  /* ── Phase 1 — instant: use any cached bars (fresh or stale) or simulate ── */
+  /* -- Phase 1 � instant: use any cached bars (fresh or stale) or simulate -- */
   const anyCache=_binanceCache[ck]||_tradeOHLCVCache[ck];
   const instantBars=anyCache?.bars||(()=>{
     const iSec=PERIOD_SIM_INTERVAL_SEC[period]||300,now=Math.floor(Date.now()/1000);
@@ -3471,7 +3471,7 @@ async function drawCandleChart(a,period,container){
   });
   applyChartOverlays();
 
-  /* ── Phase 2 — background: fetch real data if cache is stale or absent; silently replace ── */
+  /* -- Phase 2 � background: fetch real data if cache is stale or absent; silently replace -- */
   const binFresh=_binanceCache[ck]&&Date.now()-_binanceCache[ck].ts<60000;
   const tdFresh=_tradeOHLCVCache[ck]&&Date.now()-_tradeOHLCVCache[ck].ts<90000;
   if(!binFresh&&!tdFresh){
@@ -3497,7 +3497,7 @@ async function drawLineAreaChart(a,period,type,container){
     return lb;
   }
 
-  /* ── Phase 1 — instant ── */
+  /* -- Phase 1 � instant -- */
   const anyCache=_binanceCache[ck]||_tradeOHLCVCache[ck];
   let lineBars;
   if(anyCache?.bars){
@@ -3531,7 +3531,7 @@ async function drawLineAreaChart(a,period,type,container){
   });
   applyChartOverlays();
 
-  /* ── Phase 2 — background fetch; silently replace data ── */
+  /* -- Phase 2 � background fetch; silently replace data -- */
   const binFresh=_binanceCache[ck]&&Date.now()-_binanceCache[ck].ts<60000;
   const tdFresh=_tradeOHLCVCache[ck]&&Date.now()-_tradeOHLCVCache[ck].ts<90000;
   if(!binFresh&&!tdFresh){
@@ -3625,13 +3625,13 @@ function setCfdLots(v){cfdLots=Math.max(0.01,v);opVal('cfd-lots-inp',cfdLots);do
 function updateConfirmBtn(){
   opAll('op-confirm-btn').forEach(btn=>{
     const lbl=btn.querySelector('[data-op="op-confirm-lbl"]');if(!lbl)return;
-    const _inner=(icon,verb,sub)=>`<div class="op-btn-inner"><div class="op-btn-icon-ring"><i class="${icon}"></i></div><div class="op-btn-text"><span class="op-btn-verb">${verb}</span><span class="op-btn-sub-text">${sub} · ${activeSym}</span></div><i class="fas fa-chevron-right op-btn-chevron"></i></div>`;
+    const _inner=(icon,verb,sub)=>`<div class="op-btn-inner"><div class="op-btn-icon-ring"><i class="${icon}"></i></div><div class="op-btn-text"><span class="op-btn-verb">${verb}</span><span class="op-btn-sub-text">${sub} � ${activeSym}</span></div><i class="fas fa-chevron-right op-btn-chevron"></i></div>`;
     if(orderMode==='spot'){
       if(orderDir==='buy'){btn.className='op-confirm-btn buy';lbl.innerHTML=_inner('fas fa-arrow-trend-up','Execute Buy',orderType==='market'?'Market':'Limit');}
       else{btn.className='op-confirm-btn sell';lbl.innerHTML=_inner('fas fa-arrow-trend-down','Execute Sell',orderType==='market'?'Market':'Limit');}
     }else{
-      if(cfdDir==='long'){btn.className='op-confirm-btn cfd-long';lbl.innerHTML=_inner('fas fa-circle-up','Open Long','CFD · '+cfdLots+' lot'+(cfdLots!==1?'s':''));}
-      else{btn.className='op-confirm-btn cfd-short';lbl.innerHTML=_inner('fas fa-circle-down','Open Short','CFD · '+cfdLots+' lot'+(cfdLots!==1?'s':''));}
+      if(cfdDir==='long'){btn.className='op-confirm-btn cfd-long';lbl.innerHTML=_inner('fas fa-circle-up','Open Long','CFD � '+cfdLots+' lot'+(cfdLots!==1?'s':''));}
+      else{btn.className='op-confirm-btn cfd-short';lbl.innerHTML=_inner('fas fa-circle-down','Open Short','CFD � '+cfdLots+' lot'+(cfdLots!==1?'s':''));}
     }
   });
 }
@@ -3649,7 +3649,7 @@ function updateOrderCalc(){
     opAll('op-confirm-btn').forEach(btn=>{btn.disabled=insuf;btn.style.opacity=insuf?'.4':'1';});
   }else{
     const cat=a.cat||'crypto';const lotVal=LOT_VALUES[cat]||1000;const notional=cfdLots*lotVal;const margin=notional*.1;const fee=+(notional*.001).toFixed(2);
-    opTxt('cfd-notional-label','≈ $'+fmt(notional)+' notional');opTxt('os-price','$'+fmtP(price));opTxt('os-qty',cfdLots+' lot'+(cfdLots!==1?'s':'')+' · $'+fmt(notional));opTxt('os-margin',fmtMoney(margin));opTxt('os-fee',fmtMoney(fee));opTxt('os-total',fmtMoney(margin+fee));
+    opTxt('cfd-notional-label','� $'+fmt(notional)+' notional');opTxt('os-price','$'+fmtP(price));opTxt('os-qty',cfdLots+' lot'+(cfdLots!==1?'s':'')+' � $'+fmt(notional));opTxt('os-margin',fmtMoney(margin));opTxt('os-fee',fmtMoney(fee));opTxt('os-total',fmtMoney(margin+fee));
     const insuf=margin+fee>cash;
     opAll('op-insuf').forEach(el=>el.style.display=insuf?'block':'none');opTxt('op-insuf-msg','Need '+fmtMoney(margin+fee)+' margin');
     opAll('op-confirm-btn').forEach(btn=>{btn.disabled=insuf;btn.style.opacity=insuf?'.4':'1';});
@@ -3688,7 +3688,7 @@ async function submitOrder(){
       const cat=a.cat||'crypto';const lotVal=LOT_VALUES[cat]||1000;const notional=cfdLots*lotVal;const margin=notional*.1;const fee=+(notional*.001).toFixed(2);
       if(margin+fee>cash){trToast('Insufficient margin','','error');return;}
       const tp=orderCfdTp;const sl=orderCfdSl;
-      await sb.from('transactions').insert({user_id:authUser.id,type:'buy',symbol:a.sym,name:a.name+' CFD '+cfdDir.toUpperCase(),icon:a.icon,color:a.color,quantity:cfdLots,price_at_tx:price,usd_amount:-(margin+fee),status:'approved',note:`CFD ${cfdDir.toUpperCase()} · ${cfdLots}L`});
+      await sb.from('transactions').insert({user_id:authUser.id,type:'buy',symbol:a.sym,name:a.name+' CFD '+cfdDir.toUpperCase(),icon:a.icon,color:a.color,quantity:cfdLots,price_at_tx:price,usd_amount:-(margin+fee),status:'approved',note:`CFD ${cfdDir.toUpperCase()} � ${cfdLots}L`});
       let tradeId='local_'+Date.now();
       try{const{data}=await sb.from('open_trades').insert({user_id:authUser.id,sym:a.sym,direction:cfdDir,lots:cfdLots,entry_price:price,take_profit:tp,stop_loss:sl,notional,status:'open'}).select().single();if(data)tradeId=data.id;}catch(e){}
       openTrades.unshift({id:tradeId,sym:a.sym,direction:cfdDir,lots:cfdLots,entry_price:price,take_profit:tp,stop_loss:sl,notional,margin,status:'open'});
@@ -3716,13 +3716,13 @@ async function executeCloseTrade(id,isAutoClose=false){
   try{
     const cash=+(profile?.cash||0);const nc=+(cash+margin+pnl).toFixed(2);
     await sb.from('profiles').update({cash:nc}).eq('id',authUser.id);
-    await sb.from('transactions').insert({user_id:authUser.id,type:'sell',symbol:t.sym,name:a.name+' CFD Close'+(isAutoClose?' [AUTO]':''),icon:a.icon,color:a.color,quantity:+t.lots,price_at_tx:cur,usd_amount:+(margin+pnl).toFixed(2),status:'approved',note:`CFD CLOSE${isAutoClose?' [AUTO-CLOSE]':''} · P&L ${pnl>=0?'+':''}$${fmt(pnl)}`});
+    await sb.from('transactions').insert({user_id:authUser.id,type:'sell',symbol:t.sym,name:a.name+' CFD Close'+(isAutoClose?' [AUTO]':''),icon:a.icon,color:a.color,quantity:+t.lots,price_at_tx:cur,usd_amount:+(margin+pnl).toFixed(2),status:'approved',note:`CFD CLOSE${isAutoClose?' [AUTO-CLOSE]':''} � P&L ${pnl>=0?'+':''}$${fmt(pnl)}`});
     try{await sb.from('open_trades').update({status:'closed',close_price:cur,closed_at:new Date().toISOString()}).eq('id',t.id);}catch(e){}
     openTrades.splice(idx,1);profile.cash=nc;
     addTradeMarker(t.sym,t.direction==='long'?'sell':'buy',cur);
     refreshCash();renderOpenTradesInPanel();renderPositionsStrip();renderMobPortfolio();
     applyChartOverlays();renderFloatingTradesPanel();
-    trToast(isAutoClose?'⚡ Auto-Close Executed':'Position Closed',`P&L: ${pnl>=0?'+':''}$${fmt(pnl)}`,pnl>=0?'success':'error');
+    trToast(isAutoClose?'? Auto-Close Executed':'Position Closed',`P&L: ${pnl>=0?'+':''}$${fmt(pnl)}`,pnl>=0?'success':'error');
   }catch(err){trToast('Close failed',err.message||'Error','error');}
 }
 
@@ -3770,11 +3770,11 @@ function renderAlertsList(){
     return `<div class="alert-item">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-          <span class="alert-badge" style="background:${up?'var(--green-dim)':'var(--red-dim)'};color:${up?'var(--green2)':'var(--red2)'};border:1px solid ${up?'rgba(30,184,122,.2)':'rgba(224,65,75,.2)'}">${up?'▲ ABOVE':'▼ BELOW'}</span>
+          <span class="alert-badge" style="background:${up?'var(--green-dim)':'var(--red-dim)'};color:${up?'var(--green2)':'var(--red2)'};border:1px solid ${up?'rgba(30,184,122,.2)':'rgba(224,65,75,.2)'}">${up?'? ABOVE':'? BELOW'}</span>
           <span style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text1)">$${fmtP(al.price)}</span>
-          ${hit?'<span style="font-family:var(--font-mono);font-size:9px;color:var(--gold)">✓ TRIGGERED</span>':''}
+          ${hit?'<span style="font-family:var(--font-mono);font-size:9px;color:var(--gold)">? TRIGGERED</span>':''}
         </div>
-        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${hit?'Triggered':'≈ '+Math.abs(dist).toFixed(2)+'% away'}</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${hit?'Triggered':'� '+Math.abs(dist).toFixed(2)+'% away'}</div>
       </div>
       <button class="alert-del-btn" data-del-alert="${al.id}"><i class="fas fa-trash-alt"></i></button>
     </div>`;
@@ -3800,8 +3800,8 @@ function checkAlerts(){
       al.triggered=true;changed=true;
       // In-app notification instead of browser notification
       showInAppNotif(
-        `🔔 ${al.sym} Alert Triggered`,
-        `Price ${al.dir} $${fmtP(al.price)} · Now at $${fmtP(cur)}`,
+        `?? ${al.sym} Alert Triggered`,
+        `Price ${al.dir} $${fmtP(al.price)} � Now at $${fmtP(cur)}`,
         'alert',
         8000,
         ()=>{ selectAsset(al.sym); openMobAlerts(); }
@@ -3890,7 +3890,7 @@ function renderMobPortfolio(){
       const cur=liveP(h.symbol)||+h.avg_buy_price;const val=+h.quantity*cur;const pnl=(h.pnl_override!=null)?+h.pnl_override:(cur-+h.avg_buy_price)*+h.quantity;const up=pnl>=0;
       return `<div class="pf-holding" data-sym="${h.symbol}">
         <div style="width:36px;height:36px;border-radius:9px;background:${a.color}18;color:${a.color};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="${a.icon}"></i></div>
-        <div style="flex:1;min-width:0"><p style="font-size:13px;font-weight:600;color:var(--text1);font-family:var(--font-mono)">${h.symbol}</p><p style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${+h.quantity<1?(+h.quantity).toFixed(6):(+h.quantity).toFixed(4)} · avg $${fmtP(+h.avg_buy_price)}</p></div>
+        <div style="flex:1;min-width:0"><p style="font-size:13px;font-weight:600;color:var(--text1);font-family:var(--font-mono)">${h.symbol}</p><p style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${+h.quantity<1?(+h.quantity).toFixed(6):(+h.quantity).toFixed(4)} � avg $${fmtP(+h.avg_buy_price)}</p></div>
         <div style="text-align:right"><p style="font-family:var(--font-mono);font-size:12px;color:var(--text1)">${maskVal(fmtMoney(val))}</p><p class="pf-pnl ${up?'g':'r'}" style="font-size:11px">${up?'+':''}${maskVal(fmtMoney(pnl))}</p></div>
       </div>`;
     }).join('');
@@ -3907,7 +3907,7 @@ function renderMobPortfolio(){
           <span style="font-family:var(--font-mono);font-size:8px;padding:2px 7px;border-radius:4px;background:${t.direction==='long'?'var(--green-dim)':'var(--red-dim)'};color:${t.direction==='long'?'var(--green2)':'var(--red2)'}">${t.direction.toUpperCase()}</span>
           <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${t.lots} lots</span>
         </div>
-        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">Entry $${fmtP(entry)} · Current $${fmtP(cur)}</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">Entry $${fmtP(entry)} � Current $${fmtP(cur)}</div>
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div><p class="pf-pnl ${up?'g':'r'}" id="mob-ptpnl-${t.id}" style="font-size:15px;font-weight:700">${up?'+':''}${maskVal(fmtMoney(Math.abs(pnl)))}</p><p style="font-family:var(--font-mono);font-size:9px;color:${up?'var(--green2)':'var(--red2)'}">${up?'+':''}${pnlPct.toFixed(2)}%</p></div>
           <button data-close-trade="${t.id}" style="padding:8px 16px;border-radius:8px;border:1px solid rgba(224,65,75,.25);background:rgba(224,65,75,.07);color:var(--red2);font-family:var(--font-mono);font-size:10px;cursor:pointer;min-height:38px">Close</button>
@@ -3921,7 +3921,7 @@ function renderMobPortfolio(){
       const amt=+(tx.usd_amount||0);const isPos=amt>0;const d=new Date(tx.created_at);
       return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
         <div style="width:32px;height:32px;border-radius:9px;background:${isPos?'var(--green-dim)':'var(--red-dim)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isPos?'var(--green2)':'var(--red2)'}"><i class="fas fa-${isPos?'arrow-trend-up':'arrow-trend-down'}" style="font-size:12px"></i></div>
-        <div style="flex:1;min-width:0"><p style="font-size:12px;font-weight:600;color:var(--text1);font-family:var(--font-mono)">${tx.symbol||'—'} <span style="font-family:var(--font-mono);font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--text3)">${(tx.type||'').toUpperCase()}</span></p><p style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${d.toLocaleDateString()} ${d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}</p></div>
+        <div style="flex:1;min-width:0"><p style="font-size:12px;font-weight:600;color:var(--text1);font-family:var(--font-mono)">${tx.symbol||'�'} <span style="font-family:var(--font-mono);font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--text3)">${(tx.type||'').toUpperCase()}</span></p><p style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${d.toLocaleDateString()} ${d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}</p></div>
         <p style="font-family:var(--font-mono);font-size:12px;color:${isPos?'var(--green2)':'var(--red2)'};flex-shrink:0">${isPos?'+':''}${fmtMoney(Math.abs(amt))}</p>
       </div>`;
     }).join('');
@@ -3954,8 +3954,8 @@ function renderPositionsStrip(){
     thead.innerHTML=`<tr><th>Time</th><th>Type</th><th>Asset</th><th>Qty</th><th>Price</th><th>Amount</th><th>Status</th></tr>`;
     if(!txHistory.length){tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--text3)">No history</td></tr>`;return;}
     tbody.innerHTML=txHistory.map(tx=>{
-      const amt=+(tx.usd_amount||0);const isPos=amt>0;const d=new Date(tx.created_at);const qtyStr=tx.quantity?((+tx.quantity<1)?(+tx.quantity).toFixed(6):(+tx.quantity).toFixed(4)):'—';
-      return`<tr><td style="color:var(--text3)">${d.toLocaleDateString()} ${d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}</td><td><span style="font-family:var(--font-mono);font-size:8px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.04);color:var(--text3)">${tx.type.toUpperCase()}</span></td><td>${tx.symbol||'—'}</td><td style="color:var(--text2)">${qtyStr}</td><td style="color:var(--text2)">${tx.price_at_tx?'$'+fmtP(+tx.price_at_tx):'—'}</td><td style="color:${isPos?'var(--green2)':'var(--red2)'}">${isPos?'+':''}${fmtMoney(Math.abs(amt))}</td><td><span style="color:${tx.status==='approved'?'var(--green2)':tx.status==='pending'?'var(--gold)':'var(--red2)'}">${(tx.status||'—').toUpperCase()}</span></td></tr>`;
+      const amt=+(tx.usd_amount||0);const isPos=amt>0;const d=new Date(tx.created_at);const qtyStr=tx.quantity?((+tx.quantity<1)?(+tx.quantity).toFixed(6):(+tx.quantity).toFixed(4)):'�';
+      return`<tr><td style="color:var(--text3)">${d.toLocaleDateString()} ${d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'})}</td><td><span style="font-family:var(--font-mono);font-size:8px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.04);color:var(--text3)">${tx.type.toUpperCase()}</span></td><td>${tx.symbol||'�'}</td><td style="color:var(--text2)">${qtyStr}</td><td style="color:var(--text2)">${tx.price_at_tx?'$'+fmtP(+tx.price_at_tx):'�'}</td><td style="color:${isPos?'var(--green2)':'var(--red2)'}">${isPos?'+':''}${fmtMoney(Math.abs(amt))}</td><td><span style="color:${tx.status==='approved'?'var(--green2)':tx.status==='pending'?'var(--gold)':'var(--red2)'}">${(tx.status||'�').toUpperCase()}</span></td></tr>`;
     }).join('');
   }
 }
@@ -3983,8 +3983,8 @@ function startPnlTick(){
         if(el){if(prefix==='strip-tpnl-'){el.textContent=(up?'+':'')+'$'+fmt(Math.abs(pnl));el.style.color=up?'var(--green2)':'var(--red2)';}else{el.textContent=(up?'+':'')+'$'+fmt(Math.abs(pnl));el.className='pf-pnl '+(up?'g':'r');}}
       });
       const dir=t.direction||t.dir;const tp=+(t.take_profit||0);const sl=+(t.stop_loss||0);
-      if(tp&&((dir==='long'&&cur>=tp)||(dir==='short'&&cur<=tp))){trToast('TP Hit — '+t.sym,'@ $'+fmtP(cur),'success');executeCloseTrade(String(t.id),false);}
-      else if(sl&&((dir==='long'&&cur<=sl)||(dir==='short'&&cur>=sl))){trToast('SL Hit — '+t.sym,'@ $'+fmtP(cur),'error');executeCloseTrade(String(t.id),false);}
+      if(tp&&((dir==='long'&&cur>=tp)||(dir==='short'&&cur<=tp))){trToast('TP Hit � '+t.sym,'@ $'+fmtP(cur),'success');executeCloseTrade(String(t.id),false);}
+      else if(sl&&((dir==='long'&&cur<=sl)||(dir==='short'&&cur>=sl))){trToast('SL Hit � '+t.sym,'@ $'+fmtP(cur),'error');executeCloseTrade(String(t.id),false);}
     });
     holdings.forEach(h=>{const el=$('strip-pr-'+h.symbol);if(el)el.textContent='$'+fmtP(liveP(h.symbol)||+h.avg_buy_price);});
     refreshBalanceBar();
@@ -4009,7 +4009,7 @@ function showReceipt(d){
 function closeReceipt(){$('receipt-modal').classList.remove('open');}
 
 window.addEventListener('resize',()=>{
-  // lwChart uses autoSize:true — LWC handles its own resize internally
+  // lwChart uses autoSize:true � LWC handles its own resize internally
   if(cjChart)cjChart.resize();
 });
 
@@ -4026,3 +4026,4 @@ document.addEventListener('aurumRatesReady',()=>{
 <script src="premium.js"></script>
 </body>
 </html>
+
