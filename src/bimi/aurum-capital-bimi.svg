@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <title>Aurum Capital</title>
+  <circle cx="250" cy="250" r="250" fill="#0a1628"/>
+  <path fill-rule="evenodd" fill="#c9a84c"
+    d="M250 100 L400 400 L348 400 L290 295 L210 295 L152 400 L100 400 Z
+       M250 200 L278 262 L222 262 Z"/>
+</svg>
