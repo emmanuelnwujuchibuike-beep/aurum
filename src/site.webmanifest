@@ -16,7 +16,7 @@
     {
       "src": "/image/favicon.svg",
       "sizes": "192x192",
-      "type": "image/webp"
+      "type": "image/svg"
     }
   ]
 }
