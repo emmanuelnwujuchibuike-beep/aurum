@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.2" baseProfile="tiny-ps"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 500 500"
+  width="500" height="500">
+  <title>Aurum Capital</title>
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#162236"/>
+      <stop offset="70%" stop-color="#0a1520"/>
+      <stop offset="100%" stop-color="#050c14"/>
+    </radialGradient>
+    <linearGradient id="goldA" x1="40%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#f0d878"/>
+      <stop offset="25%" stop-color="#d4a843"/>
+      <stop offset="60%" stop-color="#b8892a"/>
+      <stop offset="100%" stop-color="#7a5a18"/>
+    </linearGradient>
+  </defs>
+  <circle cx="250" cy="250" r="250" fill="#050c14"/>
+  <circle cx="250" cy="250" r="242" fill="url(#bgGrad)"/>
+  <circle cx="250" cy="250" r="242" fill="none" stroke="#c8a84b" stroke-width="6"/>
+  <circle cx="250" cy="250" r="230" fill="none" stroke="#c8a84b" stroke-width="1.2"/>
+  <polygon points="250,36 364,86 432,190 432,310 364,414 250,464 136,414 68,310 68,190 136,86" fill="none" stroke="#c8a84b" stroke-width="0.9" opacity="0.3"/>
+  <line x1="210" y1="55" x2="232" y2="55" stroke="#c8a84b" stroke-width="2"/>
+  <line x1="268" y1="55" x2="290" y2="55" stroke="#c8a84b" stroke-width="2"/>
+  <line x1="250" y1="42" x2="250" y2="60" stroke="#c8a84b" stroke-width="2"/>
+  <line x1="210" y1="55" x2="196" y2="69" stroke="#c8a84b" stroke-width="1.5"/>
+  <line x1="290" y1="55" x2="304" y2="69" stroke="#c8a84b" stroke-width="1.5"/>
+  <line x1="210" y1="445" x2="232" y2="445" stroke="#c8a84b" stroke-width="2"/>
+  <line x1="268" y1="445" x2="290" y2="445" stroke="#c8a84b" stroke-width="2"/>
+  <line x1="250" y1="440" x2="250" y2="458" stroke="#c8a84b" stroke-width="2"/>
+  <line x1="210" y1="445" x2="196" y2="431" stroke="#c8a84b" stroke-width="1.5"/>
+  <line x1="290" y1="445" x2="304" y2="431" stroke="#c8a84b" stroke-width="1.5"/>
+  <path d="M 250,102 L 385,408 L 330,408 L 295,318 L 205,318 L 170,408 L 115,408 Z M 250,178 L 283,308 L 217,308 Z" fill="url(#goldA)" fill-rule="evenodd"/>
+  <circle cx="199" cy="333" r="4.5" fill="#c8a84b" opacity="0.5"/>
+  <circle cx="301" cy="333" r="4.5" fill="#c8a84b" opacity="0.5"/>
+  <circle cx="250" cy="104" r="3" fill="#8a9aaa" opacity="0.7"/>
+</svg>
