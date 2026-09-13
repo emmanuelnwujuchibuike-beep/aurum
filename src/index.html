@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
   <link rel="icon" href="./image/favicon.png" type="image/png" sizes="any">
   <link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.png">
   <link rel="manifest" href="./site.webmanifest">
@@ -31,9 +31,9 @@
   <meta name="twitter:description" content="Multi-asset investment platform for crypto, stocks, commodities, and real estate.">
   <meta name="twitter:image" content="https://aurumcapitalinvest.com/image/favicon.png">
   <link rel="stylesheet" href="premium-base.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
-  <script src="coingecko-sync.js?v=4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+  <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js" defer></script>
+  <script src="coingecko-sync.js?v=4" defer></script>
   <style>
     :root {
       --gold:        #c9a84c;
@@ -2534,21 +2534,6 @@
   ------------------------------------------ */
   (function(){
 
-    /* ? Hero headline char stagger */
-    function animChars(el){
-      if(!el||el.dataset.cs)return;
-      el.dataset.cs='1';
-      var txt=el.textContent;
-      el.textContent='';
-      txt.split('').forEach(function(c,i){
-        if(c===' '){el.appendChild(document.createTextNode(' '));return;}
-        var s=document.createElement('span');
-        s.textContent=c;
-        s.style.cssText='display:inline-block;animation:charUp .7s cubic-bezier(.16,1,.3,1) '+(i*.028).toFixed(3)+'s both';
-        el.appendChild(s);
-      });
-    }
-
     /* ? Magnetic hover on CTA buttons */
     function initMag(){
       document.querySelectorAll('.btn-hero-primary,.btn-hero-ghost,.btn-gold').forEach(function(el){
@@ -2581,19 +2566,6 @@
     },{passive:true});
 
     document.addEventListener('DOMContentLoaded',function(){
-      /* fire char stagger on hero headline */
-      var heroTitle=document.querySelector('.hero-title');
-      if(heroTitle){
-        /* wait for hero-revealed so it's visible first */
-        var mo=new MutationObserver(function(){
-          if(document.body.classList.contains('hero-revealed')){
-            mo.disconnect();
-            setTimeout(function(){animChars(heroTitle);},200);
-          }
-        });
-        mo.observe(document.body,{attributes:true,attributeFilter:['class']});
-        if(document.body.classList.contains('hero-revealed'))animChars(heroTitle);
-      }
       initMag();
     });
 
