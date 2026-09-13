@@ -88,7 +88,7 @@
     justify-content: space-between;
     padding: 0 40px;
     background: rgba(4,6,8,.88);
-    backdrop-filter: blur(28px);
+    
     border-bottom: 1px solid rgba(255,255,255,.055);
     transition: background .4s;
   }
@@ -228,7 +228,7 @@
     position: absolute;
     inset: 0;
     background: rgba(4,6,8,0);
-    backdrop-filter: blur(0px);
+    
     transition: background .55s cubic-bezier(.4,0,.2,1), backdrop-filter .55s;
   }
 
@@ -278,7 +278,7 @@
 
   .mobile-menu.open .mobile-menu-backdrop {
     background: rgba(4,6,8,.72);
-    backdrop-filter: blur(10px);
+    
   }
 
   .mobile-menu.open .mobile-menu-panel {
@@ -650,7 +650,7 @@
     border: 1px solid rgba(255,255,255,.08);
     border-radius: 20px; overflow: hidden;
     animation: fadeUp .8s ease .3s both;
-    backdrop-filter: blur(20px);
+    
   }
 
   .hero-stat { padding: 22px 36px; text-align: center; border-right: 1px solid rgba(255,255,255,.06); }
@@ -676,7 +676,7 @@
   .story-metric-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .18em; color: gray; text-transform: uppercase; margin-top: 6px; }
   .story-pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .story-pill { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .08em; padding: 6px 14px; border-radius: 20px; background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2); color: var(--gold); }
-  .story-card-float { position: absolute; top: 28px; right: -28px; width: 180px; background: var(--surface); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 18px 20px; backdrop-filter: blur(20px); animation: floatCard 5s ease-in-out infinite; }
+  .story-card-float { position: absolute; top: 28px; right: -28px; width: 180px; background: var(--surface); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 18px 20px;  animation: floatCard 5s ease-in-out infinite; }
   @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
   .float-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: .14em; color: var(--steel); text-transform: uppercase; margin-bottom: 8px; }
   .float-val { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--gain); font-weight: 300; }
@@ -896,7 +896,7 @@
   html[data-theme="light"] .hero-title { color: #1a1008; }
   html[data-theme="light"] .hero-subtitle { color: #3a2818; }
   html[data-theme="light"] .hero-eyebrow { background: rgba(154,124,46,.09); border-color: rgba(154,124,46,.22); }
-  html[data-theme="light"] .hero-stats { background: rgba(255,255,255,.92) !important; border-color: rgba(0,0,0,.09) !important; backdrop-filter: blur(20px); }
+  html[data-theme="light"] .hero-stats { background: rgba(255,255,255,.92) !important; border-color: rgba(0,0,0,.09) !important;  }
   html[data-theme="light"] .hero-stat { border-right-color: rgba(0,0,0,.07) !important; }
   html[data-theme="light"] .hero-stat-val { color: #1a1008; }
   html[data-theme="light"] .hero-stat-lbl { color: #7a6448; }
@@ -972,7 +972,6 @@
 </head>
 <body>
 
-<div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 <!-- ═══════════════════════════════════════════
      NAV

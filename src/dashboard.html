@@ -49,7 +49,6 @@ body{font-family:'Instrument Sans',sans-serif;background:var(--void);color:var(-
 .grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.028;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
   background-size:220px}
-#particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35}
 
 /* -- AUTH GATE -- */
 #authGate{display:none;position:fixed;inset:0;z-index:998;background:var(--void);align-items:center;justify-content:center}
@@ -63,7 +62,7 @@ body{font-family:'Instrument Sans',sans-serif;background:var(--void);color:var(-
 
 /* -- DESKTOP SIDEBAR -- */
 #sidebar{display:none;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;
-  background:rgba(7,9,13,.97);backdrop-filter:blur(24px);
+  background:rgba(7,9,13,.97);
   border-right:1px solid rgba(255,255,255,.06);z-index:50;padding:24px 16px;overflow-y:auto}
 .sbl{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:13px;
   font-size:.84rem;font-weight:500;color:var(--ash);transition:all .2s;
@@ -75,7 +74,7 @@ body{font-family:'Instrument Sans',sans-serif;background:var(--void);color:var(-
 /* -- NAV -- */
 nav{position:sticky;top:0;z-index:40;height:var(--nav-h);
   display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-  background:rgba(5,6,8,.96);backdrop-filter:blur(36px) saturate(180%);
+  background:rgba(5,6,8,.96);
   border-bottom:1px solid rgba(255,255,255,.06)}
 nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent 0%,rgba(201,166,60,.18) 40%,rgba(201,166,60,.18) 60%,transparent 100%)}
@@ -117,9 +116,9 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 /* -- MOBILE MENU — ULTRA PREMIUM -- */
 .mobile-menu{display:none;position:fixed;inset:0;z-index:400;pointer-events:none}
 .mobile-menu.open{pointer-events:all}
-.mm-backdrop{position:absolute;inset:0;background:rgba(2,4,8,0);backdrop-filter:blur(0px);
+.mm-backdrop{position:absolute;inset:0;background:rgba(2,4,8,0);
   transition:background .45s,backdrop-filter .45s}
-.mobile-menu.open .mm-backdrop{background:rgba(2,4,8,.88);backdrop-filter:blur(18px)}
+.mobile-menu.open .mm-backdrop{background:rgba(2,4,8,.88);}
 .mm-panel{position:absolute;top:0;right:0;width:min(360px,92vw);height:100%;
   background:linear-gradient(175deg,#07101e 0%,#060b18 40%,#050810 100%);
   border-left:1px solid rgba(201,166,60,.18);
@@ -339,7 +338,7 @@ body.menu-open{overflow:hidden}
 
 /* -- MODALS -- */
 .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);
-  backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:16px}
+  display:none;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
 .modal-box-base{background:linear-gradient(150deg,#0c1521,#080d18);
   border:1px solid rgba(255,255,255,.07);border-radius:24px;
@@ -715,7 +714,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
 .adm-topbar {
   height: 56px;
   background: rgba(7,9,13,.97);
-  backdrop-filter: blur(24px);
+  
   border-bottom: 1px solid rgba(201,166,60,.15);
   display: flex;
   align-items: center;
@@ -989,7 +988,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   inset: 0;
   background: rgba(0,0,0,.6);
   z-index: 10;
-  backdrop-filter: blur(4px);
+  
 }
 .adm-sidebar-overlay.open { display: block; }
 
@@ -1444,7 +1443,6 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   html[data-theme="light"] .nw-analytics-block > div:last-child{border-left-color:rgba(0,0,0,.1)!important}
   html[data-theme="light"] .ambient{background:radial-gradient(ellipse 80% 50% at 30% -10%,rgba(159,122,30,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(100,80,40,.03) 0%,transparent 55%)!important}
   html[data-theme="light"] .grain{opacity:.015!important}
-  html[data-theme="light"] #particleCanvas{opacity:.1!important}
 
   /* -- 4. Ticker -- */
   html[data-theme="light"] .ticker-wrap{background:rgba(240,235,224,.98)!important;border-top-color:rgba(0,0,0,.08)!important;border-bottom-color:rgba(0,0,0,.08)!important}
@@ -1468,7 +1466,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   html[data-theme="light"] .nav-toggle:hover{background:rgba(159,122,30,.14)!important;border-color:rgba(159,122,30,.38)!important}
 
   /* -- 7. Mobile menu -- */
-  html[data-theme="light"] .mobile-menu.open .mm-backdrop{background:rgba(200,193,180,.75)!important;backdrop-filter:blur(14px)!important}
+  html[data-theme="light"] .mobile-menu.open .mm-backdrop{background:rgba(200,193,180,.75)!important;}
   html[data-theme="light"] .mm-panel{background:linear-gradient(160deg,#f5f1e9 0%,#ede8de 50%,#e8e0d2 100%)!important;border-left-color:rgba(159,122,30,.18)!important}
   html[data-theme="light"] .mm-head{border-bottom-color:rgba(0,0,0,.07)!important}
   html[data-theme="light"] .mm-logo-word{color:#0f0d0a!important}
@@ -1584,7 +1582,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   html[data-theme="light"] .tx-row:hover{background:rgba(0,0,0,.025)!important}
 
   /* -- 18. Modals -- */
-  html[data-theme="light"] .modal-overlay{background:rgba(210,200,185,.75)!important;backdrop-filter:blur(20px)!important}
+  html[data-theme="light"] .modal-overlay{background:rgba(210,200,185,.75)!important;}
   html[data-theme="light"] .modal-box-base{background:linear-gradient(150deg,#ffffff,#f9f5ef)!important;border-color:rgba(0,0,0,.1)!important;box-shadow:0 80px 160px rgba(0,0,0,.18),0 0 0 1px rgba(159,122,30,.1)!important}
   html[data-theme="light"] .modal-hdr{background:linear-gradient(150deg,#ffffff,#f9f5ef)!important;border-bottom-color:rgba(0,0,0,.08)!important}
   html[data-theme="light"] .modal-close-btn{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.1)!important;color:#7a5c38!important}
@@ -1767,7 +1765,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   display:inline-flex;align-items:center;gap:8px;
   padding:6px 16px 6px 14px;border-radius:99px;
   font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.07em;
-  backdrop-filter:blur(8px)}
+  }
 
 /* Allocation ring */
 .alloc-ring-wrap{position:relative;width:160px;height:160px;flex-shrink:0}
@@ -1783,7 +1781,7 @@ html[data-theme="light"] .dep-proc-connector{background:rgba(0,0,0,.1)}
   border-radius:22px;
   padding:28px 28px;
   box-shadow:0 4px 32px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.045);
-  backdrop-filter:blur(14px);
+  
   animation:fadeUp .9s cubic-bezier(.16,1,.3,1) .4s both}
 .nw-hero-inner{contain:layout}
 
@@ -2014,7 +2012,6 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
 <body class="overflow-x-hidden">
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:99999;pointer-events:none;opacity:0;background:#faf8f4;transition:opacity .15s ease"></div>
 
-<canvas id="particleCanvas"></canvas>
 <div class="ambient"></div>
 <div class="ambient-deep"></div>
 <div class="mesh-grid"></div>
@@ -2307,7 +2304,7 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
               style="display:flex;align-items:center;gap:9px;
                 background:rgba(201,166,60,.08);border:1px solid rgba(201,166,60,.3);
                 border-radius:16px;padding:12px 20px;cursor:pointer;
-                transition:all .3s;backdrop-filter:blur(8px)"
+                transition:all .3s;
               onmouseover="this.style.borderColor='var(--gold)';this.style.background='rgba(201,166,60,.14)'"
               onmouseout="this.style.borderColor='rgba(201,166,60,.3)';this.style.background='rgba(201,166,60,.08)'">
               <span style="width:7px;height:7px;border-radius:50%;background:var(--gold);animation:livePulse 1.5s infinite;flex-shrink:0"></span>
@@ -3872,18 +3869,6 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
   <div><p id="toast-title" style="font-size:13px;font-weight:600;color:var(--pearl)"></p><p id="toast-sub" style="font-size:11px;color:var(--ash);margin-top:2px"></p></div>
 </div>
 
-<!-- --------------------------------------------------
-     PARTICLES
--------------------------------------------------- -->
-<script>
-(function(){
-  const cv=document.getElementById('particleCanvas'),ctx=cv.getContext('2d');let W,H,pts=[];
-  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight}resize();addEventListener('resize',resize);
-  function rand(a,b){return a+Math.random()*(b-a)}
-  for(let i=0;i<55;i++)pts.push({x:rand(0,W),y:rand(0,H),vx:rand(-.16,.16),vy:rand(-.1,.1),r:rand(.3,1.6),gold:Math.random()<.3});
-  function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.gold?'rgba(201,166,60,.5)':'rgba(180,200,220,.2)';ctx.fill()});for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<120){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);const a=(1-d/120)*.05;ctx.strokeStyle=pts[i].gold&&pts[j].gold?`rgba(201,166,60,${a*2})`:`rgba(180,200,220,${a})`;ctx.lineWidth=.5;ctx.stroke()}}requestAnimationFrame(draw)}draw();
-})();
-</script>
 
 <script>
   /* ---------- SCROLL REVEAL ---------- */
@@ -4437,7 +4422,7 @@ function injectTradeModal() {
 function injectTradeReceipt() {
   if (document.getElementById('tradeReceiptModal')) return;
   document.body.insertAdjacentHTML('beforeend', `
-  <div style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.94);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:16px" id="tradeReceiptModal">
+  <div style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;padding:16px" id="tradeReceiptModal">
     <div style="background:linear-gradient(155deg,#080e18,#060c12);border:1px solid rgba(201,166,60,.2);border-radius:26px;width:100%;max-width:420px;max-height:94vh;overflow-y:auto;box-shadow:0 0 100px rgba(201,166,60,.07)" id="tradeReceiptCard">
       <div style="padding:32px 26px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)">
         <div id="receipt-icon-wrap" style="width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><i id="receipt-icon-i" style="font-size:26px"></i></div>

@@ -32,8 +32,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="coingecko-sync.js?v=4"></script>
   <script src="chat-widget.js"></script>
-  <meta property="og:image" content="[https://aurumcapitalinvest.com/image/favicon.png](https://aurumcapitalinvest.com/image/favicon.png)">
-  <meta property="og:title" content="Aurum Invest">
 
   <style>
     :root {
@@ -79,7 +77,7 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 40px; height: 72px;
       background: rgba(4,8,15,0.72);
-      backdrop-filter: blur(24px);
+      
       border-bottom: 1px solid rgba(255,255,255,0.06);
       transition: all 0.3s;
     }
@@ -160,7 +158,7 @@
     .lp-menu-backdrop {
       position: absolute; inset: 0;
       background: rgba(2,4,6,0);
-      backdrop-filter: blur(0px);
+      
       transition: background .6s cubic-bezier(.4,0,.2,1), backdrop-filter .6s;
     }
     .lp-menu-panel {
@@ -173,7 +171,7 @@
       display: flex; flex-direction: column; overflow: hidden;
     }
     .lp-mobile-menu.open { pointer-events: all; }
-    .lp-mobile-menu.open .lp-menu-backdrop { background: rgba(2,4,6,.82); backdrop-filter: blur(16px); }
+    .lp-mobile-menu.open .lp-menu-backdrop { background: rgba(2,4,6,.82);  }
     .lp-mobile-menu.open .lp-menu-panel { transform: translateX(0); }
     @media(max-width:1024px) { .lp-mobile-menu { display: block !important; } }
     @media(min-width:1025px) { .lp-mobile-menu { display: none !important; } }
@@ -331,7 +329,7 @@
       border-radius: 20px; overflow: hidden;
       max-width: 640px; margin: 0 auto;
       background: rgba(201,168,76,0.03);
-      backdrop-filter: blur(12px);
+      
     }
     .agg-stat { flex: 1; padding: 24px 20px; text-align: center; border-right: 1px solid var(--border-gold); position: relative; }
     .agg-stat:last-child { border-right: none; }
@@ -441,7 +439,7 @@
       background: linear-gradient(145deg, rgba(201,168,76,0.04) 0%, rgba(6,12,20,0.98) 60%);
       padding: 32px 32px 28px;
       overflow: hidden;
-      backdrop-filter: blur(12px);
+      
     }
     .chart-card::before {
       content: '';
@@ -614,7 +612,7 @@
       border-radius: 20px; overflow: hidden;
       border: 1px solid var(--border-gold);
       background: linear-gradient(145deg, rgba(201,168,76,0.04), rgba(8,16,26,0.95));
-      backdrop-filter: blur(16px);
+      
     }
     .ls-cell { padding: 28px 24px; text-align: center; border-right: 1px solid var(--border-gold); position: relative; }
     .ls-cell:last-child { border-right: none; }
@@ -685,7 +683,7 @@
       padding: 5px 11px; border-radius: 8px;
       background: rgba(34,197,94,0.16); border: 1px solid rgba(34,197,94,0.35);
       font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: #22c55e;
-      backdrop-filter: blur(8px);
+      
     }
 
     .video-play-btn {
@@ -710,7 +708,7 @@
       font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.06em;
       color: rgba(255,255,255,0.7);
       background: rgba(0,0,0,0.5);
-      padding: 3px 7px; border-radius: 5px; backdrop-filter: blur(6px);
+      padding: 3px 7px; border-radius: 5px; 
     }
 
     .video-info {
@@ -738,13 +736,13 @@
       display: none; align-items: center; justify-content: center;
       padding: 20px;
       background: rgba(2,4,8,0);
-      backdrop-filter: blur(0px);
+      
       transition: background 0.35s, backdrop-filter 0.35s;
     }
     #videoModal.open {
       display: flex;
       background: rgba(2,4,8,0.92);
-      backdrop-filter: blur(22px);
+      
     }
     #videoModal.open .vm-box {
       animation: vmSlideIn 0.4s cubic-bezier(.4,0,.2,1) forwards;
@@ -776,7 +774,7 @@
       display: flex; align-items: center; justify-content: center;
       color: var(--text-dim); font-size: 14px; cursor: pointer;
       transition: color 0.2s, background 0.2s, border-color 0.2s;
-      backdrop-filter: blur(8px);
+      
     }
     .vm-close:hover { color: var(--gold); border-color: var(--border-gold); background: rgba(201,168,76,0.1); }
 
@@ -884,7 +882,7 @@
       background: rgba(4,8,15,0.85);
       border-bottom: 1px solid rgba(255,255,255,0.05);
       overflow: hidden;
-      backdrop-filter: blur(12px);
+      
     }
     .ticker-track {
       display: flex; align-items: center; height: 100%;
@@ -1164,10 +1162,8 @@
 </head>
 <body>
 
-<div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 <div id="scrollProgress"></div>
-<canvas class="ambient-canvas" id="ambientCanvas"></canvas>
 
 <!-- HEADER -->
 <header id="mainHeader">
@@ -2185,21 +2181,8 @@ const chartObserver = new IntersectionObserver(entries => {
 const chartsSection = document.querySelector('.charts-section');
 if (chartsSection) chartObserver.observe(chartsSection);
 
-/* ══════ AMBIENT PARTICLES ══════ */
-(function(){
-  const canvas=document.getElementById('ambientCanvas');
-  const ctx=canvas.getContext('2d');
-  let W,H,particles;
-  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
-  function init(){ particles=Array.from({length:55},()=>({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.4+0.3, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25, alpha:Math.random()*.5+.1, gold:Math.random()>.6 })); }
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    particles.forEach(p=>{ ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.gold?`rgba(201,168,76,${p.alpha})`:`rgba(140,157,181,${p.alpha*.4})`;ctx.fill(); p.x+=p.vx;p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; });
-    requestAnimationFrame(draw);
-  }
-  resize();init();draw();
-  window.addEventListener('resize',()=>{ resize();init(); });
-})();
+// Ambient canvas particle background removed for performance — it ran an
+// unconditional requestAnimationFrame loop forever, purely for decoration.
 
 /* ══════ MOBILE NAV ══════ */
 (function(){

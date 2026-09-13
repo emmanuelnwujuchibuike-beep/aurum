@@ -85,7 +85,7 @@
       padding: 0 48px;
       height: 72px;
       background: rgba(2,4,6,.85);
-      backdrop-filter: blur(24px);
+      
       border-bottom: 1px solid var(--border);
     }
 
@@ -182,7 +182,7 @@
     .lp-menu-backdrop {
       position: absolute; inset: 0;
       background: rgba(2,4,6,0);
-      backdrop-filter: blur(0px);
+      
       transition: background .6s cubic-bezier(.4,0,.2,1), backdrop-filter .6s;
     }
     .lp-menu-panel {
@@ -228,7 +228,7 @@
     .lp-mobile-menu.open { pointer-events: all; }
     .lp-mobile-menu.open .lp-menu-backdrop {
       background: rgba(2,4,6,.82);
-      backdrop-filter: blur(16px);
+      
     }
     .lp-mobile-menu.open .lp-menu-panel { transform: translateX(0); }
 
@@ -598,7 +598,7 @@
     .doc-tabs {
       position: sticky; top: 72px; z-index: 0;
       background: rgba(6,12,18,.92);
-      backdrop-filter: blur(20px);
+      
       border-bottom: 1px solid var(--border);
     }
     .doc-tabs-inner {
@@ -1098,7 +1098,6 @@
 <link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
-<div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 
   <!-- Scroll progress bar -->

@@ -220,7 +220,7 @@ body::after {
 /* Mobile overlay */
 #overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.7); backdrop-filter: blur(4px); z-index: 40;
+  background: rgba(0,0,0,.7);  z-index: 40;
 }
 #overlay.show { display: block; }
 
@@ -242,7 +242,7 @@ body::after {
   justify-content: space-between;
   padding: 0 32px;
   background: rgba(2,4,10,.92);
-  backdrop-filter: blur(28px);
+  
   position: sticky; top: 0; z-index: 30; gap: 16px;
 }
 .topbar-left { display: flex; align-items: center; gap: 14px; }
@@ -933,7 +933,7 @@ body::after {
 .modal-bg {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.88);
-  backdrop-filter: blur(18px);
+  
   z-index: 200; display: none;
   align-items: center; justify-content: center; padding: 16px;
 }
@@ -1246,7 +1246,7 @@ body::after {
   html[data-theme="light"] .upload-zone-sub{color:#7a6448!important}
 
   /* -- Modal -- */
-  html[data-theme="light"] .modal-bg{background:rgba(100,80,60,.48)!important;backdrop-filter:blur(14px)!important}
+  html[data-theme="light"] .modal-bg{background:rgba(100,80,60,.48)!important;}
   html[data-theme="light"] .modal{background:#ffffff!important;border-color:rgba(0,0,0,.1)!important;box-shadow:0 32px 80px rgba(0,0,0,.15)!important}
   html[data-theme="light"] .modal::before{background:linear-gradient(90deg,transparent,rgba(154,124,46,.22),transparent)!important}
   html[data-theme="light"] .modal-title{color:#1a1008!important}
@@ -1281,7 +1281,6 @@ body::after {
 <link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
-<div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 
 <div id="overlay" onclick="closeSidebar()"></div>
