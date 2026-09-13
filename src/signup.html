@@ -593,7 +593,6 @@ html[data-theme="light"] .conf-note{background:rgba(0,0,0,.03);border-color:rgba
 <link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
-<script src="intro-loader.js"></script>
 <div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 
@@ -942,7 +941,7 @@ document.addEventListener('aurumTermsAccepted', function() {
 });
 </script>
 
-<!-- Stat counter — runs after intro-loader.js clears the overlay -->
+<!-- Stat counter -->
 <script>
 (function() {
   function runCounters() {
@@ -959,8 +958,7 @@ document.addEventListener('aurumTermsAccepted', function() {
       })();
     });
   }
-  // Wait for intro overlay to finish (2s dismiss + 1.1s iris-out)
-  setTimeout(runCounters, 3200);
+  runCounters();
 })();
 </script>
 
