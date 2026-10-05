@@ -2915,10 +2915,19 @@ function updateTickerPrices(){
 }
 
 function startLiveData(){
+  if(liveDataInterval)return;
   fetchLivePrices();
   liveDataInterval=setInterval(fetchLivePrices,15000);
   priceTickTimer=setInterval(microTick,800);
 }
+function stopLiveData(){
+  clearInterval(liveDataInterval);clearInterval(priceTickTimer);
+  liveDataInterval=null;priceTickTimer=null;
+}
+// Pause price polling while the tab is hidden to avoid idle Edge Function calls
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)stopLiveData();else startLiveData();
+});
 
 function refreshBalanceBar(){
   const c=+(profile?.cash||0);const nw=c+holdingsValue();
