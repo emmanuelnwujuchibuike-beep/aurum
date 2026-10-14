@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aurum Capital � Precision Investment Platform</title>
+  <title>Aurum Capital — Precision Investment Platform</title>
 
-  <!-- Flash-of-wrong-theme prevention � must run synchronously before first paint -->
+  <!-- Flash-of-wrong-theme prevention — must run synchronously before first paint -->
   <script>
     (function(){
       var t = localStorage.getItem('aurum_theme');
@@ -21,7 +21,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="./image/favicon.png">
   <link rel="manifest" href="./site.webmanifest">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Aurum Capital � Precision Investment Platform">
+  <meta property="og:title" content="Aurum Capital — Precision Investment Platform">
   <meta property="og:description" content="Multi-asset investment platform for crypto, stocks, commodities, and real estate.">
   <meta property="og:url" content="https://aurumcapitalinvest.com/">
   <meta property="og:image" content="https://aurumcapitalinvest.com/image/favicon.png">
@@ -126,7 +126,7 @@
       
       overflow: hidden;
       display: flex; align-items: center;
-      /* FIX: Use CSS animation as the base scroll mechanism � immune to
+      /* FIX: Use CSS animation as the base scroll mechanism — immune to
          touch events freezing the JS RAF loop.
          JS will override transform only when patching live prices. */
     }
@@ -293,7 +293,7 @@
     .hero-title strong { display: block; background: linear-gradient(135deg, var(--text-1) 0%, var(--gold-pale) 50%, var(--gold) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 500; }
     .hero-sub { font-size: 16px; color: var(--text-2); font-weight: 300; max-width: 480px; line-height: 1.75; margin-bottom: 40px; }
     /* ----------------------------------------------
-       LUXURY HERO BUTTONS � responsive, animated
+       LUXURY HERO BUTTONS — responsive, animated
     ---------------------------------------------- */
     .hero-ctas {
       display: grid;
@@ -303,14 +303,7 @@
       width: fit-content;
     }
 
-    /* Staggered entrance slide-up */
-    @keyframes btnRise {
-      from { opacity: 0; transform: translateY(18px) scale(.96); }
-      to   { opacity: 1; transform: translateY(0)    scale(1);   }
-    }
-    .btn-hero-primary  { animation: btnRise .45s cubic-bezier(.34,1.56,.64,1) .05s both; }
-    .btn-hero-ghost    { animation: btnRise .45s cubic-bezier(.34,1.56,.64,1) .12s both; }
-    .btn-hero-property { animation: btnRise .45s cubic-bezier(.34,1.56,.64,1) .19s both; }
+    
 
     /* Shared base */
     .btn-hero-primary,
@@ -827,7 +820,7 @@
     }
     .section-label::before { background: var(--gold); opacity: .55; }
 
-    /* Enhanced spring reveals � no blur to keep reveals compositor-only */
+    /* Enhanced spring reveals — no blur to keep reveals compositor-only */
     .reveal { opacity: 0; transform: translateY(24px);
       transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
     .reveal.in { opacity: 1; transform: none; }
@@ -835,7 +828,7 @@
     /* Hero title enhanced */
     .hero-title { letter-spacing: -.01em; }
 
-    /* Asset card glow � reveal is handled by body.hero-revealed gate above */
+    /* Asset card glow — reveal is handled by body.hero-revealed gate above */
 
     /* Trust counter glow */
     .trust-num { text-shadow: 0 0 18px rgba(201,168,76,.25); }
@@ -881,13 +874,13 @@
       );
     }
 
-    /* Smooth global theme transitions � no box-shadow (would repaint on hover during scroll) */
+    /* Smooth global theme transitions — no box-shadow (would repaint on hover during scroll) */
     *, *::before, *::after {
       transition-property: background-color, border-color, color;
       transition-duration: .35s;
       transition-timing-function: cubic-bezier(.25,.46,.45,.94);
     }
-    /* But NOT these � they have their own critical transitions */
+    /* But NOT these — they have their own critical transitions */
     .particle, .aurora-orb, .hero-orb-1, .hero-orb-2, .hero-orb-3,
     .hero-grid, .ticker-track, .mm-link, .mm-logo,
     .mm-close, .mm-cta, .mm-strip, .mm-coins, [class*="reveal"], .asset-card,
@@ -897,7 +890,7 @@
     }
 
     /* --------------------------------------------------
-       LIGHT THEME � VARIABLES
+       LIGHT THEME — VARIABLES
     -------------------------------------------------- */
     html[data-theme="light"] {
       --gold:        #b8902d;
@@ -1206,7 +1199,7 @@
       color: var(--gold); transform: rotate(45deg);
     }
 
-    /* Grid-based height animation � handles any answer length */
+    /* Grid-based height animation — handles any answer length */
     .faq-answer-wrap {
       display: grid; grid-template-rows: 0fr;
       transition: grid-template-rows .5s cubic-bezier(.16,1,.3,1);
@@ -1251,11 +1244,11 @@
     html[data-theme="light"] .faq-icon { border-color: rgba(0,0,0,.1); color: var(--text-3); }
     html[data-theme="light"] .faq-item.faq-open .faq-icon { background: rgba(184,144,45,.1); border-color: rgba(184,144,45,.3); }
 
-    /* ??????????????????????????????????????????????????
-       LUXURY MOTION SYSTEM � outdomode-style
-    ?????????????????????????????????????????????????? */
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LUXURY MOTION SYSTEM — outdomode-style
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-    /* � Animated grain � */
+    /* — Animated grain — */
     .grain-overlay{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:.032;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='g'%3E%3CfeTurbulence baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23g)'/%3E%3C/svg%3E");
       background-size:220px;display:none}
@@ -1266,7 +1259,7 @@
       60% {background-position:15% 0}    70% {background-position:0 15%}
       80% {background-position:3% 35%}   90% {background-position:-10% 10%}}
 
-    /* � Fixed aurora orbs � */
+    /* — Fixed aurora orbs — */
     .aurora-orb{position:fixed;pointer-events:none;z-index:1;border-radius:50%;will-change:transform;translate:0 var(--par-y,0px)}
     .aurora-1{width:700px;height:550px;background:radial-gradient(circle,rgba(201,168,76,.09) 0%,transparent 65%);
       top:-18%;left:-12%;animation:auroraA 22s ease-in-out infinite}
@@ -1285,7 +1278,7 @@
     /* Coarse-pointer overrides */
     @media(pointer:coarse){.grain-overlay{display:none}}
 
-    /* � Char stagger � */
+    /* — Char stagger — */
     @keyframes charUp{from{opacity:0;transform:translateY(55%)}to{opacity:1;transform:translateY(0)}}
 
     /* light-theme adjustments */
@@ -1321,9 +1314,9 @@
     </nav>
     <div class="head-ctas">
       <a href="signup.html" class="btn-ghost">Sign In</a>
-      <a href="signup.html" class="btn-gold">Open Account ?</a>
+      <a href="signup.html" class="btn-gold">Open Account →</a>
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle dark/light mode">
-        <span class="theme-icon" id="themeIcon">?</span>
+        <span class="theme-icon" id="themeIcon">☀</span>
       </button>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
         <span class="bar"></span><span class="bar"></span><span class="bar"></span>
@@ -1345,12 +1338,12 @@
       </div>
 
       <div class="mm-strip">
-        <div class="mm-strip-label">? Live Prices</div>
+        <div class="mm-strip-label">◆ Live Prices</div>
         <div class="mm-coins" id="mmCoins"></div>
       </div>
 
       <nav class="mm-nav">
-        <div class="mm-sec-label">? Explore</div>
+        <div class="mm-sec-label">◆ Explore</div>
         <a href="#markets" class="mm-link active" onclick="closeMenu()">
           <div class="mm-link-inner">
             <div class="mm-link-icon"><i class="fas fa-chart-line"></i></div>
@@ -1388,7 +1381,7 @@
         </a>
 
         <div class="mm-divider"></div>
-        <div class="mm-sec-label">? Company</div>
+        <div class="mm-sec-label">◆ Company</div>
 
         <a href="about.html" class="mm-link">
           <div class="mm-link-inner">
@@ -1406,7 +1399,7 @@
         </a>
 
         <div class="mm-divider"></div>
-        <div class="mm-sec-label">? Account</div>
+        <div class="mm-sec-label">◆ Account</div>
 
         <a href="signup.html" class="mm-link" id="mm-signin-link">
           <div class="mm-link-inner">
@@ -1426,14 +1419,14 @@
 
       <div class="mm-cta">
         <a href="signup.html" class="mm-cta-btn mm-cta-primary" id="mm-cta-primary">
-          <i class="fas fa-rocket" style="font-size:11px"></i> Open Account � Free
+          <i class="fas fa-rocket" style="font-size:11px"></i> Open Account — Free
         </a>
         <a href="invest.html" class="mm-cta-btn mm-cta-secondary">
           <i class="fas fa-chart-candlestick" style="font-size:11px"></i> Explore Live Markets
         </a>
         <div class="mm-status">
           <div class="mm-status-dot"></div>
-          <span class="mm-status-text">All systems operational � 99.9% uptime</span>
+          <span class="mm-status-text">All systems operational · 99.9% uptime</span>
         </div>
       </div>
     </div>
@@ -1455,7 +1448,7 @@
           Invest where<br><em>precision</em> meets<br><strong>tomorrow's returns</strong>
         </h1>
         <p class="hero-sub">
-          Seamlessly invest across digital assets, global equities, and prime real estate � unified under one precision platform engineered for the world's most discerning investors.
+          Seamlessly invest across digital assets, global equities, and prime real estate — unified under one precision platform engineered for the world's most discerning investors.
         </p>
         <div class="hero-ctas">
           <a href="signup.html" class="btn-hero-primary">
@@ -1508,34 +1501,34 @@
         </div>
         <div class="ac-body">
           <div class="ac-row" onclick="openAssetChart('BTC')" title="View BTC chart">
-            <div class="ac-icon" style="background:rgba(247,147,26,0.12);color:#f7931a;">?</div>
-            <div class="ac-info"><div class="ac-sym">Bitcoin</div><div class="ac-name">BTC � CRYPTO</div></div>
+            <div class="ac-icon" style="background:rgba(247,147,26,0.12);color:#f7931a;">₿</div>
+            <div class="ac-info"><div class="ac-sym">Bitcoin</div><div class="ac-name">BTC · CRYPTO</div></div>
             <div class="ac-right">
-              <div class="ac-price" id="pr-BTC">�</div>
+              <div class="ac-price" id="pr-BTC">—</div>
               <span class="ac-chg up" id="chg-BTC">+0.00%</span>
             </div>
           </div>
           <div class="ac-row" onclick="openAssetChart('ETH')" title="View ETH chart">
-            <div class="ac-icon" style="background:rgba(98,126,234,0.12);color:#627eea;">?</div>
-            <div class="ac-info"><div class="ac-sym">Ethereum</div><div class="ac-name">ETH � CRYPTO</div></div>
+            <div class="ac-icon" style="background:rgba(98,126,234,0.12);color:#627eea;">⟠</div>
+            <div class="ac-info"><div class="ac-sym">Ethereum</div><div class="ac-name">ETH · CRYPTO</div></div>
             <div class="ac-right">
-              <div class="ac-price" id="pr-ETH">�</div>
+              <div class="ac-price" id="pr-ETH">—</div>
               <span class="ac-chg up" id="chg-ETH">+0.00%</span>
             </div>
           </div>
           <div class="ac-row" onclick="openAssetChart('SOL')" title="View SOL chart">
-            <div class="ac-icon" style="background:rgba(20,241,149,0.10);color:#14f195;">?</div>
-            <div class="ac-info"><div class="ac-sym">Solana</div><div class="ac-name">SOL � CRYPTO</div></div>
+            <div class="ac-icon" style="background:rgba(20,241,149,0.10);color:#14f195;">◎</div>
+            <div class="ac-info"><div class="ac-sym">Solana</div><div class="ac-name">SOL · CRYPTO</div></div>
             <div class="ac-right">
-              <div class="ac-price" id="pr-SOL">�</div>
+              <div class="ac-price" id="pr-SOL">—</div>
               <span class="ac-chg up" id="chg-SOL">+0.00%</span>
             </div>
           </div>
           <div class="ac-row" onclick="openAssetChart('XRP')" title="View XRP chart">
             <div class="ac-icon" style="background:rgba(0,174,228,0.12);color:#00aae4;">X</div>
-            <div class="ac-info"><div class="ac-sym">Ripple</div><div class="ac-name">XRP � CRYPTO</div></div>
+            <div class="ac-info"><div class="ac-sym">Ripple</div><div class="ac-name">XRP · CRYPTO</div></div>
             <div class="ac-right">
-              <div class="ac-price" id="pr-XRP">�</div>
+              <div class="ac-price" id="pr-XRP">—</div>
               <span class="ac-chg dn" id="chg-XRP">+0.00%</span>
             </div>
           </div>
@@ -1557,7 +1550,7 @@
     <div class="section-inner">
       <div class="section-label reveal">Live Markets</div>
       <h2 class="section-title reveal reveal-delay-1">Track the <em>Pulse</em> of Global Assets</h2>
-      <p class="section-sub reveal reveal-delay-2">Live market intelligence across crypto, global equities, and commodities � refreshed every 30 seconds directly from institutional-grade data feeds.</p>
+      <p class="section-sub reveal reveal-delay-2">Live market intelligence across crypto, global equities, and commodities — refreshed every 30 seconds directly from institutional-grade data feeds.</p>
       <div class="market-tabs reveal reveal-delay-2">
         <button class="tab-btn on" onclick="filterMarkets('all',this)">All</button>
         <button class="tab-btn" onclick="filterMarkets('crypto',this)">Crypto</button>
@@ -1573,7 +1566,7 @@
     <div class="section-inner">
       <div class="section-label reveal">Investment Verticals</div>
       <h2 class="section-title reveal reveal-delay-1">Diversified <em>Opportunity</em> Streams</h2>
-      <p class="section-sub reveal reveal-delay-2">Select from meticulously curated investment verticals � each engineered for a distinct objective: high-growth, capital preservation, or yield generation.</p>
+      <p class="section-sub reveal reveal-delay-2">Select from meticulously curated investment verticals — each engineered for a distinct objective: high-growth, capital preservation, or yield generation.</p>
       <div class="verticals-grid">
         <div class="vert-card reveal reveal-delay-1">
           <div class="vc-img">
@@ -1629,7 +1622,7 @@
     <div class="section-inner">
       <div class="section-label reveal">Featured Assets</div>
       <h2 class="section-title reveal reveal-delay-1">High-Conviction <em>Picks</em></h2>
-      <p class="section-sub reveal reveal-delay-2">A curated selection of the most compelling assets across every class � actively monitored by our proprietary research framework.</p>
+      <p class="section-sub reveal reveal-delay-2">A curated selection of the most compelling assets across every class — actively monitored by our proprietary research framework.</p>
       <div class="table-wrap reveal reveal-delay-3">
         <table class="assets-table">
           <thead>
@@ -1648,23 +1641,23 @@
     <div class="section-inner">
       <div class="section-label reveal">Property Spotlight</div>
       <h2 class="section-title reveal reveal-delay-1">Prime Real Estate <em>Exposure</em></h2>
-      <p class="section-sub reveal reveal-delay-2">Direct fractional access to institutional-caliber properties across the world's most sought-after markets � from coastal retreats to city-centre commercial assets.</p>
+      <p class="section-sub reveal reveal-delay-2">Direct fractional access to institutional-caliber properties across the world's most sought-after markets — from coastal retreats to city-centre commercial assets.</p>
       <div class="property-grid">
         <div class="prop-card reveal reveal-delay-1">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/frankfurt.jpg);"></div><div class="prop-img-overlay"></div><span class="prop-badge live">Live</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Frankfurt, Germany</span></div>
-          <div class="prop-body"><div class="prop-type">Mixed-Use Office</div><div class="prop-name">The Rhine Pavilion</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$500K�$650K</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
+          <div class="prop-body"><div class="prop-type">Mixed-Use Office</div><div class="prop-name">The Rhine Pavilion</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$500K–$650K</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
         </div>
         <div class="prop-card reveal reveal-delay-2">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/furt.jpg);"></div><div class="prop-img-overlay"></div><span class="prop-badge live">Live</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Bodensee, Germany</span></div>
-          <div class="prop-body"><div class="prop-type">Vacation</div><div class="prop-name">Lake Constance</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$550K�$750K</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
+          <div class="prop-body"><div class="prop-type">Vacation</div><div class="prop-name">Lake Constance</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$550K–$750K</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
         </div>
         <div class="prop-card reveal reveal-delay-3">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/beach2.jpg);"></div><div class="prop-img-overlay"></div><span class="prop-badge live">Live</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Santa Monica, CA</span></div>
-          <div class="prop-body"><div class="prop-type">Beach House</div><div class="prop-name">Pacific Meridian</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$25M�$30M</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
+          <div class="prop-body"><div class="prop-type">Beach House</div><div class="prop-name">Pacific Meridian</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$25M–$30M</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
         </div>
         <div class="prop-card reveal reveal-delay-1">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/dc.svg);"></div><div class="prop-img-overlay"></div><span class="prop-badge live">Live</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Washington DC</span></div>
-          <div class="prop-body"><div class="prop-type">Tech Equipped</div><div class="prop-name">Luxury Home</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$10M�$15M</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
+          <div class="prop-body"><div class="prop-type">Tech Equipped</div><div class="prop-name">Luxury Home</div><div class="prop-invest-row"><a class="tbl-btn" href="#" onclick="requireAuth('invest.html');return false;"><i class="fas fa-plus" style="font-size:9px;"></i> Invest</a></div><div class="prop-meta"><div class="prop-meta-item"><div class="prop-meta-val">7.3%</div><div class="prop-meta-lbl">Target Yield</div></div><div class="prop-meta-item"><div class="prop-meta-val" style="font-size:14px;">$10M–$15M</div><div class="prop-meta-lbl">Asset Value</div></div></div></div>
         </div>
         <div class="prop-card reveal reveal-delay-2">
           <div class="prop-img"><div class="prop-img-bg" style="background-image:url(./image/burwood.jpg);"></div><div class="prop-img-overlay"></div><span class="prop-badge new">New</span><span class="prop-loc-tag"><i class="fas fa-location-dot"></i> Sydney, Australia</span></div>
@@ -1693,7 +1686,7 @@
           <a href="contact.html" class="faq-contact-card">
             <div class="faq-cc-icon"><i class="fas fa-headset"></i></div>
             <div class="faq-cc-title">Still have questions?</div>
-            <p class="faq-cc-sub">Our team responds within 24 hours. No bots � real advisors who know the platform.</p>
+            <p class="faq-cc-sub">Our team responds within 24 hours. No bots — real advisors who know the platform.</p>
             <span class="faq-cc-link">Contact Support <i class="fas fa-arrow-right" style="font-size:9px"></i></span>
           </a>
         </div>
@@ -1704,18 +1697,18 @@
           <div class="faq-item">
             <button class="faq-btn" aria-expanded="false">
               <span class="faq-num">01</span>
-              <span class="faq-q">How does Aurum Capital work?</span>
+              <span class="faq-q">How does Aurum Capital work—</span>
               <span class="faq-icon"><i class="fas fa-plus"></i></span>
             </button>
             <div class="faq-answer-wrap"><div class="faq-answer-inner">
-              <div class="faq-answer">Aurum Capital is a <strong>multi-asset investment platform</strong> that lets you invest across crypto, global equities, commodities, and real estate � all from one dashboard. Deposit funds, choose your allocations, and monitor your full portfolio with real-time P&amp;L analytics updated every 30 seconds.</div>
+              <div class="faq-answer">Aurum Capital is a <strong>multi-asset investment platform</strong> that lets you invest across crypto, global equities, commodities, and real estate — all from one dashboard. Deposit funds, choose your allocations, and monitor your full portfolio with real-time P&amp;L analytics updated every 30 seconds.</div>
             </div></div>
           </div>
 
           <div class="faq-item">
             <button class="faq-btn" aria-expanded="false">
               <span class="faq-num">02</span>
-              <span class="faq-q">Is my investment capital secure?</span>
+              <span class="faq-q">Is my investment capital secure—</span>
               <span class="faq-icon"><i class="fas fa-plus"></i></span>
             </button>
             <div class="faq-answer-wrap"><div class="faq-answer-inner">
@@ -1726,66 +1719,66 @@
           <div class="faq-item">
             <button class="faq-btn" aria-expanded="false">
               <span class="faq-num">03</span>
-              <span class="faq-q">What assets can I invest in?</span>
+              <span class="faq-q">What assets can I invest in—</span>
               <span class="faq-icon"><i class="fas fa-plus"></i></span>
             </button>
             <div class="faq-answer-wrap"><div class="faq-answer-inner">
-              <div class="faq-answer">You have access to four major asset classes: <strong>Cryptocurrencies</strong> (Bitcoin, Ethereum, Solana, and 50+ altcoins), <strong>Global equities</strong> (Tesla, Apple, Nvidia, Microsoft and more), <strong>Commodities</strong> (Gold, Silver, Crude Oil), and <strong>Premium real estate</strong> � fractional ownership in institutional-grade property.</div>
+              <div class="faq-answer">You have access to four major asset classes: <strong>Cryptocurrencies</strong> (Bitcoin, Ethereum, Solana, and 50+ altcoins), <strong>Global equities</strong> (Tesla, Apple, Nvidia, Microsoft and more), <strong>Commodities</strong> (Gold, Silver, Crude Oil), and <strong>Premium real estate</strong> — fractional ownership in institutional-grade property.</div>
             </div></div>
           </div>
 
           <div class="faq-item">
             <button class="faq-btn" aria-expanded="false">
               <span class="faq-num">04</span>
-              <span class="faq-q">What are the minimum investment amounts?</span>
+              <span class="faq-q">What are the minimum investment amounts—</span>
               <span class="faq-icon"><i class="fas fa-plus"></i></span>
             </button>
             <div class="faq-answer-wrap"><div class="faq-answer-inner">
-              <div class="faq-answer">There is <strong>no minimum for crypto or stock positions</strong> � you can start with any amount. Real estate investments begin from <strong>$1,000</strong>, allowing fractional access to properties that would otherwise require hundreds of thousands in capital. All minimum requirements are displayed clearly before you confirm any position.</div>
+              <div class="faq-answer">There is <strong>no minimum for crypto or stock positions</strong> — you can start with any amount. Real estate investments begin from <strong>$1,000</strong>, allowing fractional access to properties that would otherwise require hundreds of thousands in capital. All minimum requirements are displayed clearly before you confirm any position.</div>
             </div></div>
           </div>
 
           <div class="faq-item">
             <button class="faq-btn" aria-expanded="false">
               <span class="faq-num">05</span>
-              <span class="faq-q">How do deposits and withdrawals work?</span>
+              <span class="faq-q">How do deposits and withdrawals work—</span>
               <span class="faq-icon"><i class="fas fa-plus"></i></span>
             </button>
             <div class="faq-answer-wrap"><div class="faq-answer-inner">
-              <div class="faq-answer">Deposits are accepted via <strong>bank transfer, debit/credit card</strong>, and direct crypto transfer � typically credited within minutes. Withdrawals to your bank are processed within <strong>1�3 business days</strong>; crypto withdrawals usually settle within 24 hours. There are no withdrawal fees on standard accounts.</div>
+              <div class="faq-answer">Deposits are accepted via <strong>bank transfer, debit/credit card</strong>, and direct crypto transfer — typically credited within minutes. Withdrawals to your bank are processed within <strong>1–3 business days</strong>; crypto withdrawals usually settle within 24 hours. There are no withdrawal fees on standard accounts.</div>
             </div></div>
           </div>
 
           <div class="faq-item">
             <button class="faq-btn" aria-expanded="false">
               <span class="faq-num">06</span>
-              <span class="faq-q">Are there management or trading fees?</span>
+              <span class="faq-q">Are there management or trading fees—</span>
               <span class="faq-icon"><i class="fas fa-plus"></i></span>
             </button>
             <div class="faq-answer-wrap"><div class="faq-answer-inner">
-              <div class="faq-answer">Aurum Capital charges <strong>0% annual management fee</strong>. A small, transparent trading spread applies to each transaction � always shown upfront before you confirm. There are no subscription fees, no hidden charges, and no penalty for holding cash in your account.</div>
+              <div class="faq-answer">Aurum Capital charges <strong>0% annual management fee</strong>. A small, transparent trading spread applies to each transaction — always shown upfront before you confirm. There are no subscription fees, no hidden charges, and no penalty for holding cash in your account.</div>
             </div></div>
           </div>
 
           <div class="faq-item">
             <button class="faq-btn" aria-expanded="false">
               <span class="faq-num">07</span>
-              <span class="faq-q">How quickly can I open an account?</span>
+              <span class="faq-q">How quickly can I open an account—</span>
               <span class="faq-icon"><i class="fas fa-plus"></i></span>
             </button>
             <div class="faq-answer-wrap"><div class="faq-answer-inner">
-              <div class="faq-answer">Account creation takes <strong>under 5 minutes</strong>. Sign up with your email address, complete a brief identity verification (KYC) � typically instant for most applicants � fund your account, and you are ready to invest. <a href="signup.html">Get started here ?</a></div>
+              <div class="faq-answer">Account creation takes <strong>under 5 minutes</strong>. Sign up with your email address, complete a brief identity verification (KYC) — typically instant for most applicants — fund your account, and you are ready to invest. <a href="signup.html">Get started here →</a></div>
             </div></div>
           </div>
 
           <div class="faq-item">
             <button class="faq-btn" aria-expanded="false">
               <span class="faq-num">08</span>
-              <span class="faq-q">Can I track my portfolio performance in real time?</span>
+              <span class="faq-q">Can I track my portfolio performance in real time—</span>
               <span class="faq-icon"><i class="fas fa-plus"></i></span>
             </button>
             <div class="faq-answer-wrap"><div class="faq-answer-inner">
-              <div class="faq-answer">Yes. Your personal dashboard provides a <strong>live view of your entire portfolio</strong> � current value, unrealised P&amp;L, allocation breakdown across asset classes, and position-level performance. Prices stream directly from global exchanges and refresh every 30 seconds automatically.</div>
+              <div class="faq-answer">Yes. Your personal dashboard provides a <strong>live view of your entire portfolio</strong> — current value, unrealised P&amp;L, allocation breakdown across asset classes, and position-level performance. Prices stream directly from global exchanges and refresh every 30 seconds automatically.</div>
             </div></div>
           </div>
 
@@ -1798,7 +1791,7 @@
     <div class="cta-band-inner reveal">
       <div>
         <h2 class="cta-title">Your capital deserves<br><em>institutional-grade</em> conviction.</h2>
-        <p class="cta-sub">Open your account and gain direct access to differentiated asset classes, real-time intelligence, and proprietary allocation tools � the same infrastructure trusted by the world's most discerning investors.</p>
+        <p class="cta-sub">Open your account and gain direct access to differentiated asset classes, real-time intelligence, and proprietary allocation tools — the same infrastructure trusted by the world's most discerning investors.</p>
       </div>
       <div class="cta-actions">
         <a href="signup.html" class="btn-hero-primary" style="justify-content:center;"><i class="fas fa-rocket" style="font-size:12px;"></i> Create Account</a>
@@ -1813,14 +1806,14 @@
       <div class="footer-grid">
         <div>
           <a href="index.html" class="logo-link"><div class="logo-mark">A</div><span class="logo-name">Aurum Capital</span></a>
-          <p class="footer-desc">Aurum Capital is the private investment platform of choice for discerning investors seeking institutional-grade access to digital assets, global equities, and prime real estate � all in one place.</p>
+          <p class="footer-desc">Aurum Capital is the private investment platform of choice for discerning investors seeking institutional-grade access to digital assets, global equities, and prime real estate — all in one place.</p>
         </div>
         <div class="footer-col"><div class="footer-col-title">Company</div><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Careers</a></li><li><a href="contact.html">Press</a></li></ul></div>
         <div class="footer-col"><div class="footer-col-title">Explore</div><ul><li><a href="#markets">Markets</a></li><li><a href="invest.html">Invest</a></li><li><a href="#assets">Assets</a></li></ul></div>
         <div class="footer-col"><div class="footer-col-title">Support</div><ul><li><a href="contact.html">Help Center</a></li><li><a href="privacy-policy.html">Terms</a></li><li><a href="privacy-policy.html">Privacy</a></li></ul></div>
       </div>
       <div class="footer-bottom">
-        <div class="footer-legal">� 2026 Aurum Capital. All rights reserved.</div>
+        <div class="footer-legal">© 2026 Aurum Capital. All rights reserved.</div>
         <div class="footer-social">
           <a class="social-btn" href="https://x.com/AurumCapitalinvest" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
           <a class="social-btn" href="https://linkedin.com/company/aurumcapitalinvest" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
@@ -1837,12 +1830,12 @@
       <div class="cha-hdr">
         <div class="cha-asset">
           <div class="cha-ico" id="cha-ico"></div>
-          <div><div class="cha-aname" id="cha-aname">Bitcoin</div><div class="cha-sym" id="cha-sym">BTC � CRYPTO</div></div>
+          <div><div class="cha-aname" id="cha-aname">Bitcoin</div><div class="cha-sym" id="cha-sym">BTC · CRYPTO</div></div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <div>
             <div style="display:flex;align-items:baseline;">
-              <span class="cha-price" id="cha-price">�</span>
+              <span class="cha-price" id="cha-price">—</span>
               <span class="cha-chg" id="cha-chg">+0.00%</span>
             </div>
             <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
@@ -1850,15 +1843,15 @@
               <span style="font-family:var(--ff-mono);font-size:9px;color:var(--text-3);letter-spacing:.1em;">LIVE PRICE</span>
             </div>
           </div>
-          <button class="cha-close" onclick="closeAssetChart()">?</button>
+          <button class="cha-close" onclick="closeAssetChart()">✕</button>
         </div>
       </div>
       <div class="cha-stats">
-        <div class="cha-stat"><div class="cha-stat-l">Open</div><div class="cha-stat-v" id="cha-open">�</div></div>
-        <div class="cha-stat"><div class="cha-stat-l">24H High</div><div class="cha-stat-v" id="cha-high" style="color:var(--green)">�</div></div>
-        <div class="cha-stat"><div class="cha-stat-l">24H Low</div><div class="cha-stat-v" id="cha-low" style="color:var(--red)">�</div></div>
-        <div class="cha-stat"><div class="cha-stat-l">Market Cap</div><div class="cha-stat-v" id="cha-mcap">�</div></div>
-        <div class="cha-stat"><div class="cha-stat-l">Volume 24H</div><div class="cha-stat-v" id="cha-vol24">�</div></div>
+        <div class="cha-stat"><div class="cha-stat-l">Open</div><div class="cha-stat-v" id="cha-open">—</div></div>
+        <div class="cha-stat"><div class="cha-stat-l">24H High</div><div class="cha-stat-v" id="cha-high" style="color:var(--green)">—</div></div>
+        <div class="cha-stat"><div class="cha-stat-l">24H Low</div><div class="cha-stat-v" id="cha-low" style="color:var(--red)">—</div></div>
+        <div class="cha-stat"><div class="cha-stat-l">Market Cap</div><div class="cha-stat-v" id="cha-mcap">—</div></div>
+        <div class="cha-stat"><div class="cha-stat-l">Volume 24H</div><div class="cha-stat-v" id="cha-vol24">—</div></div>
       </div>
       <div class="cha-ctrl">
         <div class="cha-btn-grp" id="cha-type-grp">
@@ -1879,13 +1872,13 @@
         </div>
       </div>
       <div class="cha-ohlcv">
-        <span class="cha-ov-item"><span class="cha-ov-lbl">O</span><span id="ov-o" style="color:var(--text-1)">�</span></span>
-        <span class="cha-ov-item"><span class="cha-ov-lbl">H</span><span id="ov-h" style="color:var(--green)">�</span></span>
-        <span class="cha-ov-item"><span class="cha-ov-lbl">L</span><span id="ov-l" style="color:var(--red)">�</span></span>
-        <span class="cha-ov-item"><span class="cha-ov-lbl">C</span><span id="ov-c" style="color:var(--gold)">�</span></span>
-        <span class="cha-ov-item"><span class="cha-ov-lbl">Vol</span><span id="ov-v" style="color:var(--blue)">�</span></span>
+        <span class="cha-ov-item"><span class="cha-ov-lbl">O</span><span id="ov-o" style="color:var(--text-1)">—</span></span>
+        <span class="cha-ov-item"><span class="cha-ov-lbl">H</span><span id="ov-h" style="color:var(--green)">—</span></span>
+        <span class="cha-ov-item"><span class="cha-ov-lbl">L</span><span id="ov-l" style="color:var(--red)">—</span></span>
+        <span class="cha-ov-item"><span class="cha-ov-lbl">C</span><span id="ov-c" style="color:var(--gold)">—</span></span>
+        <span class="cha-ov-item"><span class="cha-ov-lbl">Vol</span><span id="ov-v" style="color:var(--blue)">—</span></span>
         <span class="cha-ov-item" id="ov-chg-wrap" style="display:none;">
-          <span class="cha-ov-lbl">Chg</span><span id="ov-chg">�</span>
+          <span class="cha-ov-lbl">Chg</span><span id="ov-chg">—</span>
         </span>
       </div>
       <div id="cha-main"></div>
@@ -1911,13 +1904,13 @@
 
     /* -- FORMAT HELPERS -- */
     function fmtP(p) {
-      if (!p || p <= 0) return '�';
+      if (!p || p <= 0) return '—';
       if (p >= 1000)  return '$' + p.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
       if (p >= 1)     return '$' + parseFloat(p).toFixed(2);
       return '$' + parseFloat(p).toFixed(4);
     }
     function fmtCompact(p) {
-      if (!p || p <= 0) return '�';
+      if (!p || p <= 0) return '—';
       if (p >= 1e12) return '$' + (p/1e12).toFixed(2) + 'T';
       if (p >= 1e9)  return '$' + (p/1e9).toFixed(2) + 'B';
       if (p >= 1e6)  return '$' + (p/1e6).toFixed(2) + 'M';
@@ -1925,7 +1918,7 @@
       return '$' + parseFloat(p).toFixed(2);
     }
     function fmtChg(c) {
-      if (c == null || isNaN(c)) return '�';
+      if (c == null || isNaN(c)) return '—';
       var sign = c >= 0 ? '+' : '';
       return sign + parseFloat(c).toFixed(2) + '%';
     }
@@ -1943,20 +1936,20 @@
 
     /* -- MARKET DATA -- */
     var MARKET_DATA = {
-      BTC:    {price:null, chg:0, mcap:'�', cat:'crypto',      icon:'?',  color:'#f7931a', bg:'rgba(247,147,26,0.12)',  faIcon:'fab fa-bitcoin'},
-      ETH:    {price:null, chg:0, mcap:'�', cat:'crypto',      icon:'?',  color:'#627eea', bg:'rgba(98,126,234,0.12)',  faIcon:'fab fa-ethereum'},
-      SOL:    {price:null, chg:0, mcap:'�', cat:'crypto',      icon:'?',  color:'#14f195', bg:'rgba(20,241,149,0.10)',  faIcon:'fas fa-sun'},
-      XRP:    {price:null, chg:0, mcap:'�', cat:'crypto',      icon:'X',  color:'#00aae4', bg:'rgba(0,174,228,0.12)',   faIcon:'fas fa-water'},
-      BNB:    {price:null, chg:0, mcap:'�', cat:'crypto',      icon:'B',  color:'#f3ba2f', bg:'rgba(243,186,47,0.12)',  faIcon:'fas fa-coins'},
-      ADA:    {price:null, chg:0, mcap:'�', cat:'crypto',      icon:'?',  color:'#0033ad', bg:'rgba(0,51,173,0.15)',    faIcon:'fas fa-circle-nodes'},
-      DOGE:   {price:null, chg:0, mcap:'�', cat:'crypto',      icon:'�',  color:'#c2a633', bg:'rgba(194,166,51,0.12)',  faIcon:'fas fa-dog'},
-      AAPL:   {price:205.00,  chg:0.6,  mcap:'$3.1T',  cat:'stocks',      icon:'??', color:'#a2aaad', bg:'rgba(162,170,173,0.12)', faIcon:'fab fa-apple'},
+      BTC:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'₿',  color:'#f7931a', bg:'rgba(247,147,26,0.12)',  faIcon:'fab fa-bitcoin'},
+      ETH:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'⟠',  color:'#627eea', bg:'rgba(98,126,234,0.12)',  faIcon:'fab fa-ethereum'},
+      SOL:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'◎',  color:'#14f195', bg:'rgba(20,241,149,0.10)',  faIcon:'fas fa-sun'},
+      XRP:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'X',  color:'#00aae4', bg:'rgba(0,174,228,0.12)',   faIcon:'fas fa-water'},
+      BNB:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'B',  color:'#f3ba2f', bg:'rgba(243,186,47,0.12)',  faIcon:'fas fa-coins'},
+      ADA:    {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'₳',  color:'#0033ad', bg:'rgba(0,51,173,0.15)',    faIcon:'fas fa-circle-nodes'},
+      DOGE:   {price:null, chg:0, mcap:'—', cat:'crypto',      icon:'Ð',  color:'#c2a633', bg:'rgba(194,166,51,0.12)',  faIcon:'fas fa-dog'},
+      AAPL:   {price:205.00,  chg:0.6,  mcap:'$3.1T',  cat:'stocks',      icon:'🍎', color:'#a2aaad', bg:'rgba(162,170,173,0.12)', faIcon:'fab fa-apple'},
       NVDA:   {price:1080.00, chg:2.1,  mcap:'$2.6T',  cat:'stocks',      icon:'N',  color:'#76b900', bg:'rgba(118,185,0,0.12)',   faIcon:'fas fa-microchip'},
       TSLA:   {price:350.00,  chg:-0.6, mcap:'$1.1T',  cat:'stocks',      icon:'T',  color:'#e31937', bg:'rgba(227,25,55,0.12)',   faIcon:'fas fa-car'},
       MSFT:   {price:440.00,  chg:0.3,  mcap:'$3.2T',  cat:'stocks',      icon:'M',  color:'#00a4ef', bg:'rgba(0,164,239,0.12)',   faIcon:'fab fa-windows'},
-      GOLD:   {price:3200.00, chg:0.4,  mcap:'�',      cat:'commodities', icon:'??', color:'#c9a84c', bg:'rgba(201,168,76,0.12)',  faIcon:'fas fa-coins'},
-      OIL:    {price:70.00,   chg:-0.7, mcap:'�',      cat:'commodities', icon:'??', color:'#4a3728', bg:'rgba(74,55,40,0.2)',     faIcon:'fas fa-oil-can'},
-      SILVER: {price:32.00,   chg:1.1,  mcap:'�',      cat:'commodities', icon:'?', color:'#adb5c0', bg:'rgba(173,181,192,0.12)', faIcon:'fas fa-circle'},
+      GOLD:   {price:3200.00, chg:0.4,  mcap:'—',      cat:'commodities', icon:'🥇', color:'#c9a84c', bg:'rgba(201,168,76,0.12)',  faIcon:'fas fa-coins'},
+      OIL:    {price:70.00,   chg:-0.7, mcap:'—',      cat:'commodities', icon:'🛢', color:'#4a3728', bg:'rgba(74,55,40,0.2)',     faIcon:'fas fa-oil-can'},
+      SILVER: {price:32.00,   chg:1.1,  mcap:'—',      cat:'commodities', icon:'⚪', color:'#adb5c0', bg:'rgba(173,181,192,0.12)', faIcon:'fas fa-circle'},
     };
 
     var CG_SYMS = ['BTC','ETH','SOL','XRP','BNB','ADA','DOGE'];
@@ -2029,13 +2022,13 @@
         });
     }
 
-    /* fetchCoinGeckoPrices() removed � coingecko-sync.js already fetches
+    /* fetchCoinGeckoPrices() removed — coingecko-sync.js already fetches
        all crypto prices via the edge function every 15 s.
        Running a second CoinGecko fetch here caused duplicate onPriceUpdate
        calls and race conditions with the edge-function data. */
 
     /* --------------------------------------------
-       TICKER  �  FIXED VERSION
+       TICKER  —  FIXED VERSION
        
        Architecture:
          1. buildTicker() writes HTML and immediately
@@ -2069,7 +2062,7 @@
 
     function fmtTickerPrice(sym) {
       var d = MARKET_DATA[sym];
-      return d.price != null ? fmtP(d.price) : '���';
+      return d.price != null ? fmtP(d.price) : '···';
     }
     function fmtTickerChg(sym) {
       var d = MARKET_DATA[sym];
@@ -2102,10 +2095,10 @@
         });
       }
       track.innerHTML = html;
-      /* CSS animation starts automatically via .ticker-track class � immediate visual motion */
+      /* CSS animation starts automatically via .ticker-track class — immediate visual motion */
     }
 
-    /* FIX: measure with retries � fonts may not be ready on first RAF */
+    /* FIX: measure with retries — fonts may not be ready on first RAF */
     function measureAndStartRAF() {
       var track   = document.getElementById('tickerTrack');
       if (!track) return;
@@ -2125,14 +2118,14 @@
           setTimeout(tryMeasure, 100);
           return;
         }
-        /* Good measurement obtained � switch from CSS animation to JS RAF */
+        /* Good measurement obtained — switch from CSS animation to JS RAF */
         _tickerHalf = half || 1200; /* fallback to sane estimate if measurement still fails */
         _tickerPos  = 0;
         track.classList.add('js-driven'); /* removes CSS animation, hands off to RAF */
         tickerLoop();
       }
 
-      /* Wait for fonts AND then measure � ensures JetBrains Mono is loaded */
+      /* Wait for fonts AND then measure — ensures JetBrains Mono is loaded */
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(function() { tryMeasure(); });
       } else {
@@ -2151,7 +2144,7 @@
       _tickerRAF = requestAnimationFrame(tickerLoop);
     }
 
-    /* -- PAUSE / RESUME � fixed for both mouse AND touch -- */
+    /* -- PAUSE / RESUME — fixed for both mouse AND touch -- */
     (function attachTickerInteraction() {
       var outer = document.getElementById('tickerOuter');
       if (!outer) return;
@@ -2166,7 +2159,7 @@
         if (!_tickerRAF) tickerLoop();
       });
 
-      /* Mobile touch � same cancel/restart pattern */
+      /* Mobile touch — same cancel/restart pattern */
       outer.addEventListener('touchstart', function() {
         _tickerPaused = true;
         if (_tickerRAF) { cancelAnimationFrame(_tickerRAF); _tickerRAF = null; }
@@ -2191,7 +2184,7 @@
         var d  = MARKET_DATA[sym];
         if (!d) return '';
         var up = d.chg >= 0;
-        var px = d.price != null ? fmtP(d.price) : '���';
+        var px = d.price != null ? fmtP(d.price) : '···';
         return '<div class="mm-coin">' +
           '<i class="' + d.faIcon + '" style="font-size:14px;color:' + d.color + '"></i>' +
           '<div>' +
@@ -2199,7 +2192,7 @@
             '<div class="mm-coin-price" id="mm-px-' + sym + '">' + px + '</div>' +
           '</div>' +
           '<span class="mm-coin-chg ' + (up?'chg-up':'chg-dn') + '" id="mm-chg-' + sym + '">' +
-            (d.price != null ? fmtChg(d.chg) : '���') +
+            (d.price != null ? fmtChg(d.chg) : '···') +
           '</span>' +
         '</div>';
       }).join('');
@@ -2211,9 +2204,9 @@
         if (!d) return;
         var pxEl  = document.getElementById('mm-px-'  + sym);
         var chgEl = document.getElementById('mm-chg-' + sym);
-        if (pxEl)  pxEl.textContent  = d.price != null ? fmtP(d.price) : '���';
+        if (pxEl)  pxEl.textContent  = d.price != null ? fmtP(d.price) : '···';
         if (chgEl) {
-          chgEl.textContent = d.price != null ? fmtChg(d.chg) : '���';
+          chgEl.textContent = d.price != null ? fmtChg(d.chg) : '···';
           chgEl.className   = 'mm-coin-chg ' + (d.chg >= 0 ? 'chg-up' : 'chg-dn');
         }
       });
@@ -2243,10 +2236,10 @@
             '<span class="mc-chg ' + (isUp?'up':'dn') + '" id="mc-chg-' + sym + '">' + fmtChg(d.chg) + '</span>' +
           '</div>' +
           '<div class="mc-name">' + sym + '</div>' +
-          '<div class="mc-price" id="mc-px-' + sym + '">' + (d.price != null ? fmtP(d.price) : '���') + '</div>' +
+          '<div class="mc-price" id="mc-px-' + sym + '">' + (d.price != null ? fmtP(d.price) : '···') + '</div>' +
           '<div class="mc-mcap">MCap: ' + d.mcap + '</div>' +
           '<div class="mc-bar"><div class="mc-bar-fill" style="width:' + pct + '%;background:' + d.color + ';opacity:.7;"></div></div>' +
-          '<div class="mc-hint">View Chart ?</div>';
+          '<div class="mc-hint">View Chart ↗</div>';
         card.onclick = function() { if(typeof openAssetChart === 'function') openAssetChart(sym); };
         g.appendChild(card);
       });
@@ -2282,7 +2275,7 @@
             '<div class="at-icon" style="background:' + d.bg + ';color:' + d.color + ';">' + d.icon + '</div>' +
             '<div><div class="at-sym">' + sym + '</div><div class="at-name">' + d.cat.toUpperCase() + '</div></div>' +
           '</div></td>' +
-          '<td><span class="at-price" id="at-px-' + sym + '">' + (d.price != null ? fmtP(d.price) : '���') + '</span></td>' +
+          '<td><span class="at-price" id="at-px-' + sym + '">' + (d.price != null ? fmtP(d.price) : '···') + '</span></td>' +
           '<td><span class="at-chg ' + (isUp?'up':'dn') + '" id="at-chg-' + sym + '">' + fmtChg(d.chg) + '</span></td>' +
           '<td><span class="at-mcap">' + d.mcap + '</span></td>' +
           '<td>' + spark + '</td>' +
@@ -2291,7 +2284,7 @@
       });
     }
 
-    /* -- PRICE UPDATE HOOK � delegated to script.js -- */
+    /* -- PRICE UPDATE HOOK — delegated to script.js -- */
     /* window.onPriceUpdate is defined in script.js (defer).
        The mobile menu coin strip is still updated here via the
        storage cross-tab event and the menu-open call below. */
@@ -2331,7 +2324,7 @@
               var exp = parsed.expires_at || (parsed.user && parsed.user.exp);
               if (!exp || (Date.now() / 1000) < exp) return true;
             }
-          } catch(e) { /* malformed JSON � fall through */ }
+          } catch(e) { /* malformed JSON – fall through */ }
         }
         return !!(
           sessionStorage.getItem('aurum_session') ||
@@ -2365,7 +2358,7 @@
         if (signinLink) signinLink.href = 'signup.html';
         if (signinText) signinText.textContent = 'Sign In';
         if (signinDesc) signinDesc.textContent = 'Access your account';
-        if (ctaPrimary) { ctaPrimary.innerHTML = '<i class="fas fa-rocket" style="font-size:11px"></i> Open Account � Free'; ctaPrimary.href = 'signup.html'; }
+        if (ctaPrimary) { ctaPrimary.innerHTML = '<i class="fas fa-rocket" style="font-size:11px"></i> Open Account — Free'; ctaPrimary.href = 'signup.html'; }
       }
     }
 
@@ -2405,7 +2398,7 @@
 
 
     /* ------------------------------------------
-       INIT � DOMContentLoaded
+       INIT — DOMContentLoaded
        
        NOTE: buildTicker() is now called EAGERLY
        via a separate inline script below (outside
@@ -2429,7 +2422,7 @@
 
   /* ------------------------------------------
      FIX 3: EAGER TICKER INIT
-     Build and measure the ticker immediately �
+     Build and measure the ticker immediately —
      the ticker HTML element is above this script
      so it's already in the DOM. Starting here
      (rather than waiting for DOMContentLoaded)
@@ -2451,7 +2444,7 @@
   })();
 
   /* ------------------------------------------
-     THEME MANAGEMENT � dark / light toggle
+     THEME MANAGEMENT — dark / light toggle
   ------------------------------------------ */
   (function() {
     var html = document.documentElement;
@@ -2466,7 +2459,7 @@
     function applyTheme(theme) {
       html.dataset.theme = theme;
       var icon = document.getElementById('themeIcon');
-      if (icon) icon.textContent = theme === 'light' ? '?' : '?';
+      if (icon) icon.textContent = theme === 'light' ? '☾' : '☀';
       localStorage.setItem(THEME_KEY, theme);
     }
 
@@ -2530,7 +2523,7 @@
   ------------------------------------------ */
   (function(){
 
-    /* ? Magnetic hover on CTA buttons */
+    /* ③ Magnetic hover on CTA buttons */
     function initMag(){
       document.querySelectorAll('.btn-hero-primary,.btn-hero-ghost,.btn-gold').forEach(function(el){
         el.style.willChange='transform';
@@ -2544,7 +2537,7 @@
       });
     }
 
-    /* ? Aurora scroll parallax � rAF-throttled, compositor-only via CSS translate property */
+    /* ④ Aurora scroll parallax — rAF-throttled, compositor-only via CSS translate property */
     var a1=document.querySelector('.aurora-1');
     var a2=document.querySelector('.aurora-2');
     var a3=document.querySelector('.aurora-3');
