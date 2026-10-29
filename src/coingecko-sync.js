@@ -216,8 +216,18 @@
        get immediate prices without waiting for the edge function round-trip */
     notifyBatchCallbacks();
     /* Start live polling */
-    fetchAllPrices();
-    setInterval(fetchAllPrices, 15_000);   /* 15 s — stays under Twelve Data 8 req/min limit */
+    var _pollTimer = null;
+    function startPoll() {
+      if (_pollTimer) return;
+      fetchAllPrices();
+      _pollTimer = setInterval(fetchAllPrices, 15_000);   /* 15 s — stays under Twelve Data 8 req/min limit */
+    }
+    function stopPoll() { clearInterval(_pollTimer); _pollTimer = null; }
+    /* Pause polling while the tab is hidden to avoid idle Edge Function calls */
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stopPoll(); else startPoll();
+    });
+    if (!document.hidden) startPoll();
   }
 
   if (document.readyState === 'loading') {
