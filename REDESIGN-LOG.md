@@ -9,8 +9,11 @@ Reference: `design/aurum-design/` (landing, dashboard, invest, trade, account, a
 |---|---|
 | Landing (`index.html`) | ✅ Done earlier — matches `landing.html` (identical to the first design file) |
 | Markets (`markets.html`) | ✅ Done earlier — same system |
-| Shared signed-in shell (header, menu, quick-action sheet, bottom nav, tokens, dark theme) | ⏳ Next |
-| Dashboard | ⏳ |
+| Shared signed-in shell (header, menu, quick-action sheet, bottom nav, tokens, dark theme) | ✅ 7adf5bc |
+| Dashboard | ✅ 7adf5bc — tested with simulated account data (light/dark, test mode on/off) |
+| Admin dashboard (redesign, Supabase realtime, test-mode switch, regulator fields) | ⏳ requested |
+| Deposit / Withdraw / Transactions / Portfolio pages | ⏳ — hand off to `dashboard-classic.html#…` until built |
+| Support icon replacing chat widget | ⏳ requested |
 | Invest | ⏳ |
 | Trade | ⏳ |
 | Account / Profile & settings | ⏳ |
@@ -81,3 +84,29 @@ Net worth = cash + Σ(quantity × live price) on dashboard (`dashboard.html:4290
 - Zip deleted after verifying `design/aurum-design/` copies.
 - Uptime: **99.9%** (landing updated).
 - Regulator / licence: editable by admin (`site_settings`, planned with the account/admin work).
+
+## Test mode (owner decision)
+- `site_settings.test_mode` (applied to the database; default **false**; admin-only write, verified anonymous write changes 0 rows).
+- ON: `pnl_override` is used by the one portfolio function with value = cost + override, so cash + value = net worth everywhere; every affected figure shows **TEST** and every new page shows the test banner.
+- OFF: overrides ignored; all figures from holdings × live prices.
+
+## Bug fixes recorded
+| # | Bug | Cause | Fix |
+|---|---|---|---|
+| 5 | Three different P&L figures | override replaced P&L but not value; amount and % from different scripts; hard-coded 24,750 | one `portfolio()` function (aurum-session.js) used by new pages; 24,750 removed |
+| 6 | Net worth vs cash + portfolio | different price maps per page | same function, same price feed |
+| 7 | Empty icon boxes on Withdraw rows | icon font class missing for type | inline SVG per type, fallback icon |
+| 8 | Buy shown red like a loss | colour by sign | neutral for money in/out; green only for realised gains |
+| 9 | Floating ☰ covering buttons | page-specific floating menu | removed; one header menu + bottom nav |
+| — | iOS back-swipe "logs out" | sign-in page left in history (`location.href`), never checked existing session | `location.replace`, skip form when signed in (incl. back-cache restore), `?next=`; tested |
+
+## Tests run (dashboard)
+| Check | Result |
+|---|---|
+| Figures (test off): NW $39,216.37 = cash $22,616.37 + value $16,600; P&L +$2,100 / +14.48% | ✅ matches hand calculation |
+| Figures (test on): NW $39,116.37, P&L +$2,000 / +13.79%, 2 TEST marks + banner | ✅ |
+| Activity icons, neutral money-out colours, pending tag | ✅ |
+| Light / dark render, no horizontal scroll at 390 px, no console errors | ✅ |
+| Sign-in while signed in → app; back never returns to sign-in | ✅ |
+| Back from another page restores dashboard from back-cache (no reload) | ✅ |
+| Signed out elsewhere + back → sign-in (no cached balances shown) | ✅ |
