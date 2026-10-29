@@ -30,25 +30,26 @@ const AURUM_CHAT_CONFIG = {
   const style = document.createElement("style");
   style.textContent = `
     /* Support chat — app design (tokens from app.css; light fallbacks for pages without it) */
-    #aurum-chat-root{--c-bg:var(--bg,#ECE8E1);--c-well:var(--well,#E7E2DA);--c-ink:var(--ink,#1E1B16);--c-muted:var(--muted,#5B5448);--c-line:var(--line,#DDD6C9);
-      --c-gold:var(--gold,#C29A45);--c-on-gold:var(--on-gold,#241A05);--c-gold-ink:var(--gold-ink,#6E5314);--c-up:var(--up,#22603A);--c-down:var(--down,#A3261C);
-      --c-raise:var(--raise,7px 7px 16px #CEC7B9,-7px -7px 16px #FFFFFF);--c-raise-sm:var(--raise-sm,4px 4px 10px #D0C9BC,-4px -4px 10px #FFFFFF);
-      --c-press:var(--press-sm,inset 3px 3px 7px #D1CABD,inset -3px -3px 7px #FFFFFF);--c-btn:var(--shadow-btn,6px 6px 14px #CDBF9F,-6px -6px 14px #FFFFFF);
-      font-family:var(--sans,"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif);color:var(--c-ink);-webkit-font-smoothing:antialiased}
-    #aurum-chat-root *{box-sizing:border-box;margin:0;padding:0}
-    #aurum-chat-root button{font:inherit;border:0;cursor:pointer;color:inherit;background:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    /* Fixed milk-light palette: the widget looks the same on every page (older pages define their own dark colours) */
+    #aurum-chat-root{--c-bg:#ECE8E1;--c-well:#E7E2DA;--c-ink:#1E1B16;--c-muted:#5B5448;--c-line:#DDD6C9;
+      --c-gold:#C29A45;--c-on-gold:#241A05;--c-gold-ink:#6E5314;--c-up:#22603A;--c-down:#A3261C;
+      --c-raise:7px 7px 16px rgba(160,148,124,.45),-7px -7px 16px rgba(255,255,255,.9);--c-raise-sm:4px 4px 10px rgba(160,148,124,.4),-4px -4px 10px rgba(255,255,255,.9);
+      --c-press:inset 3px 3px 7px #D1CABD,inset -3px -3px 7px #FFFFFF;--c-btn:4px 4px 12px rgba(150,120,60,.35),-3px -3px 8px rgba(255,255,255,.8);
+      font-family:"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--c-ink);-webkit-font-smoothing:antialiased}
+    :where(#aurum-chat-root) *{box-sizing:border-box;margin:0;padding:0} /* zero specificity: component rules below keep their padding */
+    :where(#aurum-chat-root) button{font:inherit;border:0;cursor:pointer;color:inherit;background:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
     /* launcher: gold, above the floating bottom nav when the page has one */
     #aurum-toggle{position:fixed;right:18px;bottom:calc(24px + env(safe-area-inset-bottom));z-index:9998;width:56px;height:56px;border-radius:18px;background:var(--c-gold)!important;color:var(--c-on-gold);box-shadow:var(--c-btn);display:flex;align-items:center;justify-content:center}
     body:has(.nav) #aurum-toggle{bottom:calc(104px + env(safe-area-inset-bottom))}
-    #aurum-toggle:active{box-shadow:inset 3px 3px 8px var(--gold-lo,#9E7C33),inset -2px -2px 6px var(--gold-hi,#D9B565)}
+    #aurum-toggle:active{box-shadow:inset 3px 3px 8px #9E7C33,inset -2px -2px 6px #D9B565}
     #aurum-toggle .aur-tog-frame{display:flex;align-items:center;justify-content:center}
     #aurum-toggle .aur-arc-1,#aurum-toggle .aur-arc-2,#aurum-toggle .aur-d1,#aurum-toggle .aur-d2,#aurum-toggle circle{display:none}
     #aurum-toggle .aur-letter{stroke:var(--c-on-gold)}
     #aurum-toggle .icon-close{display:none}
     #aurum-toggle.open .aur-tog-frame{display:none}
     #aurum-toggle.open .icon-close{display:block}
-    #aurum-badge{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--c-down);color:#fff;font:600 11px/20px var(--mono,ui-monospace,monospace);text-align:center;display:none}
+    #aurum-badge{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--c-down);color:#fff;font:600 11px/20px "JetBrains Mono",ui-monospace,Menlo,monospace;text-align:center;display:none}
     #aurum-badge.show{display:block}
 
     /* window */
@@ -61,11 +62,11 @@ const AURUM_CHAT_CONFIG = {
     #aurum-header-avatar{width:42px;height:42px;border-radius:14px;overflow:hidden;flex:none;background:var(--c-gold);box-shadow:var(--c-raise-sm)}
     #aurum-header-avatar img{width:100%;height:100%;object-fit:cover;display:block}
     #aurum-header-info{flex:1;min-width:0}
-    #aurum-header-name{font:500 18px/1.2 var(--serif,"Playfair Display",Georgia,serif)}
+    #aurum-header-name{font:500 18px/1.2 "Playfair Display",Georgia,serif}
     #aurum-header-sub{font-size:12px;color:var(--c-muted)}
     #aurum-header-right{display:flex;align-items:center;gap:10px}
     #aurum-status-wrap{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--c-up)}
-    #aurum-status-dot{width:7px;height:7px;border-radius:4px;background:var(--ok,#2F7A4B)}
+    #aurum-status-dot{width:7px;height:7px;border-radius:4px;background:#2F7A4B}
     #aurum-close-btn{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--c-gold-ink);background:var(--c-bg)!important;box-shadow:var(--c-raise-sm)}
     #aurum-close-btn svg{width:16px;height:16px}
 
@@ -73,7 +74,7 @@ const AURUM_CHAT_CONFIG = {
     #aurum-session-prompt{flex:1;overflow-y:auto;padding:22px 18px 18px;display:flex;flex-direction:column;gap:18px}
     #aurum-prompt-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
     #aurum-hero-emblem{width:56px;height:56px;border-radius:18px;background:var(--c-well);box-shadow:var(--c-press);display:flex;align-items:center;justify-content:center}
-    #aurum-hero-wordmark{font:500 22px/1.2 var(--serif,"Playfair Display",Georgia,serif)}
+    #aurum-hero-wordmark{font:500 22px/1.2 "Playfair Display",Georgia,serif}
     #aurum-hero-rule{display:none}
     #aurum-prompt-title{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--c-gold-ink);font-weight:500}
     #aurum-prompt-sub{font-size:13px;line-height:1.55;color:var(--c-muted);max-width:280px}
@@ -92,7 +93,7 @@ const AURUM_CHAT_CONFIG = {
 
     /* conversation */
     #aurum-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain}
-    .aurum-divider{align-self:center;font:500 10px/1 var(--mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--c-muted);padding:6px 0}
+    .aurum-divider{align-self:center;font:500 10px/1 "JetBrains Mono",ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--c-muted);padding:6px 0}
     .aurum-msg{display:flex;align-items:flex-end;gap:8px;max-width:88%}
     .aurum-msg.user{align-self:flex-end;flex-direction:row-reverse}
     .aurum-msg.grouped .aurum-msg-avatar{visibility:hidden}
@@ -103,7 +104,7 @@ const AURUM_CHAT_CONFIG = {
     .aurum-msg.agent .aurum-bubble{border-bottom-left-radius:6px}
     .aurum-msg.user .aurum-bubble{background:var(--c-gold);color:var(--c-on-gold);box-shadow:none;border-bottom-right-radius:6px}
     .aur-bubble-footer{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:3px}
-    .aur-time{font:500 10px/1 var(--mono,ui-monospace,monospace);opacity:.65}
+    .aur-time{font:500 10px/1 "JetBrains Mono",ui-monospace,Menlo,monospace;opacity:.65}
     .aur-read-tick svg{width:13px;height:13px;opacity:.7}
     .aurum-img-bubble{border-radius:14px;overflow:hidden;cursor:pointer;max-width:220px;box-shadow:var(--c-raise-sm)}
     .aurum-img-bubble img{display:block;width:100%;height:auto}
@@ -134,7 +135,7 @@ const AURUM_CHAT_CONFIG = {
     #aurum-attach svg{width:18px;height:18px}
     #aurum-input-wrap{flex:1;min-width:0;border-radius:14px;background:var(--c-well);box-shadow:var(--c-press);padding:0 12px;display:flex}
     #aurum-input{flex:1;border:0;outline:none;background:transparent;resize:none;font-size:15px;line-height:1.4;font-family:inherit;color:var(--c-ink);padding:11px 0;max-height:120px}
-    #aurum-input::placeholder{color:var(--placeholder,#7A7264)}
+    #aurum-input::placeholder{color:#7A7264}
     #aurum-send{width:42px;height:42px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;background:var(--c-gold)!important;box-shadow:var(--c-btn)}
     #aurum-send:disabled{opacity:.55}
     #aurum-send .send-spinner{display:none;animation:aurSpin .8s linear infinite}

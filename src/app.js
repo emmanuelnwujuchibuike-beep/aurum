@@ -320,7 +320,7 @@
      Each page's DOMContentLoaded code runs again on arrival; listeners and timers
      it added are removed when it is left (AurumScope, set up in <head>). */
   var Scope = window.AurumScope;
-  var FULL = /\/(index|admin|signup|invest-classic|dashboard-classic|trade-classic|about|privacy-policy|testimonial)\.html$|\/$/;
+  var FULL = /\/(index|admin|signup|invest-classic|dashboard-classic|trade-classic|privacy-policy)\.html$|\/$/;
   var ONCE = /(^|\/)(app|aurum-session|money-client)\.js(\?|$)/; // shared scripts: loaded once, kept
   // Shared scripts already on this page; one a later page needs (e.g. money-client.js) loads once on arrival
   var loadedOnce = {};

@@ -90,17 +90,17 @@ const footer = `
 <footer class="foot stack g20">
   <div class="stack g8">
     <span class="serif" style="font-size:20px">Aurum Capital</span>
-    <p class="muted small">Aurum Capital is the private investment platform of choice for discerning investors seeking institutional-grade access to digital assets, global equities, and prime real estate — all in one place.</p>
+    <p class="muted small">Aurum Capital is a multi-asset investment platform: crypto, global shares, commodities and real-estate listings in one account, with live prices.</p>
   </div>
   <div class="cols">
-    <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Company</span><a href="about.html">About</a><a href="contact.html">Careers</a><a href="contact.html">Press</a></div>
-    <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Explore</span><a href="markets.html">Markets</a><a href="invest.html">Invest</a><a href="markets.html#assets">Assets</a></div>
-    <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Support</span><a href="contact.html">Help centre</a><a href="privacy-policy.html#terms">Terms</a><a href="privacy-policy.html">Privacy</a></div>
+    <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Company</span><a href="about.html">About</a><a href="testimonial.html">Client stories</a><a href="contact.html">Contact</a></div>
+    <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Explore</span><a href="markets.html">Markets</a><a href="learn.html">Learn</a><a href="fees.html">Fees</a></div>
+    <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Legal</span><a href="risks.html">Risks</a><a href="privacy-policy.html#terms">Terms</a><a href="privacy-policy.html">Privacy</a></div>
   </div>
   <div class="row g14">
 ${SOCIAL.map(([href, name, d]) => `    <a class="social raised-sm" href="${href}" target="_blank" rel="noopener noreferrer" aria-label="Aurum Capital on ${name}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${d}</svg></a>`).join('\n')}
   </div>
-  <div class="risk inset"><b>Risk disclaimer.</b> Investing involves substantial risk of loss. Past performance is not indicative of future results. Real estate investments are illiquid and subject to market fluctuations. Aurum Capital is a registered investment platform regulated by <span data-todo="regulator">[REGULATOR NAME]</span> under licence no. <span data-todo="licence">[LICENCE NUMBER]</span>.</div>
+  <div class="risk inset"><b>Risk disclaimer.</b> Investing involves substantial risk of loss. Past performance is not indicative of future results. Real estate investments are illiquid and subject to market fluctuations. You may get back less than you invest. <a href="risks.html">Read about the risks</a>.</div>
   <span class="muted" style="font-size:12px">© 2026 Aurum Capital. All rights reserved.</span>
 </footer>
 `;

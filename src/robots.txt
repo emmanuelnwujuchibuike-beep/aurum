@@ -3,3 +3,5 @@
 # and require sign-in, and a robots.txt block would stop search engines from seeing that noindex.
 User-agent: *
 Allow: /
+
+Sitemap: https://www.aurumcapitalinvest.com/sitemap.xml
