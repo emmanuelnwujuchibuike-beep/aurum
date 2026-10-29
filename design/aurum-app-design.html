@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aurum Capital — App Design</title>
+<meta name="theme-color" content="#ECE8E1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ECE8E1;--well:#E7E2DA;--ink:#1E1B16;--muted:#5B5448;--gold:#C29A45;--gold-ink:#6E5314;--accent:#8A6820;--line:#DDD6C9;
+--raise:7px 7px 16px #CEC7B9,-7px -7px 16px #FFFFFF;--raise-sm:4px 4px 10px #D0C9BC,-4px -4px 10px #FFFFFF;
+--press:inset 4px 4px 9px #D1CABD,inset -4px -4px 9px #FFFFFF;--press-sm:inset 3px 3px 7px #D1CABD,inset -3px -3px 7px #FFFFFF}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{margin:0;background:#E2DDD5;font-family:'Outfit',system-ui,-apple-system,sans-serif;color:var(--ink);-webkit-tap-highlight-color:transparent}
+a,button{touch-action:manipulation}
+.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative;background-color:var(--bg);
+background-image:linear-gradient(rgba(122,92,23,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(122,92,23,.05) 1px,transparent 1px);background-size:56px 56px}
+.serif{font-family:'Playfair Display',Georgia,serif}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-ink);font-weight:500}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.raised{background:var(--bg);box-shadow:var(--raise)}
+.raised-sm{background:var(--bg);box-shadow:var(--raise-sm)}
+.inset{background:var(--well);box-shadow:var(--press)}
+.gold{background:var(--gold);color:#241A05;box-shadow:6px 6px 14px #CDBF9F,-6px -6px 14px #FFF,inset 1px 1px 0 rgba(255,255,255,.45)}
+button{font-family:inherit;border:0;cursor:pointer;color:inherit;background:none;padding:0;font-size:inherit}
+button.raised:active,button.raised-sm:active,a.raised-sm:active,.tile:active{box-shadow:var(--press);background:var(--well)}
+.gold:active{box-shadow:inset 3px 3px 8px #9E7C33,inset -2px -2px 6px #D9B565}
+button:disabled{cursor:not-allowed;opacity:.6}
+h1,h2,p{margin:0}
+.h1{font-family:'Playfair Display',Georgia,serif;font-size:38px;line-height:1.08;font-weight:500}
+.h2{font-family:'Playfair Display',Georgia,serif;font-size:27px;line-height:1.15;font-weight:500}
+.h1 em,.h2 em{color:var(--accent)}
+.stack{display:flex;flex-direction:column}
+.g8{gap:8px}.g10{gap:10px}.g12{gap:12px}.g14{gap:14px}.g18{gap:18px}.g20{gap:20px}.g44{gap:44px}
+.row{display:flex;align-items:center}
+.btn{min-height:56px;border-radius:18px;font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.btn-sm{min-height:50px;border-radius:16px;font-size:14px;font-weight:600;width:100%}
+.lede{font-size:14px;line-height:1.6}
+.scrollx{overflow-x:auto;scrollbar-width:none}.scrollx::-webkit-scrollbar{display:none}
+
+/* header */
+.top{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top)) 20px 12px}
+.logo{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600}
+.iconbtn{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink)}
+main{padding:8px 20px calc(124px + env(safe-area-inset-bottom))}
+.screen[hidden]{display:none}
+
+/* bits */
+.ticker{border-radius:16px;padding:10px 14px;display:flex;gap:20px;white-space:nowrap;font-size:13px}
+.ticker span{display:flex;align-items:center;gap:8px}
+.down{color:#A3261C;background:#F1DAD5;border-radius:8px;padding:3px 8px;font-size:12px;font-weight:600}
+.up{color:#22603A;background:#DAEBDD;border-radius:8px;padding:3px 8px;font-size:12px;font-weight:600}
+.flat{color:var(--muted);font-size:12px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tile{border-radius:20px;padding:16px;display:flex;flex-direction:column;align-items:flex-start;gap:12px;text-align:left;font-size:14px;font-weight:600;color:var(--ink);text-decoration:none}
+.badge{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);flex:none;font-family:'Playfair Display',Georgia,serif;font-size:15px}
+.stats{border-radius:22px;padding:18px 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));text-align:center}
+.stats div{display:flex;flex-direction:column;gap:4px}
+.stats div+div{border-left:1px solid #D8D1C4}
+.stats b{font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:22px;color:var(--gold-ink)}
+.stats span{font-size:11px;color:var(--muted)}
+.card{border-radius:22px;padding:18px}
+.list{border-radius:22px;padding:4px 16px}
+.item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .grow{flex:1;min-width:0;display:flex;flex-direction:column}
+.item .end{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.link{min-height:44px;font-size:13px;font-weight:600;color:var(--gold-ink);display:inline-flex;align-items:center}
+.props{display:flex;gap:16px;margin:0 -20px;padding:6px 20px 22px;scroll-snap-type:x mandatory}
+.prop{flex:none;width:250px;border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:12px;scroll-snap-align:start}
+.photo{height:120px;border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;color:#B3A68A}
+.pill{border-radius:8px;padding:4px 9px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.photo .pill{position:absolute;top:10px;left:10px}
+.live{color:#22603A;background:#DAEBDD}.new{color:#5C450F;background:#F1E4C3}.sold{color:#4F4A42;background:#DCD7CE}
+details{border-bottom:1px solid var(--line)}details:last-child{border-bottom:0}
+summary{list-style:none;min-height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:600;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+summary .plus{width:30px;height:30px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);background:var(--bg);box-shadow:3px 3px 7px #CFC8BA,-3px -3px 7px #FFF;font-size:18px}
+summary .plus::before{content:"+"}
+details[open] summary .plus::before{content:"−"}
+details p{font-size:13px;line-height:1.6;color:var(--muted);padding-bottom:14px}
+.foot a{color:#3F3A32;text-decoration:none;font-size:14px;min-height:32px;display:flex;align-items:center}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.social{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--ink);text-decoration:none}
+.seg-wrap{border-radius:16px;padding:5px;display:flex;gap:4px}
+.seg{flex:1;min-height:40px;border-radius:12px;font-size:13px;font-weight:500;color:var(--muted);padding:0 10px;white-space:nowrap}
+.chip{min-width:44px;min-height:36px;border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);padding:0 6px}
+.seg.on,.chip.on{background:var(--bg);color:var(--ink);box-shadow:3px 3px 8px #CFC8BA,-3px -3px 8px #FFF}
+.chip.on{color:var(--gold-ink)}
+.ohlc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;font-size:12px}
+.ohlc span{display:flex;flex-direction:column}
+.vcard{border-radius:22px;padding:18px;text-align:left;display:flex;flex-direction:column;gap:8px;width:100%;background:var(--bg);box-shadow:var(--raise);outline:2px solid transparent}
+.vcard.on{background:var(--well);box-shadow:var(--press);outline-color:var(--gold)}
+.sw{width:50px;height:30px;border-radius:15px;padding:3px;display:flex;background:var(--well);box-shadow:var(--press-sm)}
+.sw span{width:24px;height:24px;border-radius:12px;background:var(--bg);box-shadow:2px 2px 5px #C9C1B2,-2px -2px 5px #FFF;transition:margin .15s}
+.sw[aria-pressed="true"] span{margin-left:20px;background:var(--gold)}
+.setting{display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px;font-weight:500}
+.setting:last-child{border-bottom:0}
+
+/* bottom nav */
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:calc(min(480px,100vw) - 28px);height:74px;border-radius:28px;display:flex;align-items:center;justify-content:space-around;padding:0 6px;z-index:10}
+.nav a{color:#6A6357;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:500;width:58px;min-height:48px;justify-content:center;text-decoration:none}
+.nav .ico{width:40px;height:30px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.nav a[aria-current="page"]{color:var(--gold-ink)}
+.nav a[aria-current="page"] .ico,.nav a:active .ico{background:var(--well);box-shadow:var(--press-sm)}
+.nav .fab{width:60px;height:60px;border-radius:22px;margin-top:-30px;color:#241A05}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="top">
+  <div class="row g12">
+    <div class="logo gold serif">A</div>
+    <div class="stack">
+      <span class="serif" style="font-size:21px;font-weight:500;letter-spacing:.04em">Aurum Capital</span>
+      <span class="muted" id="pageLabel" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase">Overview</span>
+    </div>
+  </div>
+  <button class="iconbtn raised-sm" aria-label="Notifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
+</header>
+
+<main>
+<!-- ================= HOME ================= -->
+<section class="screen stack g44" id="home" data-label="Overview">
+
+  <div class="stack g20">
+    <div class="row g8 muted" style="font-size:12px"><span style="width:8px;height:8px;border-radius:4px;background:#2F7A4B"></span>All systems operational</div>
+    <div class="ticker inset scrollx">
+      <span><b>BTC</b><span class="num" data-price="BTC">$79,808.00</span><span class="down num">−1.25%</span></span>
+      <span><b>ETH</b><span class="num" data-price="ETH">$2,306.76</span><span class="down num">−1.90%</span></span>
+      <span><b>SOL</b><span class="num" data-price="SOL">—</span><span class="flat">—</span></span>
+      <span><b>XRP</b><span class="num" data-price="XRP">—</span><span class="flat">—</span></span>
+    </div>
+    <div class="stack g14">
+      <span class="eyebrow">Institutional-grade platform</span>
+      <h1 class="h1">Invest where <em>precision</em> meets tomorrow's returns</h1>
+      <p class="muted" style="font-size:15px;line-height:1.6">Digital assets, global equities and prime real estate — unified under one precision platform built for discerning investors.</p>
+    </div>
+    <button class="btn gold" data-go="invest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>Start investing</button>
+    <div class="tiles">
+      <a class="tile raised" href="testimonial.html"><span class="badge inset"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Client stories</a>
+      <a class="tile raised" href="#property"><span class="badge inset"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/></svg></span>Prime real estate</a>
+    </div>
+    <div class="stats raised">
+      <div><b class="num">$4.2B+</b><span>Assets managed</span></div>
+      <div><b class="num">180K+</b><span>Active investors</span></div>
+      <div><b class="num">[UPTIME]</b><span>Uptime</span></div>
+    </div>
+  </div>
+
+  <div class="stack g18">
+    <div class="stack g10">
+      <span class="eyebrow">Investment verticals</span>
+      <h2 class="h2">Diversified <em>opportunity</em> streams</h2>
+      <p class="muted lede">Curated verticals for high growth, capital preservation or yield generation.</p>
+    </div>
+    <div class="card raised stack g12">
+      <div class="row g12"><span class="badge inset" style="width:44px;height:44px">₿</span><span class="stack" style="flex:1"><span class="serif" style="font-size:18px">Digital Assets</span><span class="muted" style="font-size:12px">Crypto</span></span><span class="stack" style="align-items:flex-end"><span class="serif num" style="font-size:20px;color:var(--gold-ink)">+23%</span><span class="muted" style="font-size:11px">YTD</span></span></div>
+      <p class="muted" style="font-size:13px;line-height:1.55">High-conviction crypto with integrated risk controls and dynamic allocation.</p>
+      <button class="link" data-go="invest" data-vertical="digital">View strategy →</button>
+    </div>
+    <div class="card raised stack g12">
+      <div class="row g12"><span class="badge inset" style="width:44px;height:44px">◎</span><span class="stack" style="flex:1"><span class="serif" style="font-size:18px">Global Equities</span><span class="muted" style="font-size:12px">Stocks</span></span><span class="stack" style="align-items:flex-end"><span class="serif num" style="font-size:20px;color:var(--gold-ink)">+12%</span><span class="muted" style="font-size:11px">YTD</span></span></div>
+      <p class="muted" style="font-size:13px;line-height:1.55">Concentrated exposure to market leaders, tech innovators and defensive staples.</p>
+      <button class="link" data-go="invest" data-vertical="equities">View strategy →</button>
+    </div>
+    <div class="card raised stack g12">
+      <div class="row g12"><span class="badge inset" style="width:44px;height:44px">⌂</span><span class="stack" style="flex:1"><span class="serif" style="font-size:18px">Prime Property</span><span class="muted" style="font-size:12px">Real estate</span></span><span class="stack" style="align-items:flex-end"><span class="serif num" style="font-size:20px;color:var(--gold-ink)">+8%</span><span class="muted" style="font-size:11px">Yield</span></span></div>
+      <p class="muted" style="font-size:13px;line-height:1.55">Premium property portfolios built for income and capital preservation.</p>
+      <button class="link" data-go="invest" data-vertical="estate">View strategy →</button>
+    </div>
+  </div>
+
+  <div class="stack g18">
+    <div class="stack g10">
+      <span class="eyebrow">Live markets · every 30s</span>
+      <h2 class="h2">High-conviction <em>picks</em></h2>
+      <p class="muted lede">Assets actively monitored by our research framework across crypto, equities and commodities.</p>
+    </div>
+    <div class="list raised">
+      <div class="item"><span class="badge inset">₿</span><span class="grow"><b style="font-size:14px">Bitcoin</b><span class="muted" style="font-size:12px">BTC · Cap [MKT CAP]</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">$79,808.00</span><span class="down num">−1.25%</span></span></div>
+      <div class="item"><span class="badge inset">Ξ</span><span class="grow"><b style="font-size:14px">Ethereum</b><span class="muted" style="font-size:12px">ETH · Cap [MKT CAP]</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">$2,306.76</span><span class="down num">−1.90%</span></span></div>
+      <div class="item"><span class="badge inset">S</span><span class="grow"><b style="font-size:14px">Solana</b><span class="muted" style="font-size:12px">SOL · Cap [MKT CAP]</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">—</span><span class="flat">—</span></span></div>
+      <div class="item"><span class="badge inset">X</span><span class="grow"><b style="font-size:14px">Ripple</b><span class="muted" style="font-size:12px">XRP · Cap [MKT CAP]</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">—</span><span class="flat">—</span></span></div>
+      <div style="text-align:center"><button class="link" data-go="markets">Explore live markets →</button></div>
+    </div>
+  </div>
+
+  <div class="stack g18" id="property">
+    <div class="stack g10">
+      <span class="eyebrow">Property spotlight</span>
+      <h2 class="h2">Prime real estate <em>exposure</em></h2>
+      <p class="muted lede">Fractional access to institutional-calibre property, from coastal retreats to city-centre commercial assets. From $1,000.</p>
+    </div>
+    <div class="props scrollx" id="propRow"></div>
+  </div>
+
+  <div class="stack g18" id="stories">
+    <div class="stack g10">
+      <span class="eyebrow">FAQ</span>
+      <h2 class="h2">Everything you need to <em>know</em></h2>
+    </div>
+    <div class="list raised">
+      <details open><summary>How does Aurum Capital work?<span class="plus" aria-hidden="true"></span></summary><p>Invest across crypto, equities, commodities and real estate from one dashboard, with P&amp;L analytics updated every 30 seconds.</p></details>
+      <details><summary>Is my investment capital secure?<span class="plus" aria-hidden="true"></span></summary><p>256-bit AES encryption, mandatory two-factor authentication, cold storage for digital assets and regular third-party audits.</p></details>
+      <details><summary>What assets can I invest in?<span class="plus" aria-hidden="true"></span></summary><p>Crypto (50+ listed coins), global equities, commodities such as gold, silver and crude oil, and fractional real estate.</p></details>
+      <details><summary>What are the minimum investment amounts?<span class="plus" aria-hidden="true"></span></summary><p>No minimum for crypto or stocks. Real estate starts from $1,000.</p></details>
+      <details><summary>How do deposits and withdrawals work?<span class="plus" aria-hidden="true"></span></summary><p>Deposit by bank transfer, card or crypto. Bank withdrawals take 1–3 business days, crypto about 24 hours, with no withdrawal fees on standard accounts.</p></details>
+      <details><summary>Are there management or trading fees?<span class="plus" aria-hidden="true"></span></summary><p>No annual management fee. A small trading spread is shown before you confirm any trade.</p></details>
+      <details><summary>How quickly can I open an account?<span class="plus" aria-hidden="true"></span></summary><p>Under 5 minutes. Identity checks are instant for most applicants.</p></details>
+      <details><summary>Can I track performance in real time?<span class="plus" aria-hidden="true"></span></summary><p>Yes — a live dashboard shows value, unrealised P&amp;L and allocation breakdown.</p></details>
+    </div>
+    <div class="inset row g14" style="border-radius:20px;padding:18px">
+      <span class="stack" style="flex:1;gap:4px"><b style="font-size:14px">Still have questions?</b><span class="muted" style="font-size:12px;line-height:1.5">Real advisors reply within 24 hours.</span></span>
+      <a href="contact.html" class="gold" style="min-height:44px;padding:0 16px;border-radius:14px;display:flex;align-items:center;font-size:13px;font-weight:600;text-decoration:none">Contact</a>
+    </div>
+  </div>
+
+  <div class="raised stack g18" style="border-radius:28px;padding:28px 22px;text-align:center;align-items:center">
+    <div class="logo gold serif" style="width:54px;height:54px;border-radius:18px;font-size:24px">A</div>
+    <h2 class="h2" style="font-size:26px">Your capital deserves <em>institutional-grade</em> conviction.</h2>
+    <div class="stack g14" style="width:100%">
+      <button class="btn gold" style="font-size:14px" data-go="account">Create account</button>
+      <button class="btn-sm raised-sm" style="min-height:54px;border-radius:18px" data-go="markets">Explore markets</button>
+    </div>
+  </div>
+
+  <footer class="foot stack g20">
+    <div class="stack g8"><span class="serif" style="font-size:20px">Aurum Capital</span><span class="muted" style="font-size:13px;line-height:1.5">The private investment platform of choice for discerning investors.</span></div>
+    <div class="cols">
+      <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Company</span><a href="#">About</a><a href="contact.html">Careers</a><a href="contact.html">Press</a></div>
+      <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Explore</span><a href="#" data-go="markets">Markets</a><a href="#" data-go="invest">Invest</a><a href="#" data-go="markets">Assets</a></div>
+      <div class="stack"><span class="eyebrow" style="margin-bottom:6px">Support</span><a href="contact.html">Help centre</a><a href="#">Terms</a><a href="#">Privacy</a></div>
+    </div>
+    <div class="row g14">
+      <a class="social raised-sm" href="https://x.com/AurumCapitalinvest" aria-label="Aurum Capital on X">X</a>
+      <a class="social raised-sm" href="https://linkedin.com/company/aurumcapitalinvest" aria-label="Aurum Capital on LinkedIn">in</a>
+      <a class="social raised-sm" href="https://t.me/AurumCapitalinvest" aria-label="Aurum Capital on Telegram">TG</a>
+    </div>
+    <div class="inset" style="border-radius:18px;padding:16px;font-size:12px;line-height:1.6;color:#4F4A42"><b style="color:var(--ink)">Risk disclosure.</b> Investing involves substantial risk of loss. Past performance is not indicative of future results. Real estate investments are illiquid and subject to market fluctuations. Aurum Capital is regulated by [REGULATOR], licence no. [LICENCE NO.].</div>
+    <span class="muted" style="font-size:12px">© 2026 Aurum Capital. All rights reserved.</span>
+  </footer>
+</section>
+
+<!-- ================= MARKETS ================= -->
+<section class="screen stack g20" id="markets" data-label="Markets" hidden>
+  <div class="stack g8"><span class="eyebrow">Refreshed every 30 seconds</span><h1 class="h2" style="font-size:30px">Track the <em>pulse</em> of global assets</h1></div>
+  <div class="card raised stack g14" style="border-radius:24px">
+    <div class="row g12"><span class="badge inset" style="width:42px;height:42px">₿</span><span class="stack" style="flex:1"><b style="font-size:15px">Bitcoin</b><span class="muted" style="font-size:11px;letter-spacing:.1em">BTC · CRYPTO</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="num" style="font-size:17px;font-weight:600">$79,808.00</span><span class="down num">−1.25%</span></span></div>
+    <div class="inset seg-wrap" style="border-radius:12px;padding:4px;gap:2px" data-group="chart">
+      <button class="chip on" style="flex:1">Candles</button><button class="chip" style="flex:1">Line</button><button class="chip" style="flex:1">Area</button><button class="chip" style="flex:1">Bars</button>
+    </div>
+    <div class="inset stack" style="border-radius:16px;height:170px;align-items:center;justify-content:center;gap:6px" id="chartBox">
+      <svg width="280" height="90" viewBox="0 0 280 90" fill="none" stroke="#C3B798" stroke-width="2" stroke-dasharray="4 6" aria-hidden="true"><path d="M0 70 C40 64 60 36 100 44 S160 24 200 32 S250 12 280 14"/></svg>
+      <span class="muted" style="font-size:11px">Chart loads after the page is ready</span>
+    </div>
+    <div class="row scrollx" style="gap:2px" data-group="frame">
+      <button class="chip">5M</button><button class="chip">1H</button><button class="chip">4H</button><button class="chip on">1D</button><button class="chip">1W</button><button class="chip">1M</button><button class="chip">3M</button><button class="chip">1Y</button>
+    </div>
+    <div class="ohlc">
+      <span><span class="muted">Open</span><b class="num">—</b></span><span><span class="muted">24H high</span><b class="num">—</b></span><span><span class="muted">24H low</span><b class="num">—</b></span>
+      <span><span class="muted">Market cap</span><b class="num">—</b></span><span><span class="muted">Volume 24H</span><b class="num">—</b></span><span><span class="muted">Change</span><b class="num">−1.25%</b></span>
+    </div>
+    <div class="tiles" style="gap:14px"><button class="btn-sm gold">Buy</button><button class="btn-sm raised-sm">Sell</button></div>
+  </div>
+  <div class="inset seg-wrap scrollx" data-group="filter">
+    <button class="seg on" data-f="all">All</button><button class="seg" data-f="crypto">Crypto</button><button class="seg" data-f="stocks">Stocks</button><button class="seg" data-f="commodities">Commodities</button>
+  </div>
+  <div class="list raised" id="assetList">
+    <div class="item" data-k="crypto"><span class="badge inset">₿</span><span class="grow"><b style="font-size:14px">Bitcoin</b><span class="muted" style="font-size:12px">BTC</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">$79,808.00</span><span class="down num">−1.25%</span></span></div>
+    <div class="item" data-k="crypto"><span class="badge inset">Ξ</span><span class="grow"><b style="font-size:14px">Ethereum</b><span class="muted" style="font-size:12px">ETH</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">$2,306.76</span><span class="down num">−1.90%</span></span></div>
+    <div class="item" data-k="crypto"><span class="badge inset">S</span><span class="grow"><b style="font-size:14px">Solana</b><span class="muted" style="font-size:12px">SOL</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">—</span><span class="flat">—</span></span></div>
+    <div class="item" data-k="crypto"><span class="badge inset">X</span><span class="grow"><b style="font-size:14px">Ripple</b><span class="muted" style="font-size:12px">XRP</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">—</span><span class="flat">—</span></span></div>
+    <div class="item" data-k="commodities"><span class="badge inset">Au</span><span class="grow"><b style="font-size:14px">Gold</b><span class="muted" style="font-size:12px">XAU</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">—</span><span class="flat">—</span></span></div>
+    <div class="item" data-k="commodities"><span class="badge inset">Ag</span><span class="grow"><b style="font-size:14px">Silver</b><span class="muted" style="font-size:12px">XAG</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">—</span><span class="flat">—</span></span></div>
+    <div class="item" data-k="commodities"><span class="badge inset">Oil</span><span class="grow"><b style="font-size:14px">Crude Oil</b><span class="muted" style="font-size:12px">WTI</span></span><span class="end"><span class="num" style="font-size:14px;font-weight:600">—</span><span class="flat">—</span></span></div>
+    <p class="muted" id="emptyStocks" hidden style="padding:22px 0;text-align:center;font-size:13px">Stock listings appear once your equities feed is connected.</p>
+  </div>
+</section>
+
+<!-- ================= INVEST ================= -->
+<section class="screen stack g18" id="invest" data-label="Invest" hidden>
+  <div class="stack g8"><span class="eyebrow">Start investing</span><h1 class="h2" style="font-size:30px">Choose your <em>vertical</em></h1></div>
+  <div class="stack g18" data-group="vertical">
+    <button class="vcard on" data-v="digital"><span class="row" style="justify-content:space-between;width:100%"><span class="serif" style="font-size:19px">Digital Assets</span><span class="serif num" style="font-size:18px;color:var(--gold-ink)">+23%</span></span><span class="muted" style="font-size:13px;line-height:1.5">High-conviction crypto with integrated risk controls and dynamic allocation.</span><span style="font-size:12px;font-weight:600;color:var(--gold-ink)">No minimum</span></button>
+    <button class="vcard" data-v="equities"><span class="row" style="justify-content:space-between;width:100%"><span class="serif" style="font-size:19px">Global Equities</span><span class="serif num" style="font-size:18px;color:var(--gold-ink)">+12%</span></span><span class="muted" style="font-size:13px;line-height:1.5">Concentrated exposure to market leaders, tech innovators and defensive staples.</span><span style="font-size:12px;font-weight:600;color:var(--gold-ink)">No minimum</span></button>
+    <button class="vcard" data-v="estate"><span class="row" style="justify-content:space-between;width:100%"><span class="serif" style="font-size:19px">Prime Property</span><span class="serif num" style="font-size:18px;color:var(--gold-ink)">+8%</span></span><span class="muted" style="font-size:13px;line-height:1.5">Premium property portfolios built for income and capital preservation.</span><span style="font-size:12px;font-weight:600;color:var(--gold-ink)">From $1,000</span></button>
+  </div>
+  <button class="btn gold" data-go="account" id="continueBtn">Continue with Digital Assets</button>
+  <div class="stack g12" style="margin-top:14px">
+    <h2 class="h2" style="font-size:22px">Available <em>properties</em></h2>
+    <div class="stack g12" id="propList"></div>
+  </div>
+</section>
+
+<!-- ================= PORTFOLIO ================= -->
+<section class="screen stack g20" id="portfolio" data-label="Portfolio" hidden>
+  <h1 class="h2" style="font-size:30px">Portfolio</h1>
+  <div class="raised stack g8" style="border-radius:24px;padding:22px"><span class="eyebrow">Total balance</span><span class="serif num" style="font-size:36px">$0.00</span><span class="muted" style="font-size:13px">Sign in to see value, unrealised P&amp;L and allocation.</span></div>
+  <div class="inset row" style="border-radius:20px;height:150px;justify-content:center"><svg width="260" height="80" viewBox="0 0 260 80" fill="none" stroke="#C9BFA9" stroke-width="2" stroke-dasharray="4 6" aria-hidden="true"><path d="M0 60 C40 55 60 30 100 38 S160 20 200 26 S240 10 260 12"/></svg></div>
+  <button class="btn gold" data-go="account">Sign in</button>
+</section>
+
+<!-- ================= ACCOUNT ================= -->
+<section class="screen stack g20" id="account" data-label="Account" hidden>
+  <div class="row g14">
+    <span class="badge inset" style="width:64px;height:64px;border-radius:22px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+    <div class="stack" style="gap:2px"><span class="serif" style="font-size:22px">Welcome</span><span class="muted" style="font-size:13px">Open an account in under 5 minutes</span></div>
+  </div>
+  <div class="tiles" style="gap:14px"><button class="btn-sm gold">Sign in</button><button class="btn-sm raised">Open account</button></div>
+  <div class="list raised">
+    <div class="setting"><span>Price alerts</span><button class="sw" aria-label="Price alerts" aria-pressed="true" id="alertSw"><span></span></button></div>
+    <a class="setting" href="#">Security &amp; 2FA<span class="muted">›</span></a>
+    <a class="setting" href="contact.html">Speak to an advisor<span class="muted">›</span></a>
+    <a class="setting" href="#">Our story &amp; team<span class="muted">›</span></a>
+    <a class="setting" href="#">Terms &amp; privacy<span class="muted">›</span></a>
+  </div>
+</section>
+</main>
+
+<nav class="nav raised" aria-label="Main">
+  <a href="#home" data-go="home" aria-current="page"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Home</a>
+  <a href="#markets" data-go="markets"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>Markets</a>
+  <a href="#invest" data-go="invest" class="fab gold" aria-label="Invest" style="width:60px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
+  <a href="#portfolio" data-go="portfolio"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span>Portfolio</a>
+  <a href="#account" data-go="account"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Account</a>
+</nav>
+</div>
+
+<script>
+(function(){
+  // Properties (single source for the home row and invest list)
+  var P=[["The Rhine Pavilion","Frankfurt, DE","Mixed-use office","7.3%","$500K–$650K","Live"],["Lake Constance","Bodensee, DE","Vacation","7.3%","$550K–$750K","Live"],["Pacific Meridian","Santa Monica, CA","Beach house","7.3%","$25M–$30M","Live"],["Luxury Home","Washington DC","Tech-equipped","7.3%","$10M–$15M","Live"],["Harbor Heights","Sydney, AU","Luxury residential","6.8%","$2.2M","New"],["Riverfront","Dallas, US","Industrial park","8.1%","$7M","Sold"]];
+  var house='<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-5h6v5"/></svg>';
+  var row='',list='';
+  P.forEach(function(p){var s=p[5],c=s.toLowerCase(),sold=s==='Sold';
+    row+='<div class="prop raised"><div class="photo inset">'+house+'<span class="pill '+c+'">'+s+'</span></div><div class="stack" style="gap:2px"><span class="serif" style="font-size:17px">'+p[0]+'</span><span class="muted" style="font-size:12px">'+p[1]+' · '+p[2]+'</span></div><div class="row" style="justify-content:space-between;font-size:12px"><span class="stack"><span class="muted">Target yield</span><b class="num" style="font-size:15px;color:var(--gold-ink)">'+p[3]+'</b></span><span class="stack" style="align-items:flex-end"><span class="muted">Asset value</span><b class="num" style="font-size:15px">'+p[4]+'</b></span></div><button class="btn-sm '+(sold?'inset':'gold')+'" style="min-height:44px;border-radius:14px;font-size:13px"'+(sold?' disabled':'')+'>'+(sold?'Fully funded':'Invest')+'</button></div>';
+    list+='<div class="item raised" style="border-radius:20px;padding:14px;border:0"><span class="badge inset" style="width:52px;height:52px;border-radius:14px;color:#B3A68A">'+house.replace(/38/g,'24')+'</span><span class="grow" style="gap:3px"><span class="row g8"><b style="font-size:14px">'+p[0]+'</b><span class="pill '+c+'">'+s+'</span></span><span class="muted" style="font-size:12px">'+p[1]+' · '+p[4]+'</span></span><span class="end" style="gap:0"><b class="num" style="font-size:15px;color:var(--gold-ink)">'+p[3]+'</b><span class="muted" style="font-size:11px">yield</span></span></div>';
+  });
+  document.getElementById('propRow').innerHTML=row;
+  document.getElementById('propList').innerHTML=list;
+
+  var screens=document.querySelectorAll('.screen'),label=document.getElementById('pageLabel'),navLinks=document.querySelectorAll('.nav a');
+  function show(id){
+    screens.forEach(function(s){s.hidden=s.id!==id});
+    navLinks.forEach(function(a){a.getAttribute('data-go')===id?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
+    var cur=document.getElementById(id);label.textContent=cur.getAttribute('data-label');
+    window.scrollTo(0,0);
+  }
+  var names={digital:'Digital Assets',equities:'Global Equities',estate:'Prime Property'};
+  function pickVertical(v){document.querySelectorAll('[data-v]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===v)});document.getElementById('continueBtn').textContent='Continue with '+names[v];}
+
+  // One delegated listener on pointerdown-free click: instant, no frameworks
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-go]');
+    if(t){e.preventDefault();var v=t.getAttribute('data-vertical');if(v)pickVertical(v);show(t.getAttribute('data-go'));return;}
+    var vb=e.target.closest('[data-v]');if(vb){pickVertical(vb.getAttribute('data-v'));return;}
+    var g=e.target.closest('[data-group] button');
+    if(g){g.parentNode.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b===g)});
+      var f=g.getAttribute('data-f');
+      if(f){var n=0;document.querySelectorAll('#assetList .item').forEach(function(i){var on=f==='all'||i.getAttribute('data-k')===f;i.hidden=!on;if(on)n++});document.getElementById('emptyStocks').hidden=n>0;}
+      return;}
+    if(e.target.closest('#alertSw')){var s=document.getElementById('alertSw');s.setAttribute('aria-pressed',s.getAttribute('aria-pressed')!=='true');}
+  });
+  if(location.hash){var h=location.hash.slice(1);if(document.getElementById(h)&&document.getElementById(h).classList.contains('screen'))show(h);}
+})();
+</script>
+</body>
+</html>

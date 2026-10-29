@@ -4,20 +4,11 @@
   "description": "Multi-asset investment platform",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020406",
-  "theme_color": "#c9a84c",
+  "background_color": "#ECE8E1",
+  "theme_color": "#ECE8E1",
   "icons": [
-    {
-      "src": "/image/favicon.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/image/favicon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
+    { "src": "/image/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/image/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/image/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
-

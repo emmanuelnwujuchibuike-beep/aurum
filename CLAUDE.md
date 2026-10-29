@@ -13,6 +13,12 @@ Aurum Capital is a multi-asset investment platform (crypto, stocks, commodities,
 npx tailwindcss -i ./src/input.css -o ./src/output.css --watch
 ```
 
+**Rebuild the page shell** (run after editing `src/styles/app.css` or the shared header/nav/footer in `scripts/build.mjs`):
+```sh
+npm run build
+```
+Redesigned pages are plain static HTML. The build only rewrites the regions between markers (`<style id="app-css">`, `<!--@head-->`, `<!--@header Label-->`, `<!--@nav key-->`, `<!--@footer-->`, `<!--@tail-->`) — never hand-edit inside them. Page budget: < 100 KB transferred on first load, no render-blocking resources, all content in HTML (not injected by JS). `src/app.js` is the only shared script (deferred; prefetch fallback, toggles, live prices via `data-price`/`data-chg`/`data-cap` attributes). Design references live in `design/`.
+
 **Deploy a Supabase Edge Function:**
 ```sh
 supabase functions deploy <function-name>

@@ -1,7 +1,12 @@
 {
-  "returncode": 0,
-  "stdout": "invest.html written\n",
-  "stderr": "",
+  "name": "aurum-capital",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:css": "tailwindcss -i ./src/input.css -o ./src/output.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./src/output.css --watch"
+  },
   "dependencies": {
     "@tailwindcss/cli": "^4.3.0",
     "tailwindcss": "^4.3.0"
