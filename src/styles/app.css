@@ -221,3 +221,31 @@ html.navigating main::before{content:"";position:absolute;left:var(--gut);right:
 html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
 html{overscroll-behavior-x:none}
 .app{overflow-x:clip}
+
+/* Bold icons everywhere: dark ink, thicker strokes, larger glyphs (replaces the thin brown set) */
+.iconbtn{color:var(--ink)}
+.iconbtn svg{width:22px;height:22px;stroke-width:2.3}
+.nav a,.nav .tab{color:var(--ink-2);font-weight:600}
+.nav .ico svg{width:24px;height:24px;stroke-width:2.2}
+.nav [aria-current="page"]{color:var(--ink)}
+.nav .fab svg{width:26px;height:26px;stroke-width:2.6}
+.badge{color:var(--ink)}
+.badge svg{width:21px;height:21px;stroke-width:2.3}
+.qa .k{color:var(--ink)}
+.qa .k svg{width:25px;height:25px;stroke-width:2.3}
+.qa{color:var(--ink);font-weight:600}
+.ic{color:var(--ink)!important}
+.ic svg{width:21px;height:21px;stroke-width:2.3}
+.chev{color:var(--ink)!important}
+.chev svg{stroke-width:2.6}
+.link{color:var(--ink)}
+
+/* Asset badges: brand colour, bold white glyph */
+.badge.ac{color:#fff;background:#5B5448;box-shadow:none;font:700 16px/1 var(--sans);letter-spacing:-.02em}
+.ac[data-a="BTC"]{background:#F7931A}.ac[data-a="ETH"]{background:#627EEA}.ac[data-a="SOL"]{background:linear-gradient(135deg,#9945FF,#14F195)}
+.ac[data-a="BNB"]{background:#F3BA2F;color:#1E1B16}.ac[data-a="XRP"]{background:#23292F}.ac[data-a="ADA"]{background:#0033AD}.ac[data-a="LTC"]{background:#345D9D}
+.ac[data-a="USDT"]{background:#26A17B}.ac[data-a="TSLA"]{background:#E31937}.ac[data-a="AAPL"]{background:#1E1B16}.ac[data-a="NVDA"]{background:#76B900}
+.ac[data-a="MSFT"]{background:#00A4EF}.ac[data-a="AMZN"]{background:#FF9900;color:#1E1B16}.ac[data-a="GOOGL"]{background:#4285F4}
+.ac[data-a="GOLD"]{background:linear-gradient(135deg,#E8C25A,#B8860B)}.ac[data-a="SILVER"]{background:linear-gradient(135deg,#D7D8DC,#8E9096);color:#1E1B16}.ac[data-a="OIL"]{background:#2B2118}
+.ac[data-a="estate"]{background:linear-gradient(135deg,#2F7A4B,#1D4D30)}
+.ac svg{width:22px;height:22px;stroke-width:2.5}

@@ -144,15 +144,16 @@ ${DEMO_BAR}
 `;
 };
 
+const BOLD = {"dash":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"2\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"2\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"2\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"2\"/></svg>","invest":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 3v18h18\"/><path d=\"m7 15 4-4 3 3 5-6\"/></svg>","trade":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 4v16M7 4 3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4\"/></svg>","crypto":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 8h4a2 2 0 0 1 0 4h-4zm0 4h4.5a2 2 0 0 1 0 4H9.5zM10.5 6v2m0 8v2m3-12v2m0 8v2\"/></svg>","equities":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 21h18M5 21V10m4.5 11V10m5 11V10M19 21V10M12 3 3 8h18z\"/></svg>","commodities":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 18h16l-2.5-6h-11z\"/><path d=\"M7.5 12 9 7h6l1.5 5\"/></svg>","tx":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 6h13M8 12h13M8 18h13\"/><circle cx=\"4\" cy=\"6\" r=\"1.2\"/><circle cx=\"4\" cy=\"12\" r=\"1.2\"/><circle cx=\"4\" cy=\"18\" r=\"1.2\"/></svg>","support":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z\"/><path d=\"M8.5 11h.01M12 11h.01M15.5 11h.01\"/></svg>","plus":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg>","up":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 19V5M5 12l7-7 7 7\"/></svg>","house":"<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z\"/></svg>"};
 const MENU = [
-  ['dashboard', 'dashboard.html', '◈', 'Dashboard', 'Portfolio overview'],
-  ['invest', 'invest.html', '↗', 'Invest', 'Explore markets'],
-  ['trade', 'trade.html', '⇄', 'Trade', 'Practice or live execution'],
-  ['crypto', 'invest.html#crypto', '₿', 'Cryptocurrency', 'BTC · ETH · SOL · more'],
-  ['equities', 'invest.html#equities', '◎', 'Global equities', 'TSLA · AAPL · NVDA · more'],
-  ['commodities', 'invest.html#commodities', 'Au', 'Commodities', 'Gold · Oil · Silver'],
-  ['transactions', ROUTES.transactions, '≡', 'Transactions', 'Full ledger'],
-  ['support', 'contact.html', '?', 'Support', 'Talk to an advisor'],
+  ['dashboard', 'dashboard.html', BOLD.dash, 'Dashboard', 'Portfolio overview'],
+  ['invest', 'invest.html', BOLD.invest, 'Invest', 'Explore markets'],
+  ['trade', 'trade.html', BOLD.trade, 'Trade', 'Practice or live execution'],
+  ['crypto', 'invest.html#crypto', BOLD.crypto, 'Cryptocurrency', 'BTC · ETH · SOL · more'],
+  ['equities', 'invest.html#equities', BOLD.equities, 'Global equities', 'TSLA · AAPL · NVDA · more'],
+  ['commodities', 'invest.html#commodities', BOLD.commodities, 'Commodities', 'Gold · Oil · Silver'],
+  ['transactions', ROUTES.transactions, BOLD.tx, 'Transactions', 'Full ledger'],
+  ['support', 'contact.html', BOLD.support, 'Support', 'Talk to an advisor'],
 ];
 const STRIP = [['BTC', 'BTC'], ['ETH', 'ETH'], ['SOL', 'SOL'], ['XRP', 'XRP'], ['Gold', 'XAUUSD']];
 const appMenu = (current) => `
@@ -178,10 +179,10 @@ ${MENU.map(([key, href, glyph, label, sub]) => `        <a class="mi" href="${hr
 `;
 
 const SHEET = [
-  [ROUTES.deposit, 'gold', '+', 'Deposit funds', 'Bank transfer, card or crypto'],
-  [ROUTES.withdraw, 'inset', '↑', 'Withdraw', 'To your bank or wallet'],
-  ['trade.html', 'inset', '⇅', 'Trade', 'Practice or live'],
-  ['invest.html', 'inset', '⌂', 'New investment', 'Equities or real estate'],
+  [ROUTES.deposit, 'gold', BOLD.plus, 'Deposit funds', 'Bank transfer, card or crypto'],
+  [ROUTES.withdraw, 'inset', BOLD.up, 'Withdraw', 'To your bank or wallet'],
+  ['trade.html', 'inset', BOLD.trade, 'Trade', 'Practice or live'],
+  ['invest.html', 'inset', BOLD.house, 'New investment', 'Equities or real estate'],
 ];
 const sheet = `
 <div class="overlay" id="sheet" hidden>

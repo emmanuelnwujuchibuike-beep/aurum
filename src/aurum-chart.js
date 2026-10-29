@@ -140,7 +140,8 @@
     var card = document.getElementById('chart-card');
     card.querySelector('[data-chart-name]').textContent = row.getAttribute('data-name');
     card.querySelector('[data-chart-meta]').textContent = sym.replace('USD', '') + ' · ' + row.getAttribute('data-k').toUpperCase();
-    card.querySelector('[data-chart-badge]').textContent = row.querySelector('.badge').textContent;
+    var cb = card.querySelector('[data-chart-badge]'), rb = row.querySelector('.badge');
+    cb.innerHTML = rb.innerHTML; if (rb.hasAttribute('data-a')) cb.setAttribute('data-a', rb.getAttribute('data-a'));
     card.querySelectorAll('[data-bind]').forEach(function (el) {
       var attr = el.getAttribute('data-bind'), src = row.querySelector('[' + attr + ']');
       el.setAttribute(attr, sym);
