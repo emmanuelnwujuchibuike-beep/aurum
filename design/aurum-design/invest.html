@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Invest — Aurum Capital</title>
+<meta name="theme-color" content="#ECE8E1">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('aurum-theme')||'light')}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,500&family=Outfit:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <a href="account.html" class="row g12" style="text-decoration:none;color:inherit" aria-label="Open profile">
+    <span class="avatar raised-sm"><span>AD</span></span>
+    <span class="stack" style="gap:1px"><span class="muted" style="font-size:12px">Markets</span><span class="serif" style="font-size:20px;font-weight:500">Invest</span></span>
+  </a>
+  <div class="row g12">
+    <button class="iconbtn raised-sm" data-open="menu" aria-label="Menu"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button>
+    <button class="iconbtn raised-sm" aria-label="Notifications"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot"></span></button>
+  </div>
+</header>
+
+<main class="stack g20">
+  <section class="vault row g12" style="border-radius:22px;padding:16px 16px 16px 18px">
+    <span class="grow stack g4"><span class="eyebrow" style="color:var(--vault-gold)">Buying power</span><span class="serif" data-money style="font-size:26px">$22,616.37</span></span>
+    <a href="deposit.html" class="gold row" style="min-height:44px;padding:0 16px;border-radius:14px;font-size:13px;font-weight:600;text-decoration:none;box-shadow:none">+ Add funds</a>
+  </section>
+
+  <label class="inset row g10" style="border-radius:16px;min-height:52px;padding:0 16px;color:var(--gold-ink)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search assets</span>
+    <input id="q" type="search" placeholder="Search assets, e.g. BTC, AAPL, Gold" autocomplete="off" style="flex:1;min-width:0;border:0;background:transparent;outline:none;font-size:15px;color:var(--ink)">
+  </label>
+
+  <div class="row scrollx" data-group="filter" style="gap:10px;margin:-4px -20px;padding:6px 20px 12px">
+    <button class="fchip on" data-value="all">All</button><button class="fchip" data-value="crypto">Crypto</button><button class="fchip" data-value="equities">Equities</button><button class="fchip" data-value="commodities">Commodities</button><button class="fchip" data-value="estate">Real estate</button>
+  </div>
+  <style>.fchip{flex:none;min-height:40px;padding:0 16px;border-radius:13px;font-size:13px;font-weight:500;color:var(--muted);background:var(--bg);box-shadow:3px 3px 8px #D0C9BC,-3px -3px 8px #FFF}.fchip.on{background:var(--vault);color:#E2C27A;box-shadow:none}</style>
+
+  <section class="stack g10">
+    <div class="row" style="justify-content:space-between;align-items:baseline"><h2 class="h2" id="listTitle">All markets</h2><span class="mono muted" style="font-size:11px"><span id="count">12</span> assets</span></div>
+    <div class="list raised" id="assets">
+      <a class="item" data-k="crypto" data-s="bitcoin btc" href="trade.html?s=BTC" style="color:inherit;text-decoration:none"><span class="badge inset">₿</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Bitcoin</b><span class="mono muted" style="font-size:11px">BTC · Crypto</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">$80,058.00</span><span class="tag down">−1.74%</span></span></a>
+      <a class="item" data-k="crypto" data-s="ethereum eth" href="trade.html?s=ETH" style="color:inherit;text-decoration:none"><span class="badge inset">Ξ</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Ethereum</b><span class="mono muted" style="font-size:11px">ETH · Crypto</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">$2,316.09</span><span class="tag down">−2.24%</span></span></a>
+      <a class="item" data-k="crypto" data-s="solana sol" href="trade.html?s=SOL" style="color:inherit;text-decoration:none"><span class="badge inset">S</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Solana</b><span class="mono muted" style="font-size:11px">SOL · Crypto</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">$99.98</span><span class="tag flat">2.97%</span></span></a>
+      <a class="item" data-k="crypto" data-s="bnb" href="trade.html?s=BNB" style="color:inherit;text-decoration:none"><span class="badge inset">B</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">BNB</b><span class="mono muted" style="font-size:11px">BNB · Crypto</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">$739.81</span><span class="tag flat">1.96%</span></span></a>
+      <a class="item" data-k="equities" data-s="tesla tsla" href="trade.html?s=TSLA" style="color:inherit;text-decoration:none"><span class="badge inset">T</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Tesla</b><span class="mono muted" style="font-size:11px">TSLA · Equity</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">—</span><span class="tag flat">—</span></span></a>
+      <a class="item" data-k="equities" data-s="apple aapl" href="trade.html?s=AAPL" style="color:inherit;text-decoration:none"><span class="badge inset">A</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Apple</b><span class="mono muted" style="font-size:11px">AAPL · Equity</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">—</span><span class="tag flat">—</span></span></a>
+      <a class="item" data-k="equities" data-s="nvidia nvda" href="trade.html?s=NVDA" style="color:inherit;text-decoration:none"><span class="badge inset">N</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">NVIDIA</b><span class="mono muted" style="font-size:11px">NVDA · Equity</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">—</span><span class="tag flat">—</span></span></a>
+      <a class="item" data-k="commodities" data-s="gold xau" href="trade.html?s=XAU" style="color:inherit;text-decoration:none"><span class="badge inset">Au</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Gold</b><span class="mono muted" style="font-size:11px">XAU · Commodity</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">—</span><span class="tag flat">—</span></span></a>
+      <a class="item" data-k="commodities" data-s="silver xag" href="trade.html?s=XAG" style="color:inherit;text-decoration:none"><span class="badge inset">Ag</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Silver</b><span class="mono muted" style="font-size:11px">XAG · Commodity</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">—</span><span class="tag flat">—</span></span></a>
+      <a class="item" data-k="commodities" data-s="crude oil wti" href="trade.html?s=WTI" style="color:inherit;text-decoration:none"><span class="badge inset">Oil</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Crude Oil</b><span class="mono muted" style="font-size:11px">WTI · Commodity</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">—</span><span class="tag flat">—</span></span></a>
+      <a class="item" data-k="estate" data-s="rhine pavilion frankfurt" href="#" style="color:inherit;text-decoration:none"><span class="badge inset">⌂</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">The Rhine Pavilion</b><span class="mono muted" style="font-size:11px">Frankfurt · from $1,000</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">7.3% target</span><span class="tag up">Live</span></span></a>
+      <a class="item" data-k="estate" data-s="harbor heights sydney" href="#" style="color:inherit;text-decoration:none"><span class="badge inset">⌂</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Harbor Heights</b><span class="mono muted" style="font-size:11px">Sydney · from $1,000</span></span><span class="stack" style="align-items:flex-end;gap:4px"><span class="mono" style="font-size:14px">6.8% target</span><span class="tag flat">New</span></span></a>
+      <p class="muted" id="empty" hidden style="padding:22px 0;text-align:center;font-size:13px">No assets match your search.</p>
+    </div>
+  </section>
+</main>
+<script>
+(function(){
+  var cur='all',titles={all:'All markets',crypto:'Crypto',equities:'Global equities',commodities:'Commodities',estate:'Real estate'};
+  var q=document.getElementById('q');
+  function apply(){var t=q.value.trim().toLowerCase(),n=0;
+    document.querySelectorAll('#assets .item').forEach(function(i){var ok=(cur==='all'||i.dataset.k===cur)&&(!t||i.dataset.s.indexOf(t)>-1);i.hidden=!ok;if(ok)n++;});
+    document.getElementById('count').textContent=n;document.getElementById('empty').hidden=n>0;document.getElementById('listTitle').textContent=titles[cur];}
+  document.addEventListener('group:filter',function(e){cur=e.detail;apply();});
+  q.addEventListener('input',apply);
+  document.addEventListener('DOMContentLoaded',function(){var h=location.hash.slice(1);if(titles[h]){var b=document.querySelector('[data-group="filter"] [data-value="'+h+'"]');if(b)b.click();}});
+})();
+</script>
+
+<!-- QUICK ACTIONS SHEET (shared) -->
+<div class="overlay" id="sheet" hidden>
+  <button class="scrim" data-close="sheet" aria-label="Close"></button>
+  <div class="sheet" role="dialog" aria-label="Quick actions">
+    <span class="grab"></span><span class="eyebrow">Quick actions</span>
+    <a href="deposit.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge gold" style="color:#241A05">+</span><span class="stack"><b style="font-size:14px">Deposit funds</b><span class="muted" style="font-size:12px">Bank transfer, card or crypto</span></span></a>
+    <a href="withdraw.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">↑</span><span class="stack"><b style="font-size:14px">Withdraw</b><span class="muted" style="font-size:12px">To your bank or wallet</span></span></a>
+    <a href="trade.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">⇅</span><span class="stack"><b style="font-size:14px">Trade</b><span class="muted" style="font-size:12px">Practice or live</span></span></a>
+    <a href="invest.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">⌂</span><span class="stack"><b style="font-size:14px">New investment</b><span class="muted" style="font-size:12px">Equities or real estate</span></span></a>
+  </div>
+</div>
+
+<!-- FULL-SCREEN MENU (shared) -->
+<div class="menu app" id="menu" hidden>
+  <div class="top" style="position:static">
+    <span class="row g12"><span class="gold serif" style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:19px">A</span><span class="serif" style="font-size:21px;letter-spacing:.04em">Aurum</span></span>
+    <button class="iconbtn inset" data-close="menu" aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="stack g20" style="flex:1;overflow-y:auto;padding:8px 20px 24px">
+    <div class="vault row scrollx mono" style="border-radius:20px;padding:12px 14px;gap:18px;white-space:nowrap;font-size:12px;flex:none">
+      <span><span style="color:var(--vault-gold)">BTC</span> $80,043.26 <span style="color:#F09A8E">−1.71%</span></span>
+      <span><span style="color:var(--vault-gold)">ETH</span> $2,315.98 <span style="color:#F09A8E">−2.19%</span></span>
+      <span><span style="color:var(--vault-gold)">SOL</span> —</span>
+    </div>
+    <div class="stack g10">
+      <span class="eyebrow">Navigate</span>
+      <nav class="raised" style="border-radius:22px;padding:6px" aria-label="All sections">
+        <a class="mi" href="dashboard.html"><span class="badge inset">◈</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Dashboard</b><span class="mono muted" style="font-size:11px">Portfolio overview</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html" aria-current="page"><span class="badge inset">↗</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Invest</b><span class="mono muted" style="font-size:11px">Explore markets</span></span><span class="muted">›</span></a>
+        <a class="mi" href="trade.html"><span class="badge inset">⇄</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Trade</b><span class="mono muted" style="font-size:11px">Practice or live execution</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#crypto"><span class="badge inset">₿</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Cryptocurrency</b><span class="mono muted" style="font-size:11px">BTC · ETH · SOL · more</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#equities"><span class="badge inset">◎</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Global equities</b><span class="mono muted" style="font-size:11px">TSLA · AAPL · NVDA · more</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#commodities"><span class="badge inset">Au</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Commodities</b><span class="mono muted" style="font-size:11px">Gold · Oil · Silver</span></span><span class="muted">›</span></a>
+        <a class="mi" href="transactions.html"><span class="badge inset">≡</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Transactions</b><span class="mono muted" style="font-size:11px">Full ledger</span></span><span class="muted">›</span></a>
+        <a class="mi" href="support.html"><span class="badge inset">?</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Support</b><span class="mono muted" style="font-size:11px">Talk to an advisor</span></span><span class="muted">›</span></a>
+      </nav>
+    </div>
+    <a href="deposit.html" class="gold row" style="min-height:54px;border-radius:18px;justify-content:center;font-size:15px;font-weight:600;text-decoration:none">+ Deposit funds</a>
+    <span class="row g8 muted" style="justify-content:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase"><span style="width:7px;height:7px;border-radius:4px;background:#2F7A4B"></span>All systems operational</span>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (shared) -->
+<nav class="nav raised" aria-label="Main">
+  <a href="dashboard.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Home</a>
+  <a href="invest.html" aria-current="page"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>Invest</a>
+  <button class="fab gold" data-open="sheet" aria-label="Quick actions"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  <a href="portfolio.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span>Portfolio</a>
+  <a href="account.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Account</a>
+</nav>
+</div>
+</body>
+</html>

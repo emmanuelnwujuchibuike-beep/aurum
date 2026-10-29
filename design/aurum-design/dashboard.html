@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard — Aurum Capital</title>
+<meta name="theme-color" content="#ECE8E1">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('aurum-theme')||'light')}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,500&family=Outfit:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="app">
+
+<header class="top">
+  <a href="account.html" class="row g12" style="text-decoration:none;color:inherit" aria-label="Open profile">
+    <span class="avatar raised-sm"><span>AD</span></span>
+    <span class="stack" style="gap:1px"><span class="muted" style="font-size:12px">Good morning</span><span class="serif" style="font-size:20px;font-weight:500">Aurum</span></span>
+  </a>
+  <div class="row g12">
+    <button class="iconbtn raised-sm" data-open="menu" aria-label="Menu"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button>
+    <button class="iconbtn raised-sm" aria-label="Notifications"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot"></span></button>
+  </div>
+</header>
+
+<main class="stack g26">
+
+  <!-- Net worth -->
+  <section class="vault stack g16" style="border-radius:28px;padding:22px 20px 18px">
+    <div class="row" style="justify-content:space-between">
+      <span class="eyebrow" style="color:var(--vault-gold)">Total net worth</span>
+      <button data-hide-balances aria-label="Hide or show balances" style="width:44px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--vault-muted);background:#26231D"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <span class="serif" data-money style="font-size:44px;line-height:1">$45,270.27</span>
+    <div class="row g10">
+      <span class="mono" style="font-size:12px;color:#7FD39C;background:rgba(127,211,156,.12);border-radius:8px;padding:5px 9px">▲ 3.86%</span>
+      <span style="font-size:12px;color:var(--vault-muted)">Unrealised P&amp;L</span>
+    </div>
+    <div class="stack" style="height:92px;border-radius:16px;background:var(--vault-2);align-items:center;justify-content:center;gap:4px">
+      <svg width="300" height="60" viewBox="0 0 300 60" fill="none" aria-hidden="true"><path d="M0 46 C30 44 50 30 80 34 S130 22 160 26 S220 10 250 14 S285 8 300 6" stroke="#D9B565" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/></svg>
+      <span style="font-size:10px;color:#8F8776;letter-spacing:.12em;text-transform:uppercase">Performance chart · loads after page</span>
+    </div>
+    <div class="row" data-group="range" style="gap:2px;background:#1F1C17;border-radius:11px;padding:3px">
+      <button class="rng">1D</button><button class="rng">1W</button><button class="rng on">1M</button><button class="rng">1Y</button><button class="rng">All</button>
+    </div>
+  </section>
+  <style>.rng{flex:1;min-height:32px;border-radius:9px;font-size:11px;font-weight:600;color:var(--vault-muted);letter-spacing:.06em}.rng.on{background:#2A2620;color:#E2C27A}</style>
+
+  <!-- Quick actions -->
+  <section style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+    <a href="deposit.html" class="qa"><span class="k gold"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>Deposit</a>
+    <a href="withdraw.html" class="qa"><span class="k raised-sm"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span>Withdraw</a>
+    <a href="trade.html" class="qa"><span class="k raised-sm"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M7 4 3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></span>Trade</a>
+    <a href="transactions.html" class="qa"><span class="k raised-sm"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span>History</a>
+  </section>
+  <style>.qa{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500;color:#3F3A32;text-decoration:none}.qa .k{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink)}.qa .k.gold{color:#241A05}</style>
+
+  <!-- Allocation -->
+  <section class="raised stack g16" style="border-radius:24px;padding:18px">
+    <div class="row" style="justify-content:space-between"><span class="eyebrow">Allocation</span><span class="mono muted" style="font-size:11px">5 positions</span></div>
+    <div class="inset row" style="height:12px;border-radius:6px;padding:3px;gap:3px">
+      <span style="width:50%;height:100%;border-radius:4px;background:var(--gold)"></span><span style="width:50%;height:100%;border-radius:4px;background:#3F3A32"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
+      <div class="inset stack g4" style="border-radius:18px;padding:14px"><span class="row g8 muted" style="font-size:11px;font-weight:500"><span style="width:8px;height:8px;border-radius:2px;background:var(--gold)"></span>Cash · 50%</span><span class="serif" data-money style="font-size:23px">$22,616.37</span><span class="muted" style="font-size:11px">Available to invest</span></div>
+      <div class="inset stack g4" style="border-radius:18px;padding:14px"><span class="row g8 muted" style="font-size:11px;font-weight:500"><span style="width:8px;height:8px;border-radius:2px;background:#3F3A32"></span>Invested · 50%</span><span class="serif" data-money style="font-size:23px">$22,653.90</span><span class="up" style="font-size:11px">+3.86% unrealised</span></div>
+    </div>
+  </section>
+
+  <!-- Markets -->
+  <section class="stack g12">
+    <div class="row" style="justify-content:space-between"><h2 class="h2">Markets</h2><a class="link" href="invest.html">Trade crypto →</a></div>
+    <div class="row scrollx" style="gap:14px;margin:0 -20px;padding:4px 20px 16px">
+      <a href="trade.html?s=BTC" class="raised stack g10 mkt"><span class="row" style="justify-content:space-between"><span class="row g8"><span class="badge inset" style="width:32px;height:32px;border-radius:10px;font-size:14px">₿</span><b style="font-size:14px">BTC</b></span><span class="tag down">−1.74%</span></span><span class="mono" style="font-size:15px">$80,058.00</span></a>
+      <a href="trade.html?s=ETH" class="raised stack g10 mkt"><span class="row" style="justify-content:space-between"><span class="row g8"><span class="badge inset" style="width:32px;height:32px;border-radius:10px;font-size:14px">Ξ</span><b style="font-size:14px">ETH</b></span><span class="tag down">−2.24%</span></span><span class="mono" style="font-size:15px">$2,316.31</span></a>
+      <a href="trade.html?s=SOL" class="raised stack g10 mkt"><span class="row" style="justify-content:space-between"><span class="row g8"><span class="badge inset" style="width:32px;height:32px;border-radius:10px;font-size:14px">S</span><b style="font-size:14px">SOL</b></span><span class="tag flat">—</span></span><span class="mono" style="font-size:15px">—</span></a>
+    </div>
+  </section>
+  <style>.mkt{flex:none;width:160px;border-radius:20px;padding:14px;color:inherit;text-decoration:none}</style>
+
+  <!-- Activity -->
+  <section class="stack g12">
+    <div class="row" style="justify-content:space-between"><h2 class="h2">Recent activity</h2><a class="link" href="transactions.html">View all →</a></div>
+    <div class="list raised">
+      <div class="item"><span class="badge inset" style="color:var(--gold-ink)">↓</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Buy ETH</b><span class="mono muted" style="font-size:11px">21/06/2026 · 12:40</span></span><span class="mono" style="font-size:14px">−$500.75</span></div>
+      <div class="item"><span class="badge inset" style="color:var(--down)">↑</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Withdraw BTC</b><span class="mono muted" style="font-size:11px">19/06/2026 · 00:09</span></span><span class="mono" style="font-size:14px">−$500.00</span></div>
+      <div class="item"><span class="badge inset" style="color:var(--down)">↑</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Withdraw BTC</b><span class="mono muted" style="font-size:11px">18/06/2026 · 20:38</span></span><span class="mono" style="font-size:14px">−$1,000.00</span></div>
+      <div class="item"><span class="badge inset" style="color:var(--up)">↗</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Sell BTC</b><span class="mono muted" style="font-size:11px">14/06/2026 · 20:47</span></span><span class="mono up" style="font-size:14px">+$109.81</span></div>
+      <div class="item"><span class="badge inset" style="color:var(--up)">↗</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Sell BTC</b><span class="mono muted" style="font-size:11px">14/06/2026 · 20:47</span></span><span class="mono up" style="font-size:14px">+$131.24</span></div>
+    </div>
+  </section>
+</main>
+
+<!-- QUICK ACTIONS SHEET (shared) -->
+<div class="overlay" id="sheet" hidden>
+  <button class="scrim" data-close="sheet" aria-label="Close"></button>
+  <div class="sheet" role="dialog" aria-label="Quick actions">
+    <span class="grab"></span><span class="eyebrow">Quick actions</span>
+    <a href="deposit.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge gold" style="color:#241A05">+</span><span class="stack"><b style="font-size:14px">Deposit funds</b><span class="muted" style="font-size:12px">Bank transfer, card or crypto</span></span></a>
+    <a href="withdraw.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">↑</span><span class="stack"><b style="font-size:14px">Withdraw</b><span class="muted" style="font-size:12px">To your bank or wallet</span></span></a>
+    <a href="trade.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">⇅</span><span class="stack"><b style="font-size:14px">Trade</b><span class="muted" style="font-size:12px">Practice or live</span></span></a>
+    <a href="invest.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">⌂</span><span class="stack"><b style="font-size:14px">New investment</b><span class="muted" style="font-size:12px">Equities or real estate</span></span></a>
+  </div>
+</div>
+
+<!-- FULL-SCREEN MENU (shared) -->
+<div class="menu app" id="menu" hidden>
+  <div class="top" style="position:static">
+    <span class="row g12"><span class="gold serif" style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:19px">A</span><span class="serif" style="font-size:21px;letter-spacing:.04em">Aurum</span></span>
+    <button class="iconbtn inset" data-close="menu" aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="stack g20" style="flex:1;overflow-y:auto;padding:8px 20px 24px">
+    <div class="vault row scrollx mono" style="border-radius:20px;padding:12px 14px;gap:18px;white-space:nowrap;font-size:12px;flex:none">
+      <span><span style="color:var(--vault-gold)">BTC</span> $80,043.26 <span style="color:#F09A8E">−1.71%</span></span>
+      <span><span style="color:var(--vault-gold)">ETH</span> $2,315.98 <span style="color:#F09A8E">−2.19%</span></span>
+      <span><span style="color:var(--vault-gold)">SOL</span> —</span>
+    </div>
+    <div class="stack g10">
+      <span class="eyebrow">Navigate</span>
+      <nav class="raised" style="border-radius:22px;padding:6px" aria-label="All sections">
+        <a class="mi" href="dashboard.html" aria-current="page"><span class="badge inset">◈</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Dashboard</b><span class="mono muted" style="font-size:11px">Portfolio overview</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html"><span class="badge inset">↗</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Invest</b><span class="mono muted" style="font-size:11px">Explore markets</span></span><span class="muted">›</span></a>
+        <a class="mi" href="trade.html"><span class="badge inset">⇄</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Trade</b><span class="mono muted" style="font-size:11px">Practice or live execution</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#crypto"><span class="badge inset">₿</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Cryptocurrency</b><span class="mono muted" style="font-size:11px">BTC · ETH · SOL · more</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#equities"><span class="badge inset">◎</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Global equities</b><span class="mono muted" style="font-size:11px">TSLA · AAPL · NVDA · more</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#commodities"><span class="badge inset">Au</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Commodities</b><span class="mono muted" style="font-size:11px">Gold · Oil · Silver</span></span><span class="muted">›</span></a>
+        <a class="mi" href="transactions.html"><span class="badge inset">≡</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Transactions</b><span class="mono muted" style="font-size:11px">Full ledger</span></span><span class="muted">›</span></a>
+        <a class="mi" href="support.html"><span class="badge inset">?</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Support</b><span class="mono muted" style="font-size:11px">Talk to an advisor</span></span><span class="muted">›</span></a>
+      </nav>
+    </div>
+    <a href="deposit.html" class="gold row" style="min-height:54px;border-radius:18px;justify-content:center;font-size:15px;font-weight:600;text-decoration:none">+ Deposit funds</a>
+    <span class="row g8 muted" style="justify-content:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase"><span style="width:7px;height:7px;border-radius:4px;background:#2F7A4B"></span>All systems operational</span>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (shared) -->
+<nav class="nav raised" aria-label="Main">
+  <a href="dashboard.html" aria-current="page"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Home</a>
+  <a href="invest.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>Invest</a>
+  <button class="fab gold" data-open="sheet" aria-label="Quick actions"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  <a href="portfolio.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span>Portfolio</a>
+  <a href="account.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Account</a>
+</nav>
+</div>
+</body>
+</html>

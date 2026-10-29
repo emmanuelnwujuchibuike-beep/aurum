@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trade — Aurum Capital</title>
+<meta name="theme-color" content="#ECE8E1">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('aurum-theme')||'light')}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,500&family=Outfit:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="app trade">
+<style>
+.app.trade{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background-image:none}
+.trade .tbar{flex:none;display:flex;align-items:center;gap:10px;padding:calc(14px + env(safe-area-inset-top)) 16px 6px}
+.trade .chartbox{flex:1;min-height:0;margin:0 10px;border-radius:18px;position:relative;overflow:hidden}
+.trade .order{flex:none;padding:12px 16px calc(108px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
+html.fs .trade .order{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+html.fs .nav{display:none}
+.exitfs{position:absolute;top:10px;right:10px;min-height:36px;padding:0 12px;border-radius:11px;font-size:12px;font-weight:600;box-shadow:none;display:none}
+html.fs .exitfs{display:block}
+.chip{min-height:38px;border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);background:var(--bg);box-shadow:2px 2px 6px #D0C9BC,-2px -2px 6px #FFF}
+.chip.on{background:var(--vault);color:#E2C27A;box-shadow:none}
+.tog{display:flex;align-items:center;justify-content:space-between;min-height:46px;width:100%;font-size:14px;font-weight:500;border-bottom:1px solid var(--line)}
+.tog .box{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;background:var(--well);box-shadow:inset 2px 2px 5px #D1CABD,inset -2px -2px 5px #FFF}
+.tog[aria-pressed="true"] .box{background:var(--gold);box-shadow:none;color:#241A05}
+.pop{position:absolute;top:calc(74px + env(safe-area-inset-top));left:16px;right:16px;z-index:41;border-radius:20px;padding:14px}
+.sym{display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:0 10px;border-radius:14px;text-align:left}
+.sym.on{background:var(--well);box-shadow:var(--press-sm)}
+.tradebtn{flex:1;min-height:58px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.sell{background:var(--down);color:#FFF3F0}.buy{background:var(--up);color:#EFFAF2}
+.step{width:28px;height:28px;border-radius:8px;font-weight:600}
+</style>
+
+<div class="tbar">
+  <a class="iconbtn raised-sm" href="invest.html" aria-label="Back to Invest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a>
+  <button class="raised-sm grow row g10" data-open="symPop" aria-label="Change symbol" style="min-height:44px;border-radius:14px;padding:0 12px;text-align:left">
+    <span class="grow stack"><span class="row g4" style="font-size:14px;font-weight:600"><span id="symName">BTC / USD</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6E5314" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+    <span class="mono" style="font-size:12px"><span id="symPrice">$80,077.73</span> <span id="symChg" class="down">−1.65%</span></span></span>
+  </button>
+  <button class="iconbtn raised-sm" data-open="toolPop" aria-label="Chart settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
+  <button class="iconbtn raised-sm" id="fsBtn" aria-label="Full screen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</div>
+
+<div class="row g12 mono muted" style="flex:none;padding:8px 16px;font-size:11px">
+  <span class="chip on row" id="tfTag" style="min-height:26px;padding:0 9px;font-size:11px">1D</span>
+  <span>O 79,096</span><span>H 82,619</span><span>L 77,735</span>
+  <span class="row g4 up" style="margin-left:auto"><span style="width:6px;height:6px;border-radius:3px;background:#2F7A4B"></span>LIVE</span>
+</div>
+
+<div class="chartbox inset">
+  <svg id="chart" width="100%" height="100%" preserveAspectRatio="none" role="img" aria-label="Price chart"></svg>
+  <span class="mono" id="modeTag" style="position:absolute;top:10px;left:12px;font-size:10px;color:var(--gold-ink);background:var(--bg);border-radius:6px;padding:3px 7px">PRACTICE · sample data</span>
+  <button class="exitfs gold" id="exitFs">Exit full screen</button>
+</div>
+
+<section class="order">
+  <div class="row g10">
+    <div class="inset seg-wrap" data-group="mode" style="width:160px;padding:3px;border-radius:12px">
+      <button class="seg on" data-value="demo" style="min-height:34px;font-size:12px;font-weight:600">Practice</button><button class="seg" data-value="live" style="min-height:34px;font-size:12px;font-weight:600">Live</button>
+    </div>
+    <span class="stack" style="margin-left:auto;align-items:flex-end"><span class="muted" id="balLabel" style="font-size:10px;letter-spacing:.12em;text-transform:uppercase">Practice balance</span><span class="mono" id="bal" style="font-size:13px">[DEMO BALANCE]</span></span>
+  </div>
+  <div class="row g10">
+    <button class="tradebtn sell"><span style="font-size:11px;letter-spacing:.14em;font-weight:600">SELL</span><span class="mono" style="font-size:14px">80,077.73</span></button>
+    <div class="inset stack" style="border-radius:14px;padding:4px;align-items:center;gap:2px;width:92px;flex:none">
+      <span class="muted" style="font-size:10px">Volume (lots)</span>
+      <span class="row g4"><button class="step raised-sm" id="dec" aria-label="Decrease volume">−</button><span class="mono" id="lots" style="font-size:12px;min-width:30px;text-align:center">0.01</span><button class="step raised-sm" id="inc" aria-label="Increase volume">+</button></span>
+    </div>
+    <button class="tradebtn buy"><span style="font-size:11px;letter-spacing:.14em;font-weight:600">BUY</span><span class="mono" style="font-size:14px">80,077.73</span></button>
+  </div>
+  <details style="font-size:13px"><summary style="list-style:none;min-height:36px;display:flex;align-items:center;justify-content:space-between;font-weight:600;cursor:pointer">Open positions (0) · Orders (0)<span style="color:var(--gold-ink)">▾</span></summary><p class="muted" style="font-size:12px;line-height:1.5">No open trades. Positions with stop loss and take profit show here, MT4-style.</p></details>
+</section>
+
+<!-- Symbol dropdown -->
+<div class="overlay" id="symPop" hidden style="justify-content:flex-start">
+  <button class="scrim" data-close="symPop" aria-label="Close" style="background:rgba(30,27,22,.25)"></button>
+  <div class="pop raised stack" style="gap:2px" data-group="sym">
+    <span class="eyebrow" style="padding:4px 10px 6px">Symbol</span>
+    <button class="sym on" data-value="BTC / USD|$80,077.73|−1.65%"><span class="badge inset" style="width:34px;height:34px">₿</span><span class="grow stack"><b style="font-size:14px">BTC / USD</b><span class="muted" style="font-size:11px">Crypto</span></span><span class="mono" style="font-size:13px">$80,077.73</span></button>
+    <button class="sym" data-value="ETH / USD|$2,316.89|−2.12%"><span class="badge inset" style="width:34px;height:34px">Ξ</span><span class="grow stack"><b style="font-size:14px">ETH / USD</b><span class="muted" style="font-size:11px">Crypto</span></span><span class="mono" style="font-size:13px">$2,316.89</span></button>
+    <button class="sym" data-value="SOL / USD|$100.03|"><span class="badge inset" style="width:34px;height:34px">S</span><span class="grow stack"><b style="font-size:14px">SOL / USD</b><span class="muted" style="font-size:11px">Crypto</span></span><span class="mono" style="font-size:13px">$100.03</span></button>
+    <button class="sym" data-value="XAU / USD|—|"><span class="badge inset" style="width:34px;height:34px">Au</span><span class="grow stack"><b style="font-size:14px">XAU / USD</b><span class="muted" style="font-size:11px">Gold</span></span><span class="mono" style="font-size:13px">—</span></button>
+    <button class="sym" data-value="AAPL|—|"><span class="badge inset" style="width:34px;height:34px">A</span><span class="grow stack"><b style="font-size:14px">AAPL</b><span class="muted" style="font-size:11px">Equity</span></span><span class="mono" style="font-size:13px">—</span></button>
+  </div>
+</div>
+
+<!-- Chart settings dropdown -->
+<div class="overlay" id="toolPop" hidden style="justify-content:flex-start">
+  <button class="scrim" data-close="toolPop" aria-label="Close" style="background:rgba(30,27,22,.25)"></button>
+  <div class="pop raised stack g14" style="padding:16px">
+    <span class="eyebrow">Timeframe</span>
+    <div data-group="tf" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px">
+      <button class="chip">5M</button><button class="chip">15M</button><button class="chip">30M</button><button class="chip">1H</button><button class="chip">4H</button><button class="chip on">1D</button><button class="chip">1W</button><button class="chip">1M</button><button class="chip">3M</button><button class="chip">1Y</button>
+    </div>
+    <span class="eyebrow">Chart type</span>
+    <div class="inset seg-wrap" data-group="ctype" style="padding:3px;border-radius:12px"><button class="seg on" data-value="candles">Candles</button><button class="seg" data-value="line">Line</button></div>
+    <span class="eyebrow">Indicators</span>
+    <div><button class="tog" id="maTog" aria-pressed="true">Moving average (20)<span class="box">✓</span></button><button class="tog" id="volTog" aria-pressed="true" style="border-bottom:0">Volume<span class="box">✓</span></button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ---- Sample series for the design only. Replace with TradingView Lightweight Charts + your price feed. ----
+  var seed=7;function r(){seed=(seed*16807)%2147483647;return(seed-1)/2147483646;}
+  var N=48,o=79200,D=[];for(var i=0;i<N;i++){var c=i===N-1?80077.73:o+(r()-.48)*1500,h=Math.max(o,c)+r()*700,l=Math.min(o,c)-r()*700;D.push({o:o,c:c,h:h,l:l,v:.25+r()*.75});o=c;}
+  var st={type:'candles',ma:true,vol:true};
+  var svg=document.getElementById('chart'),NS='http://www.w3.org/2000/svg';
+  function el(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e;}
+  function draw(){
+    var W=svg.clientWidth,H=svg.clientHeight;if(!W||!H)return;svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.innerHTML='';
+    var L=8,R=W-60,T=14,B=H-24,hi=-1e9,lo=1e9;D.forEach(function(d){hi=Math.max(hi,d.h);lo=Math.min(lo,d.l);});var p=(hi-lo)*.08;hi+=p;lo-=p;
+    var y=function(v){return T+(hi-v)/(hi-lo)*(B-T)},s=(R-L)/N;
+    for(var g=Math.ceil(lo/1000)*1000;g<hi;g+=1000){svg.appendChild(el('line',{x1:L,x2:W,y1:y(g),y2:y(g),stroke:'rgba(91,84,72,.10)'}));var t=el('text',{x:W-6,y:y(g)+3,'text-anchor':'end','font-size':10,fill:'#5B5448','font-family':'JetBrains Mono,monospace'});t.textContent=g.toLocaleString('en-US');svg.appendChild(t);}
+    if(st.vol)D.forEach(function(d,i){var hgt=d.v*(B-T)*.16;svg.appendChild(el('rect',{x:L+i*s+s*.18,y:B-hgt,width:s*.64,height:hgt,fill:d.c>=d.o?'rgba(47,122,75,.16)':'rgba(178,58,46,.16)'}));});
+    if(st.type==='candles')D.forEach(function(d,i){var col=d.c>=d.o?'#2F7A4B':'#B23A2E',x=L+i*s;svg.appendChild(el('line',{x1:x+s/2,x2:x+s/2,y1:y(d.h),y2:y(d.l),stroke:col,'stroke-width':1.2}));svg.appendChild(el('rect',{x:x+s*.18,y:y(Math.max(d.o,d.c)),width:s*.64,height:Math.max(1.5,Math.abs(y(d.o)-y(d.c))),fill:col,rx:1}));});
+    else svg.appendChild(el('polyline',{points:D.map(function(d,i){return(L+i*s+s/2)+','+y(d.c)}).join(' '),fill:'none',stroke:'#6E5314','stroke-width':2}));
+    if(st.ma)svg.appendChild(el('polyline',{points:D.map(function(d,i){var a=D.slice(Math.max(0,i-19),i+1),m=a.reduce(function(x,z){return x+z.c},0)/a.length;return(L+i*s+s/2)+','+y(m)}).join(' '),fill:'none',stroke:'#3E6FB0','stroke-width':1.5}));
+    var ly=y(80077.73);svg.appendChild(el('line',{x1:L,x2:W,y1:ly,y2:ly,stroke:'#22603A','stroke-dasharray':'4 4'}));
+    svg.appendChild(el('rect',{x:W-58,y:ly-9,width:56,height:18,rx:5,fill:'#22603A'}));var lt=el('text',{x:W-30,y:ly+3.5,'text-anchor':'middle','font-size':10,fill:'#EFFAF2','font-family':'JetBrains Mono,monospace'});lt.textContent='80,077.73';svg.appendChild(lt);
+  }
+  window.addEventListener('resize',draw);requestAnimationFrame(draw);
+
+  function setFs(on){document.documentElement.classList.toggle('fs',on);document.getElementById('fsBtn').setAttribute('aria-label',on?'Exit full screen':'Full screen');requestAnimationFrame(draw);}
+  document.getElementById('fsBtn').onclick=function(){setFs(!document.documentElement.classList.contains('fs'));};
+  document.getElementById('exitFs').onclick=function(){setFs(false);};
+  function tog(id,key){var b=document.getElementById(id);b.onclick=function(){st[key]=!st[key];b.setAttribute('aria-pressed',st[key]);draw();};}
+  tog('maTog','ma');tog('volTog','vol');
+  document.addEventListener('group:ctype',function(e){st.type=e.detail;draw();});
+  document.addEventListener('group:tf',function(e){document.getElementById('tfTag').textContent=e.detail;document.getElementById('toolPop').hidden=true;});
+  document.addEventListener('group:sym',function(e){var p=e.detail.split('|');document.getElementById('symName').textContent=p[0];document.getElementById('symPrice').textContent=p[1];document.getElementById('symChg').textContent=p[2];document.getElementById('symPop').hidden=true;});
+  document.addEventListener('group:mode',function(e){var d=e.detail==='demo';document.getElementById('modeTag').textContent=d?'PRACTICE · sample data':'LIVE ACCOUNT';document.getElementById('balLabel').textContent=d?'Practice balance':'Buying power';document.getElementById('bal').textContent=d?'[DEMO BALANCE]':'$22,616.37';});
+  var lots=1;function L(){document.getElementById('lots').textContent=(lots/100).toFixed(2);}
+  document.getElementById('dec').onclick=function(){lots=Math.max(1,lots-1);L();};document.getElementById('inc').onclick=function(){lots++;L();};
+})();
+</script>
+
+<!-- QUICK ACTIONS SHEET (shared) -->
+<div class="overlay" id="sheet" hidden>
+  <button class="scrim" data-close="sheet" aria-label="Close"></button>
+  <div class="sheet" role="dialog" aria-label="Quick actions">
+    <span class="grab"></span><span class="eyebrow">Quick actions</span>
+    <a href="deposit.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge gold" style="color:#241A05">+</span><span class="stack"><b style="font-size:14px">Deposit funds</b><span class="muted" style="font-size:12px">Bank transfer, card or crypto</span></span></a>
+    <a href="withdraw.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">↑</span><span class="stack"><b style="font-size:14px">Withdraw</b><span class="muted" style="font-size:12px">To your bank or wallet</span></span></a>
+    <a href="trade.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">⇅</span><span class="stack"><b style="font-size:14px">Trade</b><span class="muted" style="font-size:12px">Practice or live</span></span></a>
+    <a href="invest.html" class="sheet-btn raised-sm" style="color:inherit;text-decoration:none"><span class="badge inset">⌂</span><span class="stack"><b style="font-size:14px">New investment</b><span class="muted" style="font-size:12px">Equities or real estate</span></span></a>
+  </div>
+</div>
+
+<!-- FULL-SCREEN MENU (shared) -->
+<div class="menu app" id="menu" hidden>
+  <div class="top" style="position:static">
+    <span class="row g12"><span class="gold serif" style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:19px">A</span><span class="serif" style="font-size:21px;letter-spacing:.04em">Aurum</span></span>
+    <button class="iconbtn inset" data-close="menu" aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="stack g20" style="flex:1;overflow-y:auto;padding:8px 20px 24px">
+    <div class="vault row scrollx mono" style="border-radius:20px;padding:12px 14px;gap:18px;white-space:nowrap;font-size:12px;flex:none">
+      <span><span style="color:var(--vault-gold)">BTC</span> $80,043.26 <span style="color:#F09A8E">−1.71%</span></span>
+      <span><span style="color:var(--vault-gold)">ETH</span> $2,315.98 <span style="color:#F09A8E">−2.19%</span></span>
+      <span><span style="color:var(--vault-gold)">SOL</span> —</span>
+    </div>
+    <div class="stack g10">
+      <span class="eyebrow">Navigate</span>
+      <nav class="raised" style="border-radius:22px;padding:6px" aria-label="All sections">
+        <a class="mi" href="dashboard.html"><span class="badge inset">◈</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Dashboard</b><span class="mono muted" style="font-size:11px">Portfolio overview</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html" aria-current="page"><span class="badge inset">↗</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Invest</b><span class="mono muted" style="font-size:11px">Explore markets</span></span><span class="muted">›</span></a>
+        <a class="mi" href="trade.html"><span class="badge inset">⇄</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Trade</b><span class="mono muted" style="font-size:11px">Practice or live execution</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#crypto"><span class="badge inset">₿</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Cryptocurrency</b><span class="mono muted" style="font-size:11px">BTC · ETH · SOL · more</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#equities"><span class="badge inset">◎</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Global equities</b><span class="mono muted" style="font-size:11px">TSLA · AAPL · NVDA · more</span></span><span class="muted">›</span></a>
+        <a class="mi" href="invest.html#commodities"><span class="badge inset">Au</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Commodities</b><span class="mono muted" style="font-size:11px">Gold · Oil · Silver</span></span><span class="muted">›</span></a>
+        <a class="mi" href="transactions.html"><span class="badge inset">≡</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Transactions</b><span class="mono muted" style="font-size:11px">Full ledger</span></span><span class="muted">›</span></a>
+        <a class="mi" href="support.html"><span class="badge inset">?</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Support</b><span class="mono muted" style="font-size:11px">Talk to an advisor</span></span><span class="muted">›</span></a>
+      </nav>
+    </div>
+    <a href="deposit.html" class="gold row" style="min-height:54px;border-radius:18px;justify-content:center;font-size:15px;font-weight:600;text-decoration:none">+ Deposit funds</a>
+    <span class="row g8 muted" style="justify-content:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase"><span style="width:7px;height:7px;border-radius:4px;background:#2F7A4B"></span>All systems operational</span>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (shared) -->
+<nav class="nav raised" aria-label="Main">
+  <a href="dashboard.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Home</a>
+  <a href="invest.html" aria-current="page"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>Invest</a>
+  <button class="fab gold" data-open="sheet" aria-label="Quick actions"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  <a href="portfolio.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span>Portfolio</a>
+  <a href="account.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Account</a>
+</nav>
+</div>
+</body>
+</html>
