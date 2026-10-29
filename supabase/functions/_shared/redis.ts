@@ -49,6 +49,18 @@ export async function tryLock(key: string, ttlSec: number): Promise<boolean> {
   return (await command(["SET", `lock:${key}`, "1", "NX", "EX", ttlSec])) === "OK";
 }
 
+/**
+ * Fixed-window rate limit: true while `key` has been hit at most `limit` times in
+ * the current `windowSec`. Fails open (true) if Redis is unavailable.
+ */
+export async function allow(key: string, limit: number, windowSec: number): Promise<boolean> {
+  if (!redisEnabled) return true;
+  const n = await command(["INCR", `rl:${key}`]);
+  if (n === null) return true;
+  if (n === 1) await command(["EXPIRE", `rl:${key}`, windowSec]);
+  return Number(n) <= limit;
+}
+
 export async function del(...keys: string[]): Promise<void> {
   if (keys.length) await command(["DEL", ...keys]);
 }

@@ -417,12 +417,21 @@ serve(async (req: Request) => {
     }
 
     const cacheKey = [...symbols].sort().join(",");
+    // ?maxAge=N (seconds): the caller needs a price no older than N — used by the
+    // money function so trades never fill on a stale cached price. Display pages
+    // omit it and get stale-while-revalidate.
+    const maxAgeMs = Math.max(0, Number(url.searchParams.get("maxAge") ?? "0")) * 1000;
 
     // 1. Upstash Redis — shared by every visitor and every function instance.
     //    Stale-while-revalidate: anything up to PRICE_KEEP_SEC old is served
     //    instantly; if it's older than PRICE_FRESH_MS one request refreshes it
     //    in the background, so visitors never wait on the upstream providers.
     const hit = await getJSON<PriceResult[]>(PRICE_KEY(cacheKey));
+    if (hit?.data?.length && maxAgeMs && Date.now() - hit.t > maxAgeMs) {
+      const fresh = await refreshPrices(symbols, cacheKey);
+      if (fresh.length) return priceResponse(fresh, Date.now(), false);
+      // providers down: fall through and serve what we have, marked with its age
+    }
     if (hit?.data?.length) {
       if (Date.now() - hit.t > PRICE_FRESH_MS && await tryLock(PRICE_KEY(cacheKey), 15)) {
         background(refreshPrices(symbols, cacheKey));
