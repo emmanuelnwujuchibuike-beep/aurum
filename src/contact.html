@@ -234,8 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.getElementById('formAgain').addEventListener('click', function () { showForm(active); });
 
-  // Live chat: the real support widget (chat-widget.js) loads after the page is
-  // interactive; "Start a live chat" opens it. Admins answer from admin.html#support.
+  // Live chat: the real support widget (chat-widget.js); "Start a live chat" opens it. Admins answer from admin.html#support.
   var widgetLoading = false;
   function loadWidget(open) {
     var t = document.getElementById('aurum-toggle');
@@ -244,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (open) setTimeout(function () { loadWidget(true); }, 250);
   }
   document.getElementById('startChat').addEventListener('click', function () { loadWidget(true); });
-  addEventListener('load', function () { (window.requestIdleCallback || setTimeout)(function () { loadWidget(false); }); });
+  // Loaded on demand (not on page load) so the chat library never slows the page down.
   if (location.hash === '#chat') loadWidget(true);
 });
 </script>

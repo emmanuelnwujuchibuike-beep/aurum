@@ -123,3 +123,12 @@ Net worth = cash + Σ(quantity × live price) on dashboard (`dashboard.html:4290
 | Support chat | ✅ widget restyled to the design tokens; chat logic unchanged; 50 KB → 35 KB |
 | App-style navigation | ✅ prerender (eager for bottom nav / quick actions), cross-document view transitions (header + nav stay), skeleton below the header if the next page takes >150 ms |
 | Invest | unchanged (owner: keep existing investment functions) — DEMO badge only |
+
+### Measurements (2026-10-29, local, Lighthouse 12 mobile, simulated 4G)
+| Page | Score | FCP | LCP | TBT | CLS |
+|---|---|---|---|---|---|
+| index | 98 | 1.2 s | 2.2 s | 0 ms | 0 |
+| markets | 99 | 1.2 s | 2.0 s | 20 ms | 0 |
+| contact (chat on demand) | 94 | 1.5 s | 1.8 s | 260 ms | 0 |
+| signup (old page) | 71 | 2.5 s | 4.1 s | 370 ms | 0 |
+Signed-in pages redirect to sign-in without a session, so they were measured by weight: dashboard 64 KB, deposit 65 KB, withdraw 63 KB, profile 71 KB, trade 73 KB (+ chart library after load), admin 70 KB; 0 render-blocking resources each. Old pages: invest 83 KB + CDNs (8 blocking), dashboard-classic 122 KB + CDNs (10 blocking).
