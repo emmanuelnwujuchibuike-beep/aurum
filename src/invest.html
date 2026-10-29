@@ -2082,18 +2082,30 @@ async function loadProfile() {
 async function loadPortfolioStats() {
   const { data: h } = await sb.from('holdings').select('*').eq('user_id', authUser.id);
   myHoldings = h || [];
-  const { count: txc } = await sb.from('transactions').select('id', {count:'exact',head:true}).eq('user_id', authUser.id);
+  // Transaction count and net money paid in (approved deposits − withdrawals), in parallel
+  const [{ count: txc }, { data: flows }] = await Promise.all([
+    sb.from('transactions').select('id', {count:'exact',head:true}).eq('user_id', authUser.id),
+    sb.from('transactions').select('usd_amount').eq('user_id', authUser.id)
+      .eq('status', 'approved').in('type', ['deposit', 'withdraw', 'withdrawal']),
+  ]);
   const liveMap = {}; ALL_ASSETS.forEach(a => liveMap[a.sym] = a.price);
   const pv = myHoldings.reduce((s,h) => s + Number(h.quantity)*(liveMap[h.symbol]||Number(h.avg_buy_price)), 0);
   txt('kpi-pv', maskVal(fmtMoney(pv)));
   txt('kpi-pos', myHoldings.length);
   txt('kpi-tx', txc||0);
-  if (pv > 0 && profile) {
-    const cash = Number(profile.cash||0);
-    const pct = (((pv+cash) - 24750) / 24750 * 100).toFixed(2);
-    const sign = pct >= 0 ? '+' : '';
-    const sub = document.getElementById('kpi-pv-chg');
-    if(sub){ sub.textContent = sign+pct+'% all time'; sub.style.color = pct>=0?'var(--gain)':'var(--loss)'; }
+  // All-time return = (net worth − net paid in) ÷ net paid in. No baseline is assumed:
+  // without approved deposits there is nothing to measure against, so show "—".
+  const sub = document.getElementById('kpi-pv-chg');
+  if (sub && profile && pv > 0) {   // with no holdings the "View holdings →" link stays
+    const paidIn = (flows || []).reduce((s, t) => s + Number(t.usd_amount || 0), 0);
+    if (paidIn > 0) {
+      const pct = ((pv + Number(profile.cash || 0)) - paidIn) / paidIn * 100;
+      sub.textContent = (pct >= 0 ? '+' : '−') + Math.abs(pct).toFixed(2) + '% all time';
+      sub.style.color = pct >= 0 ? 'var(--gain)' : 'var(--loss)';
+    } else {
+      sub.textContent = '—';
+      sub.style.color = '';
+    }
   }
   renderPortfolioPanel();
 }
