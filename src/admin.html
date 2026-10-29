@@ -207,7 +207,15 @@
           <div class="row between"><span class="small-mono" id="pickCount">0 selected</span><span class="row g8"><button type="button" class="link" id="pickAll" style="min-height:32px">Select shown</button><button type="button" class="link" id="pickNone" style="min-height:32px">Clear</button></span></div>
           <div class="raised pick card2" id="pickList" style="padding:4px 14px"></div>
         </div>
-        <label class="field">Extra addresses <span class="muted" style="font-weight:400">(optional — comma or new line)</span><textarea class="input" id="mailExtra" rows="2" style="min-height:70px" placeholder="name@example.com"></textarea></label>
+        <div class="stack g8" id="extraBox">
+          <span class="field" style="margin:0">Other email addresses <span class="muted" style="font-weight:400">(optional — up to 20)</span></span>
+          <div class="row g8">
+            <input class="input grow" id="extraInput" type="email" inputmode="email" autocomplete="off" placeholder="Type or paste addresses, then Add" aria-label="Email address to add">
+            <button type="button" class="btn-x gold" id="extraAdd" style="flex:none;min-height:52px">Add</button>
+          </div>
+          <div class="row between" id="extraBar" hidden><span class="small-mono" id="extraCount">0 selected</span><span class="row g8"><button type="button" class="link" id="extraAll" style="min-height:32px">Select all</button><button type="button" class="link" id="extraNone" style="min-height:32px">Clear</button></span></div>
+          <div class="raised pick card2" id="extraList" hidden style="padding:4px 14px"></div>
+        </div>
         <div class="row g10" style="flex-wrap:wrap">
           <label class="field grow" style="min-width:150px">From<select class="input sel" id="mailFrom"><option value="support">support@</option><option value="hello">hello@</option><option value="custom">Other…</option></select></label>
           <label class="field grow" id="mailCustomBox" hidden style="min-width:150px">Address name<span class="input row" style="gap:4px"><input id="mailCustom" style="flex:1;min-width:0;border:0;background:transparent;outline:none;font:15px var(--sans);color:var(--ink)" placeholder="e.g. accounts" autocomplete="off"><span class="muted mono" id="mailDomain" style="font-size:12px">@aurumcapitalinvest.com</span></span></label>
@@ -777,7 +785,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ── Email users ─────────────────────────────────────────────────── */
   var mailMode = 'all', picked = {}, mailStage = 'edit';
-  function mailExtra() { return $('mailExtra').value.split(/[\s,;]+/).map(function (x) { return x.trim(); }).filter(function (x) { return /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(x); }); }
+  /* Other addresses: added one by one (or pasted as a list), shown as ticked rows like the user picker; max 20 */
+  var EXTRA_MAX = 20, extras = []; // [{ email, on }]
+  var EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
+  function mailExtra() { return extras.filter(function (x) { return x.on; }).map(function (x) { return x.email; }); }
+  function renderExtras() {
+    $('extraList').hidden = $('extraBar').hidden = !extras.length;
+    $('extraList').innerHTML = extras.map(function (x, i) {
+      return '<label><input type="checkbox" data-ex="' + i + '"' + (x.on ? ' checked' : '') + '><span class="grow ell mono" style="font-size:13px">' + esc(x.email) + '</span>' +
+        '<button type="button" class="link" data-exdel="' + i + '" aria-label="Remove ' + esc(x.email) + '" style="min-height:32px;color:var(--down)">Remove</button></label>';
+    }).join('');
+    $('extraCount').textContent = mailExtra().length + ' of ' + extras.length + ' selected' + (extras.length >= EXTRA_MAX ? ' · limit reached' : '');
+    mailSummary();
+  }
+  function addExtras() {
+    var parts = $('extraInput').value.split(/[\s,;]+/).map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean);
+    var bad = [], dup = 0, full = 0;
+    parts.forEach(function (e) {
+      if (!EMAIL_RE.test(e)) { bad.push(e); return; }
+      if (extras.some(function (x) { return x.email === e; })) { dup++; return; }
+      if (extras.length >= EXTRA_MAX) { full++; return; }
+      extras.push({ email: e, on: true });
+    });
+    $('extraInput').value = bad.join(', '); // keep anything invalid so it can be fixed
+    if (bad.length) toast('Check ' + (bad.length === 1 ? 'this address' : 'these addresses') + ': ' + bad.join(', '));
+    else if (full) toast('Up to ' + EXTRA_MAX + ' addresses — ' + full + ' not added');
+    else if (dup) toast(dup === 1 ? 'Already in the list' : dup + ' were already in the list');
+    renderExtras();
+  }
+  $('extraAdd').addEventListener('click', addExtras);
+  $('extraInput').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addExtras(); } });
+  $('extraInput').addEventListener('paste', function () { setTimeout(function () { if (/[\s,;]/.test($('extraInput').value.trim())) addExtras(); }, 0); });
+  $('extraList').addEventListener('change', function (e) { var c = e.target.closest('[data-ex]'); if (c) { extras[Number(c.dataset.ex)].on = c.checked; renderExtras(); } });
+  $('extraList').addEventListener('click', function (e) { var d = e.target.closest('[data-exdel]'); if (d) { e.preventDefault(); extras.splice(Number(d.dataset.exdel), 1); renderExtras(); } });
+  $('extraAll').addEventListener('click', function () { extras.forEach(function (x) { x.on = true; }); renderExtras(); });
+  $('extraNone').addEventListener('click', function () { extras = []; renderExtras(); });
   function mailSender() { var v = $('mailFrom').value; return v === 'custom' ? $('mailCustom').value.trim().toLowerCase() : v; }
   function mailCount() { return (mailMode === 'all' ? users.filter(function (u) { return u.email; }).length : mailMode === 'pick' ? Object.keys(picked).length : 0) + mailExtra().length; }
   function mailSummary() {
@@ -803,7 +845,7 @@ document.addEventListener('DOMContentLoaded', function () {
   $('pickAll').addEventListener('click', function () { $('pickList').querySelectorAll('[data-uid]').forEach(function (c) { c.checked = true; picked[c.dataset.uid] = 1; }); mailSummary(); });
   $('pickNone').addEventListener('click', function () { picked = {}; renderPick(); mailSummary(); });
   $('mailFrom').addEventListener('change', function () { $('mailCustomBox').hidden = this.value !== 'custom'; mailSummary(); });
-  ['mailExtra', 'mailCustom', 'mailSubject', 'mailBody', 'mailName'].forEach(function (id) { $(id).addEventListener('input', mailSummary); });
+  ['mailCustom', 'mailSubject', 'mailBody', 'mailName'].forEach(function (id) { $(id).addEventListener('input', mailSummary); });
   $('mailForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     var n = mailCount(), from = mailSender(), subject = $('mailSubject').value.trim(), message = $('mailBody').value.trim(), btn = $('mailSend');
