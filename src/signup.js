@@ -195,17 +195,8 @@ if (signupForm) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           },
-          body: JSON.stringify({
-            record: {
-              email:      data.user.email,
-              id:         data.user.id,
-              created_at: data.user.created_at,
-              raw_user_meta_data: {
-                first_name: firstName,
-                last_name:  lastName,
-              },
-            },
-          }),
+          // The server looks up the email and name itself; only the id is needed.
+          body: JSON.stringify({ id: data.user.id }),
         });
       } catch (err) {
         console.error('Notification failed:', err);

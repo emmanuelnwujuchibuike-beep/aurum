@@ -1,4 +1,8 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { tryLock } from "../_shared/redis.ts";
+
+const svc = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,18 +18,25 @@ serve(async (req: Request) => {
   try {
     const body = await req.json();
 
-    // Support both DB-webhook shape { record: {...} } and direct call { email, id, ... }
-    const record = body.record ?? body;
+    // Only the user id is taken from the caller (DB webhook { record } or direct { id }).
+    // Email, name and sign-up time come from the auth database, so this can't be used
+    // to send Aurum emails to arbitrary addresses.
+    const id = String((body.record ?? body).id ?? "");
+    if (!/^[0-9a-f-]{36}$/i.test(id)) return new Response("ignored", { status: 200, headers: corsHeaders });
+    const { data: { user: record } } = await svc.auth.admin.getUserById(id);
+    if (!record?.email || Date.now() - new Date(record.created_at).getTime() > 15 * 60_000) {
+      return new Response("ignored", { status: 200, headers: corsHeaders });
+    }
+    // Once per user (trigger retries, duplicate calls)
+    if (!(await tryLock(`welcome:${id}`, 86400))) return new Response("already sent", { status: 200, headers: corsHeaders });
 
-    const email      = record.email as string;
-    const id         = record.id         as string;
-    const created_at = record.created_at as string;
+    const email      = record.email;
+    const created_at = record.created_at;
 
-    // Names live in raw_user_meta_data when triggered by DB webhook;
-    // signup.js also sends them there, but fall back to direct fields for safety.
-    const meta      = record.raw_user_meta_data ?? record.user_metadata ?? {};
-    const firstName = meta.first_name  ?? meta.given_name  ?? (record.first_name as string)  ?? meta.name?.split(" ")[0] ?? "";
-    const lastName  = meta.last_name   ?? meta.family_name ?? (record.last_name  as string)  ?? meta.name?.split(" ").slice(1).join(" ") ?? "";
+    const meta      = record.user_metadata ?? {};
+    const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+    const firstName = esc(String(meta.first_name ?? meta.given_name  ?? meta.name?.split(" ")[0] ?? "").slice(0, 40));
+    const lastName  = esc(String(meta.last_name  ?? meta.family_name ?? meta.name?.split(" ").slice(1).join(" ") ?? "").slice(0, 40));
     const fullName  = `${firstName} ${lastName}`.trim() || "Valued Client";
     const displayFirst = firstName || fullName;
 

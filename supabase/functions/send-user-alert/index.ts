@@ -2,11 +2,13 @@
 // Ultra-premium email notifications — price alerts, profit alerts, portfolio digest.
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { allow } from "../_shared/redis.ts";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 const FROM    = "Aurum Capital <noreply@aurumcapitalinvest.com>";
@@ -647,12 +649,24 @@ serve(async (req) => {
       { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
   }
 
-  const { type, email, firstName = "", data = {} } = body as {
-    type: string; email: string; firstName?: string; data?: Record<string, unknown>;
-  };
+  // Only the signed-in customer, only to their own address: the caller's email/name are ignored.
+  const token = (req.headers.get("Authorization") ?? "").replace(/^Bearers+/i, "");
+  const { data: { user } } = await createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!).auth.getUser(token);
+  if (!user?.email) {
+    return new Response(JSON.stringify({ error: "Sign in required" }),
+      { status: 401, headers: { ...CORS, "Content-Type": "application/json" } });
+  }
+  if (!(await allow(`alert:${user.id}`, 10, 3600))) {
+    return new Response(JSON.stringify({ error: "Too many alert emails. Try again later." }),
+      { status: 429, headers: { ...CORS, "Content-Type": "application/json" } });
+  }
 
-  if (!type || !email) {
-    return new Response(JSON.stringify({ error: "Missing type or email" }),
+  const { type, data = {} } = body as { type: string; data?: Record<string, unknown> };
+  const email = user.email;
+  const firstName = String(user.user_metadata?.first_name ?? "").slice(0, 40);
+
+  if (!type) {
+    return new Response(JSON.stringify({ error: "Missing type" }),
       { status: 400, headers: { ...CORS, "Content-Type": "application/json" } });
   }
 
@@ -661,6 +675,8 @@ serve(async (req) => {
 
   if (type === "price_alert") {
     const d = data as { sym: string; target: number; dir: string; currentPrice: number };
+    d.sym = String(d.sym ?? "").toUpperCase().replace(/[^A-Z0-9./-]/g, "").slice(0, 12);
+    d.target = Number(d.target) || 0; d.currentPrice = Number(d.currentPrice) || 0;
     subject = `🔔 ${d.sym} Alert Triggered — ${d.dir === "above" ? "↑" : "↓"} ${fmtUSD(d.target)}`;
     html    = buildPriceAlertHtml(firstName as string, d.sym, d.dir, d.target, d.currentPrice);
 
@@ -676,6 +692,10 @@ serve(async (req) => {
       holdingsCount: number; txCount: number;
       topHoldings: Array<{sym:string;qty:number;cost:number}>;
     };
+    d.topHoldings = (d.topHoldings || []).slice(0, 5).map((h) => ({
+      sym: String(h.sym ?? "").toUpperCase().replace(/[^A-Z0-9./-]/g, "").slice(0, 12),
+      qty: Number(h.qty) || 0, cost: Number(h.cost) || 0,
+    }));
     subject = `📊 Your Aurum Capital Portfolio Digest · ${new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}`;
     html    = buildDigestHtml(firstName as string, d.portfolioValue, d.totalCost, d.holdingsCount, d.txCount, d.topHoldings || []);
 
