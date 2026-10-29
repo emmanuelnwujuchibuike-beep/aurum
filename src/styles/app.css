@@ -30,6 +30,7 @@ ul,ol{padding:0;list-style:none}
 button{font:inherit;border:0;cursor:pointer;color:inherit;background:none;padding:0}
 button:disabled{cursor:not-allowed}
 :focus-visible{outline:2px solid var(--gold-ink);outline-offset:3px}
+[hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* app column + grid backdrop */

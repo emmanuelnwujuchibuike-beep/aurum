@@ -2,7 +2,8 @@
    Pages are fully usable without it; it only adds:
    1. hover/touch prefetch where Speculation Rules aren't supported
    2. one delegated click listener for same-page toggles
-   3. live prices, fetched after `load` when the browser is idle */
+   3. live prices, fetched after `load` when the browser is idle
+   4. page scripts declared with data-lazy-script, loaded after `load` */
 (function () {
   'use strict';
 
@@ -58,8 +59,11 @@
   /* 3. Live prices ------------------------------------------------------------
      Markup: data-price="SYM", data-chg="SYM", data-cap="SYM", data-high/low/vol/open="SYM".
      Placeholders ("—") stay if the API fails. */
-  var FN = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/get-market-prices';
+  var API = 'https://ttwwthfeordsojmcjwxn.supabase.co/functions/v1/';
   var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
+  var FN = API + 'get-market-prices';
+  // Shared with lazily loaded page scripts (e.g. aurum-chart.js)
+  window.Aurum = { api: API, headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } };
 
   var usd = function (n) {
     var d = n >= 1000 ? 2 : n >= 1 ? 2 : 4;
@@ -76,6 +80,7 @@
   };
 
   function paint(rows) {
+    window.Aurum.last = rows;
     rows.forEach(function (r) {
       if (!r || !(r.price > 0)) return;
       var s = r.symbol;
@@ -95,6 +100,9 @@
     });
     document.dispatchEvent(new CustomEvent('aurum:prices', { detail: rows }));
   }
+  window.Aurum.repaint = function () {
+    if (window.Aurum.last) paint(window.Aurum.last);
+  };
 
   function load() {
     var syms = {};
@@ -103,7 +111,7 @@
     });
     var list = Object.keys(syms);
     if (!list.length || document.visibilityState === 'hidden') return;
-    fetch(FN + '?symbols=' + list.join(','), { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } })
+    fetch(FN + '?symbols=' + list.join(','), { headers: window.Aurum.headers })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) { if (j && j.data) paint(j.data); })
       .catch(function () {});
@@ -112,6 +120,15 @@
   function start() {
     var idle = window.requestIdleCallback || function (cb) { return setTimeout(cb, 200); };
     idle(load, { timeout: 2500 });
+    // Page-specific extras (charts etc.) declared as <div data-lazy-script="file.js">
+    idle(function () {
+      document.querySelectorAll('[data-lazy-script]').forEach(function (el) {
+        var s = document.createElement('script');
+        s.src = el.getAttribute('data-lazy-script');
+        s.async = true;
+        document.body.appendChild(s);
+      });
+    }, { timeout: 3000 });
     setInterval(load, 30000);
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') load(); });
   }
