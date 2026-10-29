@@ -2,7 +2,6 @@
 //  dashboard.js — Aurum Capital
 //  Fully synced with Supabase.
 //  • Reads profile, holdings, transactions from DB
-//  • Welcome bonus credited on signup (via DB trigger)
 //  • Real-time updates via Supabase channels
 //  • Balance guard: prevents trades when cash is insufficient
 // ================================================================
@@ -150,10 +149,6 @@ async function init() {
   const holdings     = holdingsRes.data ?? [];
   const transactions = txRes.data ?? [];
 
-  // // Show welcome bonus banner if first login
-  // if (profile.welcome_bonus_active && Number(profile.cash) > 0) {
-  //   showBanner(`🎉 Welcome bonus of ${fmtUSD(profile.cash)} credited to your account!`, 'info');
-  // }
 
   // Render everything
   renderProfile(profile);
