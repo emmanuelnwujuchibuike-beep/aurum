@@ -116,6 +116,7 @@
       <button class="chip" data-tab="users" aria-pressed="false">Users</button>
       <button class="chip" data-tab="email" aria-pressed="false">Email</button>
       <button class="chip" data-tab="properties" aria-pressed="false">Properties</button>
+      <button class="chip" data-tab="testimonials" aria-pressed="false">Testimonials</button>
       <button class="chip" data-tab="tools" aria-pressed="false">Tools</button>
       <button class="chip" data-tab="transactions" aria-pressed="false">Transactions</button>
       <button class="chip" data-tab="settings" aria-pressed="false">Settings</button>
@@ -247,6 +248,33 @@
           <span class="small-mono" id="pUpMsg"></span>
         </div>
         <button class="btn-sm gold" id="propSave" type="submit">Save property</button>
+      </form>
+    </section>
+
+    <!-- Testimonials: shown on testimonial.html (public.testimonials + testimonial-media bucket) -->
+    <section class="stack g14" data-panel="testimonials" hidden>
+      <div class="row between"><span class="eyebrow">Client testimonials</span><button class="btn-x gold" id="tNew" style="min-height:40px">+ New testimonial</button></div>
+      <div class="list raised" id="tList"><p class="empty">Loading…</p></div>
+      <p class="small muted">Published testimonials appear on the Client stories page, newest settings first by order. Hidden ones stay saved but aren’t shown.</p>
+
+      <form class="raised card2 stack g14" id="tForm" hidden novalidate>
+        <div class="row between"><b class="serif" id="tTitle" style="font-size:20px">New testimonial</b><button type="button" class="btn-x raised-sm" id="tCancel">Close</button></div>
+        <label class="field">Client name<input class="input" id="tName" maxlength="80" placeholder="e.g. Jane D."></label>
+        <label class="field">Role and place <span class="muted" style="font-weight:400">(optional)</span><input class="input" id="tRole" maxlength="120" placeholder="e.g. Private investor · Lisbon, Portugal"></label>
+        <label class="field">Short quote <span class="muted" style="font-weight:400">(optional if there is a video)</span><textarea class="input" id="tQuote" rows="3" maxlength="500" placeholder="What the client said, in their words"></textarea></label>
+        <div class="stack g8">
+          <span class="field" style="margin:0">Video <span class="muted" style="font-weight:400">(MP4 or MOV, up to 50 MB)</span></span>
+          <div class="row g10" style="flex-wrap:wrap"><label class="btn-x raised-sm" style="cursor:pointer;display:flex;align-items:center">Choose video<input type="file" id="tVideo" accept="video/mp4,video/quicktime,video/webm" class="sr"></label><button type="button" class="btn-x no-btn" id="tVideoClear" hidden>Remove video</button></div>
+          <video id="tVideoPrev" controls playsinline preload="metadata" style="width:100%;max-height:320px;border-radius:14px;background:#000" hidden></video>
+        </div>
+        <div class="stack g8">
+          <span class="field" style="margin:0">Cover image <span class="muted" style="font-weight:400">(optional — taken from the video if left empty)</span></span>
+          <div class="row g10" style="flex-wrap:wrap;align-items:center"><label class="btn-x raised-sm" style="cursor:pointer;display:flex;align-items:center">Choose image<input type="file" id="tPoster" accept="image/*" class="sr"></label><img id="tPosterPrev" alt="" style="height:64px;border-radius:10px;display:none"></div>
+        </div>
+        <div class="setting" style="border:0;min-height:44px"><span>Show on the website</span><button type="button" class="sw" id="tPub" aria-pressed="true" aria-label="Show on the website"><span></span></button></div>
+        <label class="row g12" style="align-items:flex-start;font-size:13px;line-height:1.5;cursor:pointer"><input type="checkbox" id="tConsent" style="width:20px;height:20px;accent-color:var(--gold);flex:none;margin-top:2px"><span>I confirm this is a real Aurum Capital client who agreed to appear, that it is in their own words, and that it contains no promises of returns or profit figures.</span></label>
+        <span class="small-mono" id="tMsg"></span>
+        <button class="btn-sm gold" id="tSave" type="submit">Save testimonial</button>
       </form>
     </section>
 
@@ -982,6 +1010,87 @@ document.addEventListener('DOMContentLoaded', function () {
     catch (err) { toast('Not saved: ' + err.message); }
   });
 
+  /* ── Testimonials ───────────────────────────────────────────────── */
+  var tRows = [], tEdit = null, tVid = null, tVidFile = null, tPosFile = null, tPosUrl = null, tRemoveOld = [];
+  var TB = S.url + '/storage/v1/object/testimonial-media/', TP = S.url + '/storage/v1/object/public/testimonial-media/';
+  function mediaUrl(u) { return !u ? '' : /^https?:/.test(u) ? u : '/' + u.replace(/^\//, ''); }
+  function loadTesti() {
+    return S.rest('testimonials?select=*&order=sort.asc,created_at.desc', { fresh: true }).then(function (r) { tRows = r || []; renderTesti(); })
+      .catch(function (e) { $('tList').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+  function renderTesti() {
+    $('tList').innerHTML = tRows.length ? tRows.map(function (t) {
+      return '<div class="prow">' + (t.poster_url ? '<img class="pthumb" src="' + esc(mediaUrl(t.poster_url)) + '" alt="" loading="lazy" style="width:48px;height:64px">' : '<span class="pthumb" style="width:48px;height:64px"></span>') +
+        '<span class="grow stack" style="min-width:0"><b class="ell" style="font-size:14px">' + esc(t.name) + (t.published ? '' : ' <span class="tag flat" style="min-width:0;font-size:10px">HIDDEN</span>') + '</b><span class="small-mono ell">' + esc(t.role || '—') + (t.video_url ? ' · video' : ' · quote') + '</span></span>' +
+        '<button class="btn-x raised-sm" data-tedit="' + esc(t.id) + '" style="min-height:38px">Edit</button></div>';
+    }).join('') : '<p class="empty">No testimonials yet.</p>';
+  }
+  function openTesti(t) {
+    tEdit = t; tVid = t ? t.video_url : null; tVidFile = null; tPosFile = null; tPosUrl = t ? t.poster_url : null; tRemoveOld = [];
+    $('tTitle').textContent = t ? 'Edit testimonial' : 'New testimonial';
+    $('tName').value = t ? t.name : ''; $('tRole').value = t ? t.role : ''; $('tQuote').value = t ? t.quote : '';
+    $('tPub').setAttribute('aria-pressed', !t || t.published ? 'true' : 'false');
+    $('tConsent').checked = false; $('tMsg').textContent = ''; $('tVideo').value = ''; $('tPoster').value = '';
+    showTVideo(); showTPoster();
+    $('tForm').hidden = false; $('tForm').scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
+  function showTVideo() {
+    var v = $('tVideoPrev'), src = tVidFile ? URL.createObjectURL(tVidFile) : mediaUrl(tVid);
+    v.hidden = !src; $('tVideoClear').hidden = !src; if (src) v.src = src; else v.removeAttribute('src');
+  }
+  function showTPoster() { var i = $('tPosterPrev'), src = tPosFile ? URL.createObjectURL(tPosFile) : mediaUrl(tPosUrl); i.style.display = src ? 'block' : 'none'; if (src) i.src = src; }
+  $('tNew').addEventListener('click', function () { openTesti(null); });
+  $('tCancel').addEventListener('click', function () { $('tForm').hidden = true; });
+  $('tList').addEventListener('click', function (e) { var b = e.target.closest('[data-tedit]'); if (b) openTesti(tRows.find(function (t) { return t.id === b.dataset.tedit; })); });
+  $('tPub').addEventListener('click', function (e) { e.stopPropagation(); this.setAttribute('aria-pressed', this.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); });
+  $('tVideo').addEventListener('change', function () {
+    var f0 = this.files && this.files[0]; if (!f0) return;
+    if (f0.size > 50 * 1024 * 1024) { toast('That video is over 50 MB — compress it first'); this.value = ''; return; }
+    tVidFile = f0; showTVideo();
+  });
+  $('tVideoClear').addEventListener('click', function () { if (tVid) tRemoveOld.push(tVid); tVid = null; tVidFile = null; $('tVideo').value = ''; showTVideo(); });
+  $('tPoster').addEventListener('change', function () { var f0 = this.files && this.files[0]; if (!f0) return; tPosFile = f0; showTPoster(); });
+  // First frame of the chosen video as a JPEG cover (when no image was chosen)
+  function frameOf(file) {
+    return new Promise(function (res) {
+      var v = document.createElement('video'), url = URL.createObjectURL(file); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = url;
+      var done = function (b) { URL.revokeObjectURL(url); res(b); };
+      v.onerror = function () { done(null); };
+      v.onloadeddata = function () { v.currentTime = Math.min(0.5, (v.duration || 1) / 2); };
+      v.onseeked = function () {
+        try { var c = document.createElement('canvas'), k = Math.min(1, 1000 / Math.max(v.videoWidth, v.videoHeight)); c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); c.toBlob(function (b) { done(b); }, 'image/jpeg', 0.85); }
+        catch (e) { done(null); }
+      };
+      setTimeout(function () { done(null); }, 8000);
+    });
+  }
+  async function putMedia(blob, ext, tok) {
+    var path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+    var r = await fetch(TB + path, { method: 'POST', headers: { apikey: S.key, Authorization: 'Bearer ' + tok, 'Content-Type': blob.type || 'application/octet-stream', 'x-upsert': 'false' }, body: blob });
+    if (!r.ok) throw new Error('Upload failed: ' + (await r.text()).slice(0, 140));
+    return TP + path;
+  }
+  $('tForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var nm = $('tName').value.trim(), quote = $('tQuote').value.trim();
+    if (!nm) { toast('Enter the client’s name'); return; }
+    if (!tVid && !tVidFile && !quote) { toast('Add a video or a quote'); return; }
+    if (!$('tConsent').checked) { toast('Please confirm the consent statement'); return; }
+    var btn = $('tSave'); btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      var tok = await S.token(), video = tVid, poster = tPosUrl;
+      if (tVidFile) { $('tMsg').textContent = 'Uploading video…'; if (tVid) tRemoveOld.push(tVid); video = await putMedia(tVidFile, /quicktime/.test(tVidFile.type) ? 'mov' : /webm/.test(tVidFile.type) ? 'webm' : 'mp4', tok); }
+      if (tPosFile) { $('tMsg').textContent = 'Uploading cover…'; if (tPosUrl) tRemoveOld.push(tPosUrl); poster = await putMedia(tPosFile, 'jpg', tok); }
+      else if (tVidFile) { var fr = await frameOf(tVidFile); if (fr) { if (tPosUrl) tRemoveOld.push(tPosUrl); poster = await putMedia(fr, 'jpg', tok); } }
+      var row = { name: nm, role: $('tRole').value.trim(), quote: quote, video_url: video || null, poster_url: poster || null, published: $('tPub').getAttribute('aria-pressed') === 'true' };
+      if (tEdit) await S.rest('testimonials?id=eq.' + encodeURIComponent(tEdit.id), { method: 'PATCH', body: JSON.stringify(row), headers: { Prefer: 'return=minimal' } });
+      else await S.rest('testimonials', { method: 'POST', body: JSON.stringify(Object.assign({ sort: tRows.length + 1 }, row)), headers: { Prefer: 'return=minimal' } });
+      tRemoveOld.filter(function (u) { return u && u.indexOf(TP) === 0; }).forEach(function (u) { fetch(TB + u.slice(TP.length), { method: 'DELETE', headers: { apikey: S.key, Authorization: 'Bearer ' + tok } }).catch(function () {}); });
+      toast('Saved — ' + nm); $('tForm').hidden = true; await loadTesti();
+    } catch (err) { toast('Not saved: ' + err.message); }
+    btn.disabled = false; btn.textContent = 'Save testimonial'; $('tMsg').textContent = '';
+  });
+
   /* ── Boot: admins only ──────────────────────────────────────────── */
   S.ready.then(function (ctx) {
     me = ctx;
@@ -989,7 +1098,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $('console').hidden = false;
     var tab = (location.hash || '').slice(1);
     show(document.querySelector('[data-panel="' + tab + '"]') ? tab : 'overview');
-    loadUsers().then(loadPending); loadTx(); loadSettings(); loadProps(); loadMailLog(); loadAddresses(); loadPayments();
+    loadUsers().then(loadPending); loadTx(); loadSettings(); loadProps(); loadMailLog(); loadAddresses(); loadPayments(); loadTesti();
     // Count open chats for the overview even before the Support tab is opened
     startSupport();
   }).catch(function (err) { if (!/signed out|expired/.test(err.message)) toast('Couldn’t load: ' + err.message); });
