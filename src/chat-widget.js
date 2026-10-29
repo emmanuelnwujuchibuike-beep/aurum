@@ -620,7 +620,8 @@ function initAurumChat() {
       return;
     }
     userInfo  = { name, email: emailField.value.trim() };
-    sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    // Unguessable: the session id is the visitor's only key to read replies
+    sessionId = `session_${newUuid()}`;
     sessionPrompt.style.display = "none";
     messagesEl.style.display    = "flex";
     inputArea.style.display     = "flex";
@@ -737,17 +738,43 @@ function initAurumChat() {
     } catch (e) { console.warn("[Aurum] Notification failed:", e.message); }
   }
 
+  function newUuid() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    return Array.from(b, x => x.toString(16).padStart(2, "0")).join("");
+  }
+
+  // Visitors can't read chat tables (RLS). Replies arrive two ways:
+  //  1. instantly, as a Realtime broadcast the admin console sends on chat_<id>
+  //  2. as a catch-up via chat_agent_replies() on connect, on refocus and every 20s
+  //     while the tab is visible — so nothing is missed if the socket dropped.
+  const seenReplies = new Set();
+  let lastReplyAt = null;
+  let catchUpTimer = null;
+
+  function showAgentReply(row) {
+    if (!row || seenReplies.has(String(row.id))) return;
+    seenReplies.add(String(row.id));
+    if (!lastReplyAt || row.created_at > lastReplyAt) lastReplyAt = row.created_at;
+    hideTyping();
+    if (row.image_url) appendImageMessage({ role: "agent", src: row.image_url, fileName: "Attachment", time: formatTime(row.created_at) });
+    else appendMessage({ role: "agent", text: row.message, time: formatTime(row.created_at) });
+    if (!isOpen) showUnread();
+  }
+
+  async function catchUpReplies() {
+    if (!sessionId || document.visibilityState === "hidden") return;
+    const { data, error } = await sb.rpc("chat_agent_replies", { p_session_id: sessionId, p_after: lastReplyAt });
+    if (!error && Array.isArray(data)) data.forEach(showAgentReply);
+  }
+
   function subscribeRealtime() {
     channel = sb.channel(`chat_${sessionId}`)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages", filter: `session_id=eq.${sessionId}` }, (payload) => {
-        const row = payload.new;
-        if (row.sender_role === "agent") {
-          hideTyping();
-          if (row.image_url) appendImageMessage({ role: "agent", src: row.image_url, fileName: "Attachment", time: formatTime(row.created_at) });
-          else appendMessage({ role: "agent", text: row.message, time: formatTime(row.created_at) });
-          if (!isOpen) showUnread();
-        }
-      }).subscribe();
+      .on("broadcast", { event: "agent_msg" }, ({ payload }) => showAgentReply(payload))
+      .subscribe(status => { if (status === "SUBSCRIBED") catchUpReplies(); });
+    clearInterval(catchUpTimer);
+    catchUpTimer = setInterval(catchUpReplies, 20000);
+    document.addEventListener("visibilitychange", catchUpReplies);
   }
 
   /* ── APPEND MESSAGE — WhatsApp style ── */
