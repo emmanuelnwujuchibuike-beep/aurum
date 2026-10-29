@@ -889,16 +889,13 @@ html[data-theme="light"] #ps-trade-launch-btn.open:hover .fab-chevron{color:rgba
     const lbl=$('cfd-ok-lbl'),spin=$('cfd-spin'),btn=$('cfd-ok-btn');
     if(lbl)lbl.style.display='none';if(spin)spin.style.display='flex';if(btn)btn.disabled=true;
     try{
-      const newCash=+(cash-margin).toFixed(2);
-      await _sb.from('profiles').update({cash:newCash}).eq('id',_uid);
-      await _sb.from('transactions').insert({user_id:_uid,type:'buy',symbol:_cfdSym,name:(meta.name||_cfdSym)+' CFD '+_cfdDir.toUpperCase(),icon:meta.icon,color:meta.color,quantity:_cfdLots,price_at_tx:price,usd_amount:-margin,status:'approved',note:`CFD ${_cfdDir.toUpperCase()} \u00b7 ${_cfdLots} lot${_cfdLots!==1?'s':''} \u00b7 Notional $${fmt(notional)} \u00b7 Margin $${fmt(margin)}`});
-      let tradeId='local_'+Date.now();
-      try{const{data}=await _sb.from('open_trades').insert({user_id:_uid,sym:_cfdSym,direction:_cfdDir,lots:_cfdLots,entry_price:price,take_profit:tp,stop_loss:sl,notional,status:'open'}).select().single();if(data)tradeId=data.id;}catch(e){}
-      _openTrades.unshift({id:tradeId,sym:_cfdSym,direction:_cfdDir,dir:_cfdDir,lots:_cfdLots,entry_price:price,entry:price,take_profit:tp,stop_loss:sl,notional,margin,opened_at:new Date().toISOString()});
-      _profile.cash=newCash;_refreshPanelStats();
+      // Server-side: price, margin, fee and balance handled by the money function
+      const tok=(await _sb.auth.getSession()).data.session?.access_token;
+      const r=await aurumMoney('cfd_open',{symbol:_cfdSym,direction:_cfdDir,lots:_cfdLots,tp,sl,name:meta.name||_cfdSym,icon:meta.icon,color:meta.color},tok);
+      await refreshAll();
       if(window.loadProfile)window.loadProfile();if(window.loadTransactions)window.loadTransactions();
       closeCfd();openPanel();switchTab('trades');
-      psToast(`${_cfdDir==='long'?'\u25b2 Long':'\u25bc Short'} Opened`,`${_cfdLots} lot${_cfdLots!==1?'s':''} ${_cfdSym} @ $${fmtP(price)} \u00b7 Margin: $${fmt(margin)}`,'success');
+      psToast(`${_cfdDir==='long'?'\u25b2 Long':'\u25bc Short'} Opened`,`${_cfdLots} lot${_cfdLots!==1?'s':''} ${_cfdSym} @ $${fmtP(r.price)} \u00b7 Margin: $${fmt(r.margin)}`,'success');
     }catch(err){psToast('Trade failed',err.message,'error');}
     finally{if(lbl){lbl.style.display='flex';lbl.innerHTML=`<i class="fas fa-bolt" style="font-size:12px;margin-right:4px"></i>Open ${_cfdDir==='long'?'Long \u25b2':'Short \u25bc'}`;}if(spin)spin.style.display='none';if(btn){btn.disabled=false;updateCfdPreview();}}
   }
@@ -909,13 +906,11 @@ html[data-theme="light"] #ps-trade-launch-btn.open:hover .fab-chevron{color:rgba
     const cur=livePrice(t.sym),meta=ASSET_REGISTRY[t.sym]||{},dir=t.direction||t.dir;
     if(!confirm(`Close ${dir.toUpperCase()} ${t.sym}?\nP&L: ${pnl>=0?'+':''}$${fmt(pnl)}`))return;
     try{
-      const cash=+(_profile?.cash||0),newCash=+(cash+margin+pnl).toFixed(2);
-      await _sb.from('profiles').update({cash:newCash}).eq('id',_uid);
-      await _sb.from('transactions').insert({user_id:_uid,type:'sell',symbol:t.sym,name:(meta.name||t.sym)+' CFD Close',icon:meta.icon||'fas fa-circle',color:meta.color||'#c9a84c',quantity:+t.lots,price_at_tx:cur,usd_amount:+(margin+pnl).toFixed(2),status:'approved',note:`CFD CLOSE \u00b7 P&L ${pnl>=0?'+':''}$${fmt(pnl)} \u00b7 Returned $${fmt(margin+pnl)}`});
-      try{await _sb.from('open_trades').update({status:'closed',close_price:cur,closed_at:new Date().toISOString()}).eq('id',t.id);}catch(e){}
-      _openTrades.splice(idx,1);_profile.cash=newCash;_refreshPanelStats();
+      const tok=(await _sb.auth.getSession()).data.session?.access_token;
+      const r=await aurumMoney('cfd_close',{trade_id:t.id},tok);
+      await refreshAll();
       if(window.loadProfile)window.loadProfile();if(window.loadTransactions)window.loadTransactions();
-      psToast('Position Closed',`P&L: ${pnl>=0?'+':''}$${fmt(pnl)}`,pnl>=0?'success':'error');renderPanel();
+      psToast('Position Closed',`P&L: ${r.pnl>=0?'+':''}$${fmt(r.pnl)}`,r.pnl>=0?'success':'error');renderPanel();
     }catch(err){psToast('Close failed',err.message,'error');}
   }
 
@@ -976,24 +971,13 @@ html[data-theme="light"] #ps-trade-launch-btn.open:hover .fab-chevron{color:rgba
     const lbl=$('bs-ok-lbl'),spin=$('bs-spin'),btn=$('bs-ok-btn');
     if(lbl)lbl.style.display='none';if(spin)spin.style.display='flex';if(btn)btn.disabled=true;
     try{
-      if(isBuy){
-        await _sb.from('transactions').insert({user_id:_uid,type:'buy',symbol:_bsSym,name:meta.name||_bsSym,icon:meta.icon,color:meta.color,quantity:qty,price_at_tx:price,usd_amount:-total,status:'approved',note:`Buy ${_bsSym} @ $${fmtP(price)} | Fee $${fee.toFixed(2)}`});
-        const ex=_holdings.find(h=>h.symbol===_bsSym);
-        if(ex){const nq=+ex.quantity+qty,na=(+ex.avg_buy_price*+ex.quantity+price*qty)/nq;await _sb.from('holdings').update({quantity:nq,avg_buy_price:+na.toFixed(6)}).eq('id',ex.id);ex.quantity=nq;ex.avg_buy_price=+na.toFixed(6);}
-        else{const{data}=await _sb.from('holdings').insert({user_id:_uid,symbol:_bsSym,name:meta.name||_bsSym,icon:meta.icon,color:meta.color,quantity:qty,avg_buy_price:price}).select().single();if(data)_holdings.push(data);}
-        const newCash=+(cash-total).toFixed(2);await _sb.from('profiles').update({cash:newCash}).eq('id',_uid);_profile.cash=newCash;
-      }else{
-        const h=_holdings.find(x=>x.symbol===_bsSym);if(!h)throw new Error('No holding found');
-        const netUSD=amt-fee;
-        await _sb.from('transactions').insert({user_id:_uid,type:'sell',symbol:_bsSym,name:meta.name||_bsSym,icon:meta.icon,color:meta.color,quantity:qty,price_at_tx:price,usd_amount:netUSD,status:'approved',note:`Sell ${_bsSym} @ $${fmtP(price)} | Fee $${fee.toFixed(2)}`});
-        const newQty=+h.quantity-qty;
-        if(newQty<=0.000001){await _sb.from('holdings').delete().eq('id',h.id);_holdings=_holdings.filter(x=>x.id!==h.id);}
-        else{await _sb.from('holdings').update({quantity:newQty}).eq('id',h.id);h.quantity=newQty;}
-        const newCash=+(cash+netUSD).toFixed(2);await _sb.from('profiles').update({cash:newCash}).eq('id',_uid);_profile.cash=newCash;
-      }
+      const tok=(await _sb.auth.getSession()).data.session?.access_token;
+      if(!isBuy&&!_holdings.find(x=>x.symbol===_bsSym))throw new Error('No holding found');
+      const r=await aurumMoney(isBuy?'buy':'sell',isBuy?{symbol:_bsSym,usd:amt,mode:'trade',name:meta.name||_bsSym,icon:meta.icon,color:meta.color}:{symbol:_bsSym,usd:amt},tok);
+      await refreshAll();
       if(window.loadProfile)window.loadProfile();if(window.loadPortfolioStats)window.loadPortfolioStats();if(window.loadTransactions)window.loadTransactions();
       closeBs();_refreshPanelStats();if(_panelOpen)renderPanel();
-      psToast(isBuy?'Buy Executed \u2713':'Sell Executed \u2713',`${isBuy?(qty.toFixed(4)+' '+_bsSym):'$'+fmt(amt-fee)+' returned'}`,'success');
+      psToast(isBuy?'Buy Executed \u2713':'Sell Executed \u2713',`${isBuy?(r.qty.toFixed(4)+' '+_bsSym):'$'+fmt(r.net)+' returned'}`,'success');
     }catch(err){psToast(isBuy?'Buy failed':'Sell failed',err.message,'error');}
     finally{if(lbl)lbl.style.display='flex';if(spin)spin.style.display='none';if(btn){btn.disabled=false;updateBsCalc();}}
   }

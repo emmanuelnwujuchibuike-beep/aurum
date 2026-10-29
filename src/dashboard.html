@@ -3972,10 +3972,9 @@ let ASSETS_LIST = [
 ];
 const PROPERTY_EARLY_PENALTY = 0.30;
 function getPropLock(sym) {
-  try {
-    const locks = JSON.parse(localStorage.getItem('aurum_property_locks')||'{}');
-    return locks[`${authUser.id}_${sym}`] || null;
-  } catch(e){ return null; }
+  // The lock lives on the holding row (set by the server at purchase).
+  const h = myHoldings.find(x => x.symbol === sym);
+  return h && h.locked_until ? { lockedUntil: h.locked_until, duration: h.lock_duration } : null;
 }
 
 const DEPOSIT_COINS = [
@@ -4556,78 +4555,34 @@ async function confirmTrade() {
   _tradeLock = true;
 
   try {
-    const newCash = isBuy
-      ? +(cash - total).toFixed(2)
-      : +(cash + (amt - fee)).toFixed(2);
+    // Server-side: the money function prices the order, checks the balance and
+    // updates cash, holdings and history atomically
+    const tok = (await sb.auth.getSession()).data.session?.access_token;
+    const before = myHoldings.find(h => h.symbol === a.sym);
+    const avgBefore = before ? Number(before.avg_buy_price) : 0;
+    const r = await aurumMoney(isBuy ? 'buy' : 'sell',
+      isBuy ? { symbol: a.sym, usd: amt, mode: 'trade', name: a.name, icon: a.icon, color: a.color } : { symbol: a.sym, usd: amt }, tok);
+    const txData = { id: r.tx_id };
 
-    let txData;
-
-    if (isBuy) {
-      const { data: tx, error: txErr } = await sb.from('transactions').insert({
-        user_id: authUser.id, type: 'buy', symbol: a.sym, name: a.name, icon: a.icon, color: a.color,
-        quantity: qty, price_at_tx: liveP, usd_amount: -total, status: 'approved',
-        note: `Buy ${a.sym} @ $${fmtPrice(liveP)} | Fee: $${fmtUSD(fee)}`
-      }).select().single();
-      if (txErr) throw txErr;
-      txData = tx;
-
-      const existing = myHoldings.find(h => h.symbol === a.sym);
-      if (existing) {
-        const newQty = Number(existing.quantity) + qty;
-        const newAvg = (Number(existing.avg_buy_price) * Number(existing.quantity) + liveP * qty) / newQty;
-        await sb.from('holdings').update({ quantity: newQty, avg_buy_price: +newAvg.toFixed(6) }).eq('id', existing.id);
-      } else {
-        await sb.from('holdings').insert({ user_id: authUser.id, symbol: a.sym, name: a.name, icon: a.icon, color: a.color, quantity: qty, avg_buy_price: liveP });
-      }
-
-    } else {
-      const netUSD = +(amt - fee).toFixed(2);
-      const { data: tx, error: txErr } = await sb.from('transactions').insert({
-        user_id: authUser.id, type: 'sell', symbol: a.sym, name: a.name, icon: a.icon, color: a.color,
-        quantity: qty, price_at_tx: liveP, usd_amount: netUSD, status: 'approved',
-        note: `Sell ${a.sym} @ $${fmtPrice(liveP)} | Fee: $${fmtUSD(fee)}`
-      }).select().single();
-      if (txErr) throw txErr;
-      txData = tx;
-
-      const holding = myHoldings.find(h => h.symbol === a.sym);
-      const newQty = Number(holding.quantity) - qty;
-      if (newQty <= 0.0000001) {
-        await sb.from('holdings').delete().eq('id', holding.id);
-      } else {
-        await sb.from('holdings').update({ quantity: newQty }).eq('id', holding.id);
-      }
-    }
-
-    const { error: cashErr } = await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
-    if (cashErr) throw cashErr;
-
-    profile = { ...profile, cash: newCash };
-
-    await new Promise(r => setTimeout(r, 300));
     await Promise.all([loadPortfolioStats(), loadTransactions()]);
     await loadProfile();
 
     closeTradeModal();
 
-    const updatedHolding = myHoldings.find(h => h.symbol === a.sym);
-    let pnl = 0, pnlLabel = 'Unrealised P&L';
-    if (!isBuy) {
-      const avgBuy = updatedHolding ? Number(updatedHolding.avg_buy_price) : liveP;
-      pnl = (liveP - avgBuy) * qty;
-      pnlLabel = 'Realised P&L';
-    }
+    // Realised P&L uses the average price from before the sale
+    const pnl = isBuy ? 0 : (r.price - avgBefore) * r.qty;
+    const pnlLabel = isBuy ? 'Unrealised P&L' : 'Realised P&L';
 
     showTradeReceipt({
       txId: txData?.id || 'N/A',
       type: isBuy ? 'MARKET BUY' : 'MARKET SELL',
       asset: `${a.name} (${a.sym})`,
-      qty: qty < 1 ? qty.toFixed(6) : qty.toFixed(4),
+      qty: r.qty < 1 ? r.qty.toFixed(6) : r.qty.toFixed(4),
       sym: a.sym,
-      price: fmtPrice(liveP),
-      gross: amt,
-      fee: fee,
-      total: total,
+      price: fmtPrice(r.price),
+      gross: isBuy ? amt : r.gross,
+      fee: r.fee,
+      total: isBuy ? r.total : r.net,
       newCash: Number(profile.cash || 0),
       pnl, pnlLabel, isBuy
     });
@@ -4721,21 +4676,10 @@ async function confirmDashPropertyWithdraw(sym, currentVal, penalty, netPayout) 
   if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
   _tradeLock = true;
   try {
-    const isPremature = penalty > 0;
-    const note = isPremature
-      ? `Early withdrawal ${sym} | Invested: $${fmtUSD(currentVal)} | Penalty: -$${fmtUSD(penalty)} (30%) | Net: $${fmtUSD(netPayout)}`
-      : `Property withdrawal ${sym} | Amount: $${fmtUSD(netPayout)}`;
-    await sb.from('transactions').insert({ user_id: authUser.id, type: 'sell', symbol: sym, name: asset.name, icon: asset.icon, color: asset.color, quantity: Number(holding.quantity), price_at_tx: Number(holding.avg_buy_price), usd_amount: netPayout, status: 'approved', note });
-    await sb.from('holdings').delete().eq('id', holding.id);
-    const { data: fp } = await sb.from('profiles').select('cash').eq('id', authUser.id).single();
-    const newCash = +((Number(fp?.cash || 0)) + netPayout).toFixed(2);
-    await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
-    profile = { ...profile, cash: newCash };
-    try {
-      const locks = JSON.parse(localStorage.getItem('aurum_property_locks') || '{}');
-      delete locks[`${authUser.id}_${sym}`];
-      localStorage.setItem('aurum_property_locks', JSON.stringify(locks));
-    } catch(e) {}
+    const tok = (await sb.auth.getSession()).data.session?.access_token;
+    const r = await aurumMoney('property_withdraw', { symbol: sym }, tok);
+    const isPremature = r.early;
+    netPayout = r.net;
     await new Promise(r => setTimeout(r, 300));
     await Promise.all([loadPortfolioStats(), loadTransactions()]);
     await loadProfile();
@@ -7100,6 +7044,7 @@ document.head.appendChild(_flashStyle);
 })();
 </script>
 <script src="coingecko-sync.js?v=4"></script>
+<script src="money-client.js"></script>
 <script src="portfolio-sync.js"></script>
 <script src="premium.js"></script>
 <script>

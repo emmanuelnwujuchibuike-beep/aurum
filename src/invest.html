@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
 <script src="currency-utils.js" defer></script>
+<script src="money-client.js" defer></script>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Invest - Aurum Capital">
 <meta property="og:description" content="Start investing in crypto, stocks, commodities, and real estate with Aurum Capital.">
@@ -2609,10 +2610,6 @@ async function confirmSellHolding(sym) {
   if (amt < 10) { showToast('Minimum $10', '', 'error'); return; }
   if (qty > maxQty + 0.000001) { showToast('Insufficient holdings', 'Amount exceeds holding value', 'error'); return; }
 
-  const fee       = +(amt * 0.001).toFixed(2);
-  const netUSD    = +(amt - fee).toFixed(2);
-  const realizedPnl = (holding.pnl_override != null) ? Number(holding.pnl_override) : (liveP - Number(holding.avg_buy_price)) * qty;
-
   const lbl  = document.getElementById('sell-confirm-lbl');
   const spin = document.getElementById('sell-spin');
   const btn  = document.getElementById('sell-confirm-btn');
@@ -2621,25 +2618,10 @@ async function confirmSellHolding(sym) {
   if (btn) btn.disabled = true;
 
   try {
-    const { data: fp } = await sb.from('profiles').select('cash').eq('id', authUser.id).single();
-    const newCash = +((Number(fp?.cash || 0)) + netUSD).toFixed(2);
-
-    await sb.from('transactions').insert({
-      user_id: authUser.id, type: 'sell', symbol: sym, name: asset.name,
-      icon: asset.icon, color: asset.color, quantity: qty, price_at_tx: liveP,
-      usd_amount: netUSD, status: 'approved',
-      note: `Sell ${sym} @ $${fmtP(liveP)} | P&L: ${realizedPnl>=0?'+':''}$${fmtU(realizedPnl)} | Fee: $${fee}`
-    });
-
-    const newQty = maxQty - qty;
-    if (newQty <= 0.0000001) {
-      await sb.from('holdings').delete().eq('id', holding.id);
-    } else {
-      await sb.from('holdings').update({ quantity: newQty, updated_at: new Date().toISOString() }).eq('id', holding.id);
-    }
-
-    await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
-
+    // Server-side: price, fee and balance are decided and applied by the money function
+    const tok=(await sb.auth.getSession()).data.session?.access_token;
+    const r = await aurumMoney('sell', { symbol: sym, usd: amt }, tok);
+    const netUSD = r.net;
     document.getElementById('investSellModal')?.remove();
     await loadProfile();
     await loadPortfolioStats();
@@ -2792,41 +2774,18 @@ async function confirmInvest() {
   if(total>cash){ showToast('Insufficient balance','Deposit funds to continue','error'); return; }
   if(amt<minAmt){ showToast(`Minimum investment is ${fmtMoney(minAmt)}`,'','error'); return; }
   txt('mi-lbl',''); document.getElementById('mi-spin').style.display='block'; document.getElementById('mi-confirm').disabled=true;
-  const qty = amt/a.price, execTime = new Date();
-  // Compute property lock-in maturity date before insert
-  let lockUntil = null;
-  if(a.cat==='property'){
-    const dur = DURATION_RATES[investDuration] || DURATION_RATES['1D'];
-    lockUntil = new Date(Date.now() + dur.days * 86400000).toISOString();
-  }
-  const txNote = a.cat==='property'
-    ? `Buy ${a.sym} @ $${fmtP(a.price)} | Lock: ${investDuration} | Unlock: ${lockUntil} | Fee: $${fee} | Slip: $${slip}`
-    : `Buy ${a.sym} @ $${fmtP(a.price)} | Fee: $${fee} | Slip: $${slip}`;
+  const execTime = new Date();
   try {
-    const { data:txData, error:txErr } = await sb.from('transactions').insert({user_id:authUser.id,type:'buy',symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,price_at_tx:a.price,usd_amount:-total,status:'approved',note:txNote}).select().single();
-    if(txErr) throw txErr;
-    const existing = myHoldings.find(h=>h.symbol===a.sym);
-    if(existing){ const nq=Number(existing.quantity)+qty,na=(Number(existing.avg_buy_price)*Number(existing.quantity)+a.price*qty)/nq; const{error:hErr}=await sb.from('holdings').update({quantity:nq,avg_buy_price:+na.toFixed(6),updated_at:new Date().toISOString()}).eq('id',existing.id); if(hErr) throw hErr; }
-    else { const{error:hErr}=await sb.from('holdings').insert({user_id:authUser.id,symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,avg_buy_price:a.price}); if(hErr) throw hErr; }
-    // Persist property lock-in to localStorage
-    if(a.cat==='property' && lockUntil){
-      try {
-        const locks = JSON.parse(localStorage.getItem('aurum_property_locks')||'{}');
-        const key = `${authUser.id}_${a.sym}`;
-        // Only set/extend if the new maturity is later than an existing one
-        if(!locks[key] || new Date(lockUntil) > new Date(locks[key].lockedUntil)){
-          locks[key] = { lockedUntil: lockUntil, duration: investDuration, investedAt: execTime.toISOString() };
-          localStorage.setItem('aurum_property_locks', JSON.stringify(locks));
-        }
-      } catch(e){}
-    }
-    const newCash = +(cash-total).toFixed(2);
-    const{error:cashErr}=await sb.from('profiles').update({cash:newCash}).eq('id',authUser.id); if(cashErr) throw cashErr;
+    // Server-side: the money function prices the order, checks the balance and
+    // records the property lock-in (holdings.locked_until)
+    const tok=(await sb.auth.getSession()).data.session?.access_token;
+    const r = await aurumMoney('buy', { symbol: a.sym, usd: amt, mode: 'invest', lock: a.cat === 'property' ? investDuration : undefined, name: a.name, icon: a.icon, color: a.color }, tok);
+    const qty = r.qty, fee = r.fee, slip = r.slip, total = r.total, newCash = r.cash, txData = { id: r.tx_id };
     await loadProfile(); await loadPortfolioStats(); await loadTransactions();
     closeInvestModal();
     txt('rc-txid',txData?.id||'N/A'); txt('rc-time',execTime.toUTCString().replace('GMT','UTC'));
     txt('rc-asset',`${a.name} (${a.sym})`); txt('rc-qty',(qty<1?qty.toFixed(6):qty.toFixed(4))+' '+a.sym);
-    txt('rc-price',fmtMoney(a.price)); txt('rc-fee',fmtMoney(fee+slip));
+    txt('rc-price',fmtMoney(r.price)); txt('rc-fee',fmtMoney(fee+slip));
     txt('rc-total','-'+fmtMoney(total)); txt('rc-newbal',fmtMoney(newCash));
     document.getElementById('receiptModal').classList.add('open');
     showToast('Order Executed ✓',`${a.sym} investment confirmed`,'success');
@@ -2846,10 +2805,10 @@ function closeReceipt(){ document.getElementById('receiptModal').classList.remov
 const PROPERTY_EARLY_PENALTY = 0.30; // 30% deducted if withdrawn before maturity
 
 function getPropLock(sym) {
-  try {
-    const locks = JSON.parse(localStorage.getItem('aurum_property_locks')||'{}');
-    return locks[`${authUser.id}_${sym}`] || null;
-  } catch(e){ return null; }
+  // The lock lives on the holding row (set by the server at purchase). Purchases made
+  // before locks moved to the server have none, and the server pays them in full.
+  const h = myHoldings.find(x => x.symbol === sym);
+  return h && h.locked_until ? { lockedUntil: h.locked_until, duration: h.lock_duration } : null;
 }
 
 function openPropertyWithdraw(sym) {
@@ -2959,32 +2918,10 @@ async function confirmPropertyWithdraw(sym, currentVal, penalty, netPayout) {
   if(btn){ btn.disabled = true; btn.style.opacity='.6'; btn.innerHTML='<i class="fas fa-spinner" style="animation:spin .7s linear infinite;display:inline-block"></i> Processing…'; }
 
   try {
-    const isPremature = penalty > 0;
-    const note = isPremature
-      ? `Early withdrawal ${sym} | Invested: $${fmtU(currentVal)} | Penalty: -$${fmtU(penalty)} (30%) | Net: $${fmtU(netPayout)}`
-      : `Property withdrawal ${sym} | Amount: $${fmtU(netPayout)}`;
-
-    await sb.from('transactions').insert({
-      user_id: authUser.id, type: 'sell', symbol: sym, name: asset.name,
-      icon: asset.icon, color: asset.color, quantity: Number(holding.quantity),
-      price_at_tx: Number(holding.avg_buy_price), usd_amount: netPayout,
-      status: 'approved', note
-    });
-
-    // Remove holding
-    await sb.from('holdings').delete().eq('id', holding.id);
-
-    // Credit net payout to cash
-    const newCash = +(Number(profile.cash) + netPayout).toFixed(2);
-    await sb.from('profiles').update({ cash: newCash }).eq('id', authUser.id);
-
-    // Clear the lock from localStorage
-    try {
-      const locks = JSON.parse(localStorage.getItem('aurum_property_locks')||'{}');
-      delete locks[`${authUser.id}_${sym}`];
-      localStorage.setItem('aurum_property_locks', JSON.stringify(locks));
-    } catch(e){}
-
+    const tok=(await sb.auth.getSession()).data.session?.access_token;
+    const r = await aurumMoney('property_withdraw', { symbol: sym }, tok);
+    const isPremature = r.early;
+    netPayout = r.net;
     await loadProfile(); await loadPortfolioStats(); await loadTransactions();
     document.getElementById('propWithdrawModal')?.remove();
     showToast(isPremature ? 'Withdrawn with penalty' : 'Withdrawal complete',
@@ -3091,14 +3028,10 @@ async function confirmSwap(){
   const fh=myHoldings.find(h=>h.symbol===fromSym);
   if(!fh||Number(fh.quantity)<amt){showToast('Insufficient holdings','','error');return;}
   txt('sw-label','');document.getElementById('sw-spin').style.display='block';document.getElementById('sw-confirm').disabled=true;
-  const usdVal=amt*fa.price,fee=+(usdVal*0.003).toFixed(2),netUSD=usdVal-fee,receive=netUSD/ta.price;
   try{
-    const newFromQty=Number(fh.quantity)-amt;
-    if(newFromQty<=0.0000001){await sb.from('holdings').delete().eq('id',fh.id);}else{await sb.from('holdings').update({quantity:newFromQty,updated_at:new Date().toISOString()}).eq('id',fh.id);}
-    const th=myHoldings.find(h=>h.symbol===toSym);
-    if(th){const nq=Number(th.quantity)+receive,na=(Number(th.avg_buy_price)*Number(th.quantity)+ta.price*receive)/nq;await sb.from('holdings').update({quantity:nq,avg_buy_price:+na.toFixed(6),updated_at:new Date().toISOString()}).eq('id',th.id);}
-    else{await sb.from('holdings').insert({user_id:authUser.id,symbol:toSym,name:ta.name,icon:ta.icon,color:ta.color,quantity:receive,avg_buy_price:ta.price});}
-    await sb.from('transactions').insert({user_id:authUser.id,type:'swap',symbol:toSym,name:`Swap ${fromSym}→${toSym}`,icon:ta.icon,color:ta.color,quantity:receive,price_at_tx:ta.price,usd_amount:0,status:'approved',note:`Swapped ${amt.toFixed(6)} ${fromSym} → ${receive.toFixed(6)} ${toSym} | Fee: $${fee.toFixed(2)}`});
+    const tok=(await sb.auth.getSession()).data.session?.access_token;
+    const r=await aurumMoney('swap',{from:fromSym,to:toSym,qty:amt,name:ta.name,icon:ta.icon,color:ta.color},tok);
+    const receive=r.received;
     await loadPortfolioStats();await loadTransactions();closeSwapModal();
     showToast('Swap Complete',`${amt.toFixed(4)} ${fromSym} → ${receive.toFixed(4)} ${toSym}`,'success');
   }catch(err){showToast('Swap failed',err.message,'error');}

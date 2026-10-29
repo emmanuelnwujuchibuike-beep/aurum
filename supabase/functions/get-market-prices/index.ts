@@ -3,6 +3,7 @@
 // Deno Edge Function | Project ref: ttwwthfeordsojmcjwxn
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { background, getJSON, setJSON, tryLock } from "../_shared/redis.ts";
 
 // ─── Supabase config (auto-injected by platform) ─────────────────────────────
 const SUPABASE_URL         = Deno.env.get("SUPABASE_URL") ?? "";
@@ -147,11 +148,11 @@ interface CacheEntry {
 const priceCache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 30_000;
 
-function getCached(key: string): PriceResult[] | null {
+function getCached(key: string): CacheEntry | null {
   const entry = priceCache.get(key);
   if (!entry) return null;
   if (Date.now() - entry.timestamp > CACHE_TTL_MS) { priceCache.delete(key); return null; }
-  return entry.data;
+  return entry;
 }
 function setCache(key: string, data: PriceResult[]): void {
   priceCache.set(key, { data, timestamp: Date.now() });
@@ -416,14 +417,72 @@ serve(async (req: Request) => {
     }
 
     const cacheKey = [...symbols].sort().join(",");
-    const cached   = getCached(cacheKey);
-    if (cached) {
-      return new Response(
-        JSON.stringify({ success: true, data: cached, cached: true }),
-        { headers: { ...CORS_HEADERS, "Content-Type": "application/json", "Cache-Control": "public, max-age=30" } },
-      );
+    // ?maxAge=N (seconds): the caller needs a price no older than N — used by the
+    // money function so trades never fill on a stale cached price. Display pages
+    // omit it and get stale-while-revalidate.
+    const maxAgeMs = Math.max(0, Number(url.searchParams.get("maxAge") ?? "0")) * 1000;
+
+    // 1. Upstash Redis — shared by every visitor and every function instance.
+    //    Stale-while-revalidate: anything up to PRICE_KEEP_SEC old is served
+    //    instantly; if it's older than PRICE_FRESH_MS one request refreshes it
+    //    in the background, so visitors never wait on the upstream providers.
+    const hit = await getJSON<PriceResult[]>(PRICE_KEY(cacheKey));
+    if (hit?.data?.length && maxAgeMs && Date.now() - hit.t > maxAgeMs) {
+      const fresh = await refreshPrices(symbols, cacheKey);
+      if (fresh.length) return priceResponse(fresh, Date.now(), false);
+      // providers down: fall through and serve what we have, marked with its age
+    }
+    if (hit?.data?.length) {
+      if (Date.now() - hit.t > PRICE_FRESH_MS && await tryLock(PRICE_KEY(cacheKey), 15)) {
+        background(refreshPrices(symbols, cacheKey));
+      }
+      return priceResponse(hit.data, hit.t, true);
     }
 
+    // 2. Per-instance memory (also covers Redis being unavailable)
+    const mem = getCached(cacheKey);
+    if (mem) return priceResponse(mem.data, mem.timestamp, true);
+
+    // 3. Cold: fetch from providers now
+    const results = await refreshPrices(symbols, cacheKey);
+    return priceResponse(results, Date.now(), false);
+  } catch (err) {
+    console.error("[get-market-prices] Unhandled error:", err);
+    return new Response(
+      JSON.stringify({ success: false, error: String(err) }),
+      { status: 500, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } },
+    );
+  }
+});
+
+// ─── Cache plumbing ──────────────────────────────────────────────────────────
+
+const PRICE_FRESH_MS = 20_000;   // older than this → refresh in background
+const PRICE_KEEP_SEC = 15 * 60;  // Redis keeps the last good prices this long
+const PRICE_KEY = (symbolsKey: string) => `prices:v1:${symbolsKey}`;
+
+/** `updatedAt` lets pages show "Updated HH:MM:SS" next to cached figures. */
+function priceResponse(data: PriceResult[], producedAt: number, cached: boolean): Response {
+  return new Response(
+    JSON.stringify({ success: true, data, cached, updatedAt: new Date(producedAt).toISOString() }),
+    { headers: { ...CORS_HEADERS, "Content-Type": "application/json", "Cache-Control": "public, max-age=15" } },
+  );
+}
+
+/** Fetch live prices and store them; an empty/failed fetch never overwrites good data. */
+async function refreshPrices(symbols: string[], cacheKey: string): Promise<PriceResult[]> {
+  const results = await fetchPrices(symbols);
+  if (results.length > 0) {
+    setCache(cacheKey, results);
+    await setJSON(PRICE_KEY(cacheKey), results, PRICE_KEEP_SEC);
+    persistPrices(results); // fire-and-forget
+  }
+  return results;
+}
+
+// ─── Upstream providers ──────────────────────────────────────────────────────
+
+async function fetchPrices(symbols: string[]): Promise<PriceResult[]> {
     // ── 1. Separate crypto from everything else ───────────────────────────
     const cryptoSymbols   = symbols.filter(s => COINGECKO_IDS[s]);
     const nonCryptoSymbols = symbols.filter(s => !COINGECKO_IDS[s]);
@@ -488,20 +547,6 @@ serve(async (req: Request) => {
       }
     }
 
-    console.info(`[get-market-prices] Returning ${results.length} prices (crypto: ${cryptoSymbols.length}, non-crypto: ${nonCryptoSymbols.length})`);
-
-    setCache(cacheKey, results);
-    persistPrices(results); // fire-and-forget
-
-    return new Response(
-      JSON.stringify({ success: true, data: results, cached: false }),
-      { headers: { ...CORS_HEADERS, "Content-Type": "application/json", "Cache-Control": "public, max-age=30" } },
-    );
-  } catch (err) {
-    console.error("[get-market-prices] Unhandled error:", err);
-    return new Response(
-      JSON.stringify({ success: false, error: String(err) }),
-      { status: 500, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } },
-    );
-  }
-});
+    console.info(`[get-market-prices] Fetched ${results.length} prices (crypto: ${cryptoSymbols.length}, non-crypto: ${nonCryptoSymbols.length})`);
+    return results;
+}
