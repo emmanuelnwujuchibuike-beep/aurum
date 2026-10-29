@@ -42,6 +42,7 @@ const ICONS = {
 // no key = follow the phone. Applied before first paint so there is no flash.
 const head = `
 <script>try{if(localStorage.getItem('aurum_live')==='1')document.documentElement.setAttribute('data-live','');var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
+<script>/* Page scope for in-app navigation (app.js router): listeners and timers a page adds on document/window inside its DOMContentLoaded handler are recorded so the router can remove them when that page is left; after an in-app navigation, a new page's DOMContentLoaded handler runs straight away. */(function(){var D=document,W=window,P=EventTarget.prototype,add=P.addEventListener,rm=P.removeEventListener,st=W.setTimeout,si=W.setInterval,ct=W.clearTimeout,ci=W.clearInterval;var S=W.AurumScope={on:0,spa:0,l:[],t:[],i:[],run:function(h,e){S.on++;try{h.call(D,e)}finally{S.on--}},drop:function(){S.l.forEach(function(x){rm.call(x[0],x[1],x[2],x[3])});S.t.forEach(function(i){ct(i)});S.i.forEach(function(i){ci(i)});S.l=[];S.t=[];S.i=[]}};P.addEventListener=function(t,f,o){if(this===D&&t==="DOMContentLoaded"&&typeof f==="function"){if(S.spa){Promise.resolve().then(function(){S.run(f)});return}return add.call(this,t,function(e){S.run(f,e)},o)}if(S.on&&(this===D||this===W))S.l.push([this,t,f,o]);return add.call(this,t,f,o)};W.setTimeout=function(){var i=st.apply(W,arguments);if(S.on)S.t.push(i);return i};W.setInterval=function(){var i=si.apply(W,arguments);if(S.on)S.i.push(i);return i}})();</script>
 <link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/playfair-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="image/favicon-32.png" type="image/png" sizes="32x32">
@@ -109,8 +110,8 @@ ${SOCIAL.map(([href, name, d]) => `    <a class="social raised-sm" href="${href}
 const ROUTES = {
   deposit: "deposit.html",
   withdraw: "withdraw.html",
-  transactions: "dashboard-classic.html#transactions",
-  portfolio: "dashboard-classic.html#portfolio",
+  transactions: "transactions.html",
+  portfolio: "portfolio.html",
 };
 const APP_ICONS = {
   grid: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
@@ -207,12 +208,10 @@ ${APP_NAV.map(([key, href, label, d]) => key === 'fab'
 </nav>
 `;
 
-// App-style navigation: pages are prerendered before the tap (bottom nav, quick actions and
-// dashboard shortcuts eagerly; everything else on touch/hover), so they open instantly.
-// New app pages only make REST reads on load, so prerendering them is safe. Pages that
-// open realtime sockets or are still the old heavy builds are only prefetched.
+// Navigation: app.js swaps shell pages in place (no reload); these rules only warm the
+// HTTP cache (bottom nav, menu and quick actions eagerly, other links on touch/hover).
 const tail = `
-<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"selector_matches":".nav a, .sheet a, .qa"},{"not":{"href_matches":["/invest.html","/admin.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]}}]},"eagerness":"eager"},{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/invest.html","/admin.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]}}]},"eagerness":"moderate"}],"prefetch":[{"source":"document","where":{"href_matches":["/invest.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]},"eagerness":"moderate"}]}</script>
+<script type="speculationrules">{"prefetch":[{"source":"document","where":{"selector_matches":".nav a, .sheet a, .qa, .mi"},"eagerness":"eager"},{"source":"document","where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
 <script src="app.js" defer></script>
 `;
 

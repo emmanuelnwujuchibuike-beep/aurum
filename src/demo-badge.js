@@ -4,6 +4,10 @@
   'use strict';
   var API = 'https://ttwwthfeordsojmcjwxn.supabase.co/rest/v1/site_settings?key=eq.payments_live&select=value';
   var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0d3d0aGZlb3Jkc29qbWNqd3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDE0OTIsImV4cCI6MjA5NTM3NzQ5Mn0.pMaGWupL4qEJKbQuYPJN2p4Z_reh2IvKgqR8sDie37w';
+  // Lock the page horizontally (no sideways drift on iOS)
+  var lock = document.createElement('style');
+  lock.textContent = 'html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}html{overscroll-behavior-x:none}';
+  document.head.appendChild(lock);
   var el = document.createElement('div');
   el.setAttribute('role', 'note');
   el.textContent = 'DEMO · NOT REAL MONEY';

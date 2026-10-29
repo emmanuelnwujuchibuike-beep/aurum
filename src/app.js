@@ -143,15 +143,21 @@
      The head script paints the last known state before first paint; this refreshes it.
      Demo is the safe default if the setting can't be read. */
   window.Aurum.live = root.hasAttribute('data-live');
-  fetch(API.replace('/functions/v1/', '/rest/v1/') + 'site_settings?key=eq.payments_live&select=value', { headers: window.Aurum.headers })
+  var todo = {};
+  function fillTodo() { document.querySelectorAll('[data-todo]').forEach(function (el) { var v = todo[el.getAttribute('data-todo')]; if (typeof v === 'string' && v.trim()) el.textContent = v.trim(); }); }
+  // Same request also fills the regulator / licence placeholders in the risk disclosure
+  fetch(API.replace('/functions/v1/', '/rest/v1/') + 'site_settings?key=in.(payments_live,regulator_name,licence_number)&select=key,value', { headers: window.Aurum.headers })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (rows) {
       if (!rows) return;
-      var on = !!rows[0] && (rows[0].value === true || rows[0].value === 'true');
+      var s = {}; rows.forEach(function (x) { s[x.key] = x.value; });
+      var on = s.payments_live === true || s.payments_live === 'true';
       try { localStorage.setItem('aurum_live', on ? '1' : '0'); } catch (e) {}
       root.toggleAttribute('data-live', on);
       window.Aurum.live = on;
       document.dispatchEvent(new CustomEvent('aurum:mode', { detail: { live: on } }));
+      todo = { regulator: s.regulator_name, licence: s.licence_number };
+      fillTodo();
     }).catch(function () {});
   window.Aurum.applyHidden = applyHidden;
   window.Aurum.theme = currentTheme;
@@ -230,6 +236,100 @@
     setInterval(load, 30000);
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') load(); });
   }
+  /* 6. In-app navigation (router) ---------------------------------------------
+     Links between pages built on the shared shell swap the page in place: no
+     browser reload, header and bottom nav stay, a skeleton shows under the header
+     if the next page takes more than 150 ms. Old pages, the admin console (live
+     sockets) and the landing page (signed-in redirect) still load normally.
+     Each page's DOMContentLoaded code runs again on arrival; listeners and timers
+     it added are removed when it is left (AurumScope, set up in <head>). */
+  var Scope = window.AurumScope;
+  var FULL = /\/(index|admin|signup|invest-classic|dashboard-classic|trade-classic|about|privacy-policy|testimonial)\.html$|\/$/;
+  var ONCE = /(^|\/)(app|aurum-session|money-client)\.js(\?|$)/; // shared scripts: loaded once, kept
+  var pages = {}; // url → Promise<html>
+  function spaTarget(a) {
+    if (!Scope || !document.getElementById('app-css')) return false;
+    if (a.target || a.hasAttribute('download') || a.origin !== location.origin) return false;
+    if (!/\.html$/.test(a.pathname) || FULL.test(a.pathname)) return false;
+    return a.pathname !== location.pathname || a.search !== location.search;
+  }
+  function fetchPage(url) {
+    if (!pages[url]) pages[url] = fetch(url, { credentials: 'same-origin' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status); return r.text();
+    }).catch(function (e) { delete pages[url]; throw e; });
+    return pages[url];
+  }
+  // Warm the cache on touch / hover so most taps swap instantly
+  function warm(e) { var a = e.target.closest && e.target.closest('a[href]'); if (a && spaTarget(a)) fetchPage(a.href).catch(function () {}); }
+  document.addEventListener('touchstart', warm, { passive: true });
+  document.addEventListener('mouseover', warm);
+
+  function runScripts(list, i) {
+    if (i >= list.length) return Promise.resolve();
+    var old = list[i], s = document.createElement('script');
+    for (var k = 0; k < old.attributes.length; k++) s.setAttribute(old.attributes[k].name, old.attributes[k].value);
+    if (old.src) {
+      return new Promise(function (res) { s.onload = s.onerror = res; s.removeAttribute('defer'); document.body.appendChild(s); })
+        .then(function () { return runScripts(list, i + 1); });
+    }
+    s.textContent = old.textContent; document.body.appendChild(s);
+    return runScripts(list, i + 1);
+  }
+  function swap(doc, url, push) {
+    Scope.drop();
+    document.title = doc.title;
+    // page styles: replace every <style> in <head> (app/shell CSS identical, page CSS differs)
+    document.querySelectorAll('head style').forEach(function (s) { s.remove(); });
+    doc.querySelectorAll('head style').forEach(function (s) { document.head.appendChild(s.cloneNode(true)); });
+    document.body.className = doc.body.className;
+    var scripts = [].slice.call(doc.body.querySelectorAll('script')).filter(function (s) { return !(s.src && ONCE.test(s.getAttribute('src'))); });
+    scripts.forEach(function (s) { s.remove(); });
+    document.body.replaceChildren.apply(document.body, [].slice.call(doc.body.childNodes).map(function (n) { return document.adoptNode(n); }));
+    root.classList.remove('menu-open', 'fs');
+    if (push) history.pushState({ spa: 1 }, '', url);
+    window.scrollTo(0, 0);
+    window.Aurum.extra = [];
+    Scope.spa = 1;
+    document.dispatchEvent(new CustomEvent('aurum:navigated'));
+    applyHidden(); fillTodo();
+    document.querySelectorAll('[data-theme-value]').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-theme-value') === currentTheme() ? 'true' : 'false'); });
+    return runScripts(scripts, 0).then(function () {
+      if (window.Aurum.last) paint(window.Aurum.last); // instant figures, then fresh ones
+      load();
+      document.querySelectorAll('[data-lazy-script]').forEach(function (el) { var s = document.createElement('script'); s.src = el.getAttribute('data-lazy-script'); s.async = true; document.body.appendChild(s); });
+    });
+  }
+  var navSeq = 0;
+  function go(url, push) {
+    var mine = ++navSeq, slow = setTimeout(function () { root.classList.add('navigating'); }, 150);
+    return fetchPage(url).then(function (html) {
+      if (mine !== navSeq) return;
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      if (!doc.getElementById('app-css')) throw new Error('not an app page');
+      var run = function () { return swap(doc, url, push); };
+      clearTimeout(slow); root.classList.remove('navigating');
+      delete pages[url]; // next visit fetches fresh HTML (prefetch will warm it again)
+      if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) return document.startViewTransition(run).updateCallbackDone;
+      return run();
+    }).catch(function () { clearTimeout(slow); location.assign(url); });
+  }
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a || !spaTarget(a)) return;
+    e.preventDefault();
+    // close any open menu / sheet first
+    document.querySelectorAll('.menu:not([hidden]),.overlay:not([hidden])').forEach(function (o) { o.hidden = true; });
+    go(a.href, true);
+  });
+  if (Scope && document.getElementById('app-css')) {
+    history.replaceState({ spa: 1 }, '', location.href);
+    window.addEventListener('popstate', function () {
+      if (FULL.test(location.pathname)) { location.reload(); return; }
+      go(location.href, false);
+    });
+  }
+
   if (document.readyState === 'complete') start();
   else window.addEventListener('load', start, { once: true });
 })();

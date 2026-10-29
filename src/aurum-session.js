@@ -172,6 +172,9 @@
     document.dispatchEvent(new CustomEvent('aurum:resume'));
     if (window.Aurum && window.Aurum.refresh) window.Aurum.refresh();
   });
+  // In-app navigation (app.js router): reload the profile so the next page sees fresh
+  // figures, and paint this page's avatar / greeting / test banner.
+  document.addEventListener('aurum:navigated', function () { window.AurumSession.ready = load(); });
   document.addEventListener('click', function (e) {
     if (e.target.closest('[data-signout]')) { e.preventDefault(); signOut(); }
   });

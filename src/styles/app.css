@@ -214,3 +214,10 @@ html.navigating main::before{content:"";position:absolute;left:var(--gut);right:
   animation:skel 1.1s ease-in-out infinite alternate}
 @keyframes skel{from{opacity:1}to{opacity:.55}}
 @media (prefers-reduced-motion:reduce){html.navigating main::before{animation:none}}
+
+/* Lock pages horizontally: nothing may make the page wider than the screen, so a
+   sideways drag never slides the whole page (iOS). Horizontal chip rows still scroll
+   inside themselves (.scrollx). */
+html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
+html{overscroll-behavior-x:none}
+.app{overflow-x:clip}

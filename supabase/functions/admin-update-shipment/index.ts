@@ -1,6 +1,7 @@
 // supabase/functions/admin-update-shipment/index.ts
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { layout, textToHtml, p as para, esc, fromAddress } from "../_shared/email.ts"
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -535,6 +536,61 @@ serve(async (req: Request) => {
         await svc.from("profiles").update({ cash: newCash }).eq("id", userId)
       }
       result = { closed: true }
+
+    // ────────────────────────────────────────────────────────────────────────
+    //  EMAIL USERS (admin compose) — brand template, sent through Resend.
+    //  to: "all" | user ids; extra: typed addresses. Sender: any local part on the
+    //  brand domain except the sign-in/notification sender (noreply).
+    // ────────────────────────────────────────────────────────────────────────
+    } else if (action === "send_email") {
+      const subject = String(body.subject ?? "").replace(/[\r\n]/g, " ").trim().slice(0, 200)
+      const message = String(body.message ?? "").trim().slice(0, 20000)
+      if (!subject || !message) throw new Error("Subject and message are required")
+      const local = String(body.from ?? "support").toLowerCase().trim()
+      if (!/^[a-z0-9][a-z0-9._-]{0,40}$/.test(local)) throw new Error("Sender must be a simple name like support or hello")
+      if (local === "noreply" || local === "no-reply") throw new Error("noreply is reserved for sign-in and account notifications")
+      const from = await fromAddress(local, typeof body.fromName === "string" && body.fromName.trim() ? body.fromName.trim() : undefined)
+      const replyTo = from.replace(/^.*<|>$/g, "")
+
+      // Recipients → [{ email, first }]
+      const list: { email: string; first: string }[] = []
+      const okEmail = (e: string) => /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(e)
+      if (body.to === "all") {
+        const { data, error } = await svc.from("profiles").select("email,first_name").not("email", "is", null)
+        if (error) throw error
+        ;(data ?? []).forEach((u) => list.push({ email: String(u.email), first: u.first_name ?? "" }))
+      } else if (Array.isArray(body.to) && body.to.length) {
+        const ids = body.to.map(String).slice(0, 1000)
+        const { data, error } = await svc.from("profiles").select("email,first_name").in("id", ids)
+        if (error) throw error
+        ;(data ?? []).forEach((u) => u.email && list.push({ email: String(u.email), first: u.first_name ?? "" }))
+      }
+      ;(Array.isArray(body.extra) ? body.extra : []).slice(0, 200).forEach((e: unknown) => list.push({ email: String(e).trim(), first: "" }))
+      const seen = new Set<string>()
+      const recipients = list.filter((r) => { const k = r.email.toLowerCase(); if (!okEmail(r.email) || seen.has(k)) return false; seen.add(k); return true })
+      if (!recipients.length) throw new Error("No valid recipients")
+      if (recipients.length > 2000) throw new Error("Too many recipients in one send (max 2000)")
+
+      // One email per person (nobody sees other addresses); Resend batch = 100 per call
+      const bodyHtml = textToHtml(message)
+      const emails = await Promise.all(recipients.map(async (r) => ({
+        from, to: [r.email], reply_to: replyTo, subject,
+        html: await layout({ preheader: message.slice(0, 120), eyebrow: "Message from Aurum Capital", title: esc(subject),
+          body: (r.first ? para("Dear " + esc(r.first) + ",") : "") + bodyHtml }),
+      })))
+      const key = Deno.env.get("RESEND_API_KEY")
+      if (!key) throw new Error("RESEND_API_KEY not set")
+      let sent = 0; const failures: string[] = []
+      for (let i = 0; i < emails.length; i += 100) {
+        const chunk = emails.slice(i, i + 100)
+        const res = await fetch("https://api.resend.com/emails/batch", {
+          method: "POST", headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" }, body: JSON.stringify(chunk),
+        })
+        if (res.ok) sent += chunk.length
+        else failures.push(`${res.status}: ${(await res.text()).slice(0, 200)}`)
+      }
+      if (!sent) throw new Error("Resend refused the send — " + failures[0])
+      result = { sent, failed: emails.length - sent, from, errors: failures }
 
     } else {
       return new Response(
