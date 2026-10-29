@@ -1,0 +1,5 @@
+# Aurum Capital — crawling rules.
+# Account pages are not blocked here on purpose: they carry <meta name="robots" content="noindex">
+# and require sign-in, and a robots.txt block would stop search engines from seeing that noindex.
+User-agent: *
+Allow: /
