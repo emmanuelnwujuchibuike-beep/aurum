@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin — Aurum Capital</title>
+<meta name="robots" content="noindex, nofollow">
+<!--@head-->
+<script>try{var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/playfair-500-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="image/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#ECE8E1">
+<!--/@head-->
+<style id="app-css">@font-face{font-family:'Outfit';font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/outfit-latin.woff2) format('woff2')}@font-face{font-family:'Playfair Display';font-style:normal;font-weight:500;font-display:optional;src:url(fonts/playfair-500-latin.woff2) format('woff2')}@font-face{font-family:'Playfair Display';font-style:italic;font-weight:500;font-display:optional;src:url(fonts/playfair-500i-latin.woff2) format('woff2')}@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/jetbrains-mono-500-latin.woff2) format('woff2')}:root{color-scheme:light;--page:#E2DDD5;--bg:#ECE8E1;--well:#E7E2DA;--ink:#1E1B16;--ink-2:#3F3A32;--muted:#5B5448;--line:#DDD6C9;--gold:#C29A45;--on-gold:#241A05;--gold-ink:#6E5314;--accent:#8A6820;--grid:rgba(122,92,23,.05);--up:#22603A;--up-bg:#DAEBDD;--down:#A3261C;--down-bg:#F1DAD5;--new:#5C450F;--new-bg:#F1E4C3;--sold:#4F4A42;--sold-bg:#DCD7CE;--ok:#2F7A4B;--nav-ink:#6A6357;--placeholder:#7A7264;--scrim:rgba(30,27,22,.35);--vault:#1A1813;--vault-2:#211E18;--vault-3:#2A2620;--vault-text:#F3EEE3;--vault-muted:#B5AC9A;--vault-gold:#D9B565;--lo:#CEC7B9;--hi:#FFFFFF;--lo-btn:#CDBF9F;--gold-lo:#9E7C33;--gold-hi:#D9B565;--raise:7px 7px 16px var(--lo),-7px -7px 16px var(--hi);--raise-sm:4px 4px 10px var(--lo),-4px -4px 10px var(--hi);--raise-xs:3px 3px 8px var(--lo),-3px -3px 8px var(--hi);--press:inset 4px 4px 9px var(--lo),inset -4px -4px 9px var(--hi);--press-sm:inset 3px 3px 7px var(--lo),inset -3px -3px 7px var(--hi);--shadow-btn:6px 6px 14px var(--lo-btn),-6px -6px 14px var(--hi);--shadow-vault:10px 12px 26px var(--lo),-8px -8px 18px var(--hi);--gut:20px;--serif:'Playfair Display',Georgia,'Times New Roman',serif;--sans:'Outfit',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}:root[data-theme="dark"]{color-scheme:dark;--page:#100F0D;--bg:#1C1A16;--well:#181612;--ink:#EEE8DC;--ink-2:#D6CFC1;--muted:#ABA392;--line:#2E2A23;--gold-ink:#D9B565;--accent:#E2C27A;--grid:rgba(217,181,101,.04);--up:#86D5A6;--up-bg:#1D3326;--down:#F29B8E;--down-bg:#3E211C;--new:#E8CD8C;--new-bg:#3A2F17;--sold:#C9C1B2;--sold-bg:#2C2922;--ok:#5FB884;--nav-ink:#B3AB9B;--placeholder:#8F8776;--scrim:rgba(0,0,0,.55);--vault:#0F0E0B;--vault-2:#171511;--vault-3:#211E18;--lo:#100F0C;--hi:#28251F;--lo-btn:#0C0B09;--gold-lo:#7D6127;--gold-hi:#D9B565}*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;scroll-padding-top:84px}body{margin:0;background:var(--page);font:15px/1.6 var(--sans);color:var(--ink);-webkit-tap-highlight-color:transparent;overflow-x:hidden}a,button,summary,label,input,select,textarea{touch-action:manipulation;-webkit-tap-highlight-color:transparent}a{color:inherit}img{display:block;max-width:100%;height:auto}h1,h2,h3,p,ul,ol,figure{margin:0}ul,ol{padding:0;list-style:none}button{font:inherit;border:0;cursor:pointer;color:inherit;background:none;padding:0}button:disabled{cursor:not-allowed;opacity:.55}:focus-visible{outline:2px solid var(--gold-ink);outline-offset:3px}[hidden]{display:none!important}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px}main{padding:8px var(--gut) calc(124px + env(safe-area-inset-bottom))}.serif{font-family:var(--serif)}.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-ink);font-weight:500}.muted{color:var(--muted)}.num{font-variant-numeric:tabular-nums}.up{color:var(--up)}.down{color:var(--down)}.h1{font-family:var(--serif);font-size:38px;line-height:1.08;font-weight:500;letter-spacing:-.005em}.h2{font-family:var(--serif);font-size:27px;line-height:1.15;font-weight:500}.h1 em,.h2 em{color:var(--accent);font-style:italic}.lede{font-size:14px;line-height:1.6;color:var(--muted)}.small{font-size:13px;line-height:1.55}.raised{background:var(--bg);box-shadow:var(--raise)}.raised-sm{background:var(--bg);box-shadow:var(--raise-sm)}.inset{background:var(--well);box-shadow:var(--press)}.gold{background:var(--gold);color:var(--on-gold);box-shadow:var(--shadow-btn)}.card{border-radius:22px;padding:18px}.stack{display:flex;flex-direction:column}.row{display:flex;align-items:center}.between{justify-content:space-between}.grow{flex:1;min-width:0}.g4{gap:4px}.g8{gap:8px}.g10{gap:10px}.g12{gap:12px}.g14{gap:14px}.g16{gap:16px}.g18{gap:18px}.g20{gap:20px}.g26{gap:26px}.g44{gap:44px}.scrollx{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}.scrollx::-webkit-scrollbar{display:none}.btn{min-height:56px;border-radius:18px;font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;text-decoration:none;padding:0 18px}.btn-sm{min-height:50px;border-radius:16px;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;width:100%;text-decoration:none;padding:0 14px}.raised:is(a,button):active,.raised-sm:is(a,button):active,.tile:active{background:var(--well);box-shadow:var(--press)}.gold:is(a,button):active{box-shadow:inset 3px 3px 8px var(--gold-lo),inset -2px -2px 6px var(--gold-hi)}.btn:disabled,.btn-sm:disabled{color:var(--muted)}.link{min-height:44px;font-size:13px;font-weight:600;color:var(--gold-ink);display:inline-flex;align-items:center;text-decoration:none}.link:active{opacity:.6}.top{position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(14px + env(safe-area-inset-top)) var(--gut) 12px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);min-width:0}.logo{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font:600 20px/1 var(--serif);flex:none}.brand-name{font:500 21px/1.2 var(--serif);letter-spacing:.04em;white-space:nowrap}.brand-sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:1.3}.iconbtn{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);flex:none;position:relative}.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:calc(min(480px,100vw) - 28px);height:74px;border-radius:28px;display:flex;align-items:center;justify-content:space-around;padding:0 6px;z-index:30}.nav a,.nav .tab{color:var(--nav-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:500;width:58px;min-height:48px;text-decoration:none}.nav .ico{width:40px;height:30px;border-radius:12px;display:flex;align-items:center;justify-content:center}.nav [aria-current="page"]{color:var(--gold-ink)}.nav [aria-current="page"] .ico,.nav a:active .ico{background:var(--well);box-shadow:var(--press-sm)}.nav .fab{width:60px;height:60px;min-height:60px;border-radius:22px;margin-top:-30px;color:var(--on-gold);display:flex;align-items:center;justify-content:center}.nav .fab:active{box-shadow:inset 3px 3px 8px var(--gold-lo),inset -2px -2px 6px var(--gold-hi)}.badge{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);flex:none;font:500 15px/1 var(--serif)}.badge.lg{width:44px;height:44px}.chg,.tag{display:inline-block;min-width:62px;text-align:center;border-radius:8px;padding:3px 8px;font-size:12px;font-weight:600;line-height:1.4;font-variant-numeric:tabular-nums}.chg.down,.tag.down{color:var(--down);background:var(--down-bg)}.chg.up,.tag.up{color:var(--up);background:var(--up-bg)}.chg.flat,.tag.flat{color:var(--muted);background:transparent}.pill{border-radius:8px;padding:4px 9px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;line-height:1.3}.live{color:var(--up);background:var(--up-bg)}.new{color:var(--new);background:var(--new-bg)}.sold{color:var(--sold);background:var(--sold-bg)}.list{border-radius:22px;padding:4px 16px}.item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);min-height:68px}.item:last-child{border-bottom:0}.item .grow{display:flex;flex-direction:column}.item .end{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:100px}.price{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;min-width:100px;text-align:right}.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.tile{border-radius:20px;padding:16px;display:flex;flex-direction:column;align-items:flex-start;gap:12px;font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;min-height:44px}.dot{width:8px;height:8px;border-radius:4px;background:var(--ok);flex:none}details{border-bottom:1px solid var(--line)}details:last-child{border-bottom:0}summary{list-style:none;min-height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:600;cursor:pointer;padding:8px 0}summary::-webkit-details-marker{display:none}summary .plus{width:30px;height:30px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);background:var(--bg);box-shadow:var(--raise-xs);font-size:18px;line-height:1}summary .plus::before{content:"+"}details[open] summary .plus::before{content:"\2212"}summary:active .plus{box-shadow:var(--press-sm);background:var(--well)}details .ans{font-size:13px;line-height:1.65;color:var(--muted);padding-bottom:16px}details .ans b{color:var(--ink);font-weight:600}.seg-wrap{border-radius:16px;padding:5px;display:flex;gap:4px}.seg{flex:1;min-height:44px;border-radius:12px;font-size:13px;font-weight:500;color:var(--muted);padding:0 12px;white-space:nowrap}.chip{min-width:44px;min-height:40px;border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);padding:0 8px}.seg.on,.chip.on,.seg[aria-pressed="true"],.chip[aria-pressed="true"]{background:var(--bg);color:var(--ink);box-shadow:var(--raise-xs)}.chip.on,.chip[aria-pressed="true"]{color:var(--gold-ink)}.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500}.input{min-height:52px;border-radius:16px;border:0;padding:0 16px;font:15px var(--sans);color:var(--ink);background:var(--well);box-shadow:var(--press);width:100%}textarea.input{min-height:120px;padding:14px 16px;resize:vertical}.input::placeholder{color:var(--placeholder)}.sw{width:50px;height:30px;border-radius:15px;padding:3px;display:flex;background:var(--well);box-shadow:var(--press-sm);flex:none}.sw span{width:24px;height:24px;border-radius:12px;background:var(--bg);box-shadow:2px 2px 5px var(--lo),-2px -2px 5px var(--hi);transition:margin .12s}.sw[aria-pressed="true"] span{margin-left:20px;background:var(--gold)}.setting{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px;font-weight:500;width:100%;text-align:left}.setting:last-child{border-bottom:0}.foot a:not(.social){color:var(--ink-2);text-decoration:none;font-size:14px;min-height:36px;display:flex;align-items:center}.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.social{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--ink);text-decoration:none}.risk{border-radius:18px;padding:16px;font-size:12px;line-height:1.6;color:var(--ink-2)}.risk b{color:var(--ink)}.cv{content-visibility:auto;contain-intrinsic-size:auto 700px;margin:-24px calc(-1 * var(--gut));padding:24px var(--gut)}@media (max-width:359px){:root{--gut:14px}.h1{font-size:33px}.brand-name{font-size:18px}.tiles{gap:12px}.nav a,.nav .tab{width:52px}}@media (prefers-reduced-motion:reduce){*{transition:none!important}}</style>
+<style id="shell-css">main.app-main{padding:10px var(--gut) calc(128px + env(safe-area-inset-bottom))}.who{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;min-width:0}.avatar{width:46px;height:46px;border-radius:16px;padding:3px;display:flex;flex:none}.avatar span{flex:1;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;background:var(--gold);color:var(--on-gold);overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.who-sub{font-size:12px;color:var(--muted);line-height:1.3}.who-title{font:500 20px/1.2 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bell-dot{position:absolute;top:11px;right:12px;width:7px;height:7px;border-radius:4px;background:var(--gold)}.vault{background:var(--vault);color:var(--vault-text);box-shadow:var(--shadow-vault);position:relative;overflow:hidden}.vault .eyebrow{color:var(--vault-gold)}.vault .muted{color:var(--vault-muted)}.rngs{display:flex;gap:2px;background:var(--vault-2);border-radius:11px;padding:3px}.rng{flex:1;min-height:34px;border-radius:9px;font-size:11px;font-weight:600;color:var(--vault-muted);letter-spacing:.06em}.rng.on,.rng[aria-pressed="true"]{background:var(--vault-3);color:var(--vault-gold)}.qa{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--ink-2);text-decoration:none;min-height:44px}.qa .k{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink)}.qa .k.gold{color:var(--on-gold)}.overlay{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;justify-content:flex-end;max-width:480px;margin:0 auto}.scrim{position:absolute;inset:0;background:var(--scrim);width:100%}.sheet{position:relative;background:var(--bg);border-radius:30px 30px 0 0;padding:14px var(--gut) calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}.grab{align-self:center;width:40px;height:5px;border-radius:3px;background:var(--line)}.sheet-btn{display:flex;align-items:center;gap:14px;min-height:60px;padding:0 14px;border-radius:18px;text-align:left;width:100%;color:inherit;text-decoration:none}.menu{position:fixed;inset:0;z-index:45;max-width:480px;margin:0 auto;display:flex;flex-direction:column}.menu-body{flex:1;overflow-y:auto;padding:8px var(--gut) 24px;display:flex;flex-direction:column;gap:20px}.mi{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:8px 12px;border-radius:16px;text-align:left;text-decoration:none;color:var(--ink)}.mi[aria-current="page"]{background:var(--well);box-shadow:var(--press-sm)}.mi:active{background:var(--well)}.strip{border-radius:20px;padding:12px 14px;gap:18px;white-space:nowrap;font-size:12px;flex:none;display:flex}.strip b{color:var(--vault-gold);font-weight:500}.strip .up{color:#86D5A6}.strip .down{color:#F29B8E}html.menu-open,html.menu-open body{overflow:hidden}html[data-hide] [data-money]{letter-spacing:.08em}.skel{display:inline-block;min-width:4ch;color:transparent;background:var(--well);border-radius:6px}.test-banner{display:flex;align-items:center;gap:10px;line-height:1.4;border-radius:14px;padding:10px 14px;font-size:12px;font-weight:600;color:var(--new);background:var(--new-bg)}.test-banner b{white-space:nowrap;letter-spacing:.08em}.test-mark{display:inline-block;vertical-align:middle;margin-left:6px;font:600 9px/1 var(--mono);letter-spacing:.12em;padding:3px 5px;border-radius:5px;color:var(--new);background:var(--new-bg)}.vault .test-mark{color:#241A05;background:#E8CD8C}.amt{font:500 14px/1.3 var(--mono);white-space:nowrap;text-align:right}.amt.neg{color:var(--ink)}.amt.pos{color:var(--up)}.when{font:500 11px/1.4 var(--mono);color:var(--muted)}.empty{padding:22px 0;text-align:center;font-size:13px;color:var(--muted)}</style>
+<style>
+.tabs{display:flex;gap:6px;border-radius:16px;padding:5px;margin:0 calc(-1 * var(--gut));padding-left:var(--gut);padding-right:var(--gut);background:transparent}
+.tabs .chip{flex:none;padding:0 14px;min-height:42px;position:relative}
+.cnt{display:inline-block;min-width:18px;margin-left:6px;padding:1px 6px;border-radius:9px;font:600 10px/1.5 var(--mono);background:var(--new-bg);color:var(--new)}
+.cnt:empty{display:none}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.kpi{border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.kpi b{font:500 20px/1.2 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card2{border-radius:22px;padding:16px}
+.pend{border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pend + .pend{margin-top:12px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-x{min-height:44px;border-radius:14px;font-size:13px;font-weight:600;padding:0 12px}
+.ok-btn{background:var(--up-bg);color:var(--up)}.no-btn{background:var(--down-bg);color:var(--down)}
+.urow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.urow:last-child{border-bottom:0}
+.ini{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex:none}
+.cash-edit{display:none;gap:8px;margin-top:8px}
+.cash-edit.on{display:flex}
+.cash-edit .input{min-height:44px}
+.small-mono{font:500 11px/1.4 var(--mono);color:var(--muted)}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* support */
+.sup{display:flex;flex-direction:column;gap:14px}
+.sess{display:flex;flex-direction:column;gap:4px;padding:12px;border-radius:16px;text-align:left;width:100%;color:inherit}
+.sess + .sess{margin-top:6px}
+.sess[aria-current="true"]{background:var(--well);box-shadow:var(--press-sm)}
+.sess .unread{min-width:20px;padding:1px 6px;border-radius:10px;background:var(--gold);color:var(--on-gold);font:600 10px/1.6 var(--mono);text-align:center}
+.st{font:600 9px/1 var(--mono);letter-spacing:.1em;padding:4px 6px;border-radius:5px}
+.st.open{color:var(--up);background:var(--up-bg)}.st.resolved{color:var(--sold);background:var(--sold-bg)}
+.star{width:32px;height:32px;border-radius:10px;color:var(--muted);font-size:15px}
+.star[aria-pressed="true"]{color:var(--gold-ink)}
+.conv{display:flex;flex-direction:column;min-height:420px;border-radius:22px;overflow:hidden}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;max-height:56vh;min-height:280px}
+.bub{max-width:82%;border-radius:16px;padding:9px 13px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.bub.user{align-self:flex-start;background:var(--well)}
+.bub.agent{align-self:flex-end;background:var(--gold);color:var(--on-gold)}
+.bub time{display:block;font:500 10px/1.4 var(--mono);opacity:.7;margin-top:3px}
+.reply{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.reply textarea{min-height:48px;max-height:140px;flex:1;resize:none;padding:12px 14px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom));z-index:50;max-width:calc(min(480px,100vw) - 40px);border-radius:14px;padding:12px 16px;font-size:13px;font-weight:500;background:var(--vault);color:var(--vault-text)}
+.denied{padding:40px 0;text-align:center}
+@media (min-width:900px){
+  .wide .app{max-width:1200px}.wide{--gut:40px}
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .sup{display:grid;grid-template-columns:360px 1fr;align-items:start}
+  .sup .back-list{display:none}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+}
+@media (max-width:899px){.sup.chatting .sess-col{display:none}.sup:not(.chatting) .conv{display:none}}
+</style>
+</head>
+<body class="wide">
+<div class="app">
+<!--@appheader back:Admin dashboard-->
+<header class="top">
+  <a class="iconbtn raised-sm" href="dashboard.html" aria-label="Back to dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a>
+    <span class="who-title grow" style="text-align:center">Admin dashboard</span>
+  <div class="row g12">
+    <button class="iconbtn raised-sm" data-open="menu" aria-label="Menu"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button>
+    
+  </div>
+</header>
+<div class="test-banner" data-test-banner hidden style="margin:0 var(--gut) 10px" role="status"><b>TEST MODE</b><span>Figures marked TEST include admin test values and are not real.</span></div>
+<!--/@appheader-->
+
+<main class="app-main stack g20">
+  <div class="denied stack g14" id="denied" hidden>
+    <span class="serif" style="font-size:24px">Admins only</span>
+    <p class="muted small">This account doesn’t have admin access.</p>
+    <a class="btn-sm raised-sm" href="dashboard.html">Back to dashboard</a>
+  </div>
+
+  <div class="stack g20" id="console" hidden>
+    <nav class="tabs row scrollx" data-group="tabs" aria-label="Admin sections">
+      <button class="chip" data-tab="overview" aria-pressed="true">Overview</button>
+      <button class="chip" data-tab="approvals" aria-pressed="false">Approvals<span class="cnt" id="cPend"></span></button>
+      <button class="chip" data-tab="support" aria-pressed="false">Support<span class="cnt" id="cChat"></span></button>
+      <button class="chip" data-tab="users" aria-pressed="false">Users</button>
+      <button class="chip" data-tab="transactions" aria-pressed="false">Transactions</button>
+      <button class="chip" data-tab="settings" aria-pressed="false">Settings</button>
+    </nav>
+
+    <!-- Overview -->
+    <section class="stack g20" data-panel="overview">
+      <div class="kpis">
+        <div class="kpi raised"><span>Users</span><b id="kUsers">—</b></div>
+        <div class="kpi raised"><span>Client cash</span><b id="kCash">—</b></div>
+        <div class="kpi raised"><span>Pending</span><b id="kPend">—</b></div>
+        <div class="kpi raised"><span>Open chats</span><b id="kChats">—</b></div>
+      </div>
+      <div class="two">
+        <div class="stack g10">
+          <div class="row between"><span class="eyebrow">Needs action</span><button class="link" data-goto="approvals">All approvals →</button></div>
+          <div class="list raised" id="ovPend"><p class="empty">Loading…</p></div>
+        </div>
+        <div class="stack g10">
+          <div class="row between"><span class="eyebrow">Newest users</span><button class="link" data-goto="users">All users →</button></div>
+          <div class="list raised" id="ovUsers"><p class="empty">Loading…</p></div>
+        </div>
+      </div>
+      <a class="sheet-btn raised-sm" href="dashboard-classic.html#admin">
+        <span class="badge inset" aria-hidden="true">⚙</span>
+        <span class="stack grow"><b style="font-size:14px">Advanced tools</b><span class="muted" style="font-size:12px">Holdings, prices, deposit addresses, payment settings, bulk actions</span></span>
+        <span class="muted" aria-hidden="true">›</span>
+      </a>
+    </section>
+
+    <!-- Approvals -->
+    <section class="stack g20" data-panel="approvals" hidden>
+      <div class="row between"><span class="eyebrow">Pending deposits &amp; withdrawals</span><button class="link" id="pendRefresh">Refresh</button></div>
+      <div class="two">
+        <div class="stack g10"><span class="muted small">Deposits <span class="mono" id="cDep"></span></span><div id="pendDep"><p class="empty">Loading…</p></div></div>
+        <div class="stack g10"><span class="muted small">Withdrawals <span class="mono" id="cWd"></span></span><div id="pendWd"><p class="empty">Loading…</p></div></div>
+      </div>
+    </section>
+
+    <!-- Support (moved here from the contact page's hidden console) -->
+    <section class="sup" data-panel="support" hidden>
+      <div class="stack g12 sess-col">
+        <div class="inset seg-wrap" data-group="chatfilter" role="group" aria-label="Filter chats">
+          <button class="seg" data-chatf="all" aria-pressed="true">All <span class="mono" id="cfAll"></span></button>
+          <button class="seg" data-chatf="open" aria-pressed="false">Open <span class="mono" id="cfOpen"></span></button>
+          <button class="seg" data-chatf="resolved" aria-pressed="false">Resolved <span class="mono" id="cfRes"></span></button>
+        </div>
+        <input class="input" id="chatSearch" type="search" placeholder="Search name or email" aria-label="Search chats">
+        <div class="raised card2" id="sessList" style="padding:8px"><p class="empty">Loading chats…</p></div>
+        <button class="btn-x raised-sm" id="clearResolved" style="color:var(--down)">Clear resolved from view</button>
+      </div>
+      <div class="conv raised" id="conv">
+        <div class="row g12" style="padding:14px 16px;border-bottom:1px solid var(--line)">
+          <button class="iconbtn raised-sm back-list" id="convBack" aria-label="Back to chats"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+          <span class="ini gold" id="cvAv">?</span>
+          <span class="grow stack" style="min-width:0"><b class="ell" id="cvName">Select a chat</b><span class="small-mono ell" id="cvSub">Conversations appear here</span></span>
+          <button class="btn-x ok-btn" id="cvResolve" disabled>Resolve</button>
+        </div>
+        <div class="msgs" id="msgs" aria-live="polite"></div>
+        <form class="reply" id="replyForm">
+          <textarea class="input" id="replyText" rows="1" placeholder="Type your reply…" aria-label="Reply" disabled></textarea>
+          <button class="gold btn-x" id="replySend" style="min-width:76px" disabled>Send</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Users -->
+    <section class="stack g12" data-panel="users" hidden>
+      <div class="row g10">
+        <input class="input grow" id="userSearch" type="search" placeholder="Search name or email" aria-label="Search users">
+        <button class="btn-x raised-sm" id="userExport" style="flex:none;min-height:52px">Export CSV</button>
+      </div>
+      <span class="small-mono" id="userCount"></span>
+      <div class="list raised" id="userList"><p class="empty">Loading…</p></div>
+    </section>
+
+    <!-- Transactions -->
+    <section class="stack g12" data-panel="transactions" hidden>
+      <input class="input" id="txSearch" type="search" placeholder="Filter by name, type, symbol, status or note" aria-label="Filter transactions">
+      <span class="small-mono" id="txCount"></span>
+      <div class="list raised" id="txList"><p class="empty">Loading…</p></div>
+    </section>
+
+    <!-- Settings -->
+    <section class="stack g20" data-panel="settings" hidden>
+      <div class="stack g10">
+        <span class="eyebrow">Site</span>
+        <div class="list raised">
+          <div class="setting"><span class="stack"><span>Test mode</span><span class="note muted" style="font-size:12px;font-weight:400">Uses admin test values on client pages and marks them TEST</span></span><button class="sw" id="testMode" aria-pressed="false" aria-label="Test mode"><span></span></button></div>
+        </div>
+      </div>
+      <form class="stack g10" id="regForm">
+        <span class="eyebrow">Risk disclosure</span>
+        <div class="raised stack g14 card2">
+          <label class="field">Regulator name<input class="input" id="regName" maxlength="120"></label>
+          <label class="field">Licence number<input class="input" id="regLic" maxlength="60"></label>
+          <button class="btn-sm gold" type="submit">Save</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<!--@sheet-->
+<div class="overlay" id="sheet" hidden>
+  <button class="scrim" data-close="sheet" aria-label="Close quick actions"></button>
+  <div class="sheet" role="dialog" aria-label="Quick actions">
+    <span class="grab" aria-hidden="true"></span><span class="eyebrow">Quick actions</span>
+    <a href="dashboard-classic.html#deposit" class="sheet-btn raised-sm"><span class="badge gold" aria-hidden="true">+</span><span class="stack"><b style="font-size:14px">Deposit funds</b><span class="muted" style="font-size:12px">Bank transfer, card or crypto</span></span></a>
+    <a href="dashboard-classic.html#withdraw" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true">↑</span><span class="stack"><b style="font-size:14px">Withdraw</b><span class="muted" style="font-size:12px">To your bank or wallet</span></span></a>
+    <a href="trade.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true">⇅</span><span class="stack"><b style="font-size:14px">Trade</b><span class="muted" style="font-size:12px">Practice or live</span></span></a>
+    <a href="invest.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true">⌂</span><span class="stack"><b style="font-size:14px">New investment</b><span class="muted" style="font-size:12px">Equities or real estate</span></span></a>
+  </div>
+</div>
+<!--/@sheet-->
+<!--@appmenu -->
+<div class="menu app" id="menu" hidden role="dialog" aria-label="Menu">
+  <div class="top" style="position:static">
+    <span class="row g12"><span class="logo gold" aria-hidden="true">A</span><span class="serif" style="font-size:21px;letter-spacing:.04em">Aurum</span></span>
+    <button class="iconbtn inset" data-close="menu" aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="menu-body">
+    <div class="vault strip scrollx mono" aria-label="Live prices">
+      <span><b>BTC</b> <span data-price="BTC">—</span> <span data-chg="BTC" class="flat">—</span></span>
+      <span><b>ETH</b> <span data-price="ETH">—</span> <span data-chg="ETH" class="flat">—</span></span>
+      <span><b>SOL</b> <span data-price="SOL">—</span> <span data-chg="SOL" class="flat">—</span></span>
+      <span><b>XRP</b> <span data-price="XRP">—</span> <span data-chg="XRP" class="flat">—</span></span>
+      <span><b>Gold</b> <span data-price="XAUUSD">—</span> <span data-chg="XAUUSD" class="flat">—</span></span>
+    </div>
+    <div class="stack g10">
+      <span class="eyebrow">Navigate</span>
+      <nav class="raised" style="border-radius:22px;padding:6px" aria-label="All sections">
+        <a class="mi" href="dashboard.html"><span class="badge inset" aria-hidden="true">◈</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Dashboard</b><span class="mono muted" style="font-size:11px">Portfolio overview</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="invest.html"><span class="badge inset" aria-hidden="true">↗</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Invest</b><span class="mono muted" style="font-size:11px">Explore markets</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="trade.html"><span class="badge inset" aria-hidden="true">⇄</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Trade</b><span class="mono muted" style="font-size:11px">Practice or live execution</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="invest.html#crypto"><span class="badge inset" aria-hidden="true">₿</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Cryptocurrency</b><span class="mono muted" style="font-size:11px">BTC · ETH · SOL · more</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="invest.html#equities"><span class="badge inset" aria-hidden="true">◎</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Global equities</b><span class="mono muted" style="font-size:11px">TSLA · AAPL · NVDA · more</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="invest.html#commodities"><span class="badge inset" aria-hidden="true">Au</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Commodities</b><span class="mono muted" style="font-size:11px">Gold · Oil · Silver</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="dashboard-classic.html#transactions"><span class="badge inset" aria-hidden="true">≡</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Transactions</b><span class="mono muted" style="font-size:11px">Full ledger</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="contact.html"><span class="badge inset" aria-hidden="true">?</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Support</b><span class="mono muted" style="font-size:11px">Talk to an advisor</span></span><span class="muted" aria-hidden="true">›</span></a>
+      </nav>
+    </div>
+    <a href="dashboard-classic.html#deposit" class="btn gold" style="text-transform:none;letter-spacing:0">+ Deposit funds</a>
+    <span class="row g8 muted" style="justify-content:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase"><span class="dot" aria-hidden="true"></span>All systems operational</span>
+  </div>
+</div>
+<!--/@appmenu-->
+<!--@appnav account-->
+<nav class="nav raised" aria-label="Main">
+  <a href="dashboard.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Home</a>
+  <a href="invest.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>Invest</a>
+  <button class="fab gold" data-open="sheet" aria-label="Quick actions"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  <a href="dashboard-classic.html#portfolio"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span>Portfolio</a>
+  <a href="profile.html" aria-current="page"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Account</a>
+</nav>
+<!--/@appnav-->
+</div>
+<!--@tail-->
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/dashboard.html","/invest.html","/trade.html","/profile.html","/signup.html","/portfolio.html","/transactions.html","/deposit.html","/withdraw.html"]}}]},"eagerness":"moderate"}],"prefetch":[{"source":"document","where":{"href_matches":["/dashboard.html","/invest.html","/trade.html","/profile.html","/signup.html","/portfolio.html","/transactions.html","/deposit.html","/withdraw.html"]},"eagerness":"moderate"}]}</script>
+<script src="app.js" defer></script>
+<!--/@tail-->
+<script src="aurum-session.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+  var S = window.AurumSession, f = S.fmt;
+  var $ = function (id) { return document.getElementById(id); };
+  var EDGE = S.url + '/functions/v1/admin-update-shipment';
+  var users = [], txs = [], pending = [], me = null;
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var toastT;
+  function toast(t) { var el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { el.hidden = true; }, 4000); }
+  function name(u) { return u ? ([u.first_name, u.last_name].filter(Boolean).join(' ') || u.email || u.id.slice(0, 8)) : '—'; }
+  function ago(iso) {
+    var m = Math.floor((Date.now() - new Date(iso)) / 6e4);
+    if (m < 1) return 'just now'; if (m < 60) return m + 'm ago';
+    var h = Math.floor(m / 60); if (h < 24) return h + 'h ago';
+    var d = Math.floor(h / 24); return d < 30 ? d + 'd ago' : new Date(iso).toLocaleDateString('en-GB');
+  }
+
+  /** Admin edge function — checks profiles.is_admin on the server for every call. */
+  async function callAdmin(action, params) {
+    var tok = await S.token();
+    var r = await fetch(EDGE, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(Object.assign({ action: action }, params || {})) });
+    if (!r.ok) throw new Error(r.status === 403 ? 'Not authorised' : 'HTTP ' + r.status + ': ' + (await r.text().catch(function () { return ''; })));
+    var j = await r.json();
+    if (!j.success) throw new Error(j.error || 'Admin action failed');
+    return j.data;
+  }
+
+  /* ── Tabs ───────────────────────────────────────────────────────── */
+  function show(tab) {
+    document.querySelectorAll('[data-panel]').forEach(function (p) { p.hidden = p.dataset.panel !== tab; });
+    document.querySelectorAll('[data-tab]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.tab === tab ? 'true' : 'false'); });
+    if (tab === 'support') startSupport();
+    try { history.replaceState(null, '', '#' + tab); } catch (e) {}
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-tab]'); if (t) { show(t.dataset.tab); return; }
+    var g = e.target.closest('[data-goto]'); if (g) { show(g.dataset.goto); window.scrollTo(0, 0); }
+  });
+
+  /* ── Overview ───────────────────────────────────────────────────── */
+  function stats() {
+    $('kUsers').textContent = users.length ? String(users.length) : '0';
+    $('kCash').textContent = f.compact(users.reduce(function (s, u) { return s + (Number(u.cash) || 0); }, 0));
+    var p = pending.filter(function (t) { return t.status === 'pending'; }).length;
+    $('kPend').textContent = String(p); $('cPend').textContent = p ? String(p) : '';
+    $('ovUsers').innerHTML = users.length ? users.slice().sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); }).slice(0, 5).map(function (u) {
+      return '<div class="item"><span class="ini inset">' + esc(initials(u)) + '</span><span class="grow"><b class="ell" style="font-size:14px">' + esc(name(u)) + '</b><span class="small-mono ell">' + esc(u.email || '—') + '</span></span><span class="amt">' + esc(f.usd(u.cash)) + '</span></div>';
+    }).join('') : '<p class="empty">No users yet.</p>';
+    var open = pending.filter(function (t) { return t.status === 'pending'; }).slice(0, 5);
+    $('ovPend').innerHTML = open.length ? open.map(function (t) {
+      var u = byId(t.user_id), dep = t.type === 'deposit';
+      return '<div class="item"><span class="badge inset" aria-hidden="true">' + (dep ? '↓' : '↑') + '</span><span class="grow"><b style="font-size:14px">' + (dep ? 'Deposit' : 'Withdrawal') + ' · ' + esc(name(u)) + '</b><span class="small-mono">' + esc(ago(t.created_at)) + '</span></span><span class="amt">' + esc(f.usd(Math.abs(Number(t.usd_amount) || 0))) + '</span></div>';
+    }).join('') : '<p class="empty">Nothing waiting. ✓</p>';
+  }
+  function byId(id) { return users.find(function (u) { return u.id === id; }); }
+  function initials(u) { return ((u.avatar_initials || ((u.first_name || '?')[0] + (u.last_name || '')[0] || '')) || '?').toUpperCase().slice(0, 2); }
+
+  /* ── Approvals ──────────────────────────────────────────────────── */
+  function pendCard(t) {
+    var u = byId(t.user_id), dep = t.type === 'deposit', amt = Math.abs(Number(t.usd_amount) || 0), isP = t.status === 'pending';
+    return '<div class="pend raised"' + (isP ? '' : ' style="opacity:.7"') + '>' +
+      '<div class="row g12"><span class="grow stack" style="min-width:0"><b class="ell">' + esc(name(u)) + '</b><span class="small-mono ell">' + esc(u ? u.email : t.user_id) + '</span></span>' +
+      '<span class="stack" style="align-items:flex-end"><b class="mono" style="font-size:17px">' + (dep ? '+' : '−') + esc(f.usd(amt).replace('−', '')) + '</b>' + (u ? '<span class="small-mono">Bal ' + esc(f.usd(u.cash)) + '</span>' : '') + '</span></div>' +
+      '<div class="row g8" style="flex-wrap:wrap"><span class="tag ' + (isP ? 'flat' : 'down') + '" style="min-width:0">' + esc((t.status || '').toUpperCase()) + '</span><span class="small-mono">' + esc(t.symbol || '—') + ' · ' + esc(ago(t.created_at)) + '</span></div>' +
+      (t.note ? '<p class="small muted" style="word-break:break-word">' + esc(t.note) + '</p>' : '') +
+      '<div class="acts">' + (isP
+        ? '<button class="btn-x ok-btn" data-approve="' + esc(t.id) + '">Approve</button><button class="btn-x no-btn" data-reject="' + esc(t.id) + '">Reject</button>'
+        : '<button class="btn-x raised-sm" data-approve="' + esc(t.id) + '">Re-approve</button><button class="btn-x no-btn" data-deltx="' + esc(t.id) + '">Delete</button>') +
+      '</div></div>';
+  }
+  function renderPending() {
+    var dep = pending.filter(function (t) { return t.type === 'deposit'; }), wd = pending.filter(function (t) { return t.type === 'withdraw'; });
+    $('cDep').textContent = '(' + dep.length + ')'; $('cWd').textContent = '(' + wd.length + ')';
+    $('pendDep').innerHTML = dep.length ? dep.map(pendCard).join('') : '<p class="empty">No pending deposits ✓</p>';
+    $('pendWd').innerHTML = wd.length ? wd.map(pendCard).join('') : '<p class="empty">No pending withdrawals ✓</p>';
+    stats();
+  }
+  async function loadPending() {
+    try { pending = (await callAdmin('get_pending')) || []; renderPending(); }
+    catch (e) { $('pendDep').innerHTML = $('pendWd').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; }
+  }
+  $('pendRefresh').addEventListener('click', function () { loadPending(); loadUsers(); });
+  document.addEventListener('click', async function (e) {
+    var a = e.target.closest('[data-approve]'), r = e.target.closest('[data-reject]'), d = e.target.closest('[data-deltx]');
+    if (!a && !r && !d) return;
+    var btn = a || r || d, id = btn.dataset.approve || btn.dataset.reject || btn.dataset.deltx;
+    var t = pending.find(function (x) { return x.id === id; }); if (!t) return;
+    var amt = Math.abs(Number(t.usd_amount) || 0), dep = t.type === 'deposit';
+    try {
+      if (a) {
+        if (!confirm((dep ? 'Approve deposit of ' : 'Approve withdrawal of ') + f.usd(amt) + '? This ' + (dep ? 'credits' : 'deducts') + ' it ' + (dep ? 'to' : 'from') + ' the client’s balance.')) return;
+        btn.disabled = true;
+        var res = await callAdmin(dep ? 'approve_deposit' : 'approve_withdrawal', { txId: t.id, userId: t.user_id, amount: amt });
+        toast((dep ? 'Deposit' : 'Withdrawal') + ' approved. New balance ' + f.usd(res && res.newCash));
+      } else if (r) {
+        var reason = prompt('Rejection reason (optional):', ''); if (reason === null) return;
+        btn.disabled = true; await callAdmin('reject_pending', { txId: t.id, reason: reason }); toast('Request rejected');
+      } else {
+        if (!confirm('Permanently delete this transaction?')) return;
+        btn.disabled = true; await callAdmin('delete_transaction', { txId: t.id }); toast('Transaction deleted');
+      }
+      await Promise.all([loadPending(), loadUsers()]);
+    } catch (err) { btn.disabled = false; toast('Error: ' + err.message); }
+  });
+
+  /* ── Users ──────────────────────────────────────────────────────── */
+  function renderUsers() {
+    var q = $('userSearch').value.trim().toLowerCase();
+    var list = users.filter(function (u) { return !q || (u.email || '').toLowerCase().indexOf(q) >= 0 || name(u).toLowerCase().indexOf(q) >= 0; });
+    $('userCount').textContent = list.length + ' of ' + users.length + ' users';
+    $('userList').innerHTML = list.length ? list.map(function (u) {
+      return '<div class="urow" style="flex-wrap:wrap"><span class="ini inset">' + esc(initials(u)) + '</span>' +
+        '<span class="grow stack" style="min-width:0"><b class="ell" style="font-size:14px">' + esc(name(u)) + (u.is_admin ? ' <span class="tag flat" style="min-width:0;font-size:10px">ADMIN</span>' : '') + '</b><span class="small-mono ell">' + esc(u.email || '—') + ' · joined ' + esc(u.created_at ? new Date(u.created_at).toLocaleDateString('en-GB') : '—') + '</span></span>' +
+        '<span class="stack" style="align-items:flex-end;gap:4px"><span class="amt">' + esc(f.usd(u.cash)) + '</span><button class="link" style="min-height:32px" data-cash="' + esc(u.id) + '">Set cash</button></span>' +
+        '<form class="cash-edit" style="width:100%" data-cashform="' + esc(u.id) + '"><input class="input mono grow" inputmode="decimal" value="' + esc((Number(u.cash) || 0).toFixed(2)) + '" aria-label="New cash balance"><button class="btn-x gold" style="flex:none">Save</button></form></div>';
+    }).join('') : '<p class="empty">No users match.</p>';
+  }
+  async function loadUsers() {
+    try { users = (await callAdmin('get_all_users')) || []; renderUsers(); stats(); if (pending.length) renderPending(); }
+    catch (e) { $('userList').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; }
+  }
+  $('userSearch').addEventListener('input', renderUsers);
+  $('userList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-cash]'); if (!b) return;
+    var fm = document.querySelector('[data-cashform="' + b.dataset.cash + '"]'); fm.classList.toggle('on');
+    if (fm.classList.contains('on')) fm.querySelector('input').focus();
+  });
+  $('userList').addEventListener('submit', async function (e) {
+    var fm = e.target.closest('[data-cashform]'); if (!fm) return; e.preventDefault();
+    var u = byId(fm.dataset.cashform), v = parseFloat(fm.querySelector('input').value.replace(/,/g, ''));
+    if (!u || isNaN(v)) { toast('Enter a valid amount'); return; }
+    if (!confirm('Set ' + name(u) + '’s cash balance to ' + f.usd(v) + '?')) return;
+    try { await callAdmin('update_cash', { userId: u.id, newAmount: v }); toast('Cash set to ' + f.usd(v)); await loadUsers(); }
+    catch (err) { toast('Error: ' + err.message); }
+  });
+  $('userExport').addEventListener('click', function () {
+    var rows = [['ID', 'First', 'Last', 'Email', 'Cash', 'Joined']].concat(users.map(function (u) { return [u.id, u.first_name || '', u.last_name || '', u.email || '', (Number(u.cash) || 0).toFixed(2), u.created_at || '']; }));
+    var csv = rows.map(function (r) { return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'aurum-users-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+  });
+
+  /* ── Transactions ───────────────────────────────────────────────── */
+  function renderTx() {
+    var q = $('txSearch').value.trim().toLowerCase();
+    var list = txs.filter(function (t) {
+      if (!q) return true;
+      var n = t.profiles ? [t.profiles.first_name, t.profiles.last_name].join(' ') : '';
+      return [n, t.type, t.symbol, t.status, t.note].join(' ').toLowerCase().indexOf(q) >= 0;
+    });
+    $('txCount').textContent = list.length + ' of ' + txs.length + ' transactions';
+    $('txList').innerHTML = list.length ? list.slice(0, 300).map(function (t) {
+      var n = t.profiles ? [t.profiles.first_name, t.profiles.last_name].filter(Boolean).join(' ') : '—';
+      var st = (t.status || 'approved').toLowerCase();
+      return '<div class="item"><span class="grow"><b style="font-size:14px">' + esc((t.type || '').replace(/^./, function (c) { return c.toUpperCase(); })) + (t.symbol ? ' ' + esc(t.symbol) : '') +
+        (st !== 'approved' && st !== 'completed' ? ' <span class="tag ' + (st === 'pending' ? 'flat' : 'down') + '" style="min-width:0;font-size:10px">' + esc(st) + '</span>' : '') + '</b>' +
+        '<span class="small-mono ell">' + esc(n) + ' · ' + esc(f.when(t.created_at)) + '</span></span><span class="amt">' + (t.usd_amount != null ? esc(f.signedUsd(t.usd_amount)) : '—') + '</span></div>';
+    }).join('') + (list.length > 300 ? '<p class="empty">Showing the newest 300 — refine the filter to see more.</p>' : '') : '<p class="empty">No transactions match.</p>';
+  }
+  async function loadTx() {
+    try { txs = (await callAdmin('get_all_transactions')) || []; renderTx(); }
+    catch (e) { $('txList').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; }
+  }
+  $('txSearch').addEventListener('input', renderTx);
+
+  /* ── Settings (site_settings: anyone reads, only admins write — RLS) ── */
+  var settings = {};
+  async function loadSettings() {
+    var rows = await S.rest('site_settings?select=key,value').catch(function () { return []; });
+    (rows || []).forEach(function (r) { settings[r.key] = r.value; });
+    $('testMode').setAttribute('aria-pressed', settings.test_mode === true || settings.test_mode === 'true' ? 'true' : 'false');
+    $('regName').value = settings.regulator_name || ''; $('regLic').value = settings.licence_number || '';
+  }
+  function putSettings(obj) {
+    var body = Object.keys(obj).map(function (k) { return { key: k, value: obj[k] }; });
+    return S.rest('site_settings?on_conflict=key', { method: 'POST', body: JSON.stringify(body), headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } });
+  }
+  $('testMode').addEventListener('click', function () {
+    // app.js has already flipped aria-pressed
+    var on = this.getAttribute('aria-pressed') === 'true', sw = this;
+    if (!confirm(on ? 'Turn TEST MODE on? Client pages will show admin test values marked TEST.' : 'Turn test mode off? Client pages go back to real figures only.')) { sw.setAttribute('aria-pressed', on ? 'false' : 'true'); return; }
+    putSettings({ test_mode: on }).then(function () { toast('Test mode ' + (on ? 'on' : 'off')); })
+      .catch(function (err) { sw.setAttribute('aria-pressed', on ? 'false' : 'true'); toast('Error: ' + err.message); });
+  });
+  $('regForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    putSettings({ regulator_name: $('regName').value.trim() || null, licence_number: $('regLic').value.trim() || null })
+      .then(function () { toast('Risk disclosure saved'); }).catch(function (err) { toast('Error: ' + err.message); });
+  });
+
+  /* ── Support inbox (realtime; needs supabase-js for channels) ───── */
+  var sb = null, sessions = {}, activeId = null, chatFilter = 'all', supportStarted = false;
+  var favs = []; try { favs = JSON.parse(localStorage.getItem('admin_favourites') || '[]'); } catch (e) {}
+  function client() {
+    if (!sb && window.supabase) sb = window.supabase.createClient(S.url, S.key);
+    return sb;
+  }
+  function chatCounts() {
+    var all = Object.keys(sessions).length, res = Object.values(sessions).filter(function (s) { return s.data.status === 'resolved'; }).length;
+    $('cfAll').textContent = all; $('cfOpen').textContent = all - res; $('cfRes').textContent = res;
+    $('kChats').textContent = String(all - res);
+    var unread = Object.values(sessions).reduce(function (n, s) { return n + s.unread; }, 0);
+    $('cChat').textContent = unread ? String(unread) : (all - res ? String(all - res) : '');
+  }
+  function renderSessions() {
+    var q = $('chatSearch').value.trim().toLowerCase();
+    var ids = Object.keys(sessions).filter(function (id) {
+      var s = sessions[id].data, st = s.status || 'open';
+      var okF = chatFilter === 'all' || (chatFilter === 'open' ? st !== 'resolved' : st === 'resolved');
+      var okQ = !q || (s.user_name || '').toLowerCase().indexOf(q) >= 0 || (s.user_email || '').toLowerCase().indexOf(q) >= 0;
+      return okF && okQ;
+    }).sort(function (a, b) {
+      var fa = favs.indexOf(a) >= 0, fb = favs.indexOf(b) >= 0; if (fa !== fb) return fa ? -1 : 1;
+      return lastAt(b) - lastAt(a);
+    });
+    $('sessList').innerHTML = ids.length ? ids.map(function (id) {
+      var s = sessions[id], d = s.data, last = (d.chat_messages || []).slice(-1)[0], st = d.status === 'resolved' ? 'resolved' : 'open', fav = favs.indexOf(id) >= 0;
+      return '<div class="sess" role="button" tabindex="0" data-sess="' + esc(id) + '" aria-current="' + (id === activeId) + '">' +
+        '<span class="row g8"><b class="grow ell" style="font-size:14px">' + esc(d.user_name || 'Visitor') + '</b>' + (s.unread ? '<span class="unread">' + (s.unread > 9 ? '9+' : s.unread) + '</span>' : '') +
+        '<span class="st ' + st + '">' + (st === 'resolved' ? 'DONE' : 'LIVE') + '</span><button class="star" data-fav="' + esc(id) + '" aria-pressed="' + fav + '" aria-label="Favourite">★</button></span>' +
+        '<span class="small-mono ell">' + esc(d.user_email || 'No email') + (last ? ' · ' + esc(ago(last.created_at)) : '') + '</span>' +
+        '<span class="muted ell" style="font-size:13px">' + esc(last ? last.message : 'Session started') + '</span></div>';
+    }).join('') : '<p class="empty">No chats here.</p>';
+    chatCounts();
+  }
+  function lastAt(id) { var m = (sessions[id].data.chat_messages || []).slice(-1)[0]; return new Date(m ? m.created_at : sessions[id].data.created_at).getTime() || 0; }
+  function addSession(s) {
+    if (sessions[s.id]) return;
+    sessions[s.id] = { data: s, unread: 0 };
+    client().channel('admin_msgs_' + s.id).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: 'session_id=eq.' + s.id }, function (p) {
+      var row = p.new, ss = sessions[s.id]; if (!ss || row.sender_role !== 'user') return;
+      ss.data.chat_messages = (ss.data.chat_messages || []).concat([row]);
+      if (activeId === s.id) appendMsg(row); else { ss.unread++; toast((ss.data.user_name || 'Visitor') + ': ' + String(row.message).slice(0, 60)); }
+      renderSessions();
+    }).subscribe();
+  }
+  async function startSupport() {
+    if (supportStarted) return;
+    if (!client()) { setTimeout(startSupport, 300); return; } // supabase-js still loading
+    supportStarted = true;
+    var r = await sb.from('chat_sessions').select('*, chat_messages(id,sender_role,message,created_at)').order('created_at', { ascending: false }).limit(50);
+    if (r.error) { $('sessList').innerHTML = '<p class="empty">' + esc(r.error.message) + '</p>'; return; }
+    (r.data || []).forEach(function (s) { (s.chat_messages || []).sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); }); addSession(s); });
+    renderSessions();
+    sb.channel('admin_all_sessions').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_sessions' }, function (p) {
+      var s = p.new; s.chat_messages = []; addSession(s); renderSessions(); toast('New chat from ' + (s.user_name || 'a visitor'));
+    }).subscribe();
+  }
+  function appendMsg(row) {
+    var b = document.createElement('div'); b.className = 'bub ' + (row.sender_role === 'agent' ? 'agent' : 'user');
+    b.textContent = row.message;
+    var t = document.createElement('time'); t.textContent = new Date(row.created_at || Date.now()).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); b.appendChild(t);
+    $('msgs').appendChild(b); $('msgs').scrollTop = $('msgs').scrollHeight;
+  }
+  async function openSession(id) {
+    activeId = id; var s = sessions[id]; s.unread = 0;
+    document.querySelector('.sup').classList.add('chatting');
+    $('cvName').textContent = s.data.user_name || 'Visitor';
+    $('cvAv').textContent = (s.data.user_name || '?')[0].toUpperCase();
+    $('cvSub').textContent = (s.data.user_email || 'No email') + (s.data.page_url ? ' · ' + s.data.page_url.replace(/^https?:\/\//, '').slice(0, 40) : '');
+    $('cvResolve').disabled = s.data.status === 'resolved'; $('cvResolve').textContent = s.data.status === 'resolved' ? 'Resolved' : 'Resolve';
+    $('replyText').disabled = false; $('replySend').disabled = false;
+    $('msgs').innerHTML = '';
+    renderSessions();
+    var r = await sb.from('chat_messages').select('*').eq('session_id', id).order('created_at', { ascending: true });
+    if (activeId !== id) return;
+    $('msgs').innerHTML = '';
+    (r.data || []).forEach(appendMsg);
+    $('replyText').focus({ preventScroll: true });
+  }
+  $('sessList').addEventListener('click', function (e) {
+    var fv = e.target.closest('[data-fav]');
+    if (fv) {
+      e.stopPropagation(); var id = fv.dataset.fav;
+      favs = favs.indexOf(id) >= 0 ? favs.filter(function (x) { return x !== id; }) : favs.concat([id]);
+      try { localStorage.setItem('admin_favourites', JSON.stringify(favs)); } catch (err) {}
+      renderSessions(); return;
+    }
+    var it = e.target.closest('[data-sess]'); if (it) openSession(it.dataset.sess);
+  });
+  $('sessList').addEventListener('keydown', function (e) { var it = e.target.closest('[data-sess]'); if (it && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openSession(it.dataset.sess); } });
+  $('convBack').addEventListener('click', function () { document.querySelector('.sup').classList.remove('chatting'); });
+  $('chatSearch').addEventListener('input', renderSessions);
+  document.addEventListener('click', function (e) { var b = e.target.closest('[data-chatf]'); if (b) { chatFilter = b.dataset.chatf; renderSessions(); } });
+  $('clearResolved').addEventListener('click', function () {
+    var ids = Object.keys(sessions).filter(function (id) { return sessions[id].data.status === 'resolved'; });
+    if (!ids.length) { toast('No resolved chats to clear'); return; }
+    if (!confirm('Remove ' + ids.length + ' resolved chat(s) from this view? They stay in the database.')) return;
+    ids.forEach(function (id) { delete sessions[id]; if (activeId === id) activeId = null; });
+    renderSessions();
+  });
+  $('cvResolve').addEventListener('click', async function () {
+    if (!activeId) return; var btn = this; btn.disabled = true;
+    var r = await sb.from('chat_sessions').update({ status: 'resolved' }).eq('id', activeId);
+    if (r.error) { btn.disabled = false; toast('Error: ' + r.error.message); return; }
+    sessions[activeId].data.status = 'resolved'; btn.textContent = 'Resolved'; renderSessions();
+  });
+  $('replyText').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('replyForm').requestSubmit(); } });
+  $('replyText').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 140) + 'px'; });
+  $('replyForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var text = $('replyText').value.trim(), id = activeId; if (!text || !id) return;
+    $('replySend').disabled = true;
+    var r = await sb.from('chat_messages').insert({ session_id: id, sender_role: 'agent', sender_name: 'Aurum Support', message: text }).select().single();
+    $('replySend').disabled = false;
+    if (r.error || !r.data) { toast('Reply not sent: ' + (r.error ? r.error.message : 'unknown error')); return; } // text stays in the box
+    $('replyText').value = ''; $('replyText').style.height = '';
+    var row = r.data; appendMsg(row);
+    sessions[id].data.chat_messages = (sessions[id].data.chat_messages || []).concat([row]); renderSessions();
+    // Visitors can't read chat tables (RLS): deliver to their open widget by broadcast;
+    // the widget also catches up via chat_agent_replies(), so a missed broadcast is harmless.
+    var ch = sb.channel('chat_' + id);
+    ch.subscribe(function (st) { if (st === 'SUBSCRIBED') ch.send({ type: 'broadcast', event: 'agent_msg', payload: row }).finally(function () { sb.removeChannel(ch); }); });
+    if (sessions[id].data.user_email) {
+      S.token().then(function (tok) {
+        return fetch(S.url + '/functions/v1/contact-form-handler', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: S.key, Authorization: 'Bearer ' + tok }, body: JSON.stringify({ formType: 'chat_reply', message: text, sessionId: id }) });
+      }).catch(function () {});
+    }
+  });
+
+  /* ── Boot: admins only ──────────────────────────────────────────── */
+  S.ready.then(function (ctx) {
+    me = ctx;
+    if (ctx.profile.is_admin !== true) { $('denied').hidden = false; return; }
+    $('console').hidden = false;
+    var tab = (location.hash || '').slice(1);
+    show(document.querySelector('[data-panel="' + tab + '"]') ? tab : 'overview');
+    loadUsers().then(loadPending); loadTx(); loadSettings();
+    // Count open chats for the overview even before the Support tab is opened
+    startSupport();
+  }).catch(function (err) { if (!/signed out|expired/.test(err.message)) toast('Couldn’t load: ' + err.message); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && me && me.profile.is_admin) loadPending(); });
+});
+</script>
+</body>
+</html>

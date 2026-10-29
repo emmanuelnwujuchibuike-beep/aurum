@@ -11,13 +11,15 @@ Reference: `design/aurum-design/` (landing, dashboard, invest, trade, account, a
 | Markets (`markets.html`) | ✅ Done earlier — same system |
 | Shared signed-in shell (header, menu, quick-action sheet, bottom nav, tokens, dark theme) | ✅ 7adf5bc |
 | Dashboard | ✅ 7adf5bc — tested with simulated account data (light/dark, test mode on/off) |
-| Admin dashboard (redesign, Supabase realtime, test-mode switch, regulator fields) | ⏳ requested |
+| Admin dashboard (`admin.html`) | ✅ Overview, approvals, support inbox (moved from contact page), users + set cash, transactions, test mode, regulator/licence. Advanced tools (holdings, prices, P&L, addresses, payment settings, bulk) open the untouched classic console at `dashboard-classic.html#admin` |
 | Deposit / Withdraw / Transactions / Portfolio pages | ⏳ — hand off to `dashboard-classic.html#…` until built |
 | Support icon replacing chat widget | ⏳ requested |
 | Invest | ⏳ |
 | Trade | ⏳ |
-| Account / Profile & settings | ⏳ |
-| Other pages (about, contact, testimonial, privacy, signup) | ⏳ — same shell & tokens |
+| Account / Profile & settings | ✅ new shell; details, avatar (upload/colour), theme, currency/format, digest, price + P&L alerts; **Admin dashboard button shown only when profiles.is_admin** |
+| Contact / Support | ✅ new shell; 4 enquiry forms (same payloads), real live-chat widget; hidden 5-tap support console removed (now admin.html#support); canned fake-advisor chat removed |
+| Other pages (about, testimonial, privacy, signup) | ⏳ — same shell & tokens |
+| Signed-in landing | ✅ index.html sends a signed-in device straight to dashboard.html before paint (`?home` shows the landing) |
 
 ## Feature inventory (must keep working)
 

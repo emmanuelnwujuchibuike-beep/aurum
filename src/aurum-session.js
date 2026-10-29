@@ -6,6 +6,7 @@
    Exposes window.AurumSession:
      ready        Promise<{ user, profile, settings }> — redirects to sign-in if needed
      rest(path, opts)      Supabase REST call with the user's token
+     token()               Promise<fresh access token> for edge functions / storage
      portfolio({...})      THE one portfolio / P&L calculation every page uses
      fmt                   number/date formatters (Intl)
      signOut()             ends the session and clears this device's user data */
@@ -152,7 +153,14 @@
     return { user: s.user, profile: profile, settings: settings, testMode: testMode };
   }
 
-  window.AurumSession = { ready: load(), rest: rest, portfolio: portfolio, fmt: fmt, signOut: signOut, url: URL_ };
+  /** Fresh access token for edge functions and storage uploads. */
+  async function token() {
+    var s = await freshSession();
+    if (!s) { toSignIn(); throw new Error('signed out'); }
+    return s.access_token;
+  }
+
+  window.AurumSession = { ready: load(), rest: rest, token: token, key: KEY, portfolio: portfolio, fmt: fmt, signOut: signOut, url: URL_ };
 
   // Back-swipe / back button: browsers restore this page instantly from the
   // back-forward cache (no reload, no flash). Re-check the session — a signed-out

@@ -6346,7 +6346,7 @@ document.addEventListener('aurumRatesReady', function () {
 /* Hand-off from the new pages while their own versions are built:
    dashboard-classic.html#deposit | #withdraw | #transactions | #portfolio opens that window
    after the page has loaded (the windows read the signed-in user only on submit). */
-(function(){var m={"#deposit":"openDepositModal","#withdraw":"openWithdrawModal","#transactions":"openTransactionsModal","#portfolio":"openPortfolioModal"}[location.hash];
+(function(){var m={"#admin":"openAdminPanel","#deposit":"openDepositModal","#withdraw":"openWithdrawModal","#transactions":"openTransactionsModal","#portfolio":"openPortfolioModal"}[location.hash];
 if(!m)return;function go(){setTimeout(function(){if(typeof window[m]==="function")window[m]();},300);}
 if(document.readyState==="complete")go();else addEventListener("load",go,{once:true});})();
 </script>
