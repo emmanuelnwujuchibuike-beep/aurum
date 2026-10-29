@@ -127,7 +127,7 @@ export async function layout(o: { preheader: string; eyebrow: string; title: str
   const reg = regulator ? `${esc(s.brand)} is regulated by ${esc(regulator)}${licence ? ` (licence ${esc(licence)})` : ""}.<br>` : "";
   const footer = o.audience === "admin"
     ? `Operations alert from your ${esc(s.brand)} platform.`
-    : `${reg}${esc(s.legal)}<br>Questions? <a href="mailto:${esc(s.support_email)}" style="color:${T.goldInk}">${esc(s.support_email)}</a>`;
+    : `${reg}${esc(s.legal)}<br>Visit: <a href="${esc(s.site_url)}" style="color:${T.goldInk}">${esc(s.site_url)}</a><br>Questions? <a href="mailto:${esc(s.support_email)}" style="color:${T.goldInk}">${esc(s.support_email)}</a>`;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light"><title>${esc(s.brand)}</title>
 <style>:root{color-scheme:light only}body{margin:0;padding:0}a{color:${T.goldInk}}em{color:${T.accent};font-style:italic}

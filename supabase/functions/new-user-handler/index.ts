@@ -722,6 +722,10 @@ function buildWelcomeHtml(
   <div style="display:inline-block;width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#8a6520);text-align:center;line-height:28px;font-size:13px;font-weight:900;color:#040608;margin-bottom:14px;font-family:Georgia,serif">A</div>
   <p style="margin:0 0 8px;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#c9a84c;font-family:'Inter',Arial,sans-serif;opacity:.8">Aurum Capital</p>
   <p style="margin:0 0 12px;font-size:10px;color:#2d3f52;letter-spacing:1.5px;font-family:'Inter',Arial,sans-serif">Dubai &nbsp;&middot;&nbsp; London &nbsp;&middot;&nbsp; New York &nbsp;&middot;&nbsp; Singapore</p>
+  <p style="margin:0 0 12px;font-size:12px;color:#7a8fa6;line-height:1.8;font-family:'Inter',Arial,sans-serif">
+    Visit: <a href="https://aurumcapitalinvest.com" style="color:#c9a84c;text-decoration:none">https://aurumcapitalinvest.com</a><br>
+    Questions? <a href="mailto:support@aurumcapitalinvest.com" style="color:#c9a84c;text-decoration:none">support@aurumcapitalinvest.com</a>
+  </p>
   <p style="margin:0;font-size:10px;color:#1e2d40;line-height:1.7;font-family:'Inter',Arial,sans-serif">
     This email was sent to <span style="color:#2d4060">${email}</span> because you created an account.<br>
     &copy; 2025 Aurum Capital. All rights reserved. Regulated &nbsp;&middot;&nbsp; Secure &nbsp;&middot;&nbsp; Trusted

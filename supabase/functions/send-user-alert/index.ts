@@ -116,6 +116,10 @@ function shell(preheader: string, body: string): string {
       You received this because you configured an alert in your account settings.<br>
       <a href="${SITE}/profile.html" style="color:rgba(201,168,76,.5)">Manage alerts &amp; notifications →</a>
     </p>
+    <p style="font-size:11px;color:rgba(255,255,255,.35);line-height:1.8;margin-top:10px">
+      Visit: <a href="${SITE}" style="color:rgba(201,168,76,.75)">${SITE}</a><br>
+      Questions? <a href="mailto:support@aurumcapitalinvest.com" style="color:rgba(201,168,76,.75)">support@aurumcapitalinvest.com</a>
+    </p>
   </td></tr>
 
 </table>
