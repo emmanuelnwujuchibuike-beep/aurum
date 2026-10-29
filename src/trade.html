@@ -6,6 +6,7 @@
 <title>Trade — Aurum Capital</title>
 <meta name="robots" content="noindex">
 <!--@head-->
+<script>/* Signed-in pages: no saved session on this device → straight to sign-in, before anything paints */try{var _p=location.pathname.split('/').pop();if(['dashboard.html','invest.html','trade.html','profile.html','portfolio.html','transactions.html','deposit.html','withdraw.html','admin.html'].indexOf(_p)>=0){var _s=JSON.parse(localStorage.getItem('sb-ttwwthfeordsojmcjwxn-auth-token')||'null');if(!_s||!_s.refresh_token)location.replace('signup.html?next='+encodeURIComponent(_p+location.search))}}catch(e){}</script>
 <script>try{if(localStorage.getItem('aurum_live')==='1')document.documentElement.setAttribute('data-live','');var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
 <script>/* Page scope for in-app navigation (app.js router): listeners and timers a page adds on document/window inside its DOMContentLoaded handler are recorded so the router can remove them when that page is left; after an in-app navigation, a new page's DOMContentLoaded handler runs straight away. */(function(){var D=document,W=window,P=EventTarget.prototype,add=P.addEventListener,rm=P.removeEventListener,st=W.setTimeout,si=W.setInterval,ct=W.clearTimeout,ci=W.clearInterval;var S=W.AurumScope={on:0,spa:0,l:[],t:[],i:[],run:function(h,e){S.on++;try{h.call(D,e)}finally{S.on--}},drop:function(){S.l.forEach(function(x){rm.call(x[0],x[1],x[2],x[3])});S.t.forEach(function(i){ct(i)});S.i.forEach(function(i){ci(i)});S.l=[];S.t=[];S.i=[]}};P.addEventListener=function(t,f,o){if(this===D&&t==="DOMContentLoaded"&&typeof f==="function"){if(S.spa){Promise.resolve().then(function(){S.run(f)});return}return add.call(this,t,function(e){S.run(f,e)},o)}if(S.on&&(this===D||this===W))S.l.push([this,t,f,o]);return add.call(this,t,f,o)};W.setTimeout=function(){var i=st.apply(W,arguments);if(S.on)S.t.push(i);return i};W.setInterval=function(){var i=si.apply(W,arguments);if(S.on)S.i.push(i);return i}})();</script>
 <link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -388,7 +389,8 @@ document.addEventListener('DOMContentLoaded', function () {
     $('clearMarks').hidden = !((marks.trades[sym] || []).length);
   }
   function snap(t) { if (!bars.length) return t; var best = bars[0].time; for (var i = 0; i < bars.length; i++) { if (bars[i].time <= t) best = bars[i].time; else break; } return best; }
-  function loadBars() {
+  function loadBars(retry) {
+    if (!retry) st.retries = 0;
     var mine = ++barsReq, a = cur(); note('Loading chart…');
     fetch(A.api + 'get-ohlcv?symbol=' + encodeURIComponent(OHLC_SYM[a.feed] || a.sym) + '&tf=' + st.tf, { headers: A.headers })
       .then(function (r) { return r.json(); })
@@ -404,7 +406,12 @@ document.addEventListener('DOMContentLoaded', function () {
         $('oO').textContent = px(last.open); $('oH').textContent = px(last.high); $('oL').textContent = px(last.low);
         note(''); makeChart(); drawSeries();
       })
-      .catch(function () { if (mine === barsReq) { bars = []; drawSeries(); note('Chart data is unavailable right now. Please try again shortly.'); } });
+      .catch(function () {
+        if (mine !== barsReq) return;
+        // Provider briefly busy (rate limit): retry on its own, a few times
+        if ((st.retries = (st.retries || 0) + 1) <= 4) { note('Chart data is busy — retrying…'); setTimeout(function () { if (mine === barsReq) loadBars(true); }, 12000); return; }
+        bars = []; drawSeries(); note('Chart data is unavailable right now. Please try again shortly.');
+      });
   }
   function tickBar(p) {
     if (!main || !bars.length || !(p > 0)) return;

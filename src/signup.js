@@ -227,7 +227,7 @@ window.resendConf = async function() {
 
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner" style="font-size:11px;animation:spin .7s linear infinite;display:inline-block;"></i> Sending…';
+    btn.textContent = 'Sending…';
   }
 
   const { error } = await supabase.auth.resend({ type: 'signup', email: pendingEmail });
@@ -235,13 +235,13 @@ window.resendConf = async function() {
   if (btn) {
     if (error) {
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-paper-plane" style="font-size:11px;"></i> Resend email';
+      btn.textContent = 'Resend email';
     } else {
-      btn.innerHTML = '<i class="fas fa-check" style="font-size:11px;"></i> Sent!';
+      btn.textContent = 'Sent!';
       // Re-enable after 30 s cooldown
       setTimeout(() => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane" style="font-size:11px;"></i> Resend email';
+        btn.textContent = 'Resend email';
       }, 30_000);
     }
   }
@@ -421,7 +421,8 @@ window.togPw = function(id, btn) {
   const inp = document.getElementById(id);
   const show = inp.type === 'password';
   inp.type = show ? 'text' : 'password';
-  btn.innerHTML = `<i class="fas fa-eye${show ? '-slash' : ''}"></i>`;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>' + (show ? '<path d="M3 3l18 18"/>' : '') + '</svg>';
+  btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
 };
 
 /* ───────────────────────────────────────────────

@@ -104,7 +104,9 @@
     });
   }
 
-  function load() {
+  var tries = 0;
+  function load(retry) {
+    if (!retry) tries = 0;
     var key = state.sym + '|' + state.tf, mine = ++req;
     if (cache[key]) { bars = cache[key]; setNote(''); draw(); return; }
     setNote('Loading chart…');
@@ -121,7 +123,11 @@
         cache[key] = bars = list;
         setNote(''); draw();
       })
-      .catch(function () { if (mine === req) setNote('Chart data is unavailable right now. Please try again shortly.'); });
+      .catch(function () {
+        if (mine !== req) return;
+        if ((tries = tries + 1) <= 4) { setNote('Chart data is busy — retrying…'); setTimeout(function () { if (mine === req) load(true); }, 12000); return; }
+        setNote('Chart data is unavailable right now. Please try again shortly.');
+      });
   }
 
   // Chip groups and asset rows (app.js dispatches aurum:toggle for data-group buttons)

@@ -6,6 +6,7 @@
 <title>Dashboard — Aurum Capital</title>
 <meta name="robots" content="noindex">
 <!--@head-->
+<script>/* Signed-in pages: no saved session on this device → straight to sign-in, before anything paints */try{var _p=location.pathname.split('/').pop();if(['dashboard.html','invest.html','trade.html','profile.html','portfolio.html','transactions.html','deposit.html','withdraw.html','admin.html'].indexOf(_p)>=0){var _s=JSON.parse(localStorage.getItem('sb-ttwwthfeordsojmcjwxn-auth-token')||'null');if(!_s||!_s.refresh_token)location.replace('signup.html?next='+encodeURIComponent(_p+location.search))}}catch(e){}</script>
 <script>try{if(localStorage.getItem('aurum_live')==='1')document.documentElement.setAttribute('data-live','');var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
 <script>/* Page scope for in-app navigation (app.js router): listeners and timers a page adds on document/window inside its DOMContentLoaded handler are recorded so the router can remove them when that page is left; after an in-app navigation, a new page's DOMContentLoaded handler runs straight away. */(function(){var D=document,W=window,P=EventTarget.prototype,add=P.addEventListener,rm=P.removeEventListener,st=W.setTimeout,si=W.setInterval,ct=W.clearTimeout,ci=W.clearInterval;var S=W.AurumScope={on:0,spa:0,l:[],t:[],i:[],run:function(h,e){S.on++;try{h.call(D,e)}finally{S.on--}},drop:function(){S.l.forEach(function(x){rm.call(x[0],x[1],x[2],x[3])});S.t.forEach(function(i){ct(i)});S.i.forEach(function(i){ci(i)});S.l=[];S.t=[];S.i=[]}};P.addEventListener=function(t,f,o){if(this===D&&t==="DOMContentLoaded"&&typeof f==="function"){if(S.spa){Promise.resolve().then(function(){S.run(f)});return}return add.call(this,t,function(e){S.run(f,e)},o)}if(S.on&&(this===D||this===W))S.l.push([this,t,f,o]);return add.call(this,t,f,o)};W.setTimeout=function(){var i=st.apply(W,arguments);if(S.on)S.t.push(i);return i};W.setInterval=function(){var i=si.apply(W,arguments);if(S.on)S.i.push(i);return i}})();</script>
 <link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -181,6 +182,25 @@ document.addEventListener('DOMContentLoaded', function () {
   var FEED = { GOLD: 'XAUUSD', SILVER: 'XAGUSD', OIL: 'USOIL' };
   var state = { cash: null, holdings: null, testMode: false, prices: {}, pricesAt: null, priced: false };
 
+  /* Count-up: figures rise from 0 to their amount (about a second). If the live
+     figures arrive while it's counting, it stops and shows them exactly. */
+  var FIG = { nw: 'usd', cash: 'compact', cash2: 'usd', invested: 'compact', inv2: 'usd', pnlAmt: 'signedUsd' };
+  var anim = { raf: 0, t0: 0, to: null, final: false, done: false };
+  function paintFigs(v) { Object.keys(v).forEach(function (id) { A.money($(id), f[FIG[id]](v[id])); }); }
+  function tick() {
+    var k = Math.min(1, (performance.now() - anim.t0) / 1100), e = 1 - Math.pow(1 - k, 3), cur = {};
+    Object.keys(anim.to).forEach(function (id) { cur[id] = anim.to[id] * e; });
+    paintFigs(cur);
+    if (k < 1) { anim.raf = requestAnimationFrame(tick); return; }
+    anim.raf = 0; paintFigs(anim.to); if (anim.final) anim.done = true;
+  }
+  function countTo(v, final) {
+    if (anim.done) { paintFigs(v); return; }
+    if (anim.t0 && final) { cancelAnimationFrame(anim.raf); anim.raf = 0; anim.done = true; paintFigs(v); return; }
+    anim.to = v; anim.final = anim.final || final;
+    if (!anim.t0) { anim.t0 = performance.now(); tick(); }
+  }
+
   function render() {
     if (state.cash == null || state.holdings == null) return;
     var prices = {};
@@ -188,16 +208,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var p = S.portfolio({ cash: state.cash, holdings: state.holdings, prices: prices, testMode: state.testMode });
     var priced = state.priced || !state.holdings.length;
 
-    A.money($('cash'), f.compact(p.cash));
-    A.money($('cash2'), f.usd(p.cash));
     $('positions').textContent = String(p.positions.length);
     $('posCount').textContent = p.positions.length + ' position' + (p.positions.length === 1 ? '' : 's');
-    if (!priced) return; // keep "—" until live prices arrive so value isn't shown at cost
+    if (!priced) return; // nothing shown at cost: the count-up starts once prices are known
 
-    A.money($('nw'), f.usd(p.netWorth));
-    A.money($('invested'), f.compact(p.value));
-    A.money($('inv2'), f.usd(p.value));
-    A.money($('pnlAmt'), f.signedUsd(p.pnl));
+    // "final" = live prices fetched this visit (or no holdings to price, or the 8 s fallback)
+    countTo({ nw: p.netWorth, cash: p.cash, cash2: p.cash, invested: p.value, inv2: p.value, pnlAmt: p.pnl },
+      !state.holdings.length || A.pricesLive === true || state.atCost === true);
     var tag = $('pnlPct');
     tag.textContent = p.cost > 0 ? f.pct(p.pnlPct) : '—';
     tag.classList.toggle('down', p.pnl < 0);
@@ -257,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // If prices never arrive, value holdings at cost after 8 s and say so
   setTimeout(function () {
     if (state.priced || !state.holdings || !state.holdings.length) return;
-    state.priced = true;
+    state.priced = true; state.atCost = true;
     $('updated').textContent = 'Live prices unavailable — valued at cost';
     render();
   }, 8000);

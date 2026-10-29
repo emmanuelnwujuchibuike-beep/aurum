@@ -6,6 +6,7 @@
 <title>Portfolio — Aurum Capital</title>
 <meta name="robots" content="noindex">
 <!--@head-->
+<script>/* Signed-in pages: no saved session on this device → straight to sign-in, before anything paints */try{var _p=location.pathname.split('/').pop();if(['dashboard.html','invest.html','trade.html','profile.html','portfolio.html','transactions.html','deposit.html','withdraw.html','admin.html'].indexOf(_p)>=0){var _s=JSON.parse(localStorage.getItem('sb-ttwwthfeordsojmcjwxn-auth-token')||'null');if(!_s||!_s.refresh_token)location.replace('signup.html?next='+encodeURIComponent(_p+location.search))}}catch(e){}</script>
 <script>try{if(localStorage.getItem('aurum_live')==='1')document.documentElement.setAttribute('data-live','');var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
 <script>/* Page scope for in-app navigation (app.js router): listeners and timers a page adds on document/window inside its DOMContentLoaded handler are recorded so the router can remove them when that page is left; after an in-app navigation, a new page's DOMContentLoaded handler runs straight away. */(function(){var D=document,W=window,P=EventTarget.prototype,add=P.addEventListener,rm=P.removeEventListener,st=W.setTimeout,si=W.setInterval,ct=W.clearTimeout,ci=W.clearInterval;var S=W.AurumScope={on:0,spa:0,l:[],t:[],i:[],run:function(h,e){S.on++;try{h.call(D,e)}finally{S.on--}},drop:function(){S.l.forEach(function(x){rm.call(x[0],x[1],x[2],x[3])});S.t.forEach(function(i){ct(i)});S.i.forEach(function(i){ci(i)});S.l=[];S.t=[];S.i=[]}};P.addEventListener=function(t,f,o){if(this===D&&t==="DOMContentLoaded"&&typeof f==="function"){if(S.spa){Promise.resolve().then(function(){S.run(f)});return}return add.call(this,t,function(e){S.run(f,e)},o)}if(S.on&&(this===D||this===W))S.l.push([this,t,f,o]);return add.call(this,t,f,o)};W.setTimeout=function(){var i=st.apply(W,arguments);if(S.on)S.t.push(i);return i};W.setInterval=function(){var i=si.apply(W,arguments);if(S.on)S.i.push(i);return i}})();</script>
 <link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -29,6 +30,19 @@
 .sub{font:500 11px/1.4 var(--mono);color:var(--muted)}
 .acts{display:flex;gap:8px;width:100%;padding-left:52px;margin-top:8px}
 .acts a,.acts button{min-height:36px;padding:0 12px;border-radius:11px;font-size:12px;font-weight:600;display:flex;align-items:center;text-decoration:none;color:inherit}
+.inv{border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.inv + .inv{margin-top:14px}
+.inv-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px;background:var(--well);display:block}
+.kv2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.kv2 span{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--muted)}
+.kv2 b{font:500 14px/1.3 var(--mono);color:var(--ink)}
+.prog{height:8px;border-radius:4px;background:var(--well);box-shadow:var(--press-sm);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--gold);border-radius:4px}
+.mat{font:600 11px/1 var(--mono);letter-spacing:.08em;padding:5px 8px;border-radius:7px}
+.mat.lock{color:var(--new);background:var(--new-bg)}.mat.done{color:var(--up);background:var(--up-bg)}
+.sum{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.sum:last-child{border-bottom:0}
+.sum b{font:500 14px/1.4 var(--mono)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom));z-index:60;max-width:calc(min(480px,100vw) - 40px);border-radius:14px;padding:12px 16px;font-size:13px;font-weight:500;background:var(--vault);color:var(--vault-text)}
 @media (min-width:900px){.wide .app{max-width:1040px}.wide{--gut:40px}.pf{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:start}.pf>.full{grid-column:1/-1}}
 </style>
@@ -68,6 +82,11 @@
     <div class="leg" id="legend"></div>
   </section>
 
+  <section class="stack g12" aria-labelledby="inv-h" id="invSec" hidden>
+    <div class="row between"><h2 class="serif" id="inv-h" style="font-size:21px;font-weight:500">Real-estate investments</h2><a class="link" href="invest.html#estate">Browse →</a></div>
+    <div id="investments"></div>
+  </section>
+
   <section class="stack g12" aria-labelledby="h-h">
     <div class="row between"><h2 class="serif" id="h-h" style="font-size:21px;font-weight:500">Holdings</h2><a class="link" href="invest.html">Invest more →</a></div>
     <div class="list raised" id="holdings" aria-live="polite"><div class="item"><span class="badge inset"></span><span class="grow"><span class="skel">Loading holdings</span></span></div></div>
@@ -80,6 +99,23 @@
 
   <p class="muted full" style="font-size:11px;line-height:1.6">Values use live market prices and may be delayed. <a class="link" href="transactions.html" style="font-size:11px;min-height:0">Full transaction history →</a></p>
 </main>
+
+<!-- Withdraw an investment to cash -->
+<div class="overlay" id="wSheet" hidden>
+  <button class="scrim" data-close="wSheet" aria-label="Close"></button>
+  <div class="sheet" role="dialog" aria-labelledby="wTitle">
+    <span class="grab" aria-hidden="true"></span>
+    <b class="serif" id="wTitle" style="font-size:20px">Withdraw to cash</b>
+    <p class="note muted small" id="wNote"></p>
+    <div class="inset" style="border-radius:16px;padding:6px 14px">
+      <div class="sum"><span class="muted">Current value</span><b id="wVal">—</b></div>
+      <div class="sum"><span class="muted" id="wFeeLbl">Early-withdrawal fee</span><b id="wFee">—</b></div>
+      <div class="sum"><span>You receive</span><b id="wNet">—</b></div>
+    </div>
+    <button class="btn gold" id="wGo" style="text-transform:none;letter-spacing:0">Confirm withdrawal</button>
+    <button class="btn-sm raised-sm" data-close="wSheet">Cancel</button>
+  </div>
+</div>
 
 <div class="toast" id="toast" role="status" hidden></div>
 
@@ -154,11 +190,18 @@ document.addEventListener('DOMContentLoaded', function () {
   var LABEL = { cash: 'Cash', crypto: 'Crypto', equities: 'Equities', commodities: 'Commodities', property: 'Real estate' };
   var HOUSE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>';
   var GLYPH = { BTC: '₿', ETH: 'Ξ', SOL: 'S', BNB: 'B', XRP: 'X', ADA: '₳', LTC: 'Ł', USDT: '₮', TSLA: 'T', AAPL: 'A', NVDA: 'N', MSFT: 'M', AMZN: 'a', GOOGL: 'G', GOLD: 'Au', SILVER: 'Ag', OIL: 'Oil' };
-  var st = { ctx: null, cash: null, holdings: null, trades: [], prices: {}, priced: false, at: null };
+  var st = { ctx: null, cash: null, holdings: null, trades: [], prices: {}, priced: false, at: null, props: {} };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   var toastT;
   function toast(t) { var el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { el.hidden = true; }, 4000); }
-  function propPrices() { var p = st.ctx && st.ctx.settings && st.ctx.settings.property_prices; return p && typeof p === 'object' ? p : {}; }
+  function propPrices() {
+    var p = st.ctx && st.ctx.settings && st.ctx.settings.property_prices, out = Object.assign({}, p && typeof p === 'object' ? p : {});
+    Object.keys(st.props || {}).forEach(function (k) { out[k] = Number(st.props[k].price); }); // listing price (admin-edited) wins
+    return out;
+  }
+  function trading() { var t = st.ctx && st.ctx.settings && st.ctx.settings.trading; return t && typeof t === 'object' ? t : {}; }
+  function feeRate() { var r = Number(trading().property_early_penalty); return r >= 0 ? r : 0; }
+  function dt(d) { return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
   function cls(sym) { if (propPrices()[sym] != null) return 'property'; for (var k in CLASS) if (CLASS[k].indexOf(sym) >= 0) return k; return 'crypto'; }
   function priceOf(sym) { return Number(propPrices()[sym]) || st.prices[FEED[sym] || sym] || 0; }
   function qty(q) { q = Number(q) || 0; return q < 1 ? q.toFixed(6) : q.toFixed(4); }
@@ -184,7 +227,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if (st.at) $('updated').textContent = 'Prices updated ' + st.at.toLocaleTimeString('en-GB');
     }
     var hb = $('holdings');
-    hb.innerHTML = p.positions.length ? p.positions.slice().sort(function (a, b) { return b.value - a.value; }).map(function (x) {
+    renderInvestments(p);
+    var listed = p.positions.filter(function (x) { return cls(x.symbol) !== 'property'; });
+    hb.innerHTML = listed.length ? listed.slice().sort(function (a, b) { return b.value - a.value; }).map(function (x) {
       var h = st.holdings.find(function (y) { return y.symbol === x.symbol; }) || {}, c = cls(x.symbol), locked = h.locked_until && new Date(h.locked_until) > new Date();
       return '<div class="item" style="flex-wrap:wrap"><span class="badge ac" data-a="' + (c === 'property' ? 'estate' : esc(x.symbol)) + '" aria-hidden="true">' + (c === 'property' ? HOUSE : esc(GLYPH[x.symbol] || x.symbol.slice(0, 3))) + '</span>' +
         '<span class="grow stack" style="gap:2px"><b style="font-size:14px">' + esc(h.name || x.symbol) + (x.isTest ? '<span class="test-mark">TEST</span>' : '') + '</b><span class="sub">' + esc(qty(x.qty)) + ' ' + esc(x.symbol) + ' · avg ' + esc(f.usd(x.avg)) + (c === 'property' && h.locked_until ? ' · ' + (locked ? 'locked until ' : 'unlocked ') + esc(new Date(h.locked_until).toLocaleDateString('en-GB')) : '') + '</span></span>' +
@@ -201,15 +246,54 @@ document.addEventListener('DOMContentLoaded', function () {
     A.applyHidden();
   }
 
-  document.addEventListener('click', async function (e) {
-    var b = e.target.closest('[data-pw]'); if (!b) return;
-    var sym = b.dataset.pw, h = st.holdings.find(function (x) { return x.symbol === sym; }) || {}, locked = h.locked_until && new Date(h.locked_until) > new Date();
-    if (!confirm('Withdraw ' + (h.name || sym) + ' to cash?' + (locked ? '\n\nIt’s locked until ' + new Date(h.locked_until).toLocaleDateString('en-GB') + ', so an early-exit penalty applies.' : ''))) return;
-    b.disabled = true;
-    try { var r = await window.aurumMoney('property_withdraw', { symbol: sym }, await S.token()); toast((r.early ? 'Withdrawn with penalty. ' : 'Withdrawn. ') + f.usd(r.net) + ' added to cash.'); await load(); }
-    catch (ex) { b.disabled = false; toast(ex.message || 'Withdrawal failed'); }
+  /* Real-estate investments: maturity, progress, withdraw with the admin-set fee */
+  var LOCK_DAYS = { '1D': 1, '1W': 7, '1M': 30, '1Y': 365 };
+  function renderInvestments(p) {
+    var list = p.positions.filter(function (x) { return cls(x.symbol) === 'property'; });
+    $('invSec').hidden = !list.length;
+    $('investments').innerHTML = list.map(function (x) {
+      var h = st.holdings.find(function (y) { return y.symbol === x.symbol; }) || {}, pr = (st.props || {})[x.symbol] || {};
+      var end = h.locked_until ? new Date(h.locked_until) : null, now = new Date(), locked = end && end > now;
+      var days = (st.ctx && st.ctx.settings && st.ctx.settings.trading && st.ctx.settings.trading.lock_days) || LOCK_DAYS;
+      var len = Number(days[h.lock_duration]) || 0, start = end && len ? new Date(end.getTime() - len * 864e5) : null;
+      var pct = !end ? 100 : start ? Math.max(0, Math.min(100, (now - start) / (end - start) * 100)) : (locked ? 0 : 100);
+      var left = locked ? Math.ceil((end - now) / 864e5) : 0, img = (pr.images || [])[0];
+      return '<div class="inv raised">' + (img ? '<img class="inv-img" src="' + esc(img) + '" alt="" loading="lazy">' : '') +
+        '<div class="row between g10"><span class="stack" style="min-width:0"><b style="font-size:16px">' + esc(pr.name || h.name || x.symbol) + '</b><span class="sub">' + esc(pr.location || x.symbol) + '</span></span>' +
+        '<span class="mat ' + (locked ? 'lock' : 'done') + '">' + (end ? (locked ? left + ' DAY' + (left === 1 ? '' : 'S') + ' LEFT' : 'MATURED') : 'NO LOCK-IN') + '</span></div>' +
+        '<div class="kv2"><span>Invested<b data-money>' + esc(f.usd(x.cost)) + '</b></span><span>Current value<b data-money>' + esc(f.usd(x.value)) + '</b></span>' +
+        '<span>Units<b>' + esc(qty(x.qty)) + '</b></span><span>Maturity date<b>' + (end ? esc(dt(end)) : '—') + '</b></span></div>' +
+        (end ? '<div class="stack g4"><div class="prog" aria-hidden="true"><i style="width:' + pct.toFixed(1) + '%"></i></div><span class="sub">' + (start ? esc(dt(start)) + ' → ' : '') + esc(dt(end)) + (h.lock_duration ? ' · ' + esc(h.lock_duration) + ' lock-in' : '') + '</span></div>' : '') +
+        '<button class="btn-sm ' + (locked ? 'raised-sm' : 'gold') + '" data-pw="' + esc(x.symbol) + '">Withdraw to cash' + (locked ? ' (early)' : '') + '</button></div>';
+    }).join('');
+  }
+  var wSym = null;
+  function openWithdraw(sym) {
+    var h = st.holdings.find(function (x) { return x.symbol === sym; }); if (!h) return;
+    var price = Number(propPrices()[sym]) || Number(h.avg_buy_price) || 0, val = Number(h.quantity) * price;
+    var end = h.locked_until ? new Date(h.locked_until) : null, early = end && end > new Date(), fee = early ? val * feeRate() : 0;
+    wSym = sym;
+    $('wTitle').textContent = 'Withdraw ' + (((st.props || {})[sym] || {}).name || h.name || sym);
+    $('wNote').textContent = early ? 'This investment matures on ' + dt(end) + '. Withdrawing now carries an early-withdrawal fee of ' + (feeRate() * 100).toFixed(feeRate() * 100 % 1 ? 2 : 0) + '%.' : 'This investment has matured — no fee applies.';
+    $('wFeeLbl').textContent = early ? 'Early-withdrawal fee (' + (feeRate() * 100).toFixed(feeRate() * 100 % 1 ? 2 : 0) + '%)' : 'Fee';
+    $('wVal').textContent = f.usd(val); $('wFee').textContent = fee ? '−' + f.usd(fee).replace('−', '') : f.usd(0); $('wNet').textContent = f.usd(val - fee);
+    $('wGo').disabled = false; $('wGo').textContent = 'Confirm withdrawal';
+    $('wSheet').hidden = false; document.documentElement.classList.add('menu-open');
+  }
+  function closeWithdraw() { $('wSheet').hidden = true; document.documentElement.classList.toggle('menu-open', !!document.querySelector('.menu:not([hidden]),.overlay:not([hidden])')); }
+  $('wGo').addEventListener('click', async function () {
+    var btn = this; if (!wSym) return;
+    if (typeof window.aurumMoney !== 'function') { toast('Still loading — please try again in a moment'); return; }
+    btn.disabled = true; btn.textContent = 'Withdrawing…';
+    try {
+      var r = await window.aurumMoney('property_withdraw', { symbol: wSym }, await S.token());
+      closeWithdraw(); toast((r.early ? 'Withdrawn early. ' : 'Withdrawn. ') + f.usd(r.net) + ' added to your cash' + (r.penalty ? ' (fee ' + f.usd(r.penalty) + ')' : '') + '.');
+      await load();
+    } catch (ex) { btn.disabled = false; btn.textContent = 'Confirm withdrawal'; toast(ex.message || 'Withdrawal failed'); }
   });
-
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-pw]'); if (b) { openWithdraw(b.dataset.pw); return; }
+  });
   document.addEventListener('aurum:prices', function (e) {
     (e.detail || []).forEach(function (r) { if (r && r.price > 0) st.prices[r.symbol] = r.price; });
     st.priced = true; st.at = new Date(); render();
@@ -220,7 +304,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var uid = st.ctx.user.id;
     return Promise.all([
       S.rest('profiles?id=eq.' + uid + '&select=cash').then(function (r) { st.cash = Number(r && r[0] && r[0].cash) || 0; }),
-      S.rest('holdings?user_id=eq.' + uid + '&quantity=gt.0&select=symbol,name,quantity,avg_buy_price,pnl_override,locked_until').then(function (h) { st.holdings = h || []; }),
+      S.rest('properties?select=*&order=sort.asc,name.asc').then(function (r) { st.props = {}; (r || []).forEach(function (x) { st.props[x.sym] = x; }); }).catch(function () {}),
+      S.rest('holdings?user_id=eq.' + uid + '&quantity=gt.0&select=symbol,name,quantity,avg_buy_price,pnl_override,locked_until,lock_duration').then(function (h) { st.holdings = h || []; }),
       S.rest('open_trades?user_id=eq.' + uid + '&status=eq.open&select=*').then(function (t) { st.trades = t || []; }).catch(function () { st.trades = []; }),
     ]).then(function () {
       A.extra = st.holdings.map(function (h) { return FEED[h.symbol] || h.symbol; }).concat(st.trades.map(function (t) { return FEED[t.sym] || t.sym; }));

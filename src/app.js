@@ -216,7 +216,7 @@
     if (!list.length || document.visibilityState === 'hidden') return;
     fetch(FN + '?symbols=' + list.join(','), { headers: window.Aurum.headers })
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (j) { if (j && j.data) paint(j.data); })
+      .then(function (j) { if (j && j.data) { window.Aurum.pricesLive = true; paint(j.data); } })
       .catch(function () {});
   }
 
@@ -256,6 +256,9 @@
   var Scope = window.AurumScope;
   var FULL = /\/(index|admin|signup|invest-classic|dashboard-classic|trade-classic|about|privacy-policy|testimonial)\.html$|\/$/;
   var ONCE = /(^|\/)(app|aurum-session|money-client)\.js(\?|$)/; // shared scripts: loaded once, kept
+  // Shared scripts already on this page; one a later page needs (e.g. money-client.js) loads once on arrival
+  var loadedOnce = {};
+  document.querySelectorAll('script[src]').forEach(function (s) { var m = s.getAttribute('src').match(ONCE); if (m) loadedOnce[m[2]] = 1; });
   var pages = {}; // url → Promise<html>
   function spaTarget(a) {
     if (!Scope || !document.getElementById('app-css')) return false;
@@ -302,7 +305,12 @@
     document.querySelectorAll('head style').forEach(function (s) { s.remove(); });
     doc.querySelectorAll('head style').forEach(function (s) { document.head.appendChild(s.cloneNode(true)); });
     document.body.className = doc.body.className;
-    var scripts = [].slice.call(doc.body.querySelectorAll('script')).filter(function (s) { return !(s.src && ONCE.test(s.getAttribute('src'))); });
+    var scripts = [].slice.call(doc.body.querySelectorAll('script')).filter(function (s) {
+      var m = s.getAttribute('src') && s.getAttribute('src').match(ONCE);
+      if (!m) return true;
+      if (loadedOnce[m[2]]) return false;
+      loadedOnce[m[2]] = 1; return true;
+    });
     scripts.forEach(function (s) { s.remove(); });
     document.body.replaceChildren.apply(document.body, [].slice.call(doc.body.childNodes).map(function (n) { return document.adoptNode(n); }));
     root.classList.remove('menu-open', 'fs');

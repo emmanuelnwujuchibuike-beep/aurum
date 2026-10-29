@@ -6,6 +6,7 @@
 <title>Admin — Aurum Capital</title>
 <meta name="robots" content="noindex, nofollow">
 <!--@head-->
+<script>/* Signed-in pages: no saved session on this device → straight to sign-in, before anything paints */try{var _p=location.pathname.split('/').pop();if(['dashboard.html','invest.html','trade.html','profile.html','portfolio.html','transactions.html','deposit.html','withdraw.html','admin.html'].indexOf(_p)>=0){var _s=JSON.parse(localStorage.getItem('sb-ttwwthfeordsojmcjwxn-auth-token')||'null');if(!_s||!_s.refresh_token)location.replace('signup.html?next='+encodeURIComponent(_p+location.search))}}catch(e){}</script>
 <script>try{if(localStorage.getItem('aurum_live')==='1')document.documentElement.setAttribute('data-live','');var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
 <script>/* Page scope for in-app navigation (app.js router): listeners and timers a page adds on document/window inside its DOMContentLoaded handler are recorded so the router can remove them when that page is left; after an in-app navigation, a new page's DOMContentLoaded handler runs straight away. */(function(){var D=document,W=window,P=EventTarget.prototype,add=P.addEventListener,rm=P.removeEventListener,st=W.setTimeout,si=W.setInterval,ct=W.clearTimeout,ci=W.clearInterval;var S=W.AurumScope={on:0,spa:0,l:[],t:[],i:[],run:function(h,e){S.on++;try{h.call(D,e)}finally{S.on--}},drop:function(){S.l.forEach(function(x){rm.call(x[0],x[1],x[2],x[3])});S.t.forEach(function(i){ct(i)});S.i.forEach(function(i){ci(i)});S.l=[];S.t=[];S.i=[]}};P.addEventListener=function(t,f,o){if(this===D&&t==="DOMContentLoaded"&&typeof f==="function"){if(S.spa){Promise.resolve().then(function(){S.run(f)});return}return add.call(this,t,function(e){S.run(f,e)},o)}if(S.on&&(this===D||this===W))S.l.push([this,t,f,o]);return add.call(this,t,f,o)};W.setTimeout=function(){var i=st.apply(W,arguments);if(S.on)S.t.push(i);return i};W.setInterval=function(){var i=si.apply(W,arguments);if(S.on)S.i.push(i);return i}})();</script>
 <link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -115,6 +116,7 @@
       <button class="chip" data-tab="users" aria-pressed="false">Users</button>
       <button class="chip" data-tab="email" aria-pressed="false">Email</button>
       <button class="chip" data-tab="properties" aria-pressed="false">Properties</button>
+      <button class="chip" data-tab="tools" aria-pressed="false">Tools</button>
       <button class="chip" data-tab="transactions" aria-pressed="false">Transactions</button>
       <button class="chip" data-tab="settings" aria-pressed="false">Settings</button>
     </nav>
@@ -137,11 +139,11 @@
           <div class="list raised" id="ovUsers"><p class="empty">Loading…</p></div>
         </div>
       </div>
-      <a class="sheet-btn raised-sm" href="dashboard-classic.html#admin">
-        <span class="badge inset" aria-hidden="true">⚙</span>
-        <span class="stack grow"><b style="font-size:14px">Advanced tools</b><span class="muted" style="font-size:12px">Holdings, prices, deposit addresses, payment settings, bulk actions</span></span>
+      <button class="sheet-btn raised-sm" data-goto="tools">
+        <span class="badge inset" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span>
+        <span class="stack grow" style="text-align:left"><b style="font-size:14px">Advanced tools</b><span class="muted" style="font-size:12px">Client holdings, deposit addresses, payment methods</span></span>
         <span class="muted" aria-hidden="true">›</span>
-      </a>
+      </button>
     </section>
 
     <!-- Approvals -->
@@ -216,6 +218,10 @@
         <button class="btn-sm gold" id="mailSend" type="submit">Review &amp; send</button>
         <p class="note muted" style="font-size:12px">Sent from your domain through Resend in the brand email template. Each person gets their own copy (nobody sees other addresses). Replies go to the sender address. The sign-in / notification sender (noreply@) can’t be used here.</p>
       </form>
+      <div class="stack g10">
+        <div class="row between"><span class="eyebrow">Recent sends</span><button type="button" class="link" id="mailLogRefresh" style="min-height:32px">Refresh</button></div>
+        <div class="list raised" id="mailLog"><p class="empty">No sends yet.</p></div>
+      </div>
     </section>
 
     <!-- Properties: real-estate listings shown on Invest (public.properties + property-images bucket) -->
@@ -244,6 +250,43 @@
       </form>
     </section>
 
+    <!-- Tools -->
+    <section class="stack g20" data-panel="tools" hidden>
+      <div class="stack g10">
+        <span class="eyebrow">Client holdings</span>
+        <div class="raised card2 stack g12">
+          <label class="field">Client<select class="input sel" id="hUser"><option value="">Choose a client…</option></select></label>
+          <div id="hList"></div>
+          <form class="stack g10" id="hAdd" hidden novalidate>
+            <span class="small-mono">Add or top up a holding</span>
+            <div class="row g8" style="flex-wrap:wrap">
+              <input class="input mono" id="hSym" placeholder="Symbol (BTC)" style="flex:1;min-width:100px;text-transform:uppercase" maxlength="12">
+              <input class="input mono" id="hQty" placeholder="Quantity" inputmode="decimal" style="flex:1;min-width:100px">
+              <input class="input mono" id="hAvg" placeholder="Avg price (USD)" inputmode="decimal" style="flex:1;min-width:120px">
+            </div>
+            <button class="btn-sm gold" type="submit">Save holding</button>
+          </form>
+        </div>
+      </div>
+
+      <form class="stack g10" id="addrForm" novalidate>
+        <span class="eyebrow">Deposit wallet addresses</span>
+        <div class="raised card2 stack g10" id="addrList"><p class="empty">Loading…</p></div>
+        <button class="btn-sm gold" type="submit">Save addresses</button>
+      </form>
+
+      <form class="stack g10" id="payForm" novalidate>
+        <span class="eyebrow">Payment methods</span>
+        <div class="list raised">
+          <div class="setting"><span>Crypto deposits</span><button type="button" class="sw" id="pmCrypto" aria-pressed="true" aria-label="Crypto deposits"><span></span></button></div>
+          <div class="setting"><span>PayPal deposits</span><button type="button" class="sw" id="pmPaypal" aria-pressed="true" aria-label="PayPal deposits"><span></span></button></div>
+        </div>
+        <label class="field">PayPal email customers pay to<input class="input" type="email" id="pmPpEmail" placeholder="payments@yourdomain.com"></label>
+        <button class="btn-sm gold" type="submit">Save payment methods</button>
+      </form>
+      <p class="small muted">Price and P&amp;L overrides are not part of the new dashboard; they remain in the <a class="link" href="dashboard-classic.html#admin" style="font-size:12px;min-height:0">classic console</a>.</p>
+    </section>
+
     <!-- Transactions -->
     <section class="stack g12" data-panel="transactions" hidden>
       <input class="input" id="txSearch" type="search" placeholder="Filter by name, type, symbol, status or note" aria-label="Filter transactions">
@@ -260,6 +303,14 @@
           <div class="setting"><span class="stack"><span>Test mode</span><span class="note muted" style="font-size:12px;font-weight:400">Uses admin test values on client pages and marks them TEST</span></span><button class="sw" id="testMode" aria-pressed="false" aria-label="Test mode"><span></span></button></div>
         </div>
       </div>
+      <form class="stack g10" id="feeForm" novalidate>
+        <span class="eyebrow">Real-estate withdrawals</span>
+        <div class="raised stack g14 card2">
+          <label class="field">Early-withdrawal fee (%)<input class="input mono" id="feePct" inputmode="decimal" placeholder="30"></label>
+          <p class="small muted">Charged when a customer withdraws a property investment before its maturity date. Withdrawing after maturity is free.</p>
+          <button class="btn-sm gold" type="submit">Save fee</button>
+        </div>
+      </form>
       <form class="stack g10" id="regForm">
         <span class="eyebrow">Risk disclosure</span>
         <div class="raised stack g14 card2">
@@ -454,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).join('') : '<p class="empty">No users match.</p>';
   }
   async function loadUsers() {
-    try { users = (await callAdmin('get_all_users')) || []; renderUsers(); stats(); mailSummary(); if (pending.length) renderPending(); }
+    try { users = (await callAdmin('get_all_users')) || []; renderUsers(); stats(); mailSummary(); fillHUsers(); if (pending.length) renderPending(); }
     catch (e) { $('userList').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; }
   }
   $('userSearch').addEventListener('input', renderUsers);
@@ -508,6 +559,8 @@ document.addEventListener('DOMContentLoaded', function () {
     $('payLive').setAttribute('aria-pressed', settings.payments_live === true || settings.payments_live === 'true' ? 'true' : 'false');
     $('testMode').setAttribute('aria-pressed', settings.test_mode === true || settings.test_mode === 'true' ? 'true' : 'false');
     $('regName').value = settings.regulator_name || ''; $('regLic').value = settings.licence_number || '';
+    var tr = settings.trading && typeof settings.trading === 'object' ? settings.trading : {};
+    $('feePct').value = tr.property_early_penalty != null ? +(Number(tr.property_early_penalty) * 100).toFixed(2) : '';
   }
   function putSettings(obj) {
     var body = Object.keys(obj).map(function (k) { return { key: k, value: obj[k] }; });
@@ -538,6 +591,21 @@ document.addEventListener('DOMContentLoaded', function () {
   settingSwitch($('testMode'), 'test_mode', function (on) {
     return on ? 'Turn TEST MODE on? Client pages will show admin test values marked TEST.' : 'Turn test mode off? Client pages go back to real figures only.';
   }, function (on) { toast('Saved — test mode ' + (on ? 'on' : 'off')); });
+  $('feeForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var pct = parseFloat(String($('feePct').value).replace('%', ''));
+    if (!(pct >= 0 && pct <= 100)) { toast('Enter a fee between 0 and 100%'); return; }
+    if (!confirm('Set the early-withdrawal fee to ' + pct + '%?')) return;
+    try {
+      // merge into the trading settings the money function reads (other trading terms unchanged)
+      var cur = await S.rest('site_settings?key=eq.trading&select=value', { fresh: true });
+      var tr = (cur && cur[0] && cur[0].value) || {};
+      if (!tr || typeof tr !== 'object' || !Object.keys(tr).length) throw new Error('Trading settings not found');
+      tr.property_early_penalty = Math.round(pct * 100) / 10000;
+      await putSettings({ trading: tr });
+      settings.trading = tr; toast('Saved — early-withdrawal fee ' + pct + '%');
+    } catch (err) { toast('Not saved: ' + err.message); }
+  });
   $('regForm').addEventListener('submit', function (e) {
     e.preventDefault();
     // value is NOT NULL (jsonb): an empty field is stored as "" rather than null
@@ -717,6 +785,7 @@ document.addEventListener('DOMContentLoaded', function () {
       toast('Sent ' + r.sent + ' email' + (r.sent === 1 ? '' : 's') + (r.failed ? ' · ' + r.failed + ' failed' : '') + ' from ' + r.from);
       if (!r.failed) { $('mailSubject').value = ''; $('mailBody').value = ''; }
     } catch (err) { toast('Not sent: ' + err.message); }
+    loadMailLog();
     btn.disabled = false; mailSummary();
   });
 
@@ -814,6 +883,101 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.disabled = false; btn.textContent = 'Save property';
   });
 
+  function loadMailLog() {
+    return S.rest('email_log?select=*&order=created_at.desc&limit=10', { fresh: true }).then(function (rows) {
+      $('mailLog').innerHTML = (rows || []).length ? rows.map(function (r) {
+        var d = r.detail || {}, errs = (d.errors || []).join(' | ');
+        return '<div class="item" style="flex-wrap:wrap"><span class="grow stack" style="gap:2px;min-width:0"><b class="ell" style="font-size:14px">' + esc(r.subject) + '</b><span class="small-mono ell">' + esc(f.when(r.created_at)) + ' · ' + esc(r.sender) + '</span></span>' +
+          '<span class="tag ' + (r.failed ? 'down' : 'up') + '" style="min-width:0">' + r.sent + '/' + r.recipients + ' accepted</span>' +
+          (errs ? '<span class="small-mono" style="width:100%;color:var(--down);word-break:break-word">' + esc(errs) + '</span>' : '') + '</div>';
+      }).join('') : '<p class="empty">No sends yet.</p>';
+    }).catch(function () {});
+  }
+  $('mailLogRefresh').addEventListener('click', loadMailLog);
+
+  /* ── Tools: holdings ─────────────────────────────────────────────── */
+  var hRows = [];
+  function fillHUsers() {
+    var cur = $('hUser').value;
+    $('hUser').innerHTML = '<option value="">Choose a client…</option>' + users.map(function (u) { return '<option value="' + esc(u.id) + '">' + esc(name(u)) + ' — ' + esc(u.email || '') + '</option>'; }).join('');
+    $('hUser').value = cur;
+  }
+  async function loadHoldings() {
+    var uid = $('hUser').value; $('hAdd').hidden = !uid;
+    if (!uid) { $('hList').innerHTML = ''; return; }
+    $('hList').innerHTML = '<p class="empty">Loading…</p>';
+    try {
+      hRows = ((await callAdmin('get_all_holdings', { userId: uid })) || []).filter(function (h) { return h.user_id === uid; });
+      $('hList').innerHTML = hRows.length ? hRows.map(function (h) {
+        return '<form class="stack g8" data-hid="' + esc(h.id) + '" style="padding:10px 0;border-bottom:1px solid var(--line)"><b style="font-size:14px">' + esc(h.symbol) + ' <span class="small-mono">' + esc(h.name || '') + '</span></b>' +
+          '<div class="row g8"><input class="input mono" name="q" value="' + esc(h.quantity) + '" inputmode="decimal" aria-label="Quantity" style="flex:1;min-height:44px"><input class="input mono" name="a" value="' + esc(h.avg_buy_price) + '" inputmode="decimal" aria-label="Average price" style="flex:1;min-height:44px">' +
+          '<button class="btn-x gold" style="flex:none">Save</button><button type="button" class="btn-x no-btn" data-hdel="' + esc(h.id) + '" style="flex:none">Delete</button></div></form>';
+      }).join('') : '<p class="empty">No holdings for this client.</p>';
+    } catch (e) { $('hList').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; }
+  }
+  $('hUser').addEventListener('change', loadHoldings);
+  $('hList').addEventListener('submit', async function (e) {
+    var fm = e.target.closest('[data-hid]'); if (!fm) return; e.preventDefault();
+    var q = parseFloat(fm.q.value), a = parseFloat(fm.a.value);
+    if (!(q >= 0) || !(a >= 0)) { toast('Enter a valid quantity and price'); return; }
+    if (!confirm('Update this holding to ' + q + ' @ ' + f.usd(a) + '?')) return;
+    try { await callAdmin('update_holding', { holdingId: fm.dataset.hid, quantity: q, avgPrice: a }); toast('Holding updated'); loadHoldings(); } catch (err) { toast('Error: ' + err.message); }
+  });
+  $('hList').addEventListener('click', async function (e) {
+    var d = e.target.closest('[data-hdel]'); if (!d) return;
+    if (!confirm('Delete this holding? This cannot be undone.')) return;
+    try { await callAdmin('delete_holding', { holdingId: d.dataset.hdel }); toast('Holding deleted'); loadHoldings(); } catch (err) { toast('Error: ' + err.message); }
+  });
+  $('hAdd').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var uid = $('hUser').value, sym = $('hSym').value.trim().toUpperCase(), q = parseFloat($('hQty').value), a = parseFloat($('hAvg').value);
+    if (!uid || !/^[A-Z0-9]{2,12}$/.test(sym) || !(q > 0) || !(a > 0)) { toast('Enter symbol, quantity and average price'); return; }
+    if (!confirm('Save ' + q + ' ' + sym + ' @ ' + f.usd(a) + ' for this client?')) return;
+    try { await callAdmin('upsert_holding', { userId: uid, symbol: sym, name: sym, quantity: q, avgPrice: a }); toast('Holding saved'); $('hSym').value = $('hQty').value = $('hAvg').value = ''; loadHoldings(); } catch (err) { toast('Error: ' + err.message); }
+  });
+
+  /* ── Tools: deposit addresses (crypto_addresses) ──────────────────── */
+  var COINS = ['BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'LTC'], addr = {};
+  function loadAddresses() {
+    return S.rest('crypto_addresses?select=symbol,address', { fresh: true }).then(function (rows) {
+      addr = {}; (rows || []).forEach(function (r) { addr[r.symbol] = r.address || ''; });
+      $('addrList').innerHTML = COINS.map(function (c) { return '<label class="field">' + c + '<input class="input mono" data-coin="' + c + '" value="' + esc(addr[c] || '') + '" placeholder="Not set — deposits in ' + c + ' show “contact support”" style="font-size:13px" autocomplete="off"></label>'; }).join('');
+    }).catch(function (e) { $('addrList').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+  $('addrForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var changed = [].slice.call(document.querySelectorAll('[data-coin]')).filter(function (i) { return i.value.trim() !== (addr[i.dataset.coin] || ''); });
+    if (!changed.length) { toast('No changes'); return; }
+    if (!confirm('Save ' + changed.length + ' changed deposit address' + (changed.length > 1 ? 'es' : '') + '? Customers will pay to the new address.')) return;
+    try {
+      for (var i = 0; i < changed.length; i++) await callAdmin('save_address', { symbol: changed[i].dataset.coin, address: changed[i].value.trim() });
+      toast('Addresses saved'); loadAddresses();
+    } catch (err) { toast('Error: ' + err.message); }
+  });
+
+  /* ── Tools: payment methods (payment_settings, id = global) ───────── */
+  var pay = null;
+  function loadPayments() {
+    return S.rest('payment_settings?id=eq.global&select=*', { fresh: true }).then(function (r) {
+      pay = (r && r[0]) || { methods_enabled: {}, ewallet_details: {} };
+      var me = pay.methods_enabled || {}, pp = (pay.ewallet_details || {}).paypal || {};
+      $('pmCrypto').setAttribute('aria-pressed', me.crypto === false ? 'false' : 'true');
+      $('pmPaypal').setAttribute('aria-pressed', me.ewallet === false || pp.enabled === false ? 'false' : 'true');
+      $('pmPpEmail').value = pp.sendToValue || pp.email || '';
+    }).catch(function () {});
+  }
+  ['pmCrypto', 'pmPaypal'].forEach(function (id) { $(id).addEventListener('click', function (e) { e.stopPropagation(); this.setAttribute('aria-pressed', this.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); }); });
+  $('payForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var email = $('pmPpEmail').value.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Enter a valid PayPal email'); return; }
+    var ppOn = $('pmPaypal').getAttribute('aria-pressed') === 'true';
+    var ew = Object.assign({}, (pay && pay.ewallet_details) || {}); ew.paypal = Object.assign({}, ew.paypal || {}, { sendToValue: email, enabled: ppOn });
+    var row = { id: 'global', methods_enabled: Object.assign({}, (pay && pay.methods_enabled) || {}, { crypto: $('pmCrypto').getAttribute('aria-pressed') === 'true', ewallet: ppOn }), ewallet_details: ew, updated_at: new Date().toISOString() };
+    try { await S.rest('payment_settings?on_conflict=id', { method: 'POST', body: JSON.stringify(row), headers: { Prefer: 'resolution=merge-duplicates,return=minimal' } }); toast('Payment methods saved'); loadPayments(); }
+    catch (err) { toast('Not saved: ' + err.message); }
+  });
+
   /* ── Boot: admins only ──────────────────────────────────────────── */
   S.ready.then(function (ctx) {
     me = ctx;
@@ -821,7 +985,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $('console').hidden = false;
     var tab = (location.hash || '').slice(1);
     show(document.querySelector('[data-panel="' + tab + '"]') ? tab : 'overview');
-    loadUsers().then(loadPending); loadTx(); loadSettings(); loadProps();
+    loadUsers().then(loadPending); loadTx(); loadSettings(); loadProps(); loadMailLog(); loadAddresses(); loadPayments();
     // Count open chats for the overview even before the Support tab is opened
     startSupport();
   }).catch(function (err) { if (!/signed out|expired/.test(err.message)) toast('Couldn’t load: ' + err.message); });

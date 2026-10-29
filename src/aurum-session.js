@@ -126,6 +126,7 @@
       'holdings?user_id=eq.' + uid + '&select=symbol,name,quantity,avg_buy_price,pnl_override',
       'holdings?user_id=eq.' + uid + '&quantity=gt.0&select=symbol,name,quantity,avg_buy_price,pnl_override,locked_until',
       'holdings?user_id=eq.' + uid + '&select=symbol,quantity,avg_buy_price,pnl_override',
+      'holdings?user_id=eq.' + uid + '&quantity=gt.0&select=symbol,name,quantity,avg_buy_price,pnl_override,locked_until,lock_duration',
       'transactions?user_id=eq.' + uid + '&select=type,symbol,usd_amount,status,created_at&order=created_at.desc&limit=5',
       'transactions?user_id=eq.' + uid + '&select=type,symbol,usd_amount,status,created_at&order=created_at.desc&limit=500',
       'open_trades?user_id=eq.' + uid + '&status=eq.open&select=*',
@@ -173,12 +174,52 @@
   }
 
   /* ── formatting (Intl; no hard-coded symbols beyond USD display) ── */
-  var nf2 = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  /* Display currency + number format chosen in Profile → Preferences (profiles.settings,
+     mirrored to localStorage 'aurum_pref_settings'). Amounts are stored and traded in USD;
+     only the display converts, at the live rate (cached 12 h). Amounts of a million or
+     more are shortened: $1.25M, $3.4B. */
+  var SYM = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', NGN: '₦', CAD: 'C$', AUD: 'A$', CHF: 'Fr ', INR: '₹', BRL: 'R$' };
+  var pref = { cur: 'USD', fmt: 'us' }, fx = { USD: 1 };
+  try { var ps = JSON.parse(localStorage.getItem('aurum_pref_settings') || 'null'); if (ps) { pref.cur = SYM[ps.currency] ? ps.currency : 'USD'; pref.fmt = ps.format === 'eu' ? 'eu' : 'us'; } } catch (e) {}
+  try { var fc = JSON.parse(localStorage.getItem('aurum_fx_v1') || 'null'); if (fc && fc.rates) fx = Object.assign({ USD: 1 }, fc.rates); } catch (e) {}
+  function setPrefs(settings) {
+    if (!settings) return;
+    pref.cur = SYM[settings.currency] ? settings.currency : 'USD';
+    pref.fmt = settings.format === 'eu' ? 'eu' : 'us';
+    if (pref.cur !== 'USD') loadFx();
+  }
+  function loadFx() {
+    try { var fc = JSON.parse(localStorage.getItem('aurum_fx_v1') || 'null'); if (fc && fc.rates && Date.now() - fc.at < 12 * 36e5) { fx = Object.assign({ USD: 1 }, fc.rates); return; } } catch (e) {}
+    fetch('https://open.er-api.com/v6/latest/USD').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d || !d.rates) return;
+      fx = Object.assign({}, d.rates, { USD: 1 });
+      try { localStorage.setItem('aurum_fx_v1', JSON.stringify({ at: Date.now(), rates: d.rates })); } catch (e) {}
+      document.dispatchEvent(new CustomEvent('aurum:resume')); // pages re-render in the new currency
+    }).catch(function () {});
+  }
+  function conv(n) { var r = fx[pref.cur]; return pref.cur === 'USD' || !r ? { v: n, s: '$' } : { v: n * r, s: SYM[pref.cur] }; }
+  function num(v, dp) { return v.toLocaleString(pref.fmt === 'eu' ? 'de-DE' : 'en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp }); }
+  function body(v) {
+    var a = Math.abs(v);
+    if (a >= 1e12) return num(a / 1e12, 2) + 'T';
+    if (a >= 1e9) return num(a / 1e9, 2) + 'B';
+    if (a >= 1e6) return num(a / 1e6, 2) + 'M';
+    return num(a, 2);
+  }
+  function money(n, signed) {
+    n = Number(n) || 0; var c = conv(n);
+    var sign = c.v < 0 ? '−' : signed && c.v > 0 ? '+' : '';
+    return sign + c.s + body(c.v);
+  }
   var fmt = {
-    usd: function (n) { n = Number(n) || 0; return (n < 0 ? '−$' : '$') + nf2.format(Math.abs(n)); },
-    signedUsd: function (n) { n = Number(n) || 0; return (n > 0 ? '+$' : n < 0 ? '−$' : '$') + nf2.format(Math.abs(n)); },
+    usd: function (n) { return money(n, false); },
+    signedUsd: function (n) { return money(n, true); },
     pct: function (n) { n = Number(n) || 0; return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(2) + '%'; },
-    compact: function (n) { n = Number(n) || 0; return (n < 0 ? '−$' : '$') + new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(Math.abs(n)); },
+    compact: function (n) {
+      n = Number(n) || 0; var c = conv(n);
+      return (c.v < 0 ? '−' : '') + c.s + new Intl.NumberFormat(pref.fmt === 'eu' ? 'de-DE' : 'en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(Math.abs(c.v));
+    },
+    currency: function () { return pref.cur; },
     when: function (iso) {
       var d = new Date(iso); if (isNaN(d)) return '—';
       return d.toLocaleDateString('en-GB') + ' · ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -216,6 +257,7 @@
     var settings = {};
     (res[1] || []).forEach(function (r) { settings[r.key] = r.value; });
     var profile = res[0] || {};
+    setPrefs(profile.settings);
     var initials = (profile.avatar_initials || ((profile.first_name || '')[0] || '') + ((profile.last_name || '')[0] || '') || (s.user.email || '?')[0]).toUpperCase();
     document.querySelectorAll('[data-avatar]').forEach(function (el) {
       if (profile.avatar_url) { el.innerHTML = ''; var i = new Image(); i.alt = ''; i.src = profile.avatar_url; el.appendChild(i); }
@@ -234,7 +276,7 @@
     return s.access_token;
   }
 
-  window.AurumSession = { ready: load(), rest: rest, token: token, key: KEY, portfolio: portfolio, fmt: fmt, signOut: signOut, url: URL_, invalidate: invalidate, warm: warm };
+  window.AurumSession = { ready: load(), rest: rest, token: token, key: KEY, portfolio: portfolio, fmt: fmt, signOut: signOut, url: URL_, invalidate: invalidate, warm: warm, setPrefs: setPrefs };
   // Warm the other main pages' data once this page is idle, and again every minute while open
   (window.requestIdleCallback || setTimeout)(function () { warm(); }, { timeout: 2500 });
   setInterval(warm, 60000);

@@ -580,17 +580,26 @@ serve(async (req: Request) => {
       })))
       const key = Deno.env.get("RESEND_API_KEY")
       if (!key) throw new Error("RESEND_API_KEY not set")
-      let sent = 0; const failures: string[] = []
+      let sent = 0; const failures: string[] = []; const ids: string[] = []
       for (let i = 0; i < emails.length; i += 100) {
         const chunk = emails.slice(i, i + 100)
         const res = await fetch("https://api.resend.com/emails/batch", {
           method: "POST", headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" }, body: JSON.stringify(chunk),
         })
-        if (res.ok) sent += chunk.length
-        else failures.push(`${res.status}: ${(await res.text()).slice(0, 200)}`)
+        const text = await res.text()
+        console.log("[send_email] resend", res.status, text.slice(0, 500))
+        let j: { data?: { id: string }[]; errors?: unknown[] } = {}
+        try { j = JSON.parse(text) } catch { /* not JSON */ }
+        if (res.ok && Array.isArray(j.data)) { sent += j.data.length; j.data.forEach((d) => ids.push(d.id)) }
+        else failures.push(`${res.status}: ${text.slice(0, 300)}`)
+        if (Array.isArray(j.errors) && j.errors.length) failures.push(JSON.stringify(j.errors).slice(0, 300))
       }
-      if (!sent) throw new Error("Resend refused the send — " + failures[0])
-      result = { sent, failed: emails.length - sent, from, errors: failures }
+      await svc.from("email_log").insert({
+        admin_id: user.id, sender: from, subject, recipients: emails.length, sent, failed: emails.length - sent,
+        detail: { ids: ids.slice(0, 50), errors: failures, to: recipients.slice(0, 50).map((r) => r.email) },
+      })
+      if (!sent) throw new Error("Resend refused the send — " + (failures[0] ?? "no response"))
+      result = { sent, failed: emails.length - sent, from, errors: failures, ids: ids.slice(0, 5) }
 
     } else {
       return new Response(

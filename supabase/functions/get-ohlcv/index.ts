@@ -100,7 +100,37 @@ serve(async (req) => {
   const limit = Math.max(0, parseInt(url.searchParams.get("limit") ?? "0", 10) || 0);
   const key   = `ohlcv:v1:${sym}:${tf}`;
 
+  // Crypto comes from Binance (public, generous limits) so Twelve Data's 8 req/min
+  // allowance is left for equities and commodities; Twelve Data stays the fallback.
+  const fetchBinance = async (): Promise<Series> => {
+    const pair = BINANCE_PAIR[sym], bi = BINANCE_INTERVAL[tf] ?? "1d";
+    if (!pair) throw new Error("not on Binance");
+    const qs = `?symbol=${pair}&interval=${bi}&limit=${Math.min(outsize, 1000)}`;
+    let rows: unknown[] | null = null, lastErr = "";
+    for (const host of ["https://api.binance.com", "https://data-api.binance.vision"]) {
+      try {
+        const r = await fetch(host + "/api/v3/klines" + qs, { signal: AbortSignal.timeout(8000) });
+        if (!r.ok) { lastErr = `Binance HTTP ${r.status}`; continue; }
+        rows = await r.json(); break;
+      } catch (e) { lastErr = (e as Error).message; }
+    }
+    if (!Array.isArray(rows) || !rows.length) throw new Error(lastErr || "No data from Binance");
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const values = (rows as Array<Array<string | number>>).map((k) => {
+      const d = new Date(Number(k[0]));
+      const datetime = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:00`;
+      return { datetime, open: String(k[1]), high: String(k[2]), low: String(k[3]), close: String(k[4]), volume: String(k[5]) };
+    }).reverse(); // newest first, like Twelve Data
+    console.info(`[get-ohlcv] ✓ binance ${sym}/${tf} → ${values.length} bars`);
+    const series = { values, meta: { symbol: pair, interval: bi, source: "binance" } };
+    await setJSON(key, series, OHLCV_KEEP_SEC);
+    return series;
+  };
+
   const fetchSeries = async (): Promise<Series> => {
+    if (BINANCE_PAIR[sym]) {
+      try { return await fetchBinance(); } catch (e) { console.warn(`[get-ohlcv] binance ${sym}:`, (e as Error).message); }
+    }
     const resp = await fetch(apiUrl, {
       signal: AbortSignal.timeout(9000),
       headers: { Accept: "application/json" },
@@ -156,6 +186,15 @@ serve(async (req) => {
 });
 
 interface Series { values: Array<Record<string, string>>; meta: Record<string, unknown> }
+
+/* Crypto on Binance (USDT pairs) and our timeframe codes → Binance intervals */
+const BINANCE_PAIR: Record<string, string> = {
+  BTC: "BTCUSDT", ETH: "ETHUSDT", SOL: "SOLUSDT", BNB: "BNBUSDT", XRP: "XRPUSDT", ADA: "ADAUSDT", LTC: "LTCUSDT",
+};
+const BINANCE_INTERVAL: Record<string, string> = {
+  "5M": "5m", "15M": "15m", "30M": "30m", "1H": "1h", "4H": "4h",
+  "1D": "1d", "1W": "1w", "1M": "1M", "3M": "1d", "1Y": "1d",
+};
 
 /* How long cached bars count as fresh, per timeframe */
 const OHLCV_FRESH_MS: Record<string, number> = {
