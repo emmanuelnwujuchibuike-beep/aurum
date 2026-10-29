@@ -108,7 +108,8 @@
     var key = state.sym + '|' + state.tf, mine = ++req;
     if (cache[key]) { bars = cache[key]; setNote(''); draw(); return; }
     setNote('Loading chart…');
-    fetch(Aurum.api + 'get-ohlcv?symbol=' + (OHLC_SYM[state.sym] || state.sym) + '&tf=' + state.tf, { headers: Aurum.headers })
+    fetch(Aurum.api + 'get-ohlcv?symbol=' + (OHLC_SYM[state.sym] || state.sym) + '&tf=' + state.tf
+      + (RANGE_TF[state.tf] ? '' : '&limit=' + MAX_BARS), { headers: Aurum.headers })
       .then(function (r) { return r.json(); })
       .then(function (j) {
         if (mine !== req) return;

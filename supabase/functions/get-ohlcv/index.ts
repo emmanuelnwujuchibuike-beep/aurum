@@ -3,6 +3,7 @@
 // Returns time-series candle data for any supported symbol + timeframe.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { background, getJSON, setJSON, tryLock } from "../_shared/redis.ts";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -94,7 +95,12 @@ serve(async (req) => {
     `&outputsize=${outsize}` +
     `&apikey=${apiKey}`;
 
-  try {
+  // Optional ?limit=N returns only the newest N bars (values are newest-first);
+  // without it the response is unchanged for existing callers.
+  const limit = Math.max(0, parseInt(url.searchParams.get("limit") ?? "0", 10) || 0);
+  const key   = `ohlcv:v1:${sym}:${tf}`;
+
+  const fetchSeries = async (): Promise<Series> => {
     const resp = await fetch(apiUrl, {
       signal: AbortSignal.timeout(9000),
       headers: { Accept: "application/json" },
@@ -111,12 +117,34 @@ serve(async (req) => {
     }
 
     console.info(`[get-ohlcv] ✓ ${sym}/${tf} → ${json.values.length} bars`);
+    const series = { values: json.values, meta: json.meta ?? {} };
+    await setJSON(key, series, OHLCV_KEEP_SEC);
+    return series;
+  };
 
-    return new Response(
-      JSON.stringify({ success: true, values: json.values, meta: json.meta ?? {} }),
-      { headers: { ...CORS, "Content-Type": "application/json" } }
-    );
+  const ok = (s: Series, producedAt: number, cached: boolean) => new Response(
+    JSON.stringify({
+      success: true,
+      values: limit ? s.values.slice(0, limit) : s.values,
+      meta: s.meta,
+      cached,
+      updatedAt: new Date(producedAt).toISOString(),
+    }),
+    { headers: { ...CORS, "Content-Type": "application/json", "Cache-Control": "public, max-age=30" } }
+  );
 
+  // Shared Redis cache, stale-while-revalidate: Twelve Data's free plan allows
+  // only 8 requests/minute, so every visitor must not hit it directly.
+  const hit = await getJSON<Series>(key);
+  if (hit?.data?.values?.length) {
+    if (Date.now() - hit.t > (OHLCV_FRESH_MS[tf] ?? 300_000) && await tryLock(key, 20)) {
+      background(fetchSeries().catch(e => console.warn(`[get-ohlcv] refresh ${key}:`, (e as Error).message)));
+    }
+    return ok(hit.data, hit.t, true);
+  }
+
+  try {
+    return ok(await fetchSeries(), Date.now(), false);
   } catch (err) {
     const msg = (err as Error).message;
     console.error(`[get-ohlcv] ${sym}/${tf} error:`, msg);
@@ -126,3 +154,13 @@ serve(async (req) => {
     );
   }
 });
+
+interface Series { values: Array<Record<string, string>>; meta: Record<string, unknown> }
+
+/* How long cached bars count as fresh, per timeframe */
+const OHLCV_FRESH_MS: Record<string, number> = {
+  "5M": 60_000, "15M": 120_000, "30M": 120_000, "1H": 300_000, "4H": 600_000,
+  "1D": 1_800_000, "1W": 3_600_000, "1M": 3_600_000, "3M": 1_800_000, "1Y": 1_800_000,
+};
+/* Redis keeps the last good series this long, so a provider outage or 429 still renders */
+const OHLCV_KEEP_SEC = 24 * 60 * 60;
