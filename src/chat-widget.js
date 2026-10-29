@@ -142,6 +142,7 @@ const AURUM_CHAT_CONFIG = {
     #aurum-send.uploading .send-spinner{display:block}
     @keyframes aurSpin{to{transform:rotate(360deg)}}
     @media (prefers-reduced-motion:reduce){#aurum-chat-root *{animation:none!important;transition:none!important}}
+    @supports (-webkit-touch-callout:none){#aurum-chat-root input,#aurum-chat-root textarea{font-size:16px!important}}
 
   `;
   document.head.appendChild(style);

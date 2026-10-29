@@ -249,3 +249,10 @@ html{overscroll-behavior-x:none}
 .ac[data-a="GOLD"]{background:linear-gradient(135deg,#E8C25A,#B8860B)}.ac[data-a="SILVER"]{background:linear-gradient(135deg,#D7D8DC,#8E9096);color:#1E1B16}.ac[data-a="OIL"]{background:#2B2118}
 .ac[data-a="estate"]{background:linear-gradient(135deg,#2F7A4B,#1D4D30)}
 .ac svg{width:22px;height:22px;stroke-width:2.5}
+
+/* iPhone/iPad: Safari zooms the page when a field with text under 16px is focused.
+   Every field is at least 16px on iOS (larger ones keep their size); pinch-zoom still works. */
+@supports (-webkit-touch-callout:none){
+  input,select,textarea,.input{font-size:16px!important}
+  .big-in{font-size:26px!important}
+}
