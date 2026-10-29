@@ -197,9 +197,6 @@
         <label class="field"><span class="eyebrow">Currency</span><select class="input sel" id="pCur" data-ps="currency">
           <option value="USD">USD — US Dollar ($)</option><option value="EUR">EUR — Euro (€)</option><option value="GBP">GBP — British Pound (£)</option><option value="JPY">JPY — Japanese Yen (¥)</option><option value="NGN">NGN — Nigerian Naira (₦)</option><option value="CAD">CAD — Canadian Dollar (C$)</option><option value="AUD">AUD — Australian Dollar (A$)</option><option value="CHF">CHF — Swiss Franc (Fr)</option><option value="INR">INR — Indian Rupee (₹)</option><option value="BRL">BRL — Brazilian Real (R$)</option>
         </select><span class="note mono" id="fxNote" hidden></span></label>
-        <div class="field"><span class="eyebrow">Number format</span>
-          <div class="inset seg-wrap" role="group" aria-label="Number format"><button class="seg" data-fmt="us" aria-pressed="false"><span class="mono" style="font-size:12px">1,234.56</span></button><button class="seg" data-fmt="eu" aria-pressed="false"><span class="mono" style="font-size:12px">1.234,56</span></button></div>
-        </div>
         <div>
           <div class="trow" style="border-bottom:1px solid var(--line)"><span class="tt"><b>Trade confirmations</b><span class="d">Ask me to confirm before every order</span></span><button class="sw" data-pref="confirm" aria-pressed="true" aria-label="Trade confirmations"><span></span></button></div>
           <div class="trow" style="border-bottom:1px solid var(--line)"><span class="tt"><b>Hide balances</b><span class="d">Mask money figures on this device</span></span><button class="sw" data-hide-balances aria-pressed="false" aria-label="Hide balances"><span></span></button></div>
@@ -342,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function msg(el, t, k) { el.textContent = t || ''; el.className = 'msg' + (k ? ' ' + k : ''); }
   function initials() { return ((profile.avatar_initials || ((profile.first_name || '')[0] || '') + ((profile.last_name || '')[0] || '')) || (ctx && ctx.user.email || 'A')[0]).toUpperCase().slice(0, 3); }
   function colour(id) { return COLORS.find(function (c) { return c[0] === id; }) || COLORS[0]; }
-  function money(usd) { var v = usd * (fx[settings.currency] || 1); return (CUR[settings.currency] || '$') + v.toLocaleString(settings.format === 'eu' ? 'de-DE' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function money(usd) { var v = usd * (fx[settings.currency] || 1); return (CUR[settings.currency] || '$') + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function dt(d, o) { return d.toLocaleDateString('en-GB', o || { day: 'numeric', month: 'long', year: 'numeric' }); }
   function age(days) {
     if (days < 1) return 'New'; if (days < 7) return days + ' day' + (days !== 1 ? 's' : '');
@@ -452,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $('profitNote').textContent = 'Alert fires when portfolio P&L reaches ' + dir + thr + '% (at most every 6 hours).' + (settings.profitAlertFiredAt ? ' Last triggered ' + dt(new Date(settings.profitAlertFiredAt), { day: 'numeric', month: 'short' }) + '.' : '');
     var n = activeAlerts().length;
     $('alertsSum').textContent = n + ' price alert' + (n === 1 ? '' : 's') + ' · P&L ' + (settings.profitAlertEnabled ? dir + thr + '%' : 'off');
-    $('prefsSum').textContent = themeName() + ' · ' + settings.currency + ' · ' + (settings.format === 'eu' ? '1.234,56' : '1,234.56');
+    $('prefsSum').textContent = themeName() + ' · ' + settings.currency;
     var fxn = $('fxNote'); fxn.hidden = settings.currency === 'USD' || !fx[settings.currency];
     if (!fxn.hidden) fxn.textContent = '1 USD = ' + (CUR[settings.currency] || '') + fx[settings.currency].toLocaleString('en-US', { maximumFractionDigits: 4 }) + ' · live rate';
     renderAlerts(); mirror();
@@ -546,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ── Load ────────────────────────────────────────────────────── */
   S.ready.then(function (c) {
     ctx = c; profile = c.profile || {}; uid = c.user.id;
-    settings = Object.assign({}, DEFAULTS, profile.settings || {});
+    settings = Object.assign({}, DEFAULTS, profile.settings || {}); settings.format = 'us';
     av.color = profile.avatar_color || 'gold'; av.url = profile.avatar_url || null;
     render(); renderSettings(); markSwatch(); avPreview(); loadFx();
     if (location.hash === '#alerts') { setAcc('alerts', true); $('alerts').scrollIntoView({ block: 'start' }); }

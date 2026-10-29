@@ -222,6 +222,50 @@
 
   window.Aurum.refresh = function () { load(); };
 
+  /* Chart data (get-ohlcv) cache: kept on the device, so a chart opens with its bars
+     already there; refreshed in the background when older than its timeframe allows.
+     Aurum.ohlcv(symbol, tf) → Promise<values, newest first>. */
+  var OH_KEY = 'aurum_ohlcv_v1', OH_FRESH = { '5M': 60e3, '15M': 120e3, '30M': 120e3, '1H': 300e3, '4H': 600e3 }, ohMem = null, ohBusy = {}, ohSaveT;
+  function ohStore() { if (!ohMem) { try { ohMem = JSON.parse(localStorage.getItem(OH_KEY) || '{}') || {}; } catch (e) { ohMem = {}; } } return ohMem; }
+  function ohSave() {
+    clearTimeout(ohSaveT);
+    ohSaveT = setTimeout(function () {
+      var s = ohStore(), keys = Object.keys(s).sort(function (a, b) { return s[b].at - s[a].at; });
+      keys.slice(14).forEach(function (k) { delete s[k]; }); // keep the 14 most recent series
+      try { localStorage.setItem(OH_KEY, JSON.stringify(s)); } catch (e) { ohMem = {}; try { localStorage.removeItem(OH_KEY); } catch (x) {} }
+    }, 400);
+  }
+  function ohFetch(sym, tf) {
+    var k = sym + '|' + tf;
+    if (!ohBusy[k]) ohBusy[k] = fetch(API + 'get-ohlcv?symbol=' + encodeURIComponent(sym) + '&tf=' + tf, { headers: window.Aurum.headers })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.success || !j.values || !j.values.length) throw new Error((j && j.error) || 'No chart data');
+        var v = j.values.slice(0, 500).map(function (x) { return { datetime: x.datetime, open: x.open, high: x.high, low: x.low, close: x.close, volume: x.volume }; });
+        ohStore()[k] = { at: Date.now(), v: v }; ohSave();
+        return v;
+      })
+      .finally(function () { delete ohBusy[k]; });
+    return ohBusy[k];
+  }
+  window.Aurum.ohlcv = function (sym, tf) {
+    var hit = ohStore()[sym + '|' + tf], fresh = OH_FRESH[tf] || 18e5;
+    if (hit && Date.now() - hit.at < fresh) return Promise.resolve(hit.v);
+    var p = ohFetch(sym, tf);
+    if (hit && Date.now() - hit.at < 2 * 864e5) { p.catch(function () {}); return Promise.resolve(hit.v); } // show stale bars, refresh behind
+    return p;
+  };
+  // Warm the main charts on every page (idle, visible tab): the trade page's timeframe + daily
+  function warmCharts() {
+    if (document.visibilityState === 'hidden') return;
+    var tf = '1D'; try { tf = (JSON.parse(localStorage.getItem('aurum_trade_view') || '{}').tf) || '1D'; } catch (e) {}
+    var list = [], s = ohStore();
+    ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'GOLD'].forEach(function (sym) { list.push([sym, tf]); if (tf !== '1D') list.push([sym, '1D']); });
+    list.filter(function (x) { var h = s[x[0] + '|' + x[1]]; return !h || Date.now() - h.at > (OH_FRESH[x[1]] || 18e5); })
+      .forEach(function (x, i) { setTimeout(function () { ohFetch(x[0], x[1]).catch(function () {}); }, 400 * i); });
+  }
+  window.Aurum.warmCharts = warmCharts;
+
   // Paint the last known prices straight away (under 10 minutes old), then fetch fresh ones
   try {
     var lastP = JSON.parse(localStorage.getItem('aurum_prices_v1') || 'null');
@@ -244,6 +288,7 @@
       });
     }, { timeout: 3000 });
     setInterval(load, 30000);
+    setTimeout(warmCharts, 2500); setInterval(warmCharts, 120000);
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') load(); });
   }
   /* 6. In-app navigation (router) ---------------------------------------------

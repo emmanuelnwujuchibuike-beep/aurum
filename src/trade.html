@@ -389,17 +389,23 @@ document.addEventListener('DOMContentLoaded', function () {
     $('clearMarks').hidden = !((marks.trades[sym] || []).length);
   }
   function snap(t) { if (!bars.length) return t; var best = bars[0].time; for (var i = 0; i < bars.length; i++) { if (bars[i].time <= t) best = bars[i].time; else break; } return best; }
+  // "2026-10-29" or "2026-10-29 21:00:00" (UTC) → unix seconds. Parsed by hand: iPhone
+  // Safari rejects forms like "2026-10-29Z", which used to empty the whole chart.
+  function barTime(s) {
+    var m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?/);
+    return m ? Math.floor(Date.UTC(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0)) / 1000) : 0;
+  }
   function loadBars(retry) {
     if (!retry) st.retries = 0;
     var mine = ++barsReq, a = cur(); note('Loading chart…');
-    fetch(A.api + 'get-ohlcv?symbol=' + encodeURIComponent(OHLC_SYM[a.feed] || a.sym) + '&tf=' + st.tf, { headers: A.headers })
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
+    A.ohlcv(OHLC_SYM[a.feed] || a.sym, st.tf)
+      .then(function (values) {
         if (mine !== barsReq) return;
-        if (!j || !j.success || !j.values || !j.values.length) throw 0;
+        var j = { values: values };
+        if (!values || !values.length) throw 0;
         var seen = {};
         bars = j.values.map(function (v) {
-          var t = Math.floor(new Date(String(v.datetime).replace(' ', 'T') + (/[zZ]|[+-]\d\d:?\d\d$/.test(v.datetime) ? '' : 'Z')).getTime() / 1000);
+          var t = barTime(v.datetime);
           return { time: t, open: +v.open, high: +v.high, low: +v.low, close: +v.close, volume: +v.volume || 0 };
         }).filter(function (b) { if (!(b.close > 0) || !b.time || seen[b.time]) return false; seen[b.time] = 1; return true; }).sort(function (x, y) { return x.time - y.time; });
         var last = bars[bars.length - 1];

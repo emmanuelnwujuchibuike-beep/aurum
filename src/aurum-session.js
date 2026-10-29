@@ -198,7 +198,8 @@
     }).catch(function () {});
   }
   function conv(n) { var r = fx[pref.cur]; return pref.cur === 'USD' || !r ? { v: n, s: '$' } : { v: n * r, s: SYM[pref.cur] }; }
-  function num(v, dp) { return v.toLocaleString(pref.fmt === 'eu' ? 'de-DE' : 'en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp }); }
+  // Always comma thousands and a dot for decimals (1,234.56), whatever the currency
+  function num(v, dp) { return v.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp }); }
   function body(v) {
     var a = Math.abs(v);
     if (a >= 1e12) return num(a / 1e12, 2) + 'T';
@@ -217,7 +218,7 @@
     pct: function (n) { n = Number(n) || 0; return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(2) + '%'; },
     compact: function (n) {
       n = Number(n) || 0; var c = conv(n);
-      return (c.v < 0 ? '−' : '') + c.s + new Intl.NumberFormat(pref.fmt === 'eu' ? 'de-DE' : 'en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(Math.abs(c.v));
+      return (c.v < 0 ? '−' : '') + c.s + new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(Math.abs(c.v));
     },
     currency: function () { return pref.cur; },
     when: function (iso) {

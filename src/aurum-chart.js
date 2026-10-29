@@ -110,12 +110,11 @@
     var key = state.sym + '|' + state.tf, mine = ++req;
     if (cache[key]) { bars = cache[key]; setNote(''); draw(); return; }
     setNote('Loading chart…');
-    fetch(Aurum.api + 'get-ohlcv?symbol=' + (OHLC_SYM[state.sym] || state.sym) + '&tf=' + state.tf
-      + (RANGE_TF[state.tf] ? '' : '&limit=' + MAX_BARS), { headers: Aurum.headers })
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
+    (Aurum.ohlcv ? Aurum.ohlcv(OHLC_SYM[state.sym] || state.sym, state.tf) : Promise.reject(0))
+      .then(function (values) {
         if (mine !== req) return;
-        if (!j || !j.success || !j.values || !j.values.length) throw 0;
+        var j = { values: values };
+        if (!values || !values.length) throw 0;
         var list = j.values.slice().reverse().map(function (v) {
           return { o: +v.open, h: +v.high, l: +v.low, c: +v.close };
         }).filter(function (b) { return b.c > 0; });
