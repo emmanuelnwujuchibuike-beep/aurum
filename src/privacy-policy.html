@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="coingecko-sync.js?v=4"></script>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
+  <script src="coingecko-sync.js?v=4" defer></script>
   <meta property="og:type" content="website">
   <meta property="og:title" content="Privacy Policy - Aurum Capital">
   <meta property="og:description" content="Read Aurum Capital's privacy policy and legal information.">
@@ -85,7 +85,7 @@
       padding: 0 48px;
       height: 72px;
       background: rgba(2,4,6,.85);
-      backdrop-filter: blur(24px);
+      
       border-bottom: 1px solid var(--border);
     }
 
@@ -182,7 +182,7 @@
     .lp-menu-backdrop {
       position: absolute; inset: 0;
       background: rgba(2,4,6,0);
-      backdrop-filter: blur(0px);
+      
       transition: background .6s cubic-bezier(.4,0,.2,1), backdrop-filter .6s;
     }
     .lp-menu-panel {
@@ -228,7 +228,7 @@
     .lp-mobile-menu.open { pointer-events: all; }
     .lp-mobile-menu.open .lp-menu-backdrop {
       background: rgba(2,4,6,.82);
-      backdrop-filter: blur(16px);
+      
     }
     .lp-mobile-menu.open .lp-menu-panel { transform: translateX(0); }
 
@@ -598,7 +598,7 @@
     .doc-tabs {
       position: sticky; top: 72px; z-index: 0;
       background: rgba(6,12,18,.92);
-      backdrop-filter: blur(20px);
+      
       border-bottom: 1px solid var(--border);
     }
     .doc-tabs-inner {
@@ -1098,8 +1098,6 @@
 <link rel="stylesheet" href="premium-base.css">
 </head>
 <body>
-<script src="intro-loader.js"></script>
-<div id="cursorGlow" class="cursor-glow"></div>
 <div id="themeOverlay" style="position:fixed;inset:0;z-index:999999;pointer-events:none;opacity:0;transition:opacity .15s ease;"></div>
 
   <!-- Scroll progress bar -->

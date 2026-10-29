@@ -153,34 +153,17 @@ table, thead, tbody, td, th {
   }
 }
 
-/* ── CURSOR GLOW ── */
-.cursor-glow {
-  position: fixed; pointer-events: none; z-index: 9001;
-  width: 400px; height: 400px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  mix-blend-mode: screen; will-change: left, top;
-  transition: width .5s, height .5s, opacity .4s !important;
-}
-html[data-theme="light"] .cursor-glow {
-  background: radial-gradient(circle, rgba(159,122,30,0.09) 0%, transparent 70%);
-  mix-blend-mode: multiply;
-}
-@media (hover: none) { .cursor-glow { display: none !important; } }
+/* ── CURSOR GLOW / DIAMOND PARTICLES: removed for performance (were driving
+   an uncapped requestAnimationFrame loop and a continuous particle spawner
+   on every page, forever, purely decorative) ── */
+.cursor-glow, .diamond-particle { display: none !important; }
 
-/* ── DIAMOND PARTICLES ── */
-.diamond-particle {
-  position: fixed; z-index: 2; pointer-events: none;
-  background: var(--gold); opacity: 0;
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  animation: aurumDiamond linear infinite;
-}
-@keyframes aurumDiamond {
-  0%   { transform: translateY(4px) rotate(0deg) scale(0); opacity: 0; }
-  6%   { opacity: .6; transform: translateY(-3vh) rotate(40deg) scale(1); }
-  94%  { opacity: .15; }
-  100% { transform: translateY(-108vh) rotate(540deg) scale(.3); opacity: 0; }
-}
+/* ── PERFORMANCE: cap every CSS animation to a single run.
+   Ambient/looping effects (glows, pulses, spins, shimmers) stop after one
+   pass instead of animating forever — this is what actually drives CPU/GPU
+   usage and device heat. One-shot entrance animations (fade/slide-in on
+   load) already run once, so this has no effect on them. ── */
+*, *::before, *::after { animation-iteration-count: 1 !important; }
 
 /* ── SHARED KEYFRAMES ── */
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
@@ -304,7 +287,7 @@ html[data-theme="light"] .nav-toggle { background: rgba(159,122,30,0.08) !import
 html[data-theme="light"] header.scrolled {
   background: rgba(250,248,244,0.94) !important;
   border-bottom-color: rgba(0,0,0,0.09) !important;
-  backdrop-filter: blur(24px) saturate(160%) !important;
+  
 }
 
 /* Footer */
@@ -321,14 +304,6 @@ html[data-theme="light"] .footer-bottom { border-top-color: rgba(0,0,0,0.07) !im
 html[data-theme="light"] .social-btn { background: rgba(0,0,0,0.06) !important; border-color: rgba(0,0,0,0.1) !important; color: var(--text-3) !important; }
 html[data-theme="light"] .social-btn:hover { background: rgba(159,122,30,0.1) !important; border-color: rgba(159,122,30,0.28) !important; color: var(--gold) !important; }
 html[data-theme="light"] .disclaimer { color: var(--text-3) !important; border-top-color: rgba(0,0,0,0.06) !important; }
-
-/* Loader */
-html[data-theme="light"] #loader { background: var(--ink) !important; }
-html[data-theme="light"] .ld-sub,
-html[data-theme="light"] .ld-capital,
-html[data-theme="light"] .ld-tagline { color: var(--text-3) !important; }
-html[data-theme="light"] .ld-progress,
-html[data-theme="light"] .ld-progress-wrap .ld-track { background: rgba(0,0,0,0.08) !important; }
 
 /* Tables */
 html[data-theme="light"] table { background: rgba(255,255,255,0.92) !important; }

@@ -12,7 +12,7 @@
     padding:9px 16px;border-radius:50px;
     background:rgba(12,17,24,.88);
     border:1px solid rgba(201,168,76,.28);
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    
     box-shadow:0 4px 24px rgba(0,0,0,.55),0 0 0 1px rgba(201,168,76,.08);
     cursor:pointer;
     font-family:'DM Sans',system-ui,sans-serif;
@@ -32,7 +32,7 @@
     position:fixed;inset:0;z-index:9999;
     display:flex;align-items:flex-end;justify-content:center;
     background:rgba(4,6,8,.82);
-    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    
     opacity:0;visibility:hidden;
     transition:opacity .3s ease,visibility .3s ease;
     padding:0;
