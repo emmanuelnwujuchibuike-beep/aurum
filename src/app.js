@@ -123,6 +123,27 @@
   });
   window.addEventListener('pageshow', function () { clearTimeout(navT); root.classList.remove('navigating'); });
 
+  /* iOS Safari: after switching away and back, the bottom nav can sit too high until the
+     page is scrolled (fixed elements use a stale viewport). Nudge the layout so it
+     re-settles: on return to the tab, on back-cache restore and on viewport resize. */
+  function settleFixed(nudge) {
+    var n = document.querySelector('.nav'); if (!n) return;
+    n.style.transform = 'translateX(-50%) translateZ(0)';
+    void n.offsetHeight;
+    requestAnimationFrame(function () { n.style.transform = ''; });
+    var y = window.scrollY;
+    if (nudge && document.documentElement.scrollHeight > window.innerHeight + 2) { window.scrollTo(window.scrollX, y + 1); window.scrollTo(window.scrollX, y); }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState !== 'visible') return;
+    setTimeout(function () { settleFixed(true); }, 60); setTimeout(function () { settleFixed(true); }, 450);
+  });
+  window.addEventListener('pageshow', function () { setTimeout(function () { settleFixed(true); }, 60); });
+  window.addEventListener('orientationchange', function () { setTimeout(function () { settleFixed(true); }, 300); });
+  if (window.visualViewport) {
+    var vvT; window.visualViewport.addEventListener('resize', function () { clearTimeout(vvT); vvT = setTimeout(function () { settleFixed(false); }, 120); });
+  }
+
   /* 3. Live prices ------------------------------------------------------------
      Markup: data-price="SYM", data-chg="SYM", data-cap="SYM", data-high/low/vol/open="SYM".
      Placeholders ("—") stay if the API fails. */

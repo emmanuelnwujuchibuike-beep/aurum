@@ -107,7 +107,11 @@
     <span class="grab" aria-hidden="true"></span>
     <b class="serif" id="wTitle" style="font-size:20px">Withdraw to cash</b>
     <p class="note muted small" id="wNote"></p>
+    <div class="inset seg-wrap" id="wPcts" role="group" aria-label="How much to withdraw" hidden>
+      <button type="button" class="seg" data-wp="25" aria-pressed="false">25%</button><button type="button" class="seg" data-wp="50" aria-pressed="false">50%</button><button type="button" class="seg" data-wp="75" aria-pressed="false">75%</button><button type="button" class="seg" data-wp="100" aria-pressed="true">All</button>
+    </div>
     <div class="inset" style="border-radius:16px;padding:6px 14px">
+      <div class="sum" id="wUnitsRow" hidden><span class="muted">Amount</span><b id="wUnits">—</b></div>
       <div class="sum"><span class="muted">Current value</span><b id="wVal">—</b></div>
       <div class="sum"><span class="muted" id="wFeeLbl">Early-withdrawal fee</span><b id="wFee">—</b></div>
       <div class="sum"><span>You receive</span><b id="wNet">—</b></div>
@@ -236,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<span class="stack" style="align-items:flex-end;gap:2px"><span class="amt" data-money>' + (ready ? esc(f.usd(x.value)) : '—') + '</span><span class="sub ' + (x.pnl > 0 ? 'up' : x.pnl < 0 ? 'down' : '') + '" data-money>' + (ready && x.cost > 0 ? esc(f.signedUsd(x.pnl) + ' · ' + f.pct(x.pnlPct)) : '') + '</span></span>' +
         '<div class="acts">' + (c === 'property'
           ? '<button class="raised-sm" data-pw="' + esc(x.symbol) + '">Withdraw to cash</button>'
-          : '<a class="raised-sm" href="trade.html?sym=' + encodeURIComponent(x.symbol) + '&amp;side=sell">Sell</a><a class="raised-sm" href="trade.html?sym=' + encodeURIComponent(x.symbol) + '&amp;side=buy">Buy more</a>') + '</div></div>';
+          : '<button class="raised-sm" data-wh="' + esc(x.symbol) + '">Withdraw to cash</button><a class="raised-sm" href="trade.html?sym=' + encodeURIComponent(x.symbol) + '&amp;side=buy">Buy more</a>') + '</div></div>';
     }).join('') : '<p class="empty">No holdings yet. <a class="link" href="invest.html" style="font-size:13px">Make your first investment →</a></p>';
     var tb = $('trades');
     tb.innerHTML = st.trades.length ? st.trades.map(function (t) {
@@ -267,8 +271,38 @@ document.addEventListener('DOMContentLoaded', function () {
         '<button class="btn-sm ' + (locked ? 'raised-sm' : 'gold') + '" data-pw="' + esc(x.symbol) + '">Withdraw to cash' + (locked ? ' (early)' : '') + '</button></div>';
     }).join('');
   }
-  var wSym = null;
+  var wSym = null, wKind = 'property', wPct = 100;
+  function sellFee() { var r = Number(trading().spot_fee); return r >= 0 ? r : 0; }
+  function pctTxt(r) { var v = r * 100; return (v % 1 ? v.toFixed(2) : v.toFixed(0)) + '%'; }
+  function openHoldingWithdraw(sym) {
+    var h = st.holdings.find(function (x) { return x.symbol === sym; }); if (!h) return;
+    wSym = sym; wKind = 'holding'; wPct = 100;
+    $('wTitle').textContent = 'Withdraw ' + sym + ' to cash';
+    $('wNote').textContent = 'Sold at the live market price. A withdrawal fee of ' + pctTxt(sellFee()) + ' applies; the rest is added to your cash balance.';
+    $('wPcts').hidden = false; $('wUnitsRow').hidden = false;
+    document.querySelectorAll('[data-wp]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.wp === '100' ? 'true' : 'false'); });
+    calcHolding();
+    $('wGo').disabled = false; $('wGo').textContent = 'Confirm withdrawal';
+    $('wSheet').hidden = false; document.documentElement.classList.add('menu-open');
+  }
+  function calcHolding() {
+    var h = st.holdings.find(function (x) { return x.symbol === wSym; }) || {}, price = priceOf(wSym) || 0;
+    var q = Number(h.quantity) * wPct / 100, gross = q * price, fee = gross * sellFee();
+    $('wUnits').textContent = qty(q) + ' ' + wSym + (price ? ' @ ' + f.usd(price) : '');
+    $('wFeeLbl').textContent = 'Withdrawal fee (' + pctTxt(sellFee()) + ')';
+    $('wVal').textContent = price ? f.usd(gross) : 'Waiting for price…';
+    $('wFee').textContent = price ? (fee ? '−' + f.usd(fee).replace('−', '') : f.usd(0)) : '—';
+    $('wNet').textContent = price ? f.usd(gross - fee) : '—';
+    $('wGo').disabled = !price;
+    return { q: q, all: wPct === 100, h: h };
+  }
+  $('wPcts').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-wp]'); if (!b) return; wPct = Number(b.dataset.wp);
+    document.querySelectorAll('[data-wp]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    calcHolding();
+  });
   function openWithdraw(sym) {
+    wKind = 'property'; $('wPcts').hidden = true; $('wUnitsRow').hidden = true;
     var h = st.holdings.find(function (x) { return x.symbol === sym; }); if (!h) return;
     var price = Number(propPrices()[sym]) || Number(h.avg_buy_price) || 0, val = Number(h.quantity) * price;
     var end = h.locked_until ? new Date(h.locked_until) : null, early = end && end > new Date(), fee = early ? val * feeRate() : 0;
@@ -285,6 +319,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var btn = this; if (!wSym) return;
     if (typeof window.aurumMoney !== 'function') { toast('Still loading — please try again in a moment'); return; }
     btn.disabled = true; btn.textContent = 'Withdrawing…';
+    if (wKind === 'holding') {
+      try {
+        var o = calcHolding(); btn.disabled = true; btn.textContent = 'Withdrawing…';
+        // exact quantity (all = the full recorded amount), so rounding can never exceed what's held
+        var q = o.all ? Number(o.h.quantity) : Math.floor(o.q * 1e8) / 1e8;
+        var rs = await window.aurumMoney('sell', { symbol: wSym, qty: q }, await S.token());
+        closeWithdraw(); toast('Withdrawn ' + qty(q) + ' ' + wSym + '. ' + f.usd(rs.net) + ' added to your cash.');
+        await load();
+      } catch (ex) { btn.disabled = false; btn.textContent = 'Confirm withdrawal'; toast(ex.message || 'Withdrawal failed'); }
+      return;
+    }
     try {
       var r = await window.aurumMoney('property_withdraw', { symbol: wSym }, await S.token());
       closeWithdraw(); toast((r.early ? 'Withdrawn early. ' : 'Withdrawn. ') + f.usd(r.net) + ' added to your cash' + (r.penalty ? ' (fee ' + f.usd(r.penalty) + ')' : '') + '.');
@@ -293,10 +338,12 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-pw]'); if (b) { openWithdraw(b.dataset.pw); return; }
+    var hb = e.target.closest('[data-wh]'); if (hb) { openHoldingWithdraw(hb.dataset.wh); return; }
   });
   document.addEventListener('aurum:prices', function (e) {
     (e.detail || []).forEach(function (r) { if (r && r.price > 0) st.prices[r.symbol] = r.price; });
     st.priced = true; st.at = new Date(); render();
+    if (!$('wSheet').hidden && wKind === 'holding') calcHolding();
   });
   setTimeout(function () { if (!st.priced && st.holdings && st.holdings.length) { st.priced = true; $('updated').textContent = 'Live prices unavailable — valued at cost'; render(); } }, 8000);
 

@@ -304,11 +304,13 @@
         </div>
       </div>
       <form class="stack g10" id="feeForm" novalidate>
-        <span class="eyebrow">Real-estate withdrawals</span>
+        <span class="eyebrow">Withdrawal fees</span>
         <div class="raised stack g14 card2">
+          <label class="field">Holding withdrawal fee (%)<input class="input mono" id="sellPct" inputmode="decimal" placeholder="0.1"></label>
+          <p class="small muted">Charged when a customer withdraws a holding (crypto, shares, commodities) to cash, or sells it. Applied by the server at the live price.</p>
           <label class="field">Early-withdrawal fee (%)<input class="input mono" id="feePct" inputmode="decimal" placeholder="30"></label>
           <p class="small muted">Charged when a customer withdraws a property investment before its maturity date. Withdrawing after maturity is free.</p>
-          <button class="btn-sm gold" type="submit">Save fee</button>
+          <button class="btn-sm gold" type="submit">Save fees</button>
         </div>
       </form>
       <form class="stack g10" id="regForm">
@@ -561,6 +563,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $('regName').value = settings.regulator_name || ''; $('regLic').value = settings.licence_number || '';
     var tr = settings.trading && typeof settings.trading === 'object' ? settings.trading : {};
     $('feePct').value = tr.property_early_penalty != null ? +(Number(tr.property_early_penalty) * 100).toFixed(2) : '';
+    $('sellPct').value = tr.spot_fee != null ? +(Number(tr.spot_fee) * 100).toFixed(3) : '';
   }
   function putSettings(obj) {
     var body = Object.keys(obj).map(function (k) { return { key: k, value: obj[k] }; });
@@ -593,17 +596,18 @@ document.addEventListener('DOMContentLoaded', function () {
   }, function (on) { toast('Saved — test mode ' + (on ? 'on' : 'off')); });
   $('feeForm').addEventListener('submit', async function (e) {
     e.preventDefault();
-    var pct = parseFloat(String($('feePct').value).replace('%', ''));
-    if (!(pct >= 0 && pct <= 100)) { toast('Enter a fee between 0 and 100%'); return; }
-    if (!confirm('Set the early-withdrawal fee to ' + pct + '%?')) return;
+    var pct = parseFloat(String($('feePct').value).replace('%', '')), spct = parseFloat(String($('sellPct').value).replace('%', ''));
+    if (!(pct >= 0 && pct <= 100) || !(spct >= 0 && spct <= 100)) { toast('Enter fees between 0 and 100%'); return; }
+    if (!confirm('Set the holding withdrawal fee to ' + spct + '% and the early real-estate withdrawal fee to ' + pct + '%?')) return;
     try {
       // merge into the trading settings the money function reads (other trading terms unchanged)
       var cur = await S.rest('site_settings?key=eq.trading&select=value', { fresh: true });
       var tr = (cur && cur[0] && cur[0].value) || {};
       if (!tr || typeof tr !== 'object' || !Object.keys(tr).length) throw new Error('Trading settings not found');
       tr.property_early_penalty = Math.round(pct * 100) / 10000;
+      tr.spot_fee = Math.round(spct * 1000) / 100000;
       await putSettings({ trading: tr });
-      settings.trading = tr; toast('Saved — early-withdrawal fee ' + pct + '%');
+      settings.trading = tr; toast('Saved — holding withdrawal ' + spct + '%, early real-estate withdrawal ' + pct + '%');
     } catch (err) { toast('Not saved: ' + err.message); }
   });
   $('regForm').addEventListener('submit', function (e) {
