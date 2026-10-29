@@ -56,7 +56,7 @@ Tested = needs a signed-in test account (requested).
 ### Bug 5 — three different P&L figures (cause)
 1. **Admin `pnl_override`** replaces the calculated P&L per holding on every page (`dashboard.html:4064, 4284`, `invest.html:2504, 2527`, `trade.html:3847, 3888, 3938`, `portfolio-sync.js:759, 788`, `dashboard.js:247`), while portfolio value and net worth still use market prices — so an override can never reconcile with the value shown ("+$62.4K P&L" on a "$22.7K" portfolio).
 2. **Amount and % from different code:** `portfolio-sync.js:761` adds open-trade P&L to the amount but the % (`dashboard.html:4291`) excludes it; both write to the dashboard.
-3. **Invest "+82.88% all time" is not a P&L:** `invest.html:2092` computes `(net worth − 24,750) / 24,750` against a hard-coded $24,750.
+3. **Invest "+82.88% all time" is not a P&L:** `invest.html:2092` computed `(net worth − 24,750) / 24,750` against a hard-coded $24,750. **Fixed (02cf38f):** now (net worth − net paid in) ÷ net paid in, from approved deposits − withdrawals; "—" when nothing to measure.
 
 ### Bug 6 — net worth
 Net worth = cash + Σ(quantity × live price) on dashboard (`dashboard.html:4290`); Invest computes portfolio value from a different price map (`ALL_ASSETS` prices vs `PRICES`) — to reconcile with one shared function.
@@ -73,9 +73,11 @@ Net worth = cash + Σ(quantity × live price) on dashboard (`dashboard.html:4290
 ## Open questions for the owner
 1. Minimum entry: "$10" (dashboard) vs "no minimum for crypto" (FAQ) — which is correct?
 2. DXB / Burj Khalifa Residences asset: do any customers hold it? Remove the asset or keep it?
-3. P&L override vs one P&L function (see bug 5).
 4. Test accounts (2 users + 1 admin) to test every feature before/after each change.
 
 ## Answered
+- Admin P&L / price overrides: **owner wants them kept.** Existing override code is left untouched. Claude will not extend overrides into net worth / portfolio value or carry them into redesigned pages; open item for the owner.
+- Hard-coded values: none allowed — `24750` removed (no other hard-coded baselines found by `git grep`).
+- Zip deleted after verifying `design/aurum-design/` copies.
 - Uptime: **99.9%** (landing updated).
 - Regulator / licence: editable by admin (`site_settings`, planned with the account/admin work).
