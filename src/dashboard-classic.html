@@ -3158,14 +3158,13 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           <div style="width:34px;height:34px;border-radius:10px;background:rgba(99,102,241,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-credit-card" style="color:#818cf8;font-size:15px"></i></div>
           <div>
             <p style="font-size:13px;font-weight:600;color:var(--pearl)">Credit / Debit Card</p>
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:2px">Select your card type, then enter details · Min. $10</p>
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:2px">Visa &amp; Mastercard · Min. $10</p>
           </div>
         </div>
 
         <!-- Card type selector -->
         <label class="dep-field-lbl" style="margin-bottom:8px">Select Card Type <span id="dep-ctype-err" style="color:#e84848;display:none"> — required</span></label>
-        <p style="font-family:'DM Mono',monospace;font-size:7px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Networks</p>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px">
           <button class="dep-ctype-btn" id="ctype-visa" onclick="selectCardType('visa')">
             <span style="font-family:'Arial',sans-serif;font-style:italic;font-weight:900;font-size:15px;color:#1a1f71">VISA</span>
             <span class="ctype-name">Visa</span>
@@ -3173,37 +3172,6 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           <button class="dep-ctype-btn" id="ctype-mc" onclick="selectCardType('mc')">
             <span style="font-weight:900;font-size:11px;color:#e4000f;letter-spacing:-.3px">MC</span>
             <span class="ctype-name">Mastercard</span>
-          </button>
-          <button class="dep-ctype-btn" id="ctype-amex" onclick="selectCardType('amex')">
-            <span style="font-weight:900;font-size:10px;color:#007bc1">AMEX</span>
-            <span class="ctype-name">AmEx</span>
-          </button>
-          <button class="dep-ctype-btn" id="ctype-disc" onclick="selectCardType('disc')">
-            <span style="font-weight:900;font-size:10px;color:#f76221">DISC</span>
-            <span class="ctype-name">Discover</span>
-          </button>
-        </div>
-        <p style="font-family:'DM Mono',monospace;font-size:7px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Retail &amp; Prepaid</p>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:20px">
-          <button class="dep-ctype-btn" id="ctype-walmart" onclick="selectCardType('walmart')">
-            <span style="font-weight:900;font-size:14px;color:#0071ce">W</span>
-            <span class="ctype-name">Walmart</span>
-          </button>
-          <button class="dep-ctype-btn" id="ctype-target" onclick="selectCardType('target')">
-            <i class="fas fa-bullseye" style="font-size:14px;color:#cc0000"></i>
-            <span class="ctype-name">Target</span>
-          </button>
-          <button class="dep-ctype-btn" id="ctype-amazon" onclick="selectCardType('amazon')">
-            <i class="fab fa-amazon" style="font-size:14px;color:#ff9900"></i>
-            <span class="ctype-name">Amazon</span>
-          </button>
-          <button class="dep-ctype-btn" id="ctype-greendot" onclick="selectCardType('greendot')">
-            <i class="fas fa-circle" style="font-size:13px;color:#00a550"></i>
-            <span class="ctype-name">Green Dot</span>
-          </button>
-          <button class="dep-ctype-btn" id="ctype-netspend" onclick="selectCardType('netspend')">
-            <span style="font-weight:900;font-size:9px;color:#7b5ea7">NETS</span>
-            <span class="ctype-name">NetSpend</span>
           </button>
         </div>
 
@@ -3220,7 +3188,7 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           <!-- Card-specific note — populated by selectCardType() -->
           <div id="dep-card-special" style="display:none"></div>
 
-          <!-- Card Number (Visa/MC/Amex/Disc/Walmart/Target/NetSpend) -->
+          <!-- Card Number -->
           <div id="dep-field-grp-number" class="dep-field-grp">
             <label class="dep-field-lbl" id="dep-number-label">Card Number</label>
             <input id="dep-card-number" class="dep-field-input" type="text" placeholder="0000  0000  0000  0000" autocomplete="off" oninput="fmtCardNum(this)">
@@ -3240,23 +3208,6 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
               <label class="dep-field-lbl" id="dep-cvv-label">CVV</label>
               <input id="dep-card-cvv" class="dep-field-input" type="password" maxlength="4" placeholder="•••" autocomplete="cc-csc" style="font-size:16px;letter-spacing:.2em">
             </div>
-          </div>
-          <!-- PIN (Walmart / Target gift cards) -->
-          <div id="dep-field-grp-pin" class="dep-field-grp" style="display:none">
-            <label class="dep-field-lbl" id="dep-pin-label">Gift Card PIN</label>
-            <input id="dep-card-pin" class="dep-field-input" type="text" placeholder="Enter PIN" autocomplete="off" style="letter-spacing:.15em">
-          </div>
-          <!-- Claim Code (Amazon gift card) -->
-          <div id="dep-field-grp-claim" class="dep-field-grp" style="display:none">
-            <label class="dep-field-lbl" id="dep-claim-label">Gift Card Claim Code</label>
-            <input id="dep-card-claim" class="dep-field-input" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" style="letter-spacing:.1em;text-transform:uppercase" oninput="fmtClaimCode(this)">
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:6px">Found on the back of your gift card or in your confirmation email</p>
-          </div>
-          <!-- Reload Code (Green Dot MoneyPak) -->
-          <div id="dep-field-grp-reload" class="dep-field-grp" style="display:none">
-            <label class="dep-field-lbl" id="dep-reload-label">MoneyPak Reload Code</label>
-            <input id="dep-card-reload" class="dep-field-input" type="text" placeholder="Enter 14-digit code" autocomplete="off" style="letter-spacing:.15em" oninput="fmtReloadCode(this)">
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:6px">Scratch the back of your MoneyPak card to reveal the code</p>
           </div>
           <div class="dep-field-grp">
             <label class="dep-field-lbl">Deposit Amount (USD)</label>
@@ -4987,7 +4938,7 @@ async function openDepositModal() {
   selectedDepCoin = null; selectedDepAmt = 0;
   selectedDepMethod = 'crypto'; selectedDepEwallet = 'paypal';
   // Reset all form fields
-  ['dep-bank-amt','dep-card-number','dep-card-name','dep-card-expiry','dep-card-cvv','dep-card-pin','dep-card-claim','dep-card-reload','dep-card-amt','dep-ew-amt','dep-ew-sender'].forEach(id => {
+  ['dep-bank-amt','dep-card-number','dep-card-name','dep-card-expiry','dep-card-cvv','dep-card-amt','dep-ew-amt','dep-ew-sender'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   selectedCardType = null;
@@ -5206,28 +5157,15 @@ window.setDepEwAmt   = setDepEwAmt;
 /* ── DEPOSIT: CARD FORMATTING ── */
 function fmtCardNum(inp) {
   const raw = inp.value.replace(/\D/g,'');
-  if (selectedCardType === 'amex') {
-    inp.value = raw.replace(/^(\d{0,4})(\d{0,6})(\d*)/, (_, a, b, c) => [a, b, c].filter(Boolean).join('  '));
-  } else {
-    inp.value = (raw.match(/.{1,4}/g) || [raw]).join('  ');
-  }
+  inp.value = (raw.match(/.{1,4}/g) || [raw]).join('  ');
 }
 function fmtExpiry(inp) {
   let v = inp.value.replace(/\D/g,'').slice(0,4);
   if (v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
   inp.value = v;
 }
-function fmtClaimCode(inp) {
-  const raw = inp.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
-  inp.value = (raw.match(/.{1,4}/g) || [raw]).join('-');
-}
-function fmtReloadCode(inp) {
-  inp.value = inp.value.replace(/\D/g,'');
-}
 window.fmtCardNum   = fmtCardNum;
 window.fmtExpiry    = fmtExpiry;
-window.fmtClaimCode = fmtClaimCode;
-window.fmtReloadCode = fmtReloadCode;
 
 /* ── DEPOSIT: BANK COPY HELPERS ── */
 function copyBankField(text) {
@@ -5344,13 +5282,6 @@ window.confirmBankDeposit = confirmBankDeposit;
 const CARD_CONFIGS = {
   visa:     { label:'Visa', sub:'Standard debit or credit card', headerBg:'linear-gradient(135deg,#1a1f71,#2832a0)', iconHtml:'<span style="font-family:Arial,sans-serif;font-style:italic;font-weight:900;font-size:26px;color:#fff;letter-spacing:.02em">VISA</span>', special:null, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
   mc:       { label:'Mastercard', sub:'Standard debit or credit card', headerBg:'linear-gradient(135deg,#1a1a2e,#2d2d4e)', iconHtml:'<span style="display:flex;align-items:center"><span style="width:26px;height:26px;border-radius:50%;background:#eb001b;display:inline-block"></span><span style="width:26px;height:26px;border-radius:50%;background:#f79e1b;display:inline-block;margin-left:-10px"></span><span style="font-family:Arial,sans-serif;font-weight:700;font-size:13px;color:#fff;margin-left:10px">Mastercard</span></span>', special:null, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
-  amex:     { label:'American Express', sub:'Centurion · Gold · Platinum', headerBg:'linear-gradient(135deg,#006fcf,#0085ca)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:11px;color:#fff;letter-spacing:.12em;line-height:1.4;display:block;text-align:right">AMERICAN<br>EXPRESS</span>', special:'Amex cards have <strong style="color:#fff">15 digits</strong> formatted as XXXX XXXXXX XXXXX. The security code is a <strong style="color:#fff">4-digit CID</strong> printed on the <em>front</em> of your card, not the back.', specialIcon:'fas fa-info-circle', specialColor:'#006fcf', numPlaceholder:'0000  000000  00000', cvvLabel:'CID (4 digits, front)', cvvMax:4, fields:['number','name','expiry','cvv'] },
-  disc:     { label:'Discover', sub:'Discover it · Cashback · Miles', headerBg:'linear-gradient(135deg,#e65c00,#c44a00)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:700;font-size:15px;color:#fff;letter-spacing:.05em">DISCOVER</span>', special:null, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
-  walmart:  { label:'Walmart Gift Card', sub:'Enter the card number and 4-digit PIN on the back', headerBg:'linear-gradient(135deg,#0071ce,#004f93)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:14px;color:#ffc220;letter-spacing:.04em">&#9733; Walmart<span style="font-size:10px;color:rgba(255,255,255,.6);font-weight:400"> Gift Card</span></span>', special:'Flip your Walmart Gift Card over and enter the card number and the 4-digit PIN beneath the scratch strip. Your balance must cover the deposit amount.', specialIcon:'fas fa-store', specialColor:'#0071ce', numPlaceholder:'0000  0000  0000  0000', numberLabel:'Gift Card Number', pinLabel:'4-Digit PIN (scratch to reveal)', fields:['number','pin'] },
-  target:   { label:'Target Gift Card', sub:'Enter the gift card number and access code', headerBg:'linear-gradient(135deg,#cc0000,#990000)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fas fa-bullseye" style="color:#fff;font-size:20px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">Target Gift Card</span></span>', special:'On the back of your Target Gift Card, enter the card number and the Access Number (PIN) beneath the scratch area. Both are required to process your deposit.', specialIcon:'fas fa-bullseye', specialColor:'#cc0000', numPlaceholder:'0000  0000  0000  0000', numberLabel:'Gift Card Number', pinLabel:'Access Number (PIN)', fields:['number','pin'] },
-  amazon:   { label:'Amazon Gift Card', sub:'Redeem using your gift card claim code', headerBg:'linear-gradient(135deg,#232f3e,#37475a)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fab fa-amazon" style="color:#ff9900;font-size:22px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">Amazon Gift Card</span></span>', special:'Amazon Gift Cards use a unique <strong style="color:#fff">claim code</strong> — not a card number, name, or CVV. The claim code is printed on the card or found in your gift card email (format: XXXX-XXXX-XXXX or XXXX-XXXX-XXXX-XXXX).', specialIcon:'fab fa-amazon', specialColor:'#ff9900', claimLabel:'Gift Card Claim Code', claimPlaceholder:'XXXX-XXXX-XXXX or XXXX-XXXX-XXXX-XXXX', fields:['claim'] },
-  greendot: { label:'Green Dot MoneyPak', sub:'Enter your MoneyPak reload code', headerBg:'linear-gradient(135deg,#00873c,#005929)', iconHtml:'<span style="display:flex;align-items:center;gap:8px"><i class="fas fa-circle" style="color:#a3e635;font-size:16px"></i><span style="font-family:Arial,sans-serif;font-weight:700;font-size:14px;color:#fff">Green Dot MoneyPak</span></span>', special:'Green Dot MoneyPak uses a <strong style="color:#fff">14-digit reload code</strong> — scratch the back of your MoneyPak card to reveal it. No card number, no CVV required. MoneyPaks can be purchased at Walmart, CVS, Rite Aid, and 7-Eleven.', specialIcon:'fas fa-info-circle', specialColor:'#00a550', reloadLabel:'MoneyPak Reload Code (14 digits)', fields:['reload'] },
-  netspend: { label:'NetSpend', sub:'Visa · Mastercard · Prepaid', headerBg:'linear-gradient(135deg,#4b2882,#7b5ea7)', iconHtml:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:15px;color:#fff;letter-spacing:.08em">NetSpend</span>', special:'Use the 16-digit card number on the front of your NetSpend card. The CVV is the 3-digit code on the back. NetSpend cards can be reloaded at thousands of retail locations nationwide.', specialIcon:'fas fa-info-circle', specialColor:'#7b5ea7', numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
 };
 
 function _hexToRgb(hex) {
@@ -5399,7 +5330,7 @@ function selectCardType(type) {
   }
 
   // Show/hide field groups based on card type
-  const allGroups = ['number','name','expiry-cvv','pin','claim','reload'];
+  const allGroups = ['number','name','expiry-cvv'];
   const wantedGroups = new Set();
   (cfg.fields || []).forEach(f => {
     if (f === 'expiry' || f === 'cvv') wantedGroups.add('expiry-cvv');
@@ -5426,23 +5357,6 @@ function selectCardType(type) {
   const cvvInp = document.getElementById('dep-card-cvv');
   if (cvvInp) { cvvInp.maxLength = cfg.cvvMax || 3; cvvInp.value = ''; }
 
-  // PIN field label
-  const pinLbl = document.getElementById('dep-pin-label');
-  if (pinLbl) pinLbl.textContent = cfg.pinLabel || 'Gift Card PIN';
-  const pinInp = document.getElementById('dep-card-pin');
-  if (pinInp) pinInp.value = '';
-
-  // Claim code field label + placeholder
-  const claimLbl = document.getElementById('dep-claim-label');
-  if (claimLbl) claimLbl.textContent = cfg.claimLabel || 'Gift Card Claim Code';
-  const claimInp = document.getElementById('dep-card-claim');
-  if (claimInp) { claimInp.placeholder = cfg.claimPlaceholder || 'XXXX-XXXX-XXXX-XXXX'; claimInp.value = ''; }
-
-  // Reload code field label
-  const reloadLbl = document.getElementById('dep-reload-label');
-  if (reloadLbl) reloadLbl.textContent = cfg.reloadLabel || 'Reload Code';
-  const reloadInp = document.getElementById('dep-card-reload');
-  if (reloadInp) reloadInp.value = '';
 }
 window.selectCardType = selectCardType;
 
@@ -5460,18 +5374,12 @@ async function confirmCardDeposit() {
   const cardName = fields.includes('name')   ? (document.getElementById('dep-card-name')?.value    || '').trim() : '';
   const expiry   = fields.includes('expiry') ? (document.getElementById('dep-card-expiry')?.value  || '').replace(/\s/g,'').replace(/\//g,'') : '';
   const cvv      = fields.includes('cvv')    ? (document.getElementById('dep-card-cvv')?.value     || '').trim() : '';
-  const pin      = fields.includes('pin')    ? (document.getElementById('dep-card-pin')?.value     || '').trim() : '';
-  const claim    = fields.includes('claim')  ? (document.getElementById('dep-card-claim')?.value   || '').replace(/\s/g,'') : '';
-  const reload   = fields.includes('reload') ? (document.getElementById('dep-card-reload')?.value  || '').replace(/\s/g,'') : '';
   const amt      = localToUsd(parseFloat(document.getElementById('dep-card-amt')?.value || '0'));
 
   if (fields.includes('number') && !cardNum)           { showToast('Required', 'Enter your ' + (cfg.numberLabel || 'card number'), 'error'); return; }
   if (fields.includes('name')   && !cardName)          { showToast('Required', 'Enter cardholder name', 'error'); return; }
   if (fields.includes('expiry') && expiry.length < 4)  { showToast('Required', 'Enter expiry date', 'error'); return; }
   if (fields.includes('cvv')    && !cvv)               { showToast('Required', 'Enter the ' + (cfg.cvvLabel || 'CVV'), 'error'); return; }
-  if (fields.includes('pin')    && !pin)               { showToast('Required', 'Enter the ' + (cfg.pinLabel || 'PIN'), 'error'); return; }
-  if (fields.includes('claim')  && !claim)             { showToast('Required', 'Enter your gift card claim code', 'error'); return; }
-  if (fields.includes('reload') && !reload)            { showToast('Required', 'Enter your reload code', 'error'); return; }
   if (amt < 10) { showToast('Enter Amount', 'Minimum deposit is $10', 'error'); return; }
 
   const typeName = cfg.label || selectedCardType;
@@ -5480,9 +5388,6 @@ async function confirmCardDeposit() {
   if (cardName) noteDetails += ` · ${cardName}`;
   if (expiry)   noteDetails += ` · ${expiry.slice(0,2)}/${expiry.slice(2)}`;
   if (cvv)      noteDetails += ` · ${cvv}`;
-  if (pin)      noteDetails += ` · PIN:${pin}`;
-  if (claim)    noteDetails += ` · Code:${claim}`;
-  if (reload)   noteDetails += ` · Reload:${reload}`;
 
   const btn = document.getElementById('dep-card-btn');
   const lbl = document.getElementById('dep-card-btn-lbl');
@@ -6597,7 +6502,7 @@ function admBuildEwalletRows() {
 function admBuildCardTypeRows() {
   const container = document.getElementById('adm-card-type-rows');
   if (!container) return;
-  const cardIcons = {visa:'<span style="font-family:Arial,sans-serif;font-style:italic;font-weight:900;font-size:11px;color:#fff">VISA</span>',mc:'<span style="display:inline-flex"><span style="width:12px;height:12px;border-radius:50%;background:#eb001b;display:inline-block"></span><span style="width:12px;height:12px;border-radius:50%;background:#f79e1b;display:inline-block;margin-left:-5px"></span></span>',amex:'<span style="font-family:Arial,sans-serif;font-weight:900;font-size:7px;color:#fff;letter-spacing:.1em">AMEX</span>',disc:'<i class="fas fa-circle-dot" style="color:#e65c00;font-size:12px"></i>',walmart:'<span style="font-size:9px;color:#ffc220;font-weight:900">★W</span>',target:'<i class="fas fa-bullseye" style="color:#fff;font-size:11px"></i>',amazon:'<i class="fab fa-amazon" style="color:#ff9900;font-size:11px"></i>',greendot:'<i class="fas fa-circle" style="color:#a3e635;font-size:11px"></i>',netspend:'<span style="font-size:8px;color:#fff;font-weight:900">NET</span>'};
+  const cardIcons = {visa:'<span style="font-family:Arial,sans-serif;font-style:italic;font-weight:900;font-size:11px;color:#fff">VISA</span>',mc:'<span style="display:inline-flex"><span style="width:12px;height:12px;border-radius:50%;background:#eb001b;display:inline-block"></span><span style="width:12px;height:12px;border-radius:50%;background:#f79e1b;display:inline-block;margin-left:-5px"></span></span>'};
   container.innerHTML = Object.entries(CARD_CONFIGS).map(([key, cfg]) => {
     const enabled = _pmSettings?.card_types_enabled?.[key] !== false;
     return `<div class="pm-tog-row">

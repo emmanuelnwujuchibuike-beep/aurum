@@ -1855,8 +1855,8 @@ sidebarOverlay.addEventListener('click', closeMobileSidebar);
     if(sess?.user_email){
       fetch(`${SUPABASE_URL}/functions/v1/contact-form-handler`,{
         method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON_KEY}`},
-        body:JSON.stringify({formType:'chat_reply',name:sess.user_name||'Valued Client',email:sess.user_email,message:text,sessionId:activeId})
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':`Bearer ${(await sb.auth.getSession()).data.session?.access_token||''}`},
+        body:JSON.stringify({formType:'chat_reply',message:text,sessionId:activeId})
       }).catch(e=>console.warn('[Aurum Admin] Reply email failed:',e));
     }
   }

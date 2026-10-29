@@ -14,7 +14,6 @@ const AURUM_CHAT_CONFIG = {
   agentAvatar:    "https://api.dicebear.com/7.x/initials/svg?seed=AU&backgroundColor=c9a84c&fontColor=ffffff",
   welcomeMsg:     "Welcome to Aurum. How may we assist your investment journey today?",
   placeholder:    "Type your message…",
-  adminEmail:     "aurumcapitalinvest@gmail.com",
   notifyEndpoint: null,
   storageBucket:  "chat-images",
 };
@@ -730,7 +729,6 @@ function initAurumChat() {
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${AURUM_CHAT_CONFIG.supabaseKey}` },
         body: JSON.stringify({
           formType,
-          adminEmail: AURUM_CHAT_CONFIG.adminEmail,
           subject, name: userName, email: userEmail,
           message, sessionId, pageUrl: pageUrl || window.location.href,
         }),
