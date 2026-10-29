@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Deposit — Aurum Capital</title>
+<meta name="robots" content="noindex">
+<!--@head-->
+<script>try{if(localStorage.getItem('aurum_live')==='1')document.documentElement.setAttribute('data-live','');var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/playfair-500-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="image/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#ECE8E1">
+<!--/@head-->
+<style id="app-css">@font-face{font-family:'Outfit';font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/outfit-latin.woff2) format('woff2')}@font-face{font-family:'Playfair Display';font-style:normal;font-weight:500;font-display:optional;src:url(fonts/playfair-500-latin.woff2) format('woff2')}@font-face{font-family:'Playfair Display';font-style:italic;font-weight:500;font-display:optional;src:url(fonts/playfair-500i-latin.woff2) format('woff2')}@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/jetbrains-mono-500-latin.woff2) format('woff2')}:root{color-scheme:light;--page:#E2DDD5;--bg:#ECE8E1;--well:#E7E2DA;--ink:#1E1B16;--ink-2:#3F3A32;--muted:#5B5448;--line:#DDD6C9;--gold:#C29A45;--on-gold:#241A05;--gold-ink:#6E5314;--accent:#8A6820;--grid:rgba(122,92,23,.05);--up:#22603A;--up-bg:#DAEBDD;--down:#A3261C;--down-bg:#F1DAD5;--new:#5C450F;--new-bg:#F1E4C3;--sold:#4F4A42;--sold-bg:#DCD7CE;--ok:#2F7A4B;--nav-ink:#6A6357;--placeholder:#7A7264;--scrim:rgba(30,27,22,.35);--vault:#1A1813;--vault-2:#211E18;--vault-3:#2A2620;--vault-text:#F3EEE3;--vault-muted:#B5AC9A;--vault-gold:#D9B565;--lo:#CEC7B9;--hi:#FFFFFF;--lo-btn:#CDBF9F;--gold-lo:#9E7C33;--gold-hi:#D9B565;--raise:7px 7px 16px var(--lo),-7px -7px 16px var(--hi);--raise-sm:4px 4px 10px var(--lo),-4px -4px 10px var(--hi);--raise-xs:3px 3px 8px var(--lo),-3px -3px 8px var(--hi);--press:inset 4px 4px 9px var(--lo),inset -4px -4px 9px var(--hi);--press-sm:inset 3px 3px 7px var(--lo),inset -3px -3px 7px var(--hi);--shadow-btn:6px 6px 14px var(--lo-btn),-6px -6px 14px var(--hi);--shadow-vault:10px 12px 26px var(--lo),-8px -8px 18px var(--hi);--gut:20px;--serif:'Playfair Display',Georgia,'Times New Roman',serif;--sans:'Outfit',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}:root[data-theme="dark"]{color-scheme:dark;--page:#100F0D;--bg:#1C1A16;--well:#181612;--ink:#EEE8DC;--ink-2:#D6CFC1;--muted:#ABA392;--line:#2E2A23;--gold-ink:#D9B565;--accent:#E2C27A;--grid:rgba(217,181,101,.04);--up:#86D5A6;--up-bg:#1D3326;--down:#F29B8E;--down-bg:#3E211C;--new:#E8CD8C;--new-bg:#3A2F17;--sold:#C9C1B2;--sold-bg:#2C2922;--ok:#5FB884;--nav-ink:#B3AB9B;--placeholder:#8F8776;--scrim:rgba(0,0,0,.55);--vault:#0F0E0B;--vault-2:#171511;--vault-3:#211E18;--lo:#100F0C;--hi:#28251F;--lo-btn:#0C0B09;--gold-lo:#7D6127;--gold-hi:#D9B565}*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;scroll-padding-top:84px}body{margin:0;background:var(--page);font:15px/1.6 var(--sans);color:var(--ink);-webkit-tap-highlight-color:transparent;overflow-x:hidden}a,button,summary,label,input,select,textarea{touch-action:manipulation;-webkit-tap-highlight-color:transparent}a{color:inherit}img{display:block;max-width:100%;height:auto}h1,h2,h3,p,ul,ol,figure{margin:0}ul,ol{padding:0;list-style:none}button{font:inherit;border:0;cursor:pointer;color:inherit;background:none;padding:0}button:disabled{cursor:not-allowed;opacity:.55}:focus-visible{outline:2px solid var(--gold-ink);outline-offset:3px}[hidden]{display:none!important}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px}main{padding:8px var(--gut) calc(124px + env(safe-area-inset-bottom))}.serif{font-family:var(--serif)}.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-ink);font-weight:500}.muted{color:var(--muted)}.num{font-variant-numeric:tabular-nums}.up{color:var(--up)}.down{color:var(--down)}.h1{font-family:var(--serif);font-size:38px;line-height:1.08;font-weight:500;letter-spacing:-.005em}.h2{font-family:var(--serif);font-size:27px;line-height:1.15;font-weight:500}.h1 em,.h2 em{color:var(--accent);font-style:italic}.lede{font-size:14px;line-height:1.6;color:var(--muted)}.small{font-size:13px;line-height:1.55}.raised{background:var(--bg);box-shadow:var(--raise)}.raised-sm{background:var(--bg);box-shadow:var(--raise-sm)}.inset{background:var(--well);box-shadow:var(--press)}.gold{background:var(--gold);color:var(--on-gold);box-shadow:var(--shadow-btn)}.card{border-radius:22px;padding:18px}.stack{display:flex;flex-direction:column}.row{display:flex;align-items:center}.between{justify-content:space-between}.grow{flex:1;min-width:0}.g4{gap:4px}.g8{gap:8px}.g10{gap:10px}.g12{gap:12px}.g14{gap:14px}.g16{gap:16px}.g18{gap:18px}.g20{gap:20px}.g26{gap:26px}.g44{gap:44px}.scrollx{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}.scrollx::-webkit-scrollbar{display:none}.btn{min-height:56px;border-radius:18px;font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;text-decoration:none;padding:0 18px}.btn-sm{min-height:50px;border-radius:16px;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;width:100%;text-decoration:none;padding:0 14px}.raised:is(a,button):active,.raised-sm:is(a,button):active,.tile:active{background:var(--well);box-shadow:var(--press)}.gold:is(a,button):active{box-shadow:inset 3px 3px 8px var(--gold-lo),inset -2px -2px 6px var(--gold-hi)}.btn:disabled,.btn-sm:disabled{color:var(--muted)}.link{min-height:44px;font-size:13px;font-weight:600;color:var(--gold-ink);display:inline-flex;align-items:center;text-decoration:none}.link:active{opacity:.6}.top{position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(14px + env(safe-area-inset-top)) var(--gut) 12px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);min-width:0}.logo{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font:600 20px/1 var(--serif);flex:none}.brand-name{font:500 21px/1.2 var(--serif);letter-spacing:.04em;white-space:nowrap}.brand-sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:1.3}.iconbtn{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);flex:none;position:relative}.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:calc(min(480px,100vw) - 28px);height:74px;border-radius:28px;display:flex;align-items:center;justify-content:space-around;padding:0 6px;z-index:30}.nav a,.nav .tab{color:var(--nav-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:500;width:58px;min-height:48px;text-decoration:none}.nav .ico{width:40px;height:30px;border-radius:12px;display:flex;align-items:center;justify-content:center}.nav [aria-current="page"]{color:var(--gold-ink)}.nav [aria-current="page"] .ico,.nav a:active .ico{background:var(--well);box-shadow:var(--press-sm)}.nav .fab{width:60px;height:60px;min-height:60px;border-radius:22px;margin-top:-30px;color:var(--on-gold);display:flex;align-items:center;justify-content:center}.nav .fab:active{box-shadow:inset 3px 3px 8px var(--gold-lo),inset -2px -2px 6px var(--gold-hi)}.badge{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);flex:none;font:500 15px/1 var(--serif)}.badge.lg{width:44px;height:44px}.chg,.tag{display:inline-block;min-width:62px;text-align:center;border-radius:8px;padding:3px 8px;font-size:12px;font-weight:600;line-height:1.4;font-variant-numeric:tabular-nums}.chg.down,.tag.down{color:var(--down);background:var(--down-bg)}.chg.up,.tag.up{color:var(--up);background:var(--up-bg)}.chg.flat,.tag.flat{color:var(--muted);background:transparent}.pill{border-radius:8px;padding:4px 9px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;line-height:1.3}.live{color:var(--up);background:var(--up-bg)}.new{color:var(--new);background:var(--new-bg)}.sold{color:var(--sold);background:var(--sold-bg)}.list{border-radius:22px;padding:4px 16px}.item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);min-height:68px}.item:last-child{border-bottom:0}.item .grow{display:flex;flex-direction:column}.item .end{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:100px}.price{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;min-width:100px;text-align:right}.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.tile{border-radius:20px;padding:16px;display:flex;flex-direction:column;align-items:flex-start;gap:12px;font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;min-height:44px}.dot{width:8px;height:8px;border-radius:4px;background:var(--ok);flex:none}details{border-bottom:1px solid var(--line)}details:last-child{border-bottom:0}summary{list-style:none;min-height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:600;cursor:pointer;padding:8px 0}summary::-webkit-details-marker{display:none}summary .plus{width:30px;height:30px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);background:var(--bg);box-shadow:var(--raise-xs);font-size:18px;line-height:1}summary .plus::before{content:"+"}details[open] summary .plus::before{content:"\2212"}summary:active .plus{box-shadow:var(--press-sm);background:var(--well)}details .ans{font-size:13px;line-height:1.65;color:var(--muted);padding-bottom:16px}details .ans b{color:var(--ink);font-weight:600}.seg-wrap{border-radius:16px;padding:5px;display:flex;gap:4px}.seg{flex:1;min-height:44px;border-radius:12px;font-size:13px;font-weight:500;color:var(--muted);padding:0 12px;white-space:nowrap}.chip{min-width:44px;min-height:40px;border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);padding:0 8px}.seg.on,.chip.on,.seg[aria-pressed="true"],.chip[aria-pressed="true"]{background:var(--bg);color:var(--ink);box-shadow:var(--raise-xs)}.chip.on,.chip[aria-pressed="true"]{color:var(--gold-ink)}.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500}.input{min-height:52px;border-radius:16px;border:0;padding:0 16px;font:15px var(--sans);color:var(--ink);background:var(--well);box-shadow:var(--press);width:100%}textarea.input{min-height:120px;padding:14px 16px;resize:vertical}.input::placeholder{color:var(--placeholder)}.sw{width:50px;height:30px;border-radius:15px;padding:3px;display:flex;background:var(--well);box-shadow:var(--press-sm);flex:none}.sw span{width:24px;height:24px;border-radius:12px;background:var(--bg);box-shadow:2px 2px 5px var(--lo),-2px -2px 5px var(--hi);transition:margin .12s}.sw[aria-pressed="true"] span{margin-left:20px;background:var(--gold)}.setting{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px;font-weight:500;width:100%;text-align:left}.setting:last-child{border-bottom:0}.foot a:not(.social){color:var(--ink-2);text-decoration:none;font-size:14px;min-height:36px;display:flex;align-items:center}.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.social{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--ink);text-decoration:none}.risk{border-radius:18px;padding:16px;font-size:12px;line-height:1.6;color:var(--ink-2)}.risk b{color:var(--ink)}.cv{content-visibility:auto;contain-intrinsic-size:auto 700px;margin:-24px calc(-1 * var(--gut));padding:24px var(--gut)}@media (max-width:359px){:root{--gut:14px}.h1{font-size:33px}.brand-name{font-size:18px}.tiles{gap:12px}.nav a,.nav .tab{width:52px}}@media (prefers-reduced-motion:reduce){*{transition:none!important}}.demo-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px var(--gut);padding-top:calc(6px + env(safe-area-inset-top));font-size:11px;line-height:1.35;color:var(--new);background:var(--new-bg);text-align:center}.demo-bar b{font:600 10px/1 var(--mono);letter-spacing:.16em}html[data-live] .demo-bar,html[data-live] [data-demo-only]{display:none!important}html:not([data-live]) [data-live-only]{display:none!important}@view-transition{navigation:auto}.top{view-transition-name:top}.nav{view-transition-name:nav}::view-transition-old(root),::view-transition-new(root){animation-duration:.12s}html.navigating main{position:relative}html.navigating main>*{visibility:hidden}html.navigating main::before{content:"";position:absolute;left:var(--gut);right:var(--gut);top:10px;height:600px;border-radius:24px;background:linear-gradient(var(--well),var(--well)) 0 0/100% 170px no-repeat,linear-gradient(var(--well),var(--well)) 0 194px/100% 60px no-repeat,linear-gradient(var(--well),var(--well)) 0 278px/45% 22px no-repeat,linear-gradient(var(--well),var(--well)) 0 316px/100% 280px no-repeat;animation:skel 1.1s ease-in-out infinite alternate}@keyframes skel{from{opacity:1}to{opacity:.55}}@media (prefers-reduced-motion:reduce){html.navigating main::before{animation:none}}</style>
+<style id="shell-css">main.app-main{padding:10px var(--gut) calc(128px + env(safe-area-inset-bottom))}.who{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;min-width:0}.avatar{width:46px;height:46px;border-radius:16px;padding:3px;display:flex;flex:none}.avatar span{flex:1;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;background:var(--gold);color:var(--on-gold);overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.who-sub{font-size:12px;color:var(--muted);line-height:1.3}.who-title{font:500 20px/1.2 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bell-dot{position:absolute;top:11px;right:12px;width:7px;height:7px;border-radius:4px;background:var(--gold)}.vault{background:var(--vault);color:var(--vault-text);box-shadow:var(--shadow-vault);position:relative;overflow:hidden}.vault .eyebrow{color:var(--vault-gold)}.vault .muted{color:var(--vault-muted)}.rngs{display:flex;gap:2px;background:var(--vault-2);border-radius:11px;padding:3px}.rng{flex:1;min-height:34px;border-radius:9px;font-size:11px;font-weight:600;color:var(--vault-muted);letter-spacing:.06em}.rng.on,.rng[aria-pressed="true"]{background:var(--vault-3);color:var(--vault-gold)}.qa{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--ink-2);text-decoration:none;min-height:44px}.qa .k{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink)}.qa .k.gold{color:var(--on-gold)}.overlay{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;justify-content:flex-end;max-width:480px;margin:0 auto}.scrim{position:absolute;inset:0;background:var(--scrim);width:100%}.sheet{position:relative;background:var(--bg);border-radius:30px 30px 0 0;padding:14px var(--gut) calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}.grab{align-self:center;width:40px;height:5px;border-radius:3px;background:var(--line)}.sheet-btn{display:flex;align-items:center;gap:14px;min-height:60px;padding:0 14px;border-radius:18px;text-align:left;width:100%;color:inherit;text-decoration:none}.menu{position:fixed;inset:0;z-index:45;max-width:480px;margin:0 auto;display:flex;flex-direction:column}.menu-body{flex:1;overflow-y:auto;padding:8px var(--gut) 24px;display:flex;flex-direction:column;gap:20px}.mi{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:8px 12px;border-radius:16px;text-align:left;text-decoration:none;color:var(--ink)}.mi[aria-current="page"]{background:var(--well);box-shadow:var(--press-sm)}.mi:active{background:var(--well)}.strip{border-radius:20px;padding:12px 14px;gap:18px;white-space:nowrap;font-size:12px;flex:none;display:flex}.strip b{color:var(--vault-gold);font-weight:500}.strip .up{color:#86D5A6}.strip .down{color:#F29B8E}html.menu-open,html.menu-open body{overflow:hidden}html[data-hide] [data-money]{letter-spacing:.08em}.skel{display:inline-block;min-width:4ch;color:transparent;background:var(--well);border-radius:6px}.test-banner{display:flex;align-items:center;gap:10px;line-height:1.4;border-radius:14px;padding:10px 14px;font-size:12px;font-weight:600;color:var(--new);background:var(--new-bg)}.test-banner b{white-space:nowrap;letter-spacing:.08em}.test-mark{display:inline-block;vertical-align:middle;margin-left:6px;font:600 9px/1 var(--mono);letter-spacing:.12em;padding:3px 5px;border-radius:5px;color:var(--new);background:var(--new-bg)}.vault .test-mark{color:#241A05;background:#E8CD8C}.amt{font:500 14px/1.3 var(--mono);white-space:nowrap;text-align:right}.amt.neg{color:var(--ink)}.amt.pos{color:var(--up)}.when{font:500 11px/1.4 var(--mono);color:var(--muted)}.empty{padding:22px 0;text-align:center;font-size:13px;color:var(--muted)}</style>
+<style>
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.coins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.coin{min-height:64px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:600}
+.coin small{font:500 9px/1.2 var(--mono);color:var(--muted)}
+.coin[aria-pressed="true"]{background:var(--well);box-shadow:var(--press-sm);color:var(--gold-ink)}
+.presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.presets .chip{min-width:0}
+.big-in{font:500 26px/1 var(--mono)}
+.addr{border-radius:16px;padding:14px;font:500 12px/1.6 var(--mono);word-break:break-all}
+.warn{border-radius:14px;padding:12px 14px;font-size:12px;line-height:1.5;color:var(--new);background:var(--new-bg)}
+.err{font-size:13px;color:var(--down);min-height:18px}
+.sub{font:500 11px/1.4 var(--mono);color:var(--muted)}
+.qr{display:flex;justify-content:center;padding:6px 0}.qr img,.qr canvas{border-radius:10px;background:#fff;padding:6px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom));z-index:60;max-width:calc(min(480px,100vw) - 40px);border-radius:14px;padding:12px 16px;font-size:13px;font-weight:500;background:var(--vault);color:var(--vault-text)}
+@media (min-width:900px){.wide .app{max-width:1000px}.wide{--gut:40px}.dp{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start}.dp>.full{grid-column:1/-1}}
+</style>
+</head>
+<body class="wide">
+<div class="app">
+<!--@appheader back:Deposit funds-->
+<div class="demo-bar" role="note"><b>DEMO</b><span>Demo platform — balances and payments are not real.</span></div>
+<header class="top">
+  <a class="iconbtn raised-sm" href="dashboard.html" aria-label="Back to dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a>
+    <span class="who-title grow" style="text-align:center">Deposit funds</span>
+  <div class="row g12">
+    <button class="iconbtn raised-sm" data-open="menu" aria-label="Menu"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button>
+    
+  </div>
+</header>
+<div class="test-banner" data-test-banner hidden style="margin:0 var(--gut) 10px" role="status"><b>TEST MODE</b><span>Figures marked TEST include admin test values and are not real.</span></div>
+<!--/@appheader-->
+
+<main class="app-main dp stack g20">
+  <section class="vault row g12 full" style="border-radius:22px;padding:16px 18px">
+    <span class="grow stack g4"><span class="eyebrow">Available cash</span><span class="serif" id="cash" data-money style="font-size:26px;min-height:32px">—</span></span>
+    <span class="mono muted" style="font-size:11px">Minimum $10</span>
+  </section>
+
+  <div class="stack g20">
+    <div class="stack g10">
+      <span class="eyebrow">1 · Payment method</span>
+      <div class="inset seg-wrap" role="group" aria-label="Payment method" id="methods">
+        <button class="seg" data-m="crypto" aria-pressed="true">Crypto</button><button class="seg" data-m="paypal" aria-pressed="false">PayPal</button>
+      </div>
+      <p class="warn" id="unavail" hidden>This payment method is temporarily unavailable. Please choose another.</p>
+    </div>
+
+    <div class="stack g10" id="coinBox">
+      <span class="eyebrow">2 · Choose a coin</span>
+      <div class="coins" id="coins" role="group" aria-label="Coin"></div>
+    </div>
+
+    <div class="stack g10">
+      <span class="eyebrow">3 · Amount (USD)</span>
+      <input class="input big-in" id="amt" inputmode="decimal" placeholder="0.00" autocomplete="off" aria-label="Deposit amount in USD">
+      <div class="presets" id="presets"><button class="chip" data-a="50" type="button">$50</button><button class="chip" data-a="100" type="button">$100</button><button class="chip" data-a="500" type="button">$500</button><button class="chip" data-a="1000" type="button">$1,000</button></div>
+    </div>
+  </div>
+
+  <section class="stack g10" aria-labelledby="pay-h">
+    <span class="eyebrow" id="pay-h">4 · Send your payment</span>
+    <form class="raised card stack g14" id="payForm" novalidate>
+      <div class="stack g8" id="demoNote" data-demo-only>
+        <p class="warn"><b>Demo mode.</b> No real payment is needed. Submit to create a demo deposit request — an admin approves it to credit demo cash.</p>
+      </div>
+
+      <div class="stack g10" id="cryptoPay" data-live-only>
+        <span class="muted small" id="cNet">Select a coin and an amount.</span>
+        <div class="qr" id="qr"></div>
+        <div class="addr inset mono" id="addr" aria-live="polite">—</div>
+        <button class="btn-sm raised-sm" id="copyAddr" type="button">Copy address</button>
+        <p class="warn">Send only <b id="wCoin">the selected coin</b> on the network shown. Funds sent to the wrong address or network can’t be recovered.</p>
+      </div>
+
+      <div class="stack g10" id="ppPay" hidden data-live-only>
+        <span class="muted small">Send the payment to this PayPal account:</span>
+        <div class="addr inset mono" id="ppTo">—</div>
+        <button class="btn-sm raised-sm" id="copyPp" type="button">Copy email</button>
+        <label class="field">Your PayPal email<input class="input" type="email" id="ppFrom" autocomplete="email" placeholder="you@example.com"></label>
+      </div>
+
+      <div id="demoPp" hidden data-demo-only><label class="field">Your PayPal email (demo)<input class="input" type="email" id="ppFromDemo" autocomplete="email" placeholder="you@example.com"></label></div>
+
+      <p class="err" id="err" role="alert"></p>
+      <button class="btn gold" id="go" type="submit" style="text-transform:none;letter-spacing:0">Review deposit</button>
+    </form>
+  </section>
+
+  <section class="stack g10 full" aria-labelledby="rec-h">
+    <div class="row between"><h2 class="h2" id="rec-h" style="font-size:21px">Recent deposits</h2><a class="link" href="dashboard-classic.html#transactions">All activity →</a></div>
+    <div class="list raised" id="recent" aria-live="polite"><div class="item"><span class="badge inset"></span><span class="grow"><span class="skel">Loading</span></span></div></div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<!--@sheet-->
+<div class="overlay" id="sheet" hidden>
+  <button class="scrim" data-close="sheet" aria-label="Close quick actions"></button>
+  <div class="sheet" role="dialog" aria-label="Quick actions">
+    <span class="grab" aria-hidden="true"></span><span class="eyebrow">Quick actions</span>
+    <a href="deposit.html" class="sheet-btn raised-sm"><span class="badge gold" aria-hidden="true">+</span><span class="stack"><b style="font-size:14px">Deposit funds</b><span class="muted" style="font-size:12px">Bank transfer, card or crypto</span></span></a>
+    <a href="withdraw.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true">↑</span><span class="stack"><b style="font-size:14px">Withdraw</b><span class="muted" style="font-size:12px">To your bank or wallet</span></span></a>
+    <a href="trade.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true">⇅</span><span class="stack"><b style="font-size:14px">Trade</b><span class="muted" style="font-size:12px">Practice or live</span></span></a>
+    <a href="invest.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true">⌂</span><span class="stack"><b style="font-size:14px">New investment</b><span class="muted" style="font-size:12px">Equities or real estate</span></span></a>
+  </div>
+</div>
+<!--/@sheet-->
+<!--@appmenu -->
+<div class="menu app" id="menu" hidden role="dialog" aria-label="Menu">
+  <div class="top" style="position:static">
+    <span class="row g12"><span class="logo gold" aria-hidden="true">A</span><span class="serif" style="font-size:21px;letter-spacing:.04em">Aurum</span></span>
+    <button class="iconbtn inset" data-close="menu" aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="menu-body">
+    <div class="vault strip scrollx mono" aria-label="Live prices">
+      <span><b>BTC</b> <span data-price="BTC">—</span> <span data-chg="BTC" class="flat">—</span></span>
+      <span><b>ETH</b> <span data-price="ETH">—</span> <span data-chg="ETH" class="flat">—</span></span>
+      <span><b>SOL</b> <span data-price="SOL">—</span> <span data-chg="SOL" class="flat">—</span></span>
+      <span><b>XRP</b> <span data-price="XRP">—</span> <span data-chg="XRP" class="flat">—</span></span>
+      <span><b>Gold</b> <span data-price="XAUUSD">—</span> <span data-chg="XAUUSD" class="flat">—</span></span>
+    </div>
+    <div class="stack g10">
+      <span class="eyebrow">Navigate</span>
+      <nav class="raised" style="border-radius:22px;padding:6px" aria-label="All sections">
+        <a class="mi" href="dashboard.html"><span class="badge inset" aria-hidden="true">◈</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Dashboard</b><span class="mono muted" style="font-size:11px">Portfolio overview</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="invest.html"><span class="badge inset" aria-hidden="true">↗</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Invest</b><span class="mono muted" style="font-size:11px">Explore markets</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="trade.html"><span class="badge inset" aria-hidden="true">⇄</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Trade</b><span class="mono muted" style="font-size:11px">Practice or live execution</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="invest.html#crypto"><span class="badge inset" aria-hidden="true">₿</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Cryptocurrency</b><span class="mono muted" style="font-size:11px">BTC · ETH · SOL · more</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="invest.html#equities"><span class="badge inset" aria-hidden="true">◎</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Global equities</b><span class="mono muted" style="font-size:11px">TSLA · AAPL · NVDA · more</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="invest.html#commodities"><span class="badge inset" aria-hidden="true">Au</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Commodities</b><span class="mono muted" style="font-size:11px">Gold · Oil · Silver</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="dashboard-classic.html#transactions"><span class="badge inset" aria-hidden="true">≡</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Transactions</b><span class="mono muted" style="font-size:11px">Full ledger</span></span><span class="muted" aria-hidden="true">›</span></a>
+        <a class="mi" href="contact.html"><span class="badge inset" aria-hidden="true">?</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">Support</b><span class="mono muted" style="font-size:11px">Talk to an advisor</span></span><span class="muted" aria-hidden="true">›</span></a>
+      </nav>
+    </div>
+    <a href="deposit.html" class="btn gold" style="text-transform:none;letter-spacing:0">+ Deposit funds</a>
+    <span class="row g8 muted" style="justify-content:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase"><span class="dot" aria-hidden="true"></span>All systems operational</span>
+  </div>
+</div>
+<!--/@appmenu-->
+<!--@appnav -->
+<nav class="nav raised" aria-label="Main">
+  <a href="dashboard.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Home</a>
+  <a href="invest.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>Invest</a>
+  <button class="fab gold" data-open="sheet" aria-label="Quick actions"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  <a href="dashboard-classic.html#portfolio"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></span>Portfolio</a>
+  <a href="profile.html"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Account</a>
+</nav>
+<!--/@appnav-->
+</div>
+<!--@tail-->
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"selector_matches":".nav a, .sheet a, .qa"},{"not":{"href_matches":["/invest.html","/admin.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]}}]},"eagerness":"eager"},{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/invest.html","/admin.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]}}]},"eagerness":"moderate"}],"prefetch":[{"source":"document","where":{"href_matches":["/invest.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]},"eagerness":"moderate"}]}</script>
+<script src="app.js" defer></script>
+<!--/@tail-->
+<script src="aurum-session.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+  var S = window.AurumSession, A = window.Aurum, f = S.fmt;
+  var $ = function (id) { return document.getElementById(id); };
+  var root = document.documentElement;
+  var COINS = [
+    { sym: 'BTC', name: 'Bitcoin', icon: 'fab fa-bitcoin', color: '#f7931a', net: 'BTC Network' },
+    { sym: 'ETH', name: 'Ethereum', icon: 'fab fa-ethereum', color: '#627eea', net: 'ERC-20 Network' },
+    { sym: 'USDT', name: 'Tether (USDT)', icon: 'fas fa-circle-dollar-to-slot', color: '#26a17b', net: 'TRC-20 / ERC-20' },
+    { sym: 'BNB', name: 'BNB Chain', icon: 'fas fa-coins', color: '#f3ba2f', net: 'BSC Network' },
+    { sym: 'SOL', name: 'Solana', icon: 'fas fa-sun', color: '#9945ff', net: 'SOL Network' },
+    { sym: 'XRP', name: 'Ripple', icon: 'fas fa-water', color: '#00aae4', net: 'XRP Ledger' },
+    { sym: 'ADA', name: 'Cardano', icon: 'fas fa-circle-nodes', color: '#3cc8c8', net: 'ADA Network' },
+    { sym: 'LTC', name: 'Litecoin', icon: 'fas fa-coins', color: '#bfbbbb', net: 'LTC Network' },
+  ];
+  var PAYPAL = { name: 'PayPal', icon: 'fab fa-paypal', color: '#009cde' };
+  var ctx = null, uid = null, addrs = {}, pay = null, method = 'crypto', coin = null, stage = 'edit', qrLoaded = false;
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var toastT;
+  function toast(t) { var el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { el.hidden = true; }, 4000); }
+  function live() { return root.hasAttribute('data-live'); }
+  function amount() { var v = parseFloat(String($('amt').value).replace(/,/g, '')); return v > 0 ? v : 0; }
+  function copy(text) { navigator.clipboard.writeText(text).then(function () { toast('Copied'); }).catch(function () { toast('Couldn’t copy — select and copy manually'); }); }
+
+  $('coins').innerHTML = COINS.map(function (c) { return '<button type="button" class="coin raised-sm" data-c="' + c.sym + '" aria-pressed="false">' + c.sym + '<small>' + esc(c.net.split(' ')[0]) + '</small></button>'; }).join('');
+
+  function enabled(m) {
+    var me = (pay && pay.methods_enabled) || {}, ew = (pay && pay.ewallet_details) || {};
+    if (m === 'crypto') return me.crypto !== false;
+    return me.ewallet !== false && !(ew.paypal && ew.paypal.enabled === false);
+  }
+  function ppEmail() { var ew = (pay && pay.ewallet_details && pay.ewallet_details.paypal) || {}; return ew.sendToValue || ew.email || 'payments@aurumcapital.io'; }
+
+  function render() {
+    document.querySelectorAll('#methods [data-m]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.m === method ? 'true' : 'false'); });
+    $('unavail').hidden = enabled(method);
+    $('coinBox').hidden = method !== 'crypto';
+    $('cryptoPay').hidden = method !== 'crypto'; $('ppPay').hidden = method !== 'paypal'; $('demoPp').hidden = method !== 'paypal';
+    document.querySelectorAll('#coins [data-c]').forEach(function (b) { b.setAttribute('aria-pressed', coin && b.dataset.c === coin.sym ? 'true' : 'false'); });
+    var a = live() && coin ? (addrs[coin.sym] || '').trim() : ''; // real details only exist in the page when payments are live
+    $('cNet').textContent = coin ? coin.name + ' · ' + coin.net : 'Select a coin and an amount.';
+    $('addr').textContent = a || (coin && live() ? 'No address set for this coin yet — contact support.' : '—');
+    $('wCoin').textContent = coin ? coin.sym + ' (' + coin.net + ')' : 'the selected coin';
+    $('copyAddr').disabled = !a; $('ppTo').textContent = live() ? ppEmail() : '—';
+    drawQr(a);
+    $('go').textContent = stage === 'confirm' ? 'Confirm — I’ve ' + (live() ? 'sent ' : 'requested ') + f.usd(amount()) : (live() ? 'Review deposit' : 'Review demo deposit');
+  }
+  function drawQr(a) {
+    var box = $('qr'); box.innerHTML = '';
+    if (!a || !live() || method !== 'crypto') return;
+    var make = function () { try { new window.QRCode(box, { text: a, width: 120, height: 120, colorDark: '#000', colorLight: '#fff', correctLevel: window.QRCode.CorrectLevel.M }); } catch (e) {} };
+    if (window.QRCode) make(); else if (!qrLoaded) { qrLoaded = true; var s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js'; s.onload = function () { drawQr(a); }; document.body.appendChild(s); }
+  }
+
+  $('methods').addEventListener('click', function (e) { var b = e.target.closest('[data-m]'); if (!b) return; method = b.dataset.m; stage = 'edit'; render(); });
+  $('coins').addEventListener('click', function (e) { var b = e.target.closest('[data-c]'); if (!b) return; coin = COINS.find(function (c) { return c.sym === b.dataset.c; }); stage = 'edit'; render(); });
+  $('presets').addEventListener('click', function (e) { var b = e.target.closest('[data-a]'); if (b) { $('amt').value = Number(b.dataset.a).toFixed(2); stage = 'edit'; render(); } });
+  $('amt').addEventListener('input', function () { stage = 'edit'; render(); });
+  $('copyAddr').addEventListener('click', function () { var a = live() && coin ? (addrs[coin.sym] || '').trim() : ''; if (a) copy(a); });
+  $('copyPp').addEventListener('click', function () { if (live()) copy(ppEmail()); });
+  document.addEventListener('aurum:mode', render);
+
+  $('payForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!ctx) return;
+    var err = $('err'), amt = amount(), btn = $('go');
+    if (!enabled(method)) { err.textContent = 'This payment method is currently unavailable.'; return; }
+    if (method === 'crypto' && !coin) { err.textContent = 'Choose a coin.'; return; }
+    if (amt < 10) { err.textContent = 'Minimum deposit is $10.'; return; }
+    var from = ($(live() ? 'ppFrom' : 'ppFromDemo').value || '').trim();
+    if (method === 'paypal' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(from)) { err.textContent = 'Enter the PayPal email you’ll pay from.'; return; }
+    err.textContent = '';
+    if (stage === 'edit') { stage = 'confirm'; render(); return; }
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    var tag = live() ? '' : '[DEMO] ';
+    var row = method === 'crypto'
+      ? { symbol: coin.sym, name: coin.name + ' Crypto Deposit', icon: coin.icon, color: coin.color, note: tag + 'Deposit: ' + coin.sym + ' · $' + amt.toFixed(2) + ' · Awaiting approval' }
+      : { symbol: 'USD', name: 'PayPal Deposit', icon: PAYPAL.icon, color: PAYPAL.color, note: tag + 'PayPal Deposit · ' + (live() ? ppEmail() : 'demo') + ' · From: ' + from + ' · $' + amt.toFixed(2) + ' · Awaiting confirmation' };
+    try {
+      await S.rest('transactions', { method: 'POST', body: JSON.stringify(Object.assign({ user_id: uid, type: 'deposit', usd_amount: amt, status: 'pending' }, row)), headers: { Prefer: 'return=minimal' } });
+      toast('Deposit request sent — pending approval.');
+      $('amt').value = ''; stage = 'edit'; render(); loadRecent();
+    } catch (ex) { err.textContent = ex.message || 'Couldn’t submit. Please try again.'; stage = 'edit'; }
+    btn.disabled = false; render();
+  });
+
+  function loadRecent() {
+    return S.rest('transactions?user_id=eq.' + uid + '&type=eq.deposit&select=symbol,usd_amount,status,created_at,note&order=created_at.desc&limit=5').then(function (rows) {
+      $('recent').innerHTML = rows.length ? rows.map(function (t) {
+        var st = (t.status || '').toLowerCase();
+        return '<div class="item"><span class="badge inset" aria-hidden="true">↓</span><span class="grow stack" style="gap:2px"><b style="font-size:14px">Deposit ' + esc(t.symbol || '') + ' <span class="tag ' + (st === 'pending' ? 'flat' : st === 'rejected' ? 'down' : 'up') + '" style="min-width:0;font-size:10px">' + esc(st) + '</span></b><span class="when">' + esc(f.when(t.created_at)) + '</span></span><span class="amt">' + esc(f.usd(t.usd_amount)) + '</span></div>';
+      }).join('') : '<p class="empty">No deposits yet.</p>';
+    });
+  }
+
+  S.ready.then(function (c) {
+    ctx = c; uid = c.user.id;
+    var first = c.profile && c.profile.cash;
+    A.money($('cash'), f.usd(Number(first) || 0)); render();
+    return Promise.all([
+      S.rest('payment_settings?id=eq.global&select=*').then(function (r) { pay = r && r[0] || null; }).catch(function () {}),
+      S.rest('crypto_addresses?select=symbol,address').then(function (r) { (r || []).forEach(function (x) { addrs[x.symbol] = x.address || ''; }); }).catch(function () {}),
+      loadRecent(),
+    ]).then(render);
+  }).catch(function (err) { if (!/signed out|expired/.test(err.message)) $('recent').innerHTML = '<p class="empty">Couldn’t load. Please try again shortly.</p>'; });
+});
+</script>
+</body>
+</html>

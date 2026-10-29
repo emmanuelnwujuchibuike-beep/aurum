@@ -112,3 +112,14 @@ Net worth = cash + Σ(quantity × live price) on dashboard (`dashboard.html:4290
 | Sign-in while signed in → app; back never returns to sign-in | ✅ |
 | Back from another page restores dashboard from back-cache (no reload) | ✅ |
 | Signed out elsewhere + back → sign-in (no cached balances shown) | ✅ |
+
+## 2026-10-29 (session 3)
+| Item | Status |
+|---|---|
+| Demo / live switch | ✅ `site_settings.payments_live` (Admin → Settings → Real payments). Off = DEMO bar on every page (badge on old pages via `demo-badge.js`), real wallet addresses / PayPal details kept out of the page, requests tagged `[DEMO]`. On = label gone, real details shown. Migration `20261029_payments_live.sql` (optional: missing row = demo). |
+| Profile | ✅ rebuilt to `aurum-capital-design.zip → 05-profile` (vault hero, accordion settings); all functions kept; Admin button only for `is_admin` |
+| Deposit / Withdraw | ✅ new pages (`deposit.html`, `withdraw.html`); same pending-request rows and admin approval as before |
+| Trade | ✅ rebuilt to `04-trade`: Lightweight Charts with real OHLCV, 10 timeframes, candles/line, MA20, volume, full screen; Spot + CFD (lots, TP/SL), open positions with live P&L, close, TP/SL + 90% loss auto-close, holdings, history, price alerts (`aurum_alerts`) and chart markers (`aurum_chart_markers`); orders via the server `money` function. Old page kept as `trade-classic.html` (linked). Not ported: synthetic candle generator / price jitter. |
+| Support chat | ✅ widget restyled to the design tokens; chat logic unchanged; 50 KB → 35 KB |
+| App-style navigation | ✅ prerender (eager for bottom nav / quick actions), cross-document view transitions (header + nav stay), skeleton below the header if the next page takes >150 ms |
+| Invest | unchanged (owner: keep existing investment functions) — DEMO badge only |

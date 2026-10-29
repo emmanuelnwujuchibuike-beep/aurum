@@ -26,381 +26,123 @@ const AURUM_CHAT_CONFIG = {
   sdkScript.onload = initAurumChat;
   document.head.appendChild(sdkScript);
 
-  const fontLink = document.createElement("link");
-  fontLink.rel  = "stylesheet";
-  fontLink.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap";
-  document.head.appendChild(fontLink);
-
+  // Fonts come from the page (app.css); the widget no longer downloads its own.
   const style = document.createElement("style");
   style.textContent = `
-    #aurum-chat-root *{box-sizing:border-box;margin:0;padding:0;}
+    /* Support chat — app design (tokens from app.css; light fallbacks for pages without it) */
+    #aurum-chat-root{--c-bg:var(--bg,#ECE8E1);--c-well:var(--well,#E7E2DA);--c-ink:var(--ink,#1E1B16);--c-muted:var(--muted,#5B5448);--c-line:var(--line,#DDD6C9);
+      --c-gold:var(--gold,#C29A45);--c-on-gold:var(--on-gold,#241A05);--c-gold-ink:var(--gold-ink,#6E5314);--c-up:var(--up,#22603A);--c-down:var(--down,#A3261C);
+      --c-raise:var(--raise,7px 7px 16px #CEC7B9,-7px -7px 16px #FFFFFF);--c-raise-sm:var(--raise-sm,4px 4px 10px #D0C9BC,-4px -4px 10px #FFFFFF);
+      --c-press:var(--press-sm,inset 3px 3px 7px #D1CABD,inset -3px -3px 7px #FFFFFF);--c-btn:var(--shadow-btn,6px 6px 14px #CDBF9F,-6px -6px 14px #FFFFFF);
+      font-family:var(--sans,"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif);color:var(--c-ink);-webkit-font-smoothing:antialiased}
+    #aurum-chat-root *{box-sizing:border-box;margin:0;padding:0}
+    #aurum-chat-root button{font:inherit;border:0;cursor:pointer;color:inherit;background:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
-    /* ═══ LIGHT MODE VARS ═══ */
-    #aurum-chat-root{
-      --gold:#C9A84C; --gold-hi:#E8C95A; --gold-lo:#9A7228;
-      --bg:#F8F5EF; --surface:#FFFFFF; --surface2:#EFE9DC;
-      --chat-bg:#EDE8DC;
-      --border:rgba(160,135,75,.14); --border-md:rgba(160,135,75,.28);
-      --text:#18100A; --text-2:#5A4A2E; --text-3:#9A8868; --text-4:#C0A878;
-      --online:#1A9E5C;
-      --user-bubble-lo:#9A7230;
-      --agent-bubble:#FFFFFF;
-      --win-shadow:0 0 0 1px rgba(160,135,75,.1),0 2px 6px rgba(0,0,0,.06),0 24px 72px rgba(60,40,0,.15),0 8px 22px rgba(60,40,0,.09);
-      --tog-shadow:0 0 0 3px rgba(201,168,76,.22),0 14px 44px rgba(180,135,30,.55),0 4px 12px rgba(0,0,0,.3);
-      font-family:'Outfit',sans-serif;
-    }
+    /* launcher: gold, above the floating bottom nav when the page has one */
+    #aurum-toggle{position:fixed;right:18px;bottom:calc(24px + env(safe-area-inset-bottom));z-index:9998;width:56px;height:56px;border-radius:18px;background:var(--c-gold)!important;color:var(--c-on-gold);box-shadow:var(--c-btn);display:flex;align-items:center;justify-content:center}
+    body:has(.nav) #aurum-toggle{bottom:calc(104px + env(safe-area-inset-bottom))}
+    #aurum-toggle:active{box-shadow:inset 3px 3px 8px var(--gold-lo,#9E7C33),inset -2px -2px 6px var(--gold-hi,#D9B565)}
+    #aurum-toggle .aur-tog-frame{display:flex;align-items:center;justify-content:center}
+    #aurum-toggle .aur-arc-1,#aurum-toggle .aur-arc-2,#aurum-toggle .aur-d1,#aurum-toggle .aur-d2,#aurum-toggle circle{display:none}
+    #aurum-toggle .aur-letter{stroke:var(--c-on-gold)}
+    #aurum-toggle .icon-close{display:none}
+    #aurum-toggle.open .aur-tog-frame{display:none}
+    #aurum-toggle.open .icon-close{display:block}
+    #aurum-badge{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--c-down);color:#fff;font:600 11px/20px var(--mono,ui-monospace,monospace);text-align:center;display:none}
+    #aurum-badge.show{display:block}
 
-    /* ═══ DARK MODE VARS ═══ */
-    html[data-theme="dark"] #aurum-chat-root{
-      --bg:#06101A; --surface:#0B1924; --surface2:#07111E;
-      --chat-bg:#0A1520;
-      --border:rgba(201,168,76,.09); --border-md:rgba(201,168,76,.2);
-      --text:#E0D4B8; --text-2:#A0906A; --text-3:#64543A; --text-4:#3A2E1C;
-      --user-bubble-lo:#7A5818;
-      --agent-bubble:#0E2038;
-      --win-shadow:0 0 0 1px rgba(201,168,76,.1),0 2px 6px rgba(0,0,0,.4),0 32px 80px rgba(0,0,0,.8),0 10px 26px rgba(0,0,0,.55);
-      --tog-shadow:0 0 0 3px rgba(201,168,76,.22),0 14px 44px rgba(201,168,76,.32),0 4px 12px rgba(0,0,0,.6);
-    }
+    /* window */
+    #aurum-window{position:fixed;right:18px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:9999;width:min(380px,calc(100vw - 24px));height:min(600px,calc(100dvh - 180px));border-radius:26px;background:var(--c-bg);box-shadow:var(--c-raise);display:none;flex-direction:column;overflow:hidden}
+    body:has(.nav) #aurum-window{bottom:calc(172px + env(safe-area-inset-bottom));height:min(560px,calc(100dvh - 250px))}
+    #aurum-window.visible{display:flex}
+    @media (max-width:520px){#aurum-window{right:12px;left:12px;width:auto}}
 
-    /* ═══════════════════════════════
-       TOGGLE BUTTON — ULTRA PREMIUM
-    ═══════════════════════════════ */
-    #aurum-toggle{
-      position:fixed; bottom:28px; right:28px; z-index:99998;
-      width:64px; height:64px; border-radius:50%; border:none; cursor:pointer;
-      background:linear-gradient(145deg,#F0D468 0%,#C9A84C 38%,#9A7230 72%,#6A4818 100%);
-      box-shadow:var(--tog-shadow);
-      display:flex; align-items:center; justify-content:center;
-      transition:transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
-      outline:none; overflow:visible;
-    }
-    #aurum-toggle:hover{ transform:scale(1.1) translateY(-3px); box-shadow:0 0 0 4px rgba(201,168,76,.3),0 20px 56px rgba(201,168,76,.6),0 4px 14px rgba(0,0,0,.3); }
-    #aurum-toggle:active{ transform:scale(.9); }
-    /* gloss */
-    #aurum-toggle::before{ content:''; position:absolute; inset:0; border-radius:50%; background:linear-gradient(145deg,rgba(255,255,255,.24) 0%,transparent 55%); pointer-events:none; }
+    #aurum-header{display:flex;align-items:center;gap:12px;padding:14px 14px 12px 16px;border-bottom:1px solid var(--c-line);flex:none}
+    #aurum-header-avatar{width:42px;height:42px;border-radius:14px;overflow:hidden;flex:none;background:var(--c-gold);box-shadow:var(--c-raise-sm)}
+    #aurum-header-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    #aurum-header-info{flex:1;min-width:0}
+    #aurum-header-name{font:500 18px/1.2 var(--serif,"Playfair Display",Georgia,serif)}
+    #aurum-header-sub{font-size:12px;color:var(--c-muted)}
+    #aurum-header-right{display:flex;align-items:center;gap:10px}
+    #aurum-status-wrap{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--c-up)}
+    #aurum-status-dot{width:7px;height:7px;border-radius:4px;background:var(--ok,#2F7A4B)}
+    #aurum-close-btn{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--c-gold-ink);background:var(--c-bg)!important;box-shadow:var(--c-raise-sm)}
+    #aurum-close-btn svg{width:16px;height:16px}
 
-    /* ─── animated icon frame ─── */
-    .aur-tog-frame{
-      position:relative; width:34px; height:34px;
-      display:flex; align-items:center; justify-content:center;
-    }
-    /* spinning arc 1 */
-    .aur-arc-1{
-      position:absolute; inset:-10px; border-radius:50%;
-      border:1.5px solid transparent;
-      border-top-color:rgba(255,240,140,.8);
-      border-right-color:rgba(255,240,140,.35);
-      animation:aurArcSpin 1.8s linear infinite;
-      pointer-events:none;
-    }
-    /* spinning arc 2 — counter-rotate */
-    .aur-arc-2{
-      position:absolute; inset:-5px; border-radius:50%;
-      border:1px solid transparent;
-      border-bottom-color:rgba(255,230,100,.55);
-      border-left-color:rgba(255,230,100,.22);
-      animation:aurArcSpin 2.8s linear infinite reverse;
-      pointer-events:none;
-    }
-    @keyframes aurArcSpin{ to{ transform:rotate(360deg); } }
+    /* start screen */
+    #aurum-session-prompt{flex:1;overflow-y:auto;padding:22px 18px 18px;display:flex;flex-direction:column;gap:18px}
+    #aurum-prompt-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+    #aurum-hero-emblem{width:56px;height:56px;border-radius:18px;background:var(--c-well);box-shadow:var(--c-press);display:flex;align-items:center;justify-content:center}
+    #aurum-hero-wordmark{font:500 22px/1.2 var(--serif,"Playfair Display",Georgia,serif)}
+    #aurum-hero-rule{display:none}
+    #aurum-prompt-title{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--c-gold-ink);font-weight:500}
+    #aurum-prompt-sub{font-size:13px;line-height:1.55;color:var(--c-muted);max-width:280px}
+    #aurum-prompt-form{display:flex;flex-direction:column;gap:12px}
+    .aurum-field-group{display:flex;flex-direction:column;gap:6px}
+    .aurum-field-label{font-size:12px;font-weight:500;color:var(--c-ink)}
+    .aurum-field{min-height:50px;border:0;border-radius:14px;padding:0 14px;font-size:15px;font-family:inherit;color:var(--c-ink);background:var(--c-well);box-shadow:var(--c-press);outline:none;width:100%}
+    .aurum-field:focus{box-shadow:var(--c-press),0 0 0 2px var(--c-gold)}
+    .aurum-field.error{box-shadow:var(--c-press),0 0 0 2px var(--c-down)}
+    #aurum-start-btn{min-height:52px;border-radius:16px;background:var(--c-gold)!important;color:var(--c-on-gold);box-shadow:var(--c-btn);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px}
+    #aurum-start-btn:disabled{opacity:.6}
+    .aurum-btn-arrow{display:flex}
+    #aurum-trust{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+    .aurum-trust-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--c-muted)}
+    .aurum-trust-item svg{width:13px;height:13px;color:var(--c-gold-ink)}
 
-    /* icon SVG in normal/open states */
-    .aur-tog-frame{ transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .22s; }
-    #aurum-toggle.open .aur-tog-frame{ transform:scale(0) rotate(50deg); opacity:0; position:absolute; }
-    #aurum-toggle:not(.open) .icon-close{ transform:scale(0) rotate(-50deg); opacity:0; position:absolute; }
-    #aurum-toggle.open .icon-close{ transform:scale(1) rotate(0); opacity:1; }
+    /* conversation */
+    #aurum-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain}
+    .aurum-divider{align-self:center;font:500 10px/1 var(--mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--c-muted);padding:6px 0}
+    .aurum-msg{display:flex;align-items:flex-end;gap:8px;max-width:88%}
+    .aurum-msg.user{align-self:flex-end;flex-direction:row-reverse}
+    .aurum-msg.grouped .aurum-msg-avatar{visibility:hidden}
+    .aurum-msg-avatar{width:28px;height:28px;border-radius:9px;overflow:hidden;flex:none;display:flex;align-items:center;justify-content:center;background:var(--c-gold);color:var(--c-on-gold);font-size:11px;font-weight:600}
+    .aurum-msg-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .aurum-msg-body{min-width:0}
+    .aurum-bubble{border-radius:16px;padding:9px 12px 7px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word;background:var(--c-bg);box-shadow:var(--c-raise-sm)}
+    .aurum-msg.agent .aurum-bubble{border-bottom-left-radius:6px}
+    .aurum-msg.user .aurum-bubble{background:var(--c-gold);color:var(--c-on-gold);box-shadow:none;border-bottom-right-radius:6px}
+    .aur-bubble-footer{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:3px}
+    .aur-time{font:500 10px/1 var(--mono,ui-monospace,monospace);opacity:.65}
+    .aur-read-tick svg{width:13px;height:13px;opacity:.7}
+    .aurum-img-bubble{border-radius:14px;overflow:hidden;cursor:pointer;max-width:220px;box-shadow:var(--c-raise-sm)}
+    .aurum-img-bubble img{display:block;width:100%;height:auto}
+    .aurum-img-caption{display:block;padding:6px 10px;font-size:11px}
+    #aurum-typing{padding:0 14px 8px;align-items:flex-end;gap:8px}
+    #aurum-typing.show{display:flex!important}
+    .aurum-typing-bubble{display:flex;gap:4px;padding:12px 14px;border-radius:16px;background:var(--c-bg);box-shadow:var(--c-raise-sm)}
+    .aurum-typing-bubble span{width:6px;height:6px;border-radius:3px;background:var(--c-muted);opacity:.5;animation:aurDot 1s infinite alternate}
+    .aurum-typing-bubble span:nth-child(2){animation-delay:.2s}
+    .aurum-typing-bubble span:nth-child(3){animation-delay:.4s}
+    @keyframes aurDot{to{opacity:1}}
 
-    /* diamond in SVG — rotate continuously */
-    .aur-d1{ transform-origin:16px 16px; animation:aurDiamRot 12s linear infinite; }
-    .aur-d2{ transform-origin:16px 16px; animation:aurDiamRot 7s linear infinite reverse; }
-    @keyframes aurDiamRot{ to{ transform:rotate(360deg); } }
+    /* composer */
+    #aurum-input-area{flex:none;border-top:1px solid var(--c-line);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+    #aurum-img-preview{display:none;align-items:center;gap:10px;padding:0 4px 8px}
+    #aurum-img-preview.has-image{display:flex}
+    #aurum-img-thumb-wrap{position:relative;width:48px;height:48px;border-radius:12px;overflow:hidden;box-shadow:var(--c-raise-sm)}
+    #aurum-img-thumb{width:100%;height:100%;object-fit:cover}
+    #aurum-img-remove{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:9px;background:rgba(0,0,0,.55)!important;color:#fff;font-size:10px}
+    #aurum-img-preview-label{font-size:12px;color:var(--c-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #aurum-upload-progress{height:2px;border-radius:1px;background:var(--c-line);margin:0 4px 8px;display:none;overflow:hidden}
+    #aurum-upload-progress.active{display:block}
+    #aurum-upload-bar{height:100%;width:0;background:var(--c-gold);transition:width .3s}
+    #aurum-input-row{display:flex;align-items:flex-end;gap:8px}
+    #aurum-file-input{display:none}
+    #aurum-attach{width:42px;height:42px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;color:var(--c-gold-ink);background:var(--c-bg)!important;box-shadow:var(--c-raise-sm)}
+    #aurum-attach.has-image{color:var(--c-up)}
+    #aurum-attach svg{width:18px;height:18px}
+    #aurum-input-wrap{flex:1;min-width:0;border-radius:14px;background:var(--c-well);box-shadow:var(--c-press);padding:0 12px;display:flex}
+    #aurum-input{flex:1;border:0;outline:none;background:transparent;resize:none;font-size:15px;line-height:1.4;font-family:inherit;color:var(--c-ink);padding:11px 0;max-height:120px}
+    #aurum-input::placeholder{color:var(--placeholder,#7A7264)}
+    #aurum-send{width:42px;height:42px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;background:var(--c-gold)!important;box-shadow:var(--c-btn)}
+    #aurum-send:disabled{opacity:.55}
+    #aurum-send .send-spinner{display:none;animation:aurSpin .8s linear infinite}
+    #aurum-send.uploading .send-icon{display:none}
+    #aurum-send.uploading .send-spinner{display:block}
+    @keyframes aurSpin{to{transform:rotate(360deg)}}
+    @media (prefers-reduced-motion:reduce){#aurum-chat-root *{animation:none!important;transition:none!important}}
 
-    /* monogram "A" — draws itself, then pulses */
-    .aur-letter{
-      stroke-dasharray:120;
-      stroke-dashoffset:120;
-      animation:aurDrawLetter 2.4s cubic-bezier(.4,0,.2,1) .6s forwards, aurLetterPulse 4s ease-in-out 3s infinite;
-    }
-    @keyframes aurDrawLetter{ 0%{ stroke-dashoffset:120; } 100%{ stroke-dashoffset:0; } }
-    @keyframes aurLetterPulse{
-      0%,100%{ stroke:rgba(255,240,130,.95); filter:none; }
-      50%{ stroke:#fff; filter:drop-shadow(0 0 6px rgba(255,230,100,.8)); }
-    }
-
-    /* badge */
-    #aurum-badge{
-      position:absolute; top:-8px; right:-8px; z-index:1;
-      background:linear-gradient(135deg,#F05040,#C02820);
-      color:#fff; font-size:10px; font-weight:700;
-      width:22px; height:22px; border-radius:50%;
-      display:none; align-items:center; justify-content:center;
-      border:2.5px solid #F0D468;
-      box-shadow:0 3px 10px rgba(192,40,32,.5);
-      animation:aurPop .38s cubic-bezier(.34,1.56,.64,1);
-      font-family:'Outfit',sans-serif;
-    }
-    #aurum-badge.show{ display:flex; }
-    @keyframes aurPop{ from{ transform:scale(0) rotate(-20deg); } to{ transform:scale(1); } }
-
-    /* ═══════════════════════════════
-       CHAT WINDOW — NEAR FULL SCREEN
-    ═══════════════════════════════ */
-    #aurum-window{
-      position:fixed;
-      right:16px; bottom:106px;
-      width:min(460px, calc(100vw - 32px));
-      height:calc(100vh - 118px);
-      max-height:none;
-      background:var(--bg);
-      border-top:2.5px solid var(--gold);
-      border:1px solid var(--border);
-      border-top:2.5px solid var(--gold);
-      border-radius:20px 20px 20px 20px;
-      box-shadow:var(--win-shadow);
-      display:flex; flex-direction:column; overflow:hidden;
-      opacity:0; transform:translateY(32px) scale(.92); pointer-events:none;
-      transition:opacity .4s ease, transform .46s cubic-bezier(.34,1.56,.64,1);
-      will-change:transform,opacity;
-      z-index:99997;
-    }
-    #aurum-window.visible{ opacity:1; transform:translateY(0) scale(1); pointer-events:all; }
-
-    /* ─── HEADER (always dark) ─── */
-    #aurum-header{
-      padding:14px 16px 12px;
-      background:linear-gradient(145deg,#0C1E30 0%,#07131F 100%);
-      border-bottom:1px solid rgba(201,168,76,.12);
-      display:flex; align-items:center; gap:11px;
-      flex-shrink:0; position:relative; overflow:hidden;
-    }
-    #aurum-header::before{ content:''; position:absolute; top:-40px; right:-30px; width:130px; height:130px; border-radius:50%; background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 70%); pointer-events:none; }
-    #aurum-header::after{ content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,.45),transparent); }
-    #aurum-header-avatar{ width:42px; height:42px; border-radius:50%; border:1.5px solid rgba(201,168,76,.45); overflow:hidden; flex-shrink:0; background:#0A1828; box-shadow:0 0 0 3px rgba(201,168,76,.08),0 4px 14px rgba(0,0,0,.35); }
-    #aurum-header-avatar img{ width:100%; height:100%; object-fit:cover; }
-    #aurum-header-info{ flex:1; min-width:0; }
-    #aurum-header-name{ font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:500; letter-spacing:.04em; color:var(--gold); line-height:1.15; }
-    #aurum-header-sub{ font-size:9px; color:rgba(180,160,120,.55); letter-spacing:.18em; text-transform:uppercase; margin-top:3px; }
-    #aurum-header-right{ display:flex; align-items:center; gap:9px; }
-    #aurum-status-wrap{ display:flex; align-items:center; gap:5px; }
-    #aurum-status-dot{ width:7px; height:7px; border-radius:50%; background:var(--online); box-shadow:0 0 7px rgba(26,158,92,.65); animation:aurGreen 2.6s ease-in-out infinite; }
-    #aurum-status-label{ font-size:11px; color:#2ECC71; font-weight:600; letter-spacing:.04em; }
-    @keyframes aurGreen{ 0%,100%{ box-shadow:0 0 5px rgba(46,204,113,.5); } 50%{ box-shadow:0 0 16px rgba(46,204,113,.95),0 0 28px rgba(46,204,113,.2); } }
-    #aurum-status-dot.offline{ background:#8A7A60; box-shadow:none; animation:none; }
-    #aurum-status-label.offline{ color:rgba(180,160,120,.55); }
-    #aurum-close-btn{ width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; outline:none; transition:background .2s,transform .2s; }
-    #aurum-close-btn:hover{ background:rgba(201,168,76,.15); border-color:rgba(201,168,76,.3); transform:scale(1.1); }
-    #aurum-close-btn svg{ width:11px; height:11px; color:rgba(200,185,155,.7); transition:color .2s; }
-    #aurum-close-btn:hover svg{ color:var(--gold); }
-
-    /* ═══════════════════════════════
-       MESSAGES — WHATSAPP STYLE BG
-    ═══════════════════════════════ */
-    #aurum-messages{
-      flex:1; overflow-y:auto;
-      padding:14px 12px 6px;
-      display:flex; flex-direction:column; gap:2px;
-      scroll-behavior:smooth;
-      background-color:var(--chat-bg);
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 2L78 40L40 78L2 40Z' stroke='%23C9A84C' stroke-width='.5' fill='none' opacity='.04'/%3E%3Cpath d='M40 18L62 40L40 62L18 40Z' stroke='%23C9A84C' stroke-width='.4' fill='none' opacity='.025'/%3E%3C/svg%3E");
-    }
-    html[data-theme="dark"] #aurum-messages{
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 2L78 40L40 78L2 40Z' stroke='%23C9A84C' stroke-width='.5' fill='none' opacity='.04'/%3E%3Cpath d='M40 18L62 40L40 62L18 40Z' stroke='%23C9A84C' stroke-width='.4' fill='none' opacity='.03'/%3E%3C/svg%3E");
-    }
-    #aurum-messages::-webkit-scrollbar{ width:3px; }
-    #aurum-messages::-webkit-scrollbar-track{ background:transparent; }
-    #aurum-messages::-webkit-scrollbar-thumb{ background:rgba(201,168,76,.15); border-radius:2px; }
-
-    /* ─── DIVIDER ─── */
-    .aurum-divider{ text-align:center; font-size:9px; color:var(--text-3); letter-spacing:.18em; text-transform:uppercase; display:flex; align-items:center; gap:10px; margin:6px 4px 10px; font-weight:500; }
-    .aurum-divider::before,.aurum-divider::after{ content:''; flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,.12),transparent); }
-
-    /* ═══════════════════════════════
-       MESSAGE ROWS — WHATSAPP STYLE
-    ═══════════════════════════════ */
-    .aurum-msg{
-      display:flex; gap:7px; align-items:flex-end;
-      animation:aurMsgIn .24s cubic-bezier(.25,.46,.45,.94) both;
-      padding:1px 4px;
-    }
-    @keyframes aurMsgIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
-    .aurum-msg.user{ flex-direction:row-reverse; }
-    .aurum-msg.grouped{ margin-top:1px; }
-    .aurum-msg.grouped .aurum-msg-avatar{ visibility:hidden; }
-
-    /* avatars */
-    .aurum-msg-avatar{ width:28px; height:28px; border-radius:50%; flex-shrink:0; background:var(--surface2); border:1.5px solid var(--border-md); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--gold); font-weight:700; font-family:'Cormorant Garamond',serif; overflow:hidden; }
-    .aurum-msg-avatar img{ width:100%; height:100%; object-fit:cover; }
-    .aurum-msg-body{ max-width:80%; display:flex; flex-direction:column; gap:1px; }
-    .aurum-msg.user .aurum-msg-body{ align-items:flex-end; }
-
-    /* ─── BUBBLE WRAPPER (for tail positioning) ─── */
-    .aurum-bubble-wrap{ position:relative; }
-
-    /* ─── USER BUBBLE ─── */
-    .aurum-msg.user .aurum-bubble{
-      background:linear-gradient(145deg,#EFD060 0%,#C9A84C 45%,#9A7230 85%,#6A4818 100%);
-      color:#0A0700; font-weight:500; font-size:13.5px; line-height:1.62;
-      padding:9px 12px 9px 14px;
-      border-radius:18px 18px 4px 18px;
-      word-break:break-word;
-      box-shadow:0 4px 16px rgba(201,168,76,.22),0 1px 4px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.28);
-      display:flex; flex-direction:column;
-    }
-    /* tail — user, only on non-grouped */
-    .aurum-msg.user:not(.grouped) .aurum-bubble-wrap::after{
-      content:''; position:absolute;
-      bottom:0; right:-6px;
-      width:10px; height:14px;
-      background:linear-gradient(210deg,#9A7230,#7A5218);
-      clip-path:polygon(0 0,0 100%,100% 100%);
-    }
-
-    /* ─── AGENT BUBBLE (LIGHT) ─── */
-    .aurum-msg.agent .aurum-bubble{
-      background:#FFFFFF;
-      color:#18100A;
-      font-size:13.5px; line-height:1.62; font-weight:400;
-      padding:9px 14px 9px 12px;
-      border-radius:18px 18px 18px 4px;
-      word-break:break-word;
-      border:1px solid rgba(0,0,0,.07);
-      box-shadow:0 2px 8px rgba(0,0,0,.07),inset 0 1px 0 rgba(255,255,255,.9);
-      display:flex; flex-direction:column;
-    }
-    /* tail — agent, only on non-grouped */
-    .aurum-msg.agent:not(.grouped) .aurum-bubble-wrap::after{
-      content:''; position:absolute;
-      bottom:0; left:-6px;
-      width:10px; height:14px;
-      background:#FFFFFF;
-      clip-path:polygon(100% 0,0 100%,100% 100%);
-    }
-    /* dark agent bubble */
-    html[data-theme="dark"] .aurum-msg.agent .aurum-bubble{ background:#0E2038; color:#DDD0B5; border-color:rgba(201,168,76,.1); box-shadow:0 2px 8px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.03); }
-    html[data-theme="dark"] .aurum-msg.agent:not(.grouped) .aurum-bubble-wrap::after{ background:#0E2038; }
-
-    /* ─── TIMESTAMP inside bubble (WhatsApp style) ─── */
-    .aur-bubble-footer{
-      display:flex; align-items:center; justify-content:flex-end; gap:4px;
-      margin-top:3px; flex-shrink:0;
-    }
-    .aurum-msg.user .aur-bubble-footer .aur-time{ color:rgba(10,7,0,.5); font-size:9.5px; font-family:'JetBrains Mono',monospace; }
-    .aurum-msg.agent .aur-bubble-footer .aur-time{ color:var(--text-3); font-size:9.5px; font-family:'JetBrains Mono',monospace; }
-    .aur-read-tick svg{ width:14px; height:14px; color:rgba(10,7,0,.5); }
-
-    /* ─── IMAGE BUBBLES ─── */
-    .aurum-img-bubble{ border-radius:14px; overflow:hidden; max-width:220px; cursor:pointer; border:1px solid var(--border); position:relative; box-shadow:0 3px 14px rgba(0,0,0,.1); transition:transform .2s,box-shadow .2s; }
-    .aurum-img-bubble:hover{ transform:scale(1.02); box-shadow:0 8px 28px rgba(0,0,0,.18); }
-    .aurum-img-bubble img{ width:100%; height:auto; display:block; }
-    .aurum-img-caption{ font-size:11px; color:var(--text-3); padding:5px 10px; background:var(--surface2); display:block; }
-    .aurum-msg.user .aurum-img-bubble{ border-color:rgba(201,168,76,.3); box-shadow:0 4px 18px rgba(201,168,76,.2); }
-
-    /* ─── IMAGE PREVIEW ─── */
-    #aurum-img-preview{ display:none; padding:10px 14px 0; background:var(--surface2); }
-    #aurum-img-preview.has-image{ display:flex; align-items:center; gap:10px; }
-    #aurum-img-thumb-wrap{ position:relative; width:46px; height:46px; flex-shrink:0; }
-    #aurum-img-thumb{ width:46px; height:46px; border-radius:9px; object-fit:cover; border:1.5px solid var(--border-md); display:block; }
-    #aurum-img-remove{ position:absolute; top:-7px; right:-7px; width:18px; height:18px; border-radius:50%; background:#E74C3C; border:2px solid var(--bg); color:#fff; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .2s; }
-    #aurum-img-remove:hover{ background:#C0392B; transform:scale(1.12); }
-    #aurum-img-preview-label{ font-size:12px; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
-
-    /* ─── TYPING ─── */
-    #aurum-typing{ display:none; padding:4px 12px 8px; }
-    #aurum-typing.show{ display:flex; gap:7px; align-items:flex-end; }
-    .aurum-typing-bubble{ background:var(--agent-bubble); border:1px solid rgba(0,0,0,.07); border-radius:18px 18px 18px 4px; padding:12px 16px; display:flex; align-items:center; gap:5px; box-shadow:0 2px 8px rgba(0,0,0,.07); }
-    html[data-theme="dark"] .aurum-typing-bubble{ border-color:rgba(201,168,76,.1); box-shadow:0 2px 10px rgba(0,0,0,.3); }
-    .aurum-typing-bubble span{ width:5px; height:5px; border-radius:50%; background:rgba(201,168,76,.55); animation:aurDot 1.55s ease-in-out infinite; display:inline-block; }
-    .aurum-typing-bubble span:nth-child(2){ animation-delay:.24s; }
-    .aurum-typing-bubble span:nth-child(3){ animation-delay:.48s; }
-    @keyframes aurDot{ 0%,60%,100%{ transform:translateY(0); opacity:.3; } 30%{ transform:translateY(-7px); opacity:1; } }
-
-    /* ═══════════════════════════════
-       SESSION PROMPT — ATMOSPHERIC HERO
-    ═══════════════════════════════ */
-    #aurum-session-prompt{ flex:1; display:flex; flex-direction:column; overflow-y:auto; }
-    #aurum-prompt-hero{
-      padding:40px 24px 32px;
-      background:linear-gradient(160deg,#0A1E32 0%,#06131E 55%,#040E18 100%);
-      border-bottom:1px solid rgba(201,168,76,.12);
-      position:relative; overflow:hidden; text-align:center; flex-shrink:0;
-    }
-    #aurum-prompt-hero::before{ content:''; position:absolute; top:-60px; right:-50px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 68%); pointer-events:none; }
-    #aurum-prompt-hero::after{ content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,.5),transparent); }
-    #aurum-hero-emblem{ display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
-    #aurum-hero-emblem svg{ filter:drop-shadow(0 0 8px rgba(201,168,76,.35)); }
-    #aurum-hero-wordmark{ font-family:'Cormorant Garamond',serif; font-size:11px; font-weight:600; letter-spacing:.45em; text-transform:uppercase; color:rgba(201,168,76,.72); margin-bottom:14px; }
-    #aurum-hero-rule{ display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px; }
-    .aurum-rule-line{ display:block; width:44px; height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,.45)); }
-    .aurum-rule-line.r{ background:linear-gradient(90deg,rgba(201,168,76,.45),transparent); }
-    .aurum-rule-diamond{ font-size:8px; color:rgba(201,168,76,.5); }
-    #aurum-prompt-title{ font-family:'Cormorant Garamond',serif; color:#EDE0C4; font-size:26px; font-weight:400; line-height:1.2; margin-bottom:10px; letter-spacing:.01em; }
-    #aurum-prompt-sub{ font-size:12.5px; color:rgba(185,165,125,.65); line-height:1.75; font-weight:300; max-width:300px; margin:0 auto; }
-
-    /* form */
-    #aurum-prompt-form{ padding:24px 22px 16px; background:var(--bg); display:flex; flex-direction:column; gap:18px; flex:1; }
-    .aurum-field-group{ display:flex; flex-direction:column; gap:6px; }
-    .aurum-field-label{ font-size:9.5px; color:var(--text-3); letter-spacing:.15em; text-transform:uppercase; font-weight:600; }
-    .aurum-field{ background:transparent; border:none; border-bottom:1.5px solid var(--border-md); border-radius:0; color:var(--text); font-size:14px; padding:9px 2px; font-family:'Outfit',sans-serif; outline:none; transition:border-color .22s; width:100%; }
-    .aurum-field:focus{ border-bottom-color:var(--gold); }
-    .aurum-field::placeholder{ color:var(--text-4); }
-    .aurum-field.error{ border-bottom-color:rgba(220,53,34,.7); animation:shake .35s ease; }
-    @keyframes shake{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-5px); } 75%{ transform:translateX(5px); } }
-    #aurum-start-btn{ background:linear-gradient(145deg,#EFD060 0%,#C9A84C 40%,#9A7230 80%,#6A4818 100%); color:#0A0700; font-weight:700; font-size:13px; border:none; border-radius:10px; padding:14px; cursor:pointer; letter-spacing:.1em; text-transform:uppercase; transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .22s; box-shadow:0 6px 22px rgba(201,168,76,.35); font-family:'Outfit',sans-serif; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:10px; }
-    #aurum-start-btn::before{ content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent); transform:translateX(-100%); transition:transform .55s ease; }
-    #aurum-start-btn:hover::before{ transform:translateX(100%); }
-    #aurum-start-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(201,168,76,.5); }
-    #aurum-start-btn:active{ transform:translateY(0) scale(.98); }
-    .aurum-btn-arrow{ display:flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,.12); flex-shrink:0; }
-    #aurum-trust{ display:flex; align-items:center; justify-content:center; gap:18px; padding:0 22px 18px; background:var(--bg); }
-    .aurum-trust-item{ display:flex; align-items:center; gap:5px; font-size:9.5px; color:var(--text-4); letter-spacing:.05em; }
-    .aurum-trust-item svg{ width:11px; height:11px; color:rgba(201,168,76,.4); }
-
-    /* ═══════════════════════════════
-       INPUT AREA
-    ═══════════════════════════════ */
-    #aurum-input-area{ padding:8px 12px 14px; border-top:1px solid var(--border); background:var(--surface2); display:flex; flex-direction:column; gap:0; flex-shrink:0; position:relative; }
-    html[data-theme="dark"] #aurum-input-area{ background:#060F1A; border-top-color:rgba(201,168,76,.09); }
-    #aurum-input-area::before{ content:''; position:absolute; top:0; left:14px; right:14px; height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,.22),transparent); }
-    #aurum-input-row{ display:flex; align-items:flex-end; gap:8px; padding-top:10px; }
-    #aurum-attach{ width:36px; height:36px; border-radius:10px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; outline:none; transition:all .2s; }
-    html[data-theme="dark"] #aurum-attach{ background:rgba(255,255,255,.04); border-color:rgba(201,168,76,.1); }
-    #aurum-attach:hover{ background:rgba(201,168,76,.1); border-color:var(--border-md); transform:translateY(-1px); }
-    #aurum-attach svg{ width:15px; height:15px; color:rgba(201,168,76,.6); transition:color .2s; }
-    #aurum-attach:hover svg{ color:var(--gold); }
-    #aurum-attach.has-image{ background:rgba(201,168,76,.12); border-color:var(--border-hi); }
-    #aurum-file-input{ display:none; }
-    #aurum-input-wrap{ flex:1; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; display:flex; align-items:flex-end; transition:border-color .2s,box-shadow .2s; overflow:hidden; }
-    html[data-theme="dark"] #aurum-input-wrap{ background:rgba(255,255,255,.04); border-color:rgba(201,168,76,.1); }
-    #aurum-input-wrap:focus-within{ border-color:rgba(201,168,76,.45); box-shadow:0 0 0 3px rgba(201,168,76,.07); }
-    #aurum-input{ flex:1; background:transparent; border:none; outline:none; color:var(--text); font-size:13.5px; padding:9px 11px; resize:none; min-height:38px; max-height:120px; font-family:'Outfit',sans-serif; line-height:1.55; }
-    #aurum-input::placeholder{ color:var(--text-4); }
-    #aurum-send{ width:38px; height:38px; border-radius:11px; border:none; cursor:pointer; background:linear-gradient(145deg,#EFD060,#C9A84C,#9A7230); display:flex; align-items:center; justify-content:center; flex-shrink:0; outline:none; position:relative; overflow:hidden; transition:transform .24s cubic-bezier(.34,1.56,.64,1),box-shadow .2s,opacity .2s; box-shadow:0 4px 16px rgba(201,168,76,.4); }
-    #aurum-send::before{ content:''; position:absolute; inset:0; background:linear-gradient(145deg,rgba(255,255,255,.2) 0%,transparent 60%); pointer-events:none; }
-    #aurum-send:hover{ transform:scale(1.1) translateY(-1px); box-shadow:0 8px 24px rgba(201,168,76,.55); }
-    #aurum-send:active{ transform:scale(.93); }
-    #aurum-send:disabled{ opacity:.3; cursor:not-allowed; transform:none; box-shadow:none; }
-    #aurum-send.uploading svg.send-icon{ display:none; }
-    #aurum-send.uploading .send-spinner{ display:block; }
-    #aurum-send .send-spinner{ display:none; }
-    @keyframes spin{ to{ transform:rotate(360deg); } }
-    .send-spinner{ animation:spin .7s linear infinite; }
-    #aurum-upload-progress{ height:2px; border-radius:2px; margin-top:6px; background:rgba(201,168,76,.08); display:none; overflow:hidden; }
-    #aurum-upload-progress.active{ display:block; }
-    #aurum-upload-bar{ height:100%; border-radius:2px; background:linear-gradient(90deg,var(--gold),var(--gold-hi)); width:0%; transition:width .3s ease; }
-
-    /* ═══════════════════════════════
-       MOBILE — full screen
-    ═══════════════════════════════ */
-    @media(max-width:520px){
-      #aurum-window{
-        width:100vw; right:0; bottom:76px;
-        height:calc(100dvh - 76px);
-        border-radius:20px 20px 0 0;
-        border-left:none; border-right:none; border-bottom:none;
-        border-top:2.5px solid var(--gold);
-      }
-      #aurum-toggle{ bottom:14px; right:18px; }
-    }
   `;
   document.head.appendChild(style);
 })();

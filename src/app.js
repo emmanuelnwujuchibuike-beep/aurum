@@ -110,6 +110,19 @@
     document.dispatchEvent(new CustomEvent('aurum:toggle', { detail: { group: group, button: b } }));
   });
 
+  /* Navigation feedback: pages are normally prerendered and open instantly. If the
+     next page isn't ready within 150 ms (slow network), keep the header and show a
+     skeleton in place of the content until it arrives. */
+  var navT;
+  document.addEventListener('click', function (e) {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.target || a.hasAttribute('download') || a.origin !== location.origin || a.pathname === location.pathname) return;
+    clearTimeout(navT);
+    navT = setTimeout(function () { if (!e.defaultPrevented) root.classList.add('navigating'); }, 150);
+  });
+  window.addEventListener('pageshow', function () { clearTimeout(navT); root.classList.remove('navigating'); });
+
   /* 3. Live prices ------------------------------------------------------------
      Markup: data-price="SYM", data-chg="SYM", data-cap="SYM", data-high/low/vol/open="SYM".
      Placeholders ("—") stay if the API fails. */
@@ -124,6 +137,22 @@
     el.dataset.value = text;
     el.textContent = isHidden() ? '••••' : text;
   };
+  window.Aurum.applyHidden = applyHidden;
+
+  /* Demo / live switch (site_settings.payments_live, set by an admin).
+     The head script paints the last known state before first paint; this refreshes it.
+     Demo is the safe default if the setting can't be read. */
+  window.Aurum.live = root.hasAttribute('data-live');
+  fetch(API.replace('/functions/v1/', '/rest/v1/') + 'site_settings?key=eq.payments_live&select=value', { headers: window.Aurum.headers })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (rows) {
+      if (!rows) return;
+      var on = !!rows[0] && (rows[0].value === true || rows[0].value === 'true');
+      try { localStorage.setItem('aurum_live', on ? '1' : '0'); } catch (e) {}
+      root.toggleAttribute('data-live', on);
+      window.Aurum.live = on;
+      document.dispatchEvent(new CustomEvent('aurum:mode', { detail: { live: on } }));
+    }).catch(function () {});
   window.Aurum.applyHidden = applyHidden;
   window.Aurum.theme = currentTheme;
   applyHidden();

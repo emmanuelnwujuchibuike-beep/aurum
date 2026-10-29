@@ -41,7 +41,7 @@ const ICONS = {
 // Theme: same storage key and values the site has always used ('light' | 'dark');
 // no key = follow the phone. Applied before first paint so there is no flash.
 const head = `
-<script>try{var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
+<script>try{if(localStorage.getItem('aurum_live')==='1')document.documentElement.setAttribute('data-live','');var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/playfair-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="image/favicon-32.png" type="image/png" sizes="32x32">
@@ -50,7 +50,9 @@ const head = `
 <meta name="theme-color" content="#ECE8E1">
 `;
 
+const DEMO_BAR = `<div class="demo-bar" role="note"><b>DEMO</b><span>Demo platform — balances and payments are not real.</span></div>`;
 const header = (label) => `
+${DEMO_BAR}
 <header class="top">
   <a class="brand" href="index.html">
     <span class="logo gold" aria-hidden="true">A</span>
@@ -105,8 +107,8 @@ ${SOCIAL.map(([href, name, d]) => `    <a class="social raised-sm" href="${href}
 // Pages not rebuilt yet hand off to the classic dashboard, which opens the
 // matching window. Switch an entry to its own page when that page is built.
 const ROUTES = {
-  deposit: "dashboard-classic.html#deposit",
-  withdraw: "dashboard-classic.html#withdraw",
+  deposit: "deposit.html",
+  withdraw: "withdraw.html",
   transactions: "dashboard-classic.html#transactions",
   portfolio: "dashboard-classic.html#portfolio",
 };
@@ -129,6 +131,7 @@ const appHeader = (spec) => {
     <span class="stack" style="min-width:0"><span class="who-sub"${sub ? "" : " data-greeting"}>${sub || "&nbsp;"}</span><span class="who-title">${title}</span></span>
   </a>`;
   return `
+${DEMO_BAR}
 <header class="top">
   ${left}
   <div class="row g12">
@@ -204,19 +207,30 @@ ${APP_NAV.map(([key, href, label, d]) => key === 'fab'
 </nav>
 `;
 
-// Prerender static pages on hover/touch intent; app pages that run auth and
-// realtime code on load are only prefetched, so a prerender never opens sockets.
+// App-style navigation: pages are prerendered before the tap (bottom nav, quick actions and
+// dashboard shortcuts eagerly; everything else on touch/hover), so they open instantly.
+// New app pages only make REST reads on load, so prerendering them is safe. Pages that
+// open realtime sockets or are still the old heavy builds are only prefetched.
 const tail = `
-<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/dashboard.html","/invest.html","/trade.html","/profile.html","/signup.html","/portfolio.html","/transactions.html","/deposit.html","/withdraw.html"]}}]},"eagerness":"moderate"}],"prefetch":[{"source":"document","where":{"href_matches":["/dashboard.html","/invest.html","/trade.html","/profile.html","/signup.html","/portfolio.html","/transactions.html","/deposit.html","/withdraw.html"]},"eagerness":"moderate"}]}</script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"selector_matches":".nav a, .sheet a, .qa"},{"not":{"href_matches":["/invest.html","/admin.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]}}]},"eagerness":"eager"},{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/invest.html","/admin.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]}}]},"eagerness":"moderate"}],"prefetch":[{"source":"document","where":{"href_matches":["/invest.html","/signup.html","/dashboard-classic.html","/trade-classic.html"]},"eagerness":"moderate"}]}</script>
 <script src="app.js" defer></script>
 `;
+
+// Pages not rebuilt yet (no shared shell) get the DEMO badge from one tiny script
+const LEGACY = `<!--@demo--><script src="demo-badge.js" defer></script><!--/@demo-->`;
 
 const pages = readdirSync(src).filter((f) => f.endsWith('.html'));
 let touched = 0;
 for (const file of pages) {
   const path = join(src, file);
   const before = readFileSync(path, 'utf8');
-  const after = before
+  let after = before;
+  if (!/<style id="app-css">/.test(before) && /<\/body>/i.test(before)) {
+    after = /<!--@demo-->/.test(after)
+      ? after.replace(/<!--@demo-->[\s\S]*?<!--\/@demo-->/, LEGACY)
+      : after.replace(/<\/body>/i, LEGACY + '</body>');
+  }
+  after = after
     .replace(/(<style id="app-css">)[\s\S]*?(<\/style>)/, (_, a, b) => a + css + b)
     .replace(/(<!--@head-->)[\s\S]*?(<!--\/@head-->)/, (_, a, b) => a + head + b)
     .replace(/(<!--@header ([^>]*?)-->)[\s\S]*?(<!--\/@header-->)/, (_, a, label, b) => a + header(label.trim()) + b)
