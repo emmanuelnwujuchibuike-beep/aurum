@@ -554,6 +554,13 @@ document.addEventListener('DOMContentLoaded', function () {
       S.rest('transactions?user_id=eq.' + uid + '&select=type,symbol,usd_amount,status,created_at&order=created_at.desc&limit=500').then(function (t) { txs = t || []; renderActivity(); }),
     ]);
   }).catch(function (err) { if (!/signed out|expired/.test(err.message)) toast('Couldn’t load your profile. Please try again.'); });
+  // Cached data was refreshed in the background and changed: re-read (served from cache, instant)
+  document.addEventListener('aurum:resume', function () {
+    if (!ctx) return;
+    S.rest('profiles?id=eq.' + encodeURIComponent(uid) + '&select=*').then(function (r) { if (r && r[0]) { profile = r[0]; render(); } }).catch(function () {});
+    S.rest('holdings?user_id=eq.' + uid + '&select=symbol,quantity,avg_buy_price,pnl_override').then(function (h) { holdings = h || []; $('nPos').textContent = String(holdings.length); }).catch(function () {});
+    S.rest('transactions?user_id=eq.' + uid + '&select=type,symbol,usd_amount,status,created_at&order=created_at.desc&limit=500').then(function (t) { txs = t || []; renderActivity(); }).catch(function () {});
+  });
 });
 </script>
 </body>

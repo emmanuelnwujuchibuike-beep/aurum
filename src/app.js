@@ -182,6 +182,7 @@
 
   function paint(rows) {
     window.Aurum.last = rows;
+    try { localStorage.setItem('aurum_prices_v1', JSON.stringify({ at: Date.now(), rows: rows })); } catch (e) {}
     rows.forEach(function (r) {
       if (!r || !(r.price > 0)) return;
       var s = r.symbol;
@@ -221,6 +222,15 @@
 
   window.Aurum.refresh = function () { load(); };
 
+  // Paint the last known prices straight away (under 10 minutes old), then fetch fresh ones
+  try {
+    var lastP = JSON.parse(localStorage.getItem('aurum_prices_v1') || 'null');
+    if (lastP && Date.now() - lastP.at < 600000 && lastP.rows) {
+      var paintCached = function () { paint(lastP.rows); };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paintCached, { once: true }); else paintCached();
+    }
+  } catch (e) {}
+
   function start() {
     var idle = window.requestIdleCallback || function (cb) { return setTimeout(cb, 200); };
     idle(load, { timeout: 2500 });
@@ -254,10 +264,20 @@
     return a.pathname !== location.pathname || a.search !== location.search;
   }
   function fetchPage(url) {
-    if (!pages[url]) pages[url] = fetch(url, { credentials: 'same-origin' }).then(function (r) {
+    url = url.split('#')[0];
+    var hit = pages[url];
+    if (hit && Date.now() - hit.at < 600000) return hit.p;
+    var p = fetch(url, { credentials: 'same-origin' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status); return r.text();
     }).catch(function (e) { delete pages[url]; throw e; });
-    return pages[url];
+    pages[url] = { at: Date.now(), p: p };
+    return p;
+  }
+  // Pre-load the pages one tap away (bottom nav, avatar → profile, menu, quick actions)
+  function warmPages() {
+    document.querySelectorAll('.nav a[href], a.who[href], .top a[href], .menu a[href], .sheet a[href], a.qa[href]').forEach(function (a) {
+      if (spaTarget(a)) fetchPage(a.href).catch(function () {});
+    });
   }
   // Warm the cache on touch / hover so most taps swap instantly
   function warm(e) { var a = e.target.closest && e.target.closest('a[href]'); if (a && spaTarget(a)) fetchPage(a.href).catch(function () {}); }
@@ -297,6 +317,7 @@
       if (window.Aurum.last) paint(window.Aurum.last); // instant figures, then fresh ones
       load();
       document.querySelectorAll('[data-lazy-script]').forEach(function (el) { var s = document.createElement('script'); s.src = el.getAttribute('data-lazy-script'); s.async = true; document.body.appendChild(s); });
+      (window.requestIdleCallback || setTimeout)(warmPages, { timeout: 2000 });
     });
   }
   var navSeq = 0;
@@ -308,7 +329,6 @@
       if (!doc.getElementById('app-css')) throw new Error('not an app page');
       var run = function () { return swap(doc, url, push); };
       clearTimeout(slow); root.classList.remove('navigating');
-      delete pages[url]; // next visit fetches fresh HTML (prefetch will warm it again)
       if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) return document.startViewTransition(run).updateCallbackDone;
       return run();
     }).catch(function () { clearTimeout(slow); location.assign(url); });
@@ -323,6 +343,7 @@
     go(a.href, true);
   });
   if (Scope && document.getElementById('app-css')) {
+    (window.requestIdleCallback || setTimeout)(warmPages, { timeout: 2000 });
     history.replaceState({ spa: 1 }, '', location.href);
     window.addEventListener('popstate', function () {
       if (FULL.test(location.pathname)) { location.reload(); return; }

@@ -27,6 +27,8 @@
     });
     var j = await r.json().catch(function () { return { error: 'Unexpected response from server' }; });
     if (!r.ok || j.error) throw new Error(j.error || ('Request failed (' + r.status + ')'));
+    // balances / holdings changed: drop cached account data so every page re-reads it
+    if (window.AurumSession && window.AurumSession.invalidate) window.AurumSession.invalidate();
     return j;
   };
 })();
