@@ -1828,12 +1828,30 @@ sidebarOverlay.addEventListener('click', closeMobileSidebar);
   replySend.addEventListener('click', adminSendReply);
   replyInput.addEventListener('input', ()=>{ replyInput.style.height='auto'; replyInput.style.height=Math.min(replyInput.scrollHeight,120)+'px'; });
 
+  // Visitors can't read chat tables (RLS), so deliver the reply to their open
+  // widget over a Realtime broadcast on chat_<sessionId>. The widget also
+  // catches up via chat_agent_replies(), so a missed broadcast is harmless.
+  function broadcastReply(sessionId,row){
+    const ch=sb.channel(`chat_${sessionId}`);
+    ch.subscribe(status=>{
+      if(status!=='SUBSCRIBED')return;
+      ch.send({type:'broadcast',event:'agent_msg',payload:row}).finally(()=>sb.removeChannel(ch));
+    });
+  }
+
   async function adminSendReply() {
     const text=replyInput.value.trim(); if(!text||!activeId)return;
     replyInput.value=''; replyInput.style.height='auto'; replySend.disabled=true;
-    const{data}=await sb.from('chat_messages').insert({session_id:activeId,sender_role:'agent',sender_name:'Aurum Support',message:text}).select().single();
-    if(data)appendAdminMessage(data,'agent');
+    const{data,error}=await sb.from('chat_messages').insert({session_id:activeId,sender_role:'agent',sender_name:'Aurum Support',message:text}).select().single();
     replySend.disabled=false; replyInput.focus();
+    if(error||!data){
+      // Keep the admin's text so nothing is lost; usually means this account isn't is_admin
+      replyInput.value=text;
+      alert('Reply not sent: '+(error?error.message:'unknown error')+'\nCheck that this account has admin access.');
+      return;
+    }
+    appendAdminMessage(data,'agent');
+    broadcastReply(activeId,data);
     // Send luxury reply notification email to the user
     const sess=sessions[activeId]?.data;
     if(sess?.user_email){
