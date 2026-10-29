@@ -16,6 +16,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js" defer></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js" defer></script>
 <script src="currency-utils.js" defer></script>
+<script src="money-client.js" defer></script>
 <meta property="og:type" content="website">
 <meta property="og:title" content="Trading Terminal - Aurum Capital">
 <meta property="og:description" content="Advanced trading terminal with real-time market data on Aurum Capital.">
@@ -3657,42 +3658,32 @@ function updateOrderCalc(){
 async function submitOrder(){
   if(!authUser||!profile)return;
   const a=assetByS(activeSym);if(!a)return;
-  const price=liveP(activeSym);const cash=+(profile.cash||0);
   opAll('op-confirm-lbl').forEach(el=>el.style.display='none');
   opAll('op-confirm-spin').forEach(el=>el.style.display='flex');
   opAll('op-confirm-btn').forEach(btn=>btn.disabled=true);
   try{
+    // Server-side execution: the money function sets the price, checks the balance
+    // and updates cash, holdings and history atomically (see money-client.js).
+    const tok=(await sb.auth.getSession()).data.session?.access_token;
     if(orderMode==='spot'){
-      const amt=orderUsdAmt;const fee=+(amt*.001).toFixed(2);const total=+(amt+fee).toFixed(2);const qty=price>0?amt/price:0;const isBuy=orderDir==='buy';
+      const amt=orderUsdAmt;const isBuy=orderDir==='buy';
       if(isBuy){
-        if(total>cash){trToast('Insufficient balance','','error');return;}
-        await sb.from('transactions').insert({user_id:authUser.id,type:'buy',symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,price_at_tx:price,usd_amount:-total,status:'approved',note:`Buy ${a.sym} @ $${fmtP(price)}`});
-        const ex=holdings.find(h=>h.symbol===a.sym);
-        if(ex){const nq=+ex.quantity+qty;const na=(+ex.avg_buy_price*+ex.quantity+price*qty)/nq;await sb.from('holdings').update({quantity:nq,avg_buy_price:+na.toFixed(6)}).eq('id',ex.id);ex.quantity=nq;ex.avg_buy_price=+na.toFixed(6);}
-        else{const{data}=await sb.from('holdings').insert({user_id:authUser.id,symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,avg_buy_price:price}).select().single();if(data)holdings.push(data);}
-        const nc=+(cash-total).toFixed(2);await sb.from('profiles').update({cash:nc}).eq('id',authUser.id);profile.cash=nc;
-        addTradeMarker(a.sym,'buy',price);
-        showReceipt({type:'MARKET BUY',asset:`${a.name} (${a.sym})`,qty:qty<1?qty.toFixed(6):qty.toFixed(4),sym:a.sym,price:fmtP(price),gross:fmtMoney(amt),fee:fmtMoney(fee),total:fmtMoney(total),newCash:nc,isBuy:true});
+        const r=await aurumMoney('buy',{symbol:a.sym,usd:amt,mode:'trade',name:a.name,icon:a.icon,color:a.color},tok);
+        await Promise.all([loadProfile(),loadHoldings()]);
+        addTradeMarker(a.sym,'buy',r.price);
+        showReceipt({type:'MARKET BUY',asset:`${a.name} (${a.sym})`,qty:r.qty<1?r.qty.toFixed(6):r.qty.toFixed(4),sym:a.sym,price:fmtP(r.price),gross:fmtMoney(amt),fee:fmtMoney(r.fee),total:fmtMoney(r.total),newCash:r.cash,isBuy:true});
       }else{
-        const h=holdings.find(x=>x.symbol===a.sym);if(!h){trToast('No holdings','No '+a.sym+' to sell','error');return;}
-        const netUSD=amt-fee;
-        await sb.from('transactions').insert({user_id:authUser.id,type:'sell',symbol:a.sym,name:a.name,icon:a.icon,color:a.color,quantity:qty,price_at_tx:price,usd_amount:netUSD,status:'approved',note:`Sell ${a.sym} @ $${fmtP(price)}`});
-        const newQty=+h.quantity-qty;if(newQty<=0.000001){await sb.from('holdings').delete().eq('id',h.id);holdings=holdings.filter(x=>x.id!==h.id);}else{await sb.from('holdings').update({quantity:newQty}).eq('id',h.id);h.quantity=newQty;}
-        const nc=+(cash+netUSD).toFixed(2);await sb.from('profiles').update({cash:nc}).eq('id',authUser.id);profile.cash=nc;
-        addTradeMarker(a.sym,'sell',price);
-        showReceipt({type:'MARKET SELL',asset:`${a.name} (${a.sym})`,qty:qty<1?qty.toFixed(6):qty.toFixed(4),sym:a.sym,price:fmtP(price),gross:fmtMoney(amt),fee:fmtMoney(fee),total:fmtMoney(netUSD),newCash:nc,isBuy:false});
+        if(!holdings.find(x=>x.symbol===a.sym)){trToast('No holdings','No '+a.sym+' to sell','error');return;}
+        const r=await aurumMoney('sell',{symbol:a.sym,usd:amt},tok);
+        await Promise.all([loadProfile(),loadHoldings()]);
+        addTradeMarker(a.sym,'sell',r.price);
+        showReceipt({type:'MARKET SELL',asset:`${a.name} (${a.sym})`,qty:r.qty<1?r.qty.toFixed(6):r.qty.toFixed(4),sym:a.sym,price:fmtP(r.price),gross:fmtMoney(r.gross),fee:fmtMoney(r.fee),total:fmtMoney(r.net),newCash:r.cash,isBuy:false});
       }
     }else{
-      const cat=a.cat||'crypto';const lotVal=LOT_VALUES[cat]||1000;const notional=cfdLots*lotVal;const margin=notional*.1;const fee=+(notional*.001).toFixed(2);
-      if(margin+fee>cash){trToast('Insufficient margin','','error');return;}
-      const tp=orderCfdTp;const sl=orderCfdSl;
-      await sb.from('transactions').insert({user_id:authUser.id,type:'buy',symbol:a.sym,name:a.name+' CFD '+cfdDir.toUpperCase(),icon:a.icon,color:a.color,quantity:cfdLots,price_at_tx:price,usd_amount:-(margin+fee),status:'approved',note:`CFD ${cfdDir.toUpperCase()} · ${cfdLots}L`});
-      let tradeId='local_'+Date.now();
-      try{const{data}=await sb.from('open_trades').insert({user_id:authUser.id,sym:a.sym,direction:cfdDir,lots:cfdLots,entry_price:price,take_profit:tp,stop_loss:sl,notional,status:'open'}).select().single();if(data)tradeId=data.id;}catch(e){}
-      openTrades.unshift({id:tradeId,sym:a.sym,direction:cfdDir,lots:cfdLots,entry_price:price,take_profit:tp,stop_loss:sl,notional,margin,status:'open'});
-      const nc=+(cash-margin-fee).toFixed(2);await sb.from('profiles').update({cash:nc}).eq('id',authUser.id);profile.cash=nc;
-      addTradeMarker(a.sym,cfdDir==='long'?'buy':'sell',price);applyChartOverlays();renderFloatingTradesPanel();
-      showReceipt({type:`CFD ${cfdDir.toUpperCase()}`,asset:`${a.name} (${a.sym})`,qty:cfdLots+' lot'+(cfdLots!==1?'s':''),sym:a.sym,price:fmtP(price),gross:fmtMoney(notional)+' notional',fee:fmtMoney(fee),total:fmtMoney(margin+fee)+' margin+fee',newCash:nc,isBuy:true});
+      const r=await aurumMoney('cfd_open',{symbol:a.sym,direction:cfdDir,lots:cfdLots,tp:orderCfdTp,sl:orderCfdSl,name:a.name,icon:a.icon,color:a.color},tok);
+      await Promise.all([loadProfile(),loadOpenTrades()]);
+      addTradeMarker(a.sym,cfdDir==='long'?'buy':'sell',r.price);applyChartOverlays();renderFloatingTradesPanel();
+      showReceipt({type:`CFD ${cfdDir.toUpperCase()}`,asset:`${a.name} (${a.sym})`,qty:cfdLots+' lot'+(cfdLots!==1?'s':''),sym:a.sym,price:fmtP(r.price),gross:fmtMoney(r.notional)+' notional',fee:fmtMoney(r.fee),total:fmtMoney(r.margin+r.fee)+' margin+fee',newCash:r.cash,isBuy:cfdDir==='long'});
     }
     refreshCash();await loadTxHistory();renderPortfolioInPanel();renderOpenTradesInPanel();renderPositionsStrip();
     if(isMobile())setTimeout(closeMobTrade,600);
@@ -3709,19 +3700,17 @@ function closeTrade(id){openCloseConfirm(id,false);}
 
 async function executeCloseTrade(id,isAutoClose=false){
   const idx=openTrades.findIndex(t=>String(t.id)===String(id));if(idx===-1)return;
-  const t=openTrades[idx];const pnl=calcTradePnl(t);const margin=+(t.margin||t.notional*.1);const cur=liveP(t.sym);
-  const a=ASSETS.find(x=>x.sym===t.sym)||{icon:'fas fa-circle',color:'#c8a45a',name:t.sym};
+  const t=openTrades[idx];
+  if(t._closing)return; t._closing=true;            // auto-close and a manual tap can race
   try{
-    const cash=+(profile?.cash||0);const nc=+(cash+margin+pnl).toFixed(2);
-    await sb.from('profiles').update({cash:nc}).eq('id',authUser.id);
-    await sb.from('transactions').insert({user_id:authUser.id,type:'sell',symbol:t.sym,name:a.name+' CFD Close'+(isAutoClose?' [AUTO]':''),icon:a.icon,color:a.color,quantity:+t.lots,price_at_tx:cur,usd_amount:+(margin+pnl).toFixed(2),status:'approved',note:`CFD CLOSE${isAutoClose?' [AUTO-CLOSE]':''} · P&L ${pnl>=0?'+':''}$${fmt(pnl)}`});
-    try{await sb.from('open_trades').update({status:'closed',close_price:cur,closed_at:new Date().toISOString()}).eq('id',t.id);}catch(e){}
-    openTrades.splice(idx,1);profile.cash=nc;
-    addTradeMarker(t.sym,t.direction==='long'?'sell':'buy',cur);
+    const tok=(await sb.auth.getSession()).data.session?.access_token;
+    const r=await aurumMoney('cfd_close',{trade_id:t.id,auto:!!isAutoClose},tok);
+    await Promise.all([loadProfile(),loadOpenTrades()]);
+    addTradeMarker(t.sym,t.direction==='long'?'sell':'buy',r.price);
     refreshCash();renderOpenTradesInPanel();renderPositionsStrip();renderMobPortfolio();
     applyChartOverlays();renderFloatingTradesPanel();
-    trToast(isAutoClose?'⚡ Auto-Close Executed':'Position Closed',`P&L: ${pnl>=0?'+':''}$${fmt(pnl)}`,pnl>=0?'success':'error');
-  }catch(err){trToast('Close failed',err.message||'Error','error');}
+    trToast(isAutoClose?'Auto-close executed':'Position closed',`P&L: ${r.pnl>=0?'+':''}$${fmt(r.pnl)}`,r.pnl>=0?'success':'error');
+  }catch(err){t._closing=false;trToast('Close failed',err.message||'Error','error');}
 }
 
 function calcTradePnl(t){const cur=liveP(t.sym);const entry=+(t.entry_price||t.entry||0);const lots=+t.lots;const a=ASSETS.find(x=>x.sym===t.sym);const cat=a?.cat||'crypto';const notional=lots*(LOT_VALUES[cat]||1000);const pct=entry>0?(cur-entry)/entry:0;const raw=notional*pct;return t.direction==='long'?raw:-raw;}
