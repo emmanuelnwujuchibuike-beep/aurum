@@ -371,9 +371,6 @@ body.menu-open{overflow:hidden}
   /* method tab sub text hidden to save space */
   #withdrawModal .dm-sub{display:none!important}
   #withdrawModal .dep-method-tab{padding:12px 8px 10px!important;min-width:60px!important}
-  /* bank & card 2-col → 1-col */
-  #wd-content-bank .wd-grid-2{grid-template-columns:1fr!important}
-  #wd-content-card .wd-grid-2{grid-template-columns:1fr!important}
 }
 
 /* ≤ 480px — very compact */
@@ -2992,22 +2989,10 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           <div class="dm-sub">Direct Wallet</div>
           <span class="dm-badge dm-badge-instant">Instant</span>
         </div>
-        <div class="dep-method-tab" id="dep-tab-bank" onclick="selectDepMethod('bank')">
-          <div class="dm-icon" style="background:rgba(29,189,108,.08)"><i class="fas fa-building-columns" style="color:#1dbd6c"></i></div>
-          <div class="dm-name">Bank Wire</div>
-          <div class="dm-sub">SWIFT / ACH</div>
-          <span class="dm-badge dm-badge-days">1–3 Days</span>
-        </div>
-        <div class="dep-method-tab" id="dep-tab-card" onclick="selectDepMethod('card')">
-          <div class="dm-icon" style="background:rgba(99,102,241,.08)"><i class="fas fa-credit-card" style="color:#818cf8"></i></div>
-          <div class="dm-name">Card</div>
-          <div class="dm-sub">Visa · MC · Amex</div>
-          <span class="dm-badge dm-badge-manual">Manual</span>
-        </div>
         <div class="dep-method-tab" id="dep-tab-ewallet" onclick="selectDepMethod('ewallet')">
           <div class="dm-icon" style="background:rgba(59,130,246,.08)"><i class="fas fa-mobile-screen-button" style="color:#60a5fa"></i></div>
-          <div class="dm-name">E-Wallet</div>
-          <div class="dm-sub">PayPal · Wise</div>
+          <div class="dm-name">PayPal</div>
+          <div class="dm-sub">PayPal</div>
           <span class="dm-badge dm-badge-hours">1–2 hrs</span>
         </div>
       </div>
@@ -3093,156 +3078,12 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
       </div>
 
       <!-- ══════ BANK WIRE ══════ -->
-      <div id="dep-content-bank" style="display:none">
-        <div style="display:flex;align-items:center;gap:10px;padding:13px 16px;background:rgba(29,189,108,.04);border:1px solid rgba(29,189,108,.12);border-radius:13px;margin-bottom:16px">
-          <div style="width:34px;height:34px;border-radius:10px;background:rgba(29,189,108,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-building-columns" style="color:#1dbd6c;font-size:15px"></i></div>
-          <div>
-            <p style="font-size:13px;font-weight:600;color:var(--pearl)">International Wire Transfer</p>
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:2px">Credited 1–3 business days after receipt · Min. $10</p>
-          </div>
-        </div>
-        <div class="dep-bank-card">
-          <div class="dep-bank-row">
-            <span class="dep-bank-lbl">Bank Name</span>
-            <span class="dep-bank-val" id="dep-bk-name" data-v="First National Bank of New York" onclick="copyBankField(this.dataset.v)">First National Bank of NY <i class="fas fa-copy" style="font-size:9px;color:var(--fog)"></i></span>
-          </div>
-          <div class="dep-bank-row">
-            <span class="dep-bank-lbl">Account Name</span>
-            <span class="dep-bank-val" id="dep-bk-acname" data-v="Aurum Capital Investments Ltd" onclick="copyBankField(this.dataset.v)">Aurum Capital Investments Ltd <i class="fas fa-copy" style="font-size:9px;color:var(--fog)"></i></span>
-          </div>
-          <div class="dep-bank-row">
-            <span class="dep-bank-lbl">Account No.</span>
-            <span class="dep-bank-val" id="dep-bk-acno" data-v="7823429100563874" onclick="copyBankField(this.dataset.v)">7823 4291 0056 3874 <i class="fas fa-copy" style="font-size:9px;color:var(--fog)"></i></span>
-          </div>
-          <div class="dep-bank-row">
-            <span class="dep-bank-lbl">Routing / Sort</span>
-            <span class="dep-bank-val" id="dep-bk-routing" data-v="021000021" onclick="copyBankField(this.dataset.v)">021 000 021 <i class="fas fa-copy" style="font-size:9px;color:var(--fog)"></i></span>
-          </div>
-          <div class="dep-bank-row">
-            <span class="dep-bank-lbl">SWIFT / BIC</span>
-            <span class="dep-bank-val" id="dep-bk-swift" data-v="FNBKUS33" onclick="copyBankField(this.dataset.v)">FNBKUS33 <i class="fas fa-copy" style="font-size:9px;color:var(--fog)"></i></span>
-          </div>
-        </div>
-        <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Your Transfer Reference</p>
-        <div class="dep-ref-box" onclick="copyBankRef()">
-          <div>
-            <div id="dep-bank-ref" class="dep-ref-code">AURUM-XXXXXXXX</div>
-            <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);margin-top:3px">Include this in the wire reference field</p>
-          </div>
-          <i class="fas fa-copy" style="color:var(--fog);font-size:14px;flex-shrink:0"></i>
-        </div>
-        <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Deposit Amount (USD)</p>
-        <div class="amt-input-wrap" style="margin-bottom:6px">
-          <span class="amt-prefix">$</span>
-          <input id="dep-bank-amt" type="number" min="10" step="any" placeholder="Enter amount…" class="amt-input">
-          <span style="padding:0 14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">USD</span>
-        </div>
-        <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-bottom:12px">Min. $10</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-          <button class="amt-preset" onclick="setDepBankAmt(1000)">$1,000</button>
-          <button class="amt-preset" onclick="setDepBankAmt(5000)">$5,000</button>
-          <button class="amt-preset" onclick="setDepBankAmt(25000)">$25,000</button>
-          <button class="amt-preset" onclick="setDepBankAmt(100000)">$100,000</button>
-        </div>
-        <button onclick="confirmBankDeposit()" id="dep-bank-btn" class="promo-btn" style="width:100%;justify-content:center;padding:14px;font-size:13px;background:linear-gradient(135deg,#1dbd6c,#16a35b)!important;box-shadow:0 8px 24px rgba(29,189,108,.2)!important">
-          <i class="fas fa-paper-plane" style="font-size:12px"></i>
-          <span id="dep-bank-btn-lbl">I've Initiated the Transfer</span>
-          <div id="dep-bank-spin" class="spin" style="display:none"></div>
-        </button>
-        <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);text-align:center;margin-top:12px;line-height:1.6">⏳ Balance credited after wire is received and reviewed · 1–3 business days</p>
-      </div>
-
-      <!-- ══════ CARD ══════ -->
-      <div id="dep-content-card" style="display:none">
-        <div style="display:flex;align-items:center;gap:10px;padding:13px 16px;background:rgba(99,102,241,.04);border:1px solid rgba(99,102,241,.12);border-radius:13px;margin-bottom:18px">
-          <div style="width:34px;height:34px;border-radius:10px;background:rgba(99,102,241,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-credit-card" style="color:#818cf8;font-size:15px"></i></div>
-          <div>
-            <p style="font-size:13px;font-weight:600;color:var(--pearl)">Credit / Debit Card</p>
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:2px">Visa &amp; Mastercard · Min. $10</p>
-          </div>
-        </div>
-
-        <!-- Card type selector -->
-        <label class="dep-field-lbl" style="margin-bottom:8px">Select Card Type <span id="dep-ctype-err" style="color:#e84848;display:none"> — required</span></label>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px">
-          <button class="dep-ctype-btn" id="ctype-visa" onclick="selectCardType('visa')">
-            <span style="font-family:'Arial',sans-serif;font-style:italic;font-weight:900;font-size:15px;color:#1a1f71">VISA</span>
-            <span class="ctype-name">Visa</span>
-          </button>
-          <button class="dep-ctype-btn" id="ctype-mc" onclick="selectCardType('mc')">
-            <span style="font-weight:900;font-size:11px;color:#e4000f;letter-spacing:-.3px">MC</span>
-            <span class="ctype-name">Mastercard</span>
-          </button>
-        </div>
-
-        <!-- No card selected yet -->
-        <div id="dep-card-no-selection" style="text-align:center;padding:28px 20px;background:rgba(255,255,255,.02);border:1.5px dashed rgba(255,255,255,.07);border-radius:14px">
-          <i class="fas fa-hand-pointer" style="font-size:22px;color:var(--fog);opacity:.3;display:block;margin-bottom:10px"></i>
-          <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--fog);line-height:1.7">Select your card type above<br>to see payment instructions</p>
-        </div>
-
-        <!-- Per-card dynamic panel -->
-        <div id="dep-card-panel" style="display:none">
-          <!-- Branded header — populated by selectCardType() -->
-          <div id="dep-card-hdr"></div>
-          <!-- Card-specific note — populated by selectCardType() -->
-          <div id="dep-card-special" style="display:none"></div>
-
-          <!-- Card Number -->
-          <div id="dep-field-grp-number" class="dep-field-grp">
-            <label class="dep-field-lbl" id="dep-number-label">Card Number</label>
-            <input id="dep-card-number" class="dep-field-input" type="text" placeholder="0000  0000  0000  0000" autocomplete="off" oninput="fmtCardNum(this)">
-          </div>
-          <!-- Cardholder Name (standard cards only) -->
-          <div id="dep-field-grp-name" class="dep-field-grp">
-            <label class="dep-field-lbl">Cardholder Name</label>
-            <input id="dep-card-name" class="dep-field-input" type="text" placeholder="Name as it appears on card" autocomplete="off">
-          </div>
-          <!-- Expiry + CVV (standard cards only) -->
-          <div id="dep-field-grp-expiry-cvv" style="display:flex;gap:12px;margin-bottom:14px">
-            <div style="flex:1">
-              <label class="dep-field-lbl">Expiry Date</label>
-              <input id="dep-card-expiry" class="dep-field-input" type="text" maxlength="7" placeholder="MM / YY" autocomplete="cc-exp" oninput="fmtExpiry(this)" style="font-size:13px">
-            </div>
-            <div style="width:120px">
-              <label class="dep-field-lbl" id="dep-cvv-label">CVV</label>
-              <input id="dep-card-cvv" class="dep-field-input" type="password" maxlength="4" placeholder="•••" autocomplete="cc-csc" style="font-size:16px;letter-spacing:.2em">
-            </div>
-          </div>
-          <div class="dep-field-grp">
-            <label class="dep-field-lbl">Deposit Amount (USD)</label>
-            <div class="amt-input-wrap" style="margin-bottom:6px">
-              <span class="amt-prefix">$</span>
-              <input id="dep-card-amt" type="number" min="10" step="any" placeholder="Enter amount…" class="amt-input">
-              <span style="padding:0 14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--fog)">USD</span>
-            </div>
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-bottom:10px">Min. $10</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-              <button class="amt-preset" onclick="setDepCardAmt(500)">$500</button>
-              <button class="amt-preset" onclick="setDepCardAmt(1000)">$1,000</button>
-              <button class="amt-preset" onclick="setDepCardAmt(5000)">$5,000</button>
-              <button class="amt-preset" onclick="setDepCardAmt(10000)">$10,000</button>
-            </div>
-          </div>
-          <button onclick="confirmCardDeposit()" id="dep-card-btn" class="promo-btn" style="width:100%;justify-content:center;padding:14px;font-size:13px;background:linear-gradient(135deg,#6366f1,#4f46e5)!important;box-shadow:0 8px 24px rgba(99,102,241,.22)!important">
-            <i class="fas fa-lock" style="font-size:12px"></i>
-            <span id="dep-card-btn-lbl">Proceed to Deposit</span>
-            <div id="dep-card-spin" class="spin" style="display:none"></div>
-          </button>
-          <div style="display:flex;align-items:center;gap:7px;justify-content:center;margin-top:12px">
-            <i class="fas fa-shield-halved" style="color:var(--fog);font-size:10px"></i>
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog)">256-bit encrypted · manually reviewed before crediting</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════ E-WALLET ══════ -->
       <div id="dep-content-ewallet" style="display:none">
         <div style="display:flex;align-items:center;gap:10px;padding:13px 16px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.12);border-radius:13px;margin-bottom:16px">
           <div style="width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-mobile-screen-button" style="color:#60a5fa;font-size:15px"></i></div>
           <div>
-            <p style="font-size:13px;font-weight:600;color:var(--pearl)">E-Wallet Transfer</p>
-            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:2px">PayPal · Zelle · Cash App · Wise · Skrill · more · 1–2 hrs</p>
+            <p style="font-size:13px;font-weight:600;color:var(--pearl)">PayPal Transfer</p>
+            <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--fog);margin-top:2px">PayPal · 1–2 hrs</p>
           </div>
         </div>
         <p style="font-family:'DM Mono',monospace;font-size:8px;color:var(--fog);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">Select Platform</p>
@@ -3250,34 +3091,6 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
           <div class="dep-ew-tab active" id="dep-ew-tab-paypal" onclick="selectDepEwallet('paypal')">
             <i class="fab fa-paypal" style="color:#009cde"></i>
             <span>PayPal</span>
-          </div>
-          <div class="dep-ew-tab" id="dep-ew-tab-applepay" onclick="selectDepEwallet('applepay')">
-            <i class="fab fa-apple" style="color:var(--pearl)"></i>
-            <span>Apple Pay</span>
-          </div>
-          <div class="dep-ew-tab" id="dep-ew-tab-chime" onclick="selectDepEwallet('chime')">
-            <i class="fas fa-piggy-bank" style="color:#00c49a"></i>
-            <span>Chime</span>
-          </div>
-          <div class="dep-ew-tab" id="dep-ew-tab-wise" onclick="selectDepEwallet('wise')">
-            <i class="fas fa-globe" style="color:#9fe870"></i>
-            <span>Wise</span>
-          </div>
-          <div class="dep-ew-tab" id="dep-ew-tab-skrill" onclick="selectDepEwallet('skrill')">
-            <i class="fas fa-money-bill-wave" style="color:#8224e3"></i>
-            <span>Skrill</span>
-          </div>
-          <div class="dep-ew-tab" id="dep-ew-tab-neteller" onclick="selectDepEwallet('neteller')">
-            <i class="fas fa-coins" style="color:#c60f09"></i>
-            <span>Neteller</span>
-          </div>
-          <div class="dep-ew-tab" id="dep-ew-tab-cashapp" onclick="selectDepEwallet('cashapp')">
-            <i class="fas fa-dollar-sign" style="color:#00c244;font-weight:900"></i>
-            <span>Cash App</span>
-          </div>
-          <div class="dep-ew-tab" id="dep-ew-tab-zelle" onclick="selectDepEwallet('zelle')">
-            <i class="fas fa-bolt" style="color:#6d1ed4"></i>
-            <span>Zelle</span>
           </div>
         </div>
         <div class="dep-ew-detail">
@@ -3288,7 +3101,6 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
             <span id="dep-ew-send-to-val">payments@aurumcapital.io</span>
             <i class="fas fa-copy" style="color:var(--fog);font-size:11px;margin-left:auto"></i>
           </div>
-          <!-- Sender identifier — changes label/placeholder per platform -->
           <div class="dep-field-grp" style="margin-top:14px">
             <label class="dep-field-lbl" id="dep-ew-sender-lbl">Your PayPal Email</label>
             <input id="dep-ew-sender" class="dep-field-input" type="text" placeholder="your@email.com" autocomplete="off">
@@ -3413,20 +3225,10 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
             <div class="dm-name">Crypto</div>
             <div class="dm-sub">BTC · ETH · USDT</div>
           </div>
-          <div class="dep-method-tab" id="wd-tab-bank" onclick="selectWdMethod('bank')">
-            <i class="fas fa-building-columns" style="color:#627eea;font-size:20px"></i>
-            <div class="dm-name">Bank Wire</div>
-            <div class="dm-sub">SWIFT · ACH</div>
-          </div>
           <div class="dep-method-tab" id="wd-tab-ewallet" onclick="selectWdMethod('ewallet')">
             <i class="fab fa-paypal" style="color:#009cde;font-size:20px"></i>
             <div class="dm-name">PayPal</div>
             <div class="dm-sub">Instant payout</div>
-          </div>
-          <div class="dep-method-tab" id="wd-tab-card" onclick="selectWdMethod('card')">
-            <i class="fas fa-credit-card" style="color:#26a17b;font-size:20px"></i>
-            <div class="dm-name">Card</div>
-            <div class="dm-sub">Visa · Mastercard</div>
           </div>
         </div>
       </div>
@@ -3444,34 +3246,6 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
       </div>
 
       <!-- ── BANK WIRE panel ── -->
-      <div id="wd-content-bank" style="display:none;margin-bottom:18px">
-        <div style="background:rgba(98,126,234,.06);border:1px solid rgba(98,126,234,.18);border-radius:14px;padding:13px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
-          <i class="fas fa-building-columns" style="color:#627eea;font-size:13px;flex-shrink:0"></i>
-          <p style="font-size:11.5px;color:var(--ash);line-height:1.5">International wire transfer · processed in <strong style="color:var(--pearl)">1–3 business days</strong> after approval.</p>
-        </div>
-        <div class="wd-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-          <div>
-            <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">Bank Name</p>
-            <input id="wd-bank-name" type="text" placeholder="e.g. Chase Bank" class="wd-field-input" oninput="validateWdForm()">
-          </div>
-          <div>
-            <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">Account Holder</p>
-            <input id="wd-bank-holder" type="text" placeholder="Full legal name" class="wd-field-input" oninput="validateWdForm()">
-          </div>
-        </div>
-        <div class="wd-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div>
-            <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">Account Number</p>
-            <input id="wd-bank-account" type="text" placeholder="IBAN or account #" class="wd-field-input" oninput="validateWdForm()">
-          </div>
-          <div>
-            <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">SWIFT / Routing</p>
-            <input id="wd-bank-swift" type="text" placeholder="SWIFT or routing #" class="wd-field-input" oninput="validateWdForm()">
-          </div>
-        </div>
-      </div>
-
-      <!-- ── PAYPAL panel ── -->
       <div id="wd-content-ewallet" style="display:none;margin-bottom:18px">
         <div style="background:rgba(0,156,222,.06);border:1px solid rgba(0,156,222,.18);border-radius:14px;padding:13px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
           <i class="fab fa-paypal" style="color:#009cde;font-size:14px;flex-shrink:0"></i>
@@ -3482,34 +3256,6 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
       </div>
 
       <!-- ── CARD panel ── -->
-      <div id="wd-content-card" style="display:none;margin-bottom:18px">
-        <div style="background:rgba(38,161,123,.06);border:1px solid rgba(38,161,123,.18);border-radius:14px;padding:13px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
-          <i class="fas fa-credit-card" style="color:#26a17b;font-size:13px;flex-shrink:0"></i>
-          <p style="font-size:11.5px;color:var(--ash);line-height:1.5">Refund to your <strong style="color:var(--pearl)">debit or credit card</strong> · 2–5 business days depending on issuer.</p>
-        </div>
-        <!-- Card type selector -->
-        <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fog);text-transform:uppercase;margin-bottom:9px">Card Type</p>
-        <div style="display:flex;gap:8px;margin-bottom:14px">
-          <button id="wd-card-visa" onclick="selectWdCard('visa')" class="wd-card-type-btn" style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02);cursor:pointer;transition:all .2s;flex:1;justify-content:center">
-            <i class="fab fa-cc-visa" style="font-size:20px;color:#1a1f71"></i>
-            <span style="font-size:12px;font-weight:600;color:var(--pearl)">Visa</span>
-          </button>
-          <button id="wd-card-mc" onclick="selectWdCard('mastercard')" class="wd-card-type-btn" style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.02);cursor:pointer;transition:all .2s;flex:1;justify-content:center">
-            <i class="fab fa-cc-mastercard" style="font-size:20px;color:#eb001b"></i>
-            <span style="font-size:12px;font-weight:600;color:var(--pearl)">Mastercard</span>
-          </button>
-        </div>
-        <div class="wd-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div>
-            <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">Cardholder Name</p>
-            <input id="wd-card-name" type="text" placeholder="Name on card" class="wd-field-input" oninput="validateWdForm()">
-          </div>
-          <div>
-            <p style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;color:var(--fog);text-transform:uppercase;margin-bottom:7px">Last 4 Digits</p>
-            <input id="wd-card-last4" type="text" maxlength="4" placeholder="e.g. 4242" class="wd-field-input" oninput="this.value=this.value.replace(/\D/g,'');validateWdForm()">
-          </div>
-        </div>
-      </div>
 
       <!-- Amount (shared) -->
       <div style="margin-bottom:18px">
@@ -3698,65 +3444,18 @@ html[data-theme="light"] .nw-ultra-hero::before,.nw-ultra-hero::after{opacity:.5
             </div>
             <div class="pm-tog-row">
               <div class="pm-tog-left">
-                <div class="pm-tog-icon" style="background:rgba(29,189,108,.08)"><i class="fas fa-building-columns" style="color:#1dbd6c;font-size:15px"></i></div>
-                <div><div class="pm-tog-name">Bank Wire</div><div class="pm-tog-sub">International wire transfer · 1–3 days</div></div>
-              </div>
-              <label class="adm-sw"><input type="checkbox" id="pm-tog-bank" checked><span class="adm-sw-track"></span></label>
-            </div>
-            <div class="pm-tog-row">
-              <div class="pm-tog-left">
-                <div class="pm-tog-icon" style="background:rgba(99,102,241,.08)"><i class="fas fa-credit-card" style="color:#818cf8;font-size:15px"></i></div>
-                <div><div class="pm-tog-name">Card</div><div class="pm-tog-sub">Visa · Mastercard · Amex · Prepaid</div></div>
-              </div>
-              <label class="adm-sw"><input type="checkbox" id="pm-tog-card" checked><span class="adm-sw-track"></span></label>
-            </div>
-            <div class="pm-tog-row">
-              <div class="pm-tog-left">
                 <div class="pm-tog-icon" style="background:rgba(59,130,246,.08)"><i class="fas fa-mobile-screen-button" style="color:#60a5fa;font-size:15px"></i></div>
-                <div><div class="pm-tog-name">E-Wallet</div><div class="pm-tog-sub">PayPal · Apple Pay · Chime · Cash App + more</div></div>
+                <div><div class="pm-tog-name">PayPal</div><div class="pm-tog-sub">PayPal payouts and deposits</div></div>
               </div>
               <label class="adm-sw"><input type="checkbox" id="pm-tog-ewallet" checked><span class="adm-sw-track"></span></label>
             </div>
           </div>
         </div>
 
-        <!-- Bank Wire Details -->
-        <div class="adm-card" style="margin-top:14px">
-          <div class="adm-card-hdr"><span class="adm-card-title">Bank Wire Details</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:#5a6880">Shown to users in the deposit modal</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 0">
-            <div>
-              <label class="adm-label" style="display:block;margin-bottom:5px">Bank Name</label>
-              <input id="pm-bank-name" class="adm-input" type="text" placeholder="e.g. First National Bank">
-            </div>
-            <div>
-              <label class="adm-label" style="display:block;margin-bottom:5px">Account Name</label>
-              <input id="pm-bank-acname" class="adm-input" type="text" placeholder="e.g. Aurum Capital Investments Ltd">
-            </div>
-            <div>
-              <label class="adm-label" style="display:block;margin-bottom:5px">Account Number</label>
-              <input id="pm-bank-acno" class="adm-input" type="text" placeholder="e.g. 7823429100563874">
-            </div>
-            <div>
-              <label class="adm-label" style="display:block;margin-bottom:5px">Routing / Sort Code</label>
-              <input id="pm-bank-routing" class="adm-input" type="text" placeholder="e.g. 021000021">
-            </div>
-            <div>
-              <label class="adm-label" style="display:block;margin-bottom:5px">SWIFT / BIC</label>
-              <input id="pm-bank-swift" class="adm-input" type="text" placeholder="e.g. FNBKUS33">
-            </div>
-          </div>
-        </div>
-
         <!-- E-Wallet Accounts -->
         <div class="adm-card" style="margin-top:14px">
-          <div class="adm-card-hdr"><span class="adm-card-title">E-Wallet Accounts</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:#5a6880">Toggle off to temporarily disable a platform</span></div>
+          <div class="adm-card-hdr"><span class="adm-card-title">PayPal Account</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:#5a6880">Toggle off to temporarily disable a platform</span></div>
           <div id="adm-ewallet-rows" style="padding:0 4px"></div>
-        </div>
-
-        <!-- Card Types -->
-        <div class="adm-card" style="margin-top:14px">
-          <div class="adm-card-hdr"><span class="adm-card-title">Card Types</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:#5a6880">Disable individual card types</span></div>
-          <div id="adm-card-type-rows" style="padding:0 4px"></div>
         </div>
 
         <!-- Save -->
@@ -3942,7 +3641,7 @@ const DEPOSIT_COINS = [
 let CRYPTO_ADDRESSES = {};
 let selectedDepCoin = null, selectedDepAmt = 0, selectedWdCoin = null;
 let selectedDepMethod = 'crypto', selectedDepEwallet = 'paypal', selectedCardType = null;
-let selectedWdMethod = 'crypto', selectedWdCardType = null;
+let selectedWdMethod = 'crypto';
 let activeChartInstance = null, activeChartAsset = null, activeChartPeriod = '1D';
 let tradeModalAsset = null, tradeModalType = 'buy';
 
@@ -4938,25 +4637,11 @@ async function openDepositModal() {
   selectedDepCoin = null; selectedDepAmt = 0;
   selectedDepMethod = 'crypto'; selectedDepEwallet = 'paypal';
   // Reset all form fields
-  ['dep-bank-amt','dep-card-number','dep-card-name','dep-card-expiry','dep-card-cvv','dep-card-amt','dep-ew-amt','dep-ew-sender'].forEach(id => {
+  ['dep-ew-amt','dep-ew-sender'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
-  selectedCardType = null;
-  document.querySelectorAll('.dep-ctype-btn').forEach(el => el.classList.remove('active'));
-  const ctypeErr = document.getElementById('dep-ctype-err'); if (ctypeErr) ctypeErr.style.display = 'none';
-  // Reset card panel to placeholder state
-  const _cardPanel = document.getElementById('dep-card-panel');
-  const _cardNoSel = document.getElementById('dep-card-no-selection');
-  if (_cardPanel) _cardPanel.style.display = 'none';
-  if (_cardNoSel) _cardNoSel.style.display = '';
-  const _cardHdr = document.getElementById('dep-card-hdr');
-  if (_cardHdr) _cardHdr.innerHTML = '';
-  const _cardSpecial = document.getElementById('dep-card-special');
-  if (_cardSpecial) { _cardSpecial.style.display = 'none'; _cardSpecial.innerHTML = ''; }
   // Reset button states
-  [['dep-bank-btn','dep-bank-btn-lbl',"I've Initiated the Transfer",'dep-bank-spin'],
-   ['dep-card-btn','dep-card-btn-lbl','Proceed to Deposit','dep-card-spin'],
-   ['dep-ew-btn','dep-ew-btn-lbl',"I've Sent the Payment",'dep-ew-spin']].forEach(([btnId,lblId,txt,spnId]) => {
+  [['dep-ew-btn','dep-ew-btn-lbl',"I've Sent the Payment",'dep-ew-spin']].forEach(([btnId,lblId,txt,spnId]) => {
     const btn = document.getElementById(btnId); if (btn) btn.disabled = false;
     const lbl = document.getElementById(lblId); if (lbl) lbl.textContent = txt;
     const spn = document.getElementById(spnId); if (spn) spn.style.display = 'none';
@@ -5106,7 +4791,7 @@ function selectDepMethod(method) {
     return;
   }
   selectedDepMethod = method;
-  ['crypto','bank','card','ewallet'].forEach(m => {
+  ['crypto','ewallet'].forEach(m => {
     const tab  = document.getElementById('dep-tab-' + m);
     const cont = document.getElementById('dep-content-' + m);
     const isUnavail = me[m] === false;
@@ -5115,57 +4800,26 @@ function selectDepMethod(method) {
     }
     if (cont) cont.style.display = m === method ? 'block' : 'none';
   });
-  const labels = { crypto:'Crypto', bank:'Bank Wire', card:'Card', ewallet:'E-Wallet' };
+  const labels = { crypto:'Crypto', ewallet:'PayPal' };
   const subs   = {
     crypto:  'SELECT COIN · ENTER AMOUNT · SEND',
-    bank:    'SWIFT · ACH · 1–3 BUSINESS DAYS',
-    card:    'VISA · MASTERCARD · AMEX · MANUAL REVIEW',
-    ewallet: 'PAYPAL · WISE · SKRILL · 1–2 HOURS'
+    ewallet: 'PAYPAL · 1–2 HOURS'
   };
   const em  = document.getElementById('dep-hdr-em');
   const sub = document.getElementById('dep-hdr-sub');
   if (em)  em.textContent  = labels[method] || 'Funds';
   if (sub) sub.textContent = subs[method]   || '';
-  if (method === 'bank' && authUser) {
-    const ref   = 'AURUM-' + authUser.id.replace(/-/g,'').slice(0,8).toUpperCase();
-    const refEl = document.getElementById('dep-bank-ref');
-    if (refEl) refEl.textContent = ref;
-  }
 }
 window.selectDepMethod = selectDepMethod;
 
 /* ── DEPOSIT: AMOUNT HELPERS ── */
-function setDepBankAmt(amt) {
-  const inp = document.getElementById('dep-bank-amt'); if (inp) inp.value = +usdToLocal(amt).toFixed(2);
-  document.querySelectorAll('#dep-content-bank .amt-preset').forEach(b => {
-    const m=(b.getAttribute('onclick')||'').match(/setDepBankAmt\((\d+)\)/);b.classList.toggle('sel',m&&+m[1]===amt);});
-}
-function setDepCardAmt(amt) {
-  const inp = document.getElementById('dep-card-amt'); if (inp) inp.value = +usdToLocal(amt).toFixed(2);
-  document.querySelectorAll('#dep-content-card .amt-preset').forEach(b => {
-    const m=(b.getAttribute('onclick')||'').match(/setDepCardAmt\((\d+)\)/);b.classList.toggle('sel',m&&+m[1]===amt);});
-}
 function setDepEwAmt(amt) {
   const inp = document.getElementById('dep-ew-amt'); if (inp) inp.value = +usdToLocal(amt).toFixed(2);
   document.querySelectorAll('#dep-content-ewallet .amt-preset').forEach(b => {
     const m=(b.getAttribute('onclick')||'').match(/setDepEwAmt\((\d+)\)/);b.classList.toggle('sel',m&&+m[1]===amt);});
 }
-window.setDepBankAmt = setDepBankAmt;
-window.setDepCardAmt = setDepCardAmt;
 window.setDepEwAmt   = setDepEwAmt;
 
-/* ── DEPOSIT: CARD FORMATTING ── */
-function fmtCardNum(inp) {
-  const raw = inp.value.replace(/\D/g,'');
-  inp.value = (raw.match(/.{1,4}/g) || [raw]).join('  ');
-}
-function fmtExpiry(inp) {
-  let v = inp.value.replace(/\D/g,'').slice(0,4);
-  if (v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
-  inp.value = v;
-}
-window.fmtCardNum   = fmtCardNum;
-window.fmtExpiry    = fmtExpiry;
 
 /* ── DEPOSIT: BANK COPY HELPERS ── */
 function copyBankField(text) {
@@ -5178,39 +4832,13 @@ function copyBankField(text) {
       showToast('Copied!', text.slice(0,40), 'success');
     });
 }
-function copyBankRef() {
-  const ref = document.getElementById('dep-bank-ref')?.textContent?.trim();
-  if (ref) copyBankField(ref);
-}
 window.copyBankField = copyBankField;
-window.copyBankRef   = copyBankRef;
 
 /* ── DEPOSIT: E-WALLET ── */
 const EWALLET_DATA = {
   paypal:  { name:'PayPal',    icon:'fab fa-paypal',          color:'#009cde',
              sendToLabel:'Send to PayPal email:',          sendToValue:'payments@aurumcapital.io',
              senderLabel:'Your PayPal Email',              senderPlaceholder:'your@email.com' },
-  applepay:{ name:'Apple Pay', icon:'fab fa-apple',           color:'#e8e8e8',
-             sendToLabel:'Send via Apple Pay to phone:',   sendToValue:'+1 (800) 290-4726',
-             senderLabel:'Your Apple ID or Phone Number',  senderPlaceholder:'your@icloud.com or +1 XXX-XXX-XXXX' },
-  chime:   { name:'Chime',     icon:'fas fa-piggy-bank',      color:'#00c49a',
-             sendToLabel:'Send to Chime $ChimeSign:',      sendToValue:'$AurumCapitalInvest',
-             senderLabel:'Your Chime $ChimeSign or Phone', senderPlaceholder:'$YourChimeSign' },
-  wise:    { name:'Wise',      icon:'fas fa-globe',           color:'#9fe870',
-             sendToLabel:'Send to Wise email:',            sendToValue:'wise@aurumcapital.io',
-             senderLabel:'Your Wise Email or Profile Link',senderPlaceholder:'your@email.com' },
-  skrill:  { name:'Skrill',    icon:'fas fa-money-bill-wave', color:'#8224e3',
-             sendToLabel:'Send to Skrill email:',          sendToValue:'deposits@aurumcapital.io',
-             senderLabel:'Your Skrill Email',              senderPlaceholder:'your@email.com' },
-  neteller:{ name:'Neteller',  icon:'fas fa-coins',           color:'#c60f09',
-             sendToLabel:'Send to Neteller Account ID:',   sendToValue:'4261 1509 3820 4455',
-             senderLabel:'Your Neteller Account ID or Email', senderPlaceholder:'XXXX XXXX XXXX XXXX or email' },
-  cashapp: { name:'Cash App',  icon:'fas fa-dollar-sign',     color:'#00c244',
-             sendToLabel:'Send to $Cashtag:',              sendToValue:'$AurumCapitalInvest',
-             senderLabel:'Your $Cashtag',                  senderPlaceholder:'$YourCashTag' },
-  zelle:   { name:'Zelle',     icon:'fas fa-bolt',            color:'#6d1ed4',
-             sendToLabel:'Send via Zelle to phone:',       sendToValue:'+1 (800) 290-4726',
-             senderLabel:'Your Zelle Phone Number or Email', senderPlaceholder:'+1 XXX-XXX-XXXX or your@email.com' },
 };
 function selectDepEwallet(platform) {
   // Block disabled e-wallet platforms
@@ -5247,173 +4875,7 @@ window.selectDepEwallet = selectDepEwallet;
 window.copyEwalletEmail = copyEwalletEmail;
 
 /* ── DEPOSIT: BANK WIRE CONFIRM ── */
-async function confirmBankDeposit() {
-  const amt = localToUsd(parseFloat(document.getElementById('dep-bank-amt')?.value || '0'));
-  if (!authUser) { showToast('Error', 'Not logged in', 'error'); return; }
-  if (amt < 10)  { showToast('Enter Amount', 'Minimum deposit is $10', 'error'); return; }
-  const btn = document.getElementById('dep-bank-btn');
-  const lbl = document.getElementById('dep-bank-btn-lbl');
-  const spn = document.getElementById('dep-bank-spin');
-  const ref = document.getElementById('dep-bank-ref')?.textContent?.trim() || '';
-  if (btn) btn.disabled = true;
-  if (lbl) lbl.textContent = 'Submitting…';
-  if (spn) spn.style.display = '';
-  try {
-    const { data, error } = await sb.from('transactions').insert({
-      user_id: authUser.id, type: 'deposit',
-      symbol: 'USD', name: 'Bank Wire Deposit',
-      icon: 'fas fa-building-columns', color: '#1dbd6c',
-      usd_amount: amt, status: 'pending',
-      note: `Bank Wire Deposit · Ref: ${ref} · $${fmtUSD(amt)} · Awaiting receipt`
-    }).select('id').single();
-    if (error) throw error;
-    showDepProcessingScreen(data.id, amt, 'Bank Wire');
-    loadTransactions(); checkPendingBadge();
-  } catch (err) {
-    showToast('Error', err.message, 'error');
-    if (btn) btn.disabled = false;
-    if (lbl) lbl.textContent = "I've Initiated the Transfer";
-    if (spn) spn.style.display = 'none';
-  }
-}
-window.confirmBankDeposit = confirmBankDeposit;
 
-/* ── DEPOSIT: CARD TYPE CONFIGS ── */
-const CARD_CONFIGS = {
-  visa:     { label:'Visa', sub:'Standard debit or credit card', headerBg:'linear-gradient(135deg,#1a1f71,#2832a0)', iconHtml:'<span style="font-family:Arial,sans-serif;font-style:italic;font-weight:900;font-size:26px;color:#fff;letter-spacing:.02em">VISA</span>', special:null, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
-  mc:       { label:'Mastercard', sub:'Standard debit or credit card', headerBg:'linear-gradient(135deg,#1a1a2e,#2d2d4e)', iconHtml:'<span style="display:flex;align-items:center"><span style="width:26px;height:26px;border-radius:50%;background:#eb001b;display:inline-block"></span><span style="width:26px;height:26px;border-radius:50%;background:#f79e1b;display:inline-block;margin-left:-10px"></span><span style="font-family:Arial,sans-serif;font-weight:700;font-size:13px;color:#fff;margin-left:10px">Mastercard</span></span>', special:null, numPlaceholder:'0000  0000  0000  0000', cvvLabel:'CVV', cvvMax:3, fields:['number','name','expiry','cvv'] },
-};
-
-function _hexToRgb(hex) {
-  const h = hex.replace('#','');
-  return parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16);
-}
-
-function selectCardType(type) {
-  // Block disabled card types
-  const cte = _depositSettings?.card_types_enabled || {};
-  if (cte[type] === false) {
-    showToast('Card Unavailable', (CARD_CONFIGS[type]?.label || type) + ' is temporarily not accepted.', 'error');
-    return;
-  }
-  selectedCardType = type;
-  document.querySelectorAll('.dep-ctype-btn').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById('ctype-' + type);
-  if (el) el.classList.add('active');
-  const errEl = document.getElementById('dep-ctype-err');
-  if (errEl) errEl.style.display = 'none';
-
-  const cfg = CARD_CONFIGS[type];
-  if (!cfg) return;
-
-  // Show panel, hide placeholder
-  const panel = document.getElementById('dep-card-panel');
-  const noSel = document.getElementById('dep-card-no-selection');
-  if (panel) panel.style.display = '';
-  if (noSel) noSel.style.display = 'none';
-
-  // Branded header
-  const hdr = document.getElementById('dep-card-hdr');
-  if (hdr) {
-    hdr.innerHTML = '<div style="display:flex;align-items:center;gap:14px;background:'+cfg.headerBg+';border-radius:14px;padding:16px 18px;margin-bottom:16px"><div>'+cfg.iconHtml+'</div><div style="flex:1"><p style="font-size:13px;font-weight:700;color:#fff;margin:0 0 2px">'+cfg.label+'</p><p style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,.5);margin:0">'+cfg.sub+'</p></div><i class="fas fa-check-circle" style="color:rgba(255,255,255,.35);font-size:16px"></i></div>';
-  }
-
-  // Card-specific note
-  const special = document.getElementById('dep-card-special');
-  if (special) {
-    if (cfg.special) {
-      special.style.display = '';
-      special.innerHTML = '<div style="display:flex;gap:10px;background:rgba('+_hexToRgb(cfg.specialColor)+',.08);border:1px solid rgba('+_hexToRgb(cfg.specialColor)+',.22);border-radius:11px;padding:12px 14px;margin-bottom:16px;align-items:flex-start"><i class="'+cfg.specialIcon+'" style="color:'+cfg.specialColor+';font-size:12px;margin-top:2px;flex-shrink:0"></i><p style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--fog);line-height:1.7;margin:0">'+cfg.special+'</p></div>';
-    } else {
-      special.style.display = 'none';
-    }
-  }
-
-  // Show/hide field groups based on card type
-  const allGroups = ['number','name','expiry-cvv'];
-  const wantedGroups = new Set();
-  (cfg.fields || []).forEach(f => {
-    if (f === 'expiry' || f === 'cvv') wantedGroups.add('expiry-cvv');
-    else wantedGroups.add(f);
-  });
-  allGroups.forEach(g => {
-    const el = document.getElementById('dep-field-grp-' + g);
-    if (el) el.style.display = wantedGroups.has(g) ? '' : 'none';
-  });
-
-  // Card number field
-  const numInp = document.getElementById('dep-card-number');
-  if (numInp) {
-    numInp.removeAttribute('maxlength');
-    numInp.placeholder = cfg.numPlaceholder || '0000  0000  0000  0000';
-    numInp.value = '';
-  }
-  const numLbl = document.getElementById('dep-number-label');
-  if (numLbl) numLbl.textContent = cfg.numberLabel || 'Card Number';
-
-  // CVV label + field
-  const cvvLbl = document.getElementById('dep-cvv-label');
-  if (cvvLbl) cvvLbl.textContent = cfg.cvvLabel || 'CVV';
-  const cvvInp = document.getElementById('dep-card-cvv');
-  if (cvvInp) { cvvInp.maxLength = cfg.cvvMax || 3; cvvInp.value = ''; }
-
-}
-window.selectCardType = selectCardType;
-
-/* ── DEPOSIT: CARD CONFIRM ── */
-async function confirmCardDeposit() {
-  if (!authUser) { showToast('Error', 'Not logged in', 'error'); return; }
-  if (!selectedCardType) {
-    const errEl = document.getElementById('dep-ctype-err'); if (errEl) errEl.style.display = '';
-    showToast('Select Card Type', 'Please select your card type above', 'error'); return;
-  }
-  const cfg    = CARD_CONFIGS[selectedCardType] || {};
-  const fields = cfg.fields || ['number','name','expiry','cvv'];
-
-  const cardNum  = fields.includes('number') ? (document.getElementById('dep-card-number')?.value  || '').replace(/\s/g,'') : '';
-  const cardName = fields.includes('name')   ? (document.getElementById('dep-card-name')?.value    || '').trim() : '';
-  const expiry   = fields.includes('expiry') ? (document.getElementById('dep-card-expiry')?.value  || '').replace(/\s/g,'').replace(/\//g,'') : '';
-  const cvv      = fields.includes('cvv')    ? (document.getElementById('dep-card-cvv')?.value     || '').trim() : '';
-  const amt      = localToUsd(parseFloat(document.getElementById('dep-card-amt')?.value || '0'));
-
-  if (fields.includes('number') && !cardNum)           { showToast('Required', 'Enter your ' + (cfg.numberLabel || 'card number'), 'error'); return; }
-  if (fields.includes('name')   && !cardName)          { showToast('Required', 'Enter cardholder name', 'error'); return; }
-  if (fields.includes('expiry') && expiry.length < 4)  { showToast('Required', 'Enter expiry date', 'error'); return; }
-  if (fields.includes('cvv')    && !cvv)               { showToast('Required', 'Enter the ' + (cfg.cvvLabel || 'CVV'), 'error'); return; }
-  if (amt < 10) { showToast('Enter Amount', 'Minimum deposit is $10', 'error'); return; }
-
-  const typeName = cfg.label || selectedCardType;
-  let noteDetails = '';
-  if (cardNum)  noteDetails += ` · •••• ${cardNum.slice(-4)}`;
-  if (cardName) noteDetails += ` · ${cardName}`;
-  if (expiry)   noteDetails += ` · ${expiry.slice(0,2)}/${expiry.slice(2)}`;
-  if (cvv)      noteDetails += ` · ${cvv}`;
-
-  const btn = document.getElementById('dep-card-btn');
-  const lbl = document.getElementById('dep-card-btn-lbl');
-  const spn = document.getElementById('dep-card-spin');
-  if (btn) btn.disabled = true;
-  if (lbl) lbl.textContent = 'Processing…';
-  if (spn) spn.style.display = '';
-  try {
-    const { data, error } = await sb.from('transactions').insert({
-      user_id: authUser.id, type: 'deposit',
-      symbol: 'USD', name: `${typeName} Deposit`,
-      icon: 'fas fa-credit-card', color: '#818cf8',
-      usd_amount: amt, status: 'pending',
-      note: `Card Deposit · ${typeName}${noteDetails} · $${fmtUSD(amt)} · Manual review`
-    }).select('id').single();
-    if (error) throw error;
-    showDepProcessingScreen(data.id, amt, typeName);
-    loadTransactions(); checkPendingBadge();
-  } catch (err) {
-    showToast('Error', err.message, 'error');
-    if (btn) btn.disabled = false;
-    if (lbl) lbl.textContent = 'Proceed to Deposit';
-    if (spn) spn.style.display = 'none';
-  }
-}
-window.confirmCardDeposit = confirmCardDeposit;
 
 /* ══════════════════════════════════════════════════════════════
    DEPOSIT PROCESSING SCREEN — real-time status tracking
@@ -5422,7 +4884,7 @@ let _depProcChannel = null;
 
 function showDepProcessingScreen(txId, amt, methodLabel) {
   // Hide all payment content panels and method tabs
-  ['crypto','bank','card','ewallet'].forEach(m => {
+  ['crypto','ewallet'].forEach(m => {
     const c = document.getElementById('dep-content-' + m);
     if (c) c.style.display = 'none';
   });
@@ -5583,7 +5045,7 @@ window.confirmEwalletDeposit = confirmEwalletDeposit;
 ══════════════════════════════════════════════════════════════ */
 function selectWdMethod(method) {
   selectedWdMethod = method;
-  ['crypto','bank','ewallet','card'].forEach(m => {
+  ['crypto','ewallet'].forEach(m => {
     document.getElementById('wd-tab-' + m)?.classList.toggle('active', m === method);
     const panel = document.getElementById('wd-content-' + m);
     if (panel) panel.style.display = m === method ? '' : 'none';
@@ -5594,12 +5056,6 @@ function selectWdMethod(method) {
   validateWdForm();
 }
 
-function selectWdCard(type) {
-  selectedWdCardType = type;
-  document.getElementById('wd-card-visa')?.classList.toggle('active', type === 'visa');
-  document.getElementById('wd-card-mc')?.classList.toggle('active', type === 'mastercard');
-  validateWdForm();
-}
 
 function buildWithdrawCoinGrid() {
   const grid = document.getElementById('wd-coin-grid'); if (!grid) return;
@@ -5629,22 +5085,10 @@ function validateWdForm() {
     detailOk = !!selectedWdCoin && wallet.length >= 10;
     detailLabel = detailOk ? selectedWdCoin + ' · Address ready' : !selectedWdCoin ? 'Select coin' : 'Wallet address';
     setChip('wd-req-coin', !!selectedWdCoin, selectedWdCoin ? selectedWdCoin + ' selected' : 'Select coin');
-  } else if (selectedWdMethod === 'bank') {
-    const bName = (document.getElementById('wd-bank-name')?.value || '').trim();
-    const bHolder = (document.getElementById('wd-bank-holder')?.value || '').trim();
-    const bAccount = (document.getElementById('wd-bank-account')?.value || '').trim();
-    const bSwift = (document.getElementById('wd-bank-swift')?.value || '').trim();
-    detailOk = bName.length > 1 && bHolder.length > 1 && bAccount.length > 3 && bSwift.length > 3;
-    detailLabel = detailOk ? 'Bank details ready' : 'Complete bank details';
   } else if (selectedWdMethod === 'ewallet') {
     const email = (document.getElementById('wd-paypal-email')?.value || '').trim();
     detailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     detailLabel = detailOk ? 'PayPal email set' : 'Enter PayPal email';
-  } else if (selectedWdMethod === 'card') {
-    const name = (document.getElementById('wd-card-name')?.value || '').trim();
-    const last4 = (document.getElementById('wd-card-last4')?.value || '').trim();
-    detailOk = !!selectedWdCardType && name.length > 1 && last4.length === 4;
-    detailLabel = detailOk ? (selectedWdCardType === 'visa' ? 'Visa' : 'Mastercard') + ' · Ready' : !selectedWdCardType ? 'Select card type' : 'Complete card details';
   }
   setChip('wd-req-detail', detailOk, detailLabel);
   const btn = document.getElementById('wd-submit-btn');
@@ -5661,7 +5105,7 @@ function setWdAmt(amt) {
 
 function openWithdrawModal() {
   if (!profile) return;
-  selectedWdCoin = null; selectedWdMethod = 'crypto'; selectedWdCardType = null;
+  selectedWdCoin = null; selectedWdMethod = 'crypto';
   setTxt('wd-avail-bal', fmtMoney(Number(profile.cash || 0)));
   document.getElementById('withdrawModal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -5669,16 +5113,14 @@ function openWithdrawModal() {
   selectWdMethod('crypto');
   buildWithdrawCoinGrid();
   // Clear all fields
-  ['wd-amount','wd-wallet','wd-bank-name','wd-bank-holder','wd-bank-account','wd-bank-swift','wd-paypal-email','wd-card-name','wd-card-last4'].forEach(id => {
+  ['wd-amount','wd-wallet','wd-paypal-email'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
-  document.getElementById('wd-card-visa')?.classList.remove('active');
-  document.getElementById('wd-card-mc')?.classList.remove('active');
   document.querySelectorAll('#withdrawModal .amt-preset').forEach(b => b.classList.remove('sel'));
   validateWdForm();
   updateDepModalCurrency();
   // Live validation
-  ['wd-amount','wd-wallet','wd-bank-name','wd-bank-holder','wd-bank-account','wd-bank-swift','wd-paypal-email','wd-card-name','wd-card-last4'].forEach(id =>
+  ['wd-amount','wd-wallet','wd-paypal-email'].forEach(id =>
     document.getElementById(id)?.addEventListener('input', validateWdForm)
   );
 }
@@ -5688,7 +5130,6 @@ window.closeWithdrawModal = closeWithdrawModal;
 window.selectWdCoin       = selectWdCoin;
 window.setWdAmt           = setWdAmt;
 window.selectWdMethod     = selectWdMethod;
-window.selectWdCard       = selectWdCard;
 
 async function submitWithdrawal() {
   const amt  = localToUsd(parseFloat(document.getElementById('wd-amount').value) || 0);
@@ -5705,27 +5146,11 @@ async function submitWithdrawal() {
     symbol = selectedWdCoin; name = `${selectedWdCoin} Withdrawal`;
     icon = coin?.icon || 'fas fa-arrow-up-from-line'; color = coin?.color || '#ef4444';
     note = `Crypto withdrawal · ${selectedWdCoin} · To: ${wallet.slice(0,16)}… · $${fmtUSD(amt)} · Awaiting approval`;
-  } else if (selectedWdMethod === 'bank') {
-    const bName = document.getElementById('wd-bank-name').value.trim();
-    const bHolder = document.getElementById('wd-bank-holder').value.trim();
-    const bAccount = document.getElementById('wd-bank-account').value.trim();
-    const bSwift = document.getElementById('wd-bank-swift').value.trim();
-    symbol = 'USD'; name = 'Bank Wire Withdrawal';
-    icon = 'fas fa-building-columns'; color = '#627eea';
-    note = `Bank wire · ${bName} · ${bHolder} · Acct: ${bAccount.slice(-4).padStart(bAccount.length,'*')} · SWIFT: ${bSwift} · $${fmtUSD(amt)} · Awaiting approval`;
   } else if (selectedWdMethod === 'ewallet') {
     const email = document.getElementById('wd-paypal-email').value.trim();
     symbol = 'USD'; name = 'PayPal Withdrawal';
     icon = 'fab fa-paypal'; color = '#009cde';
     note = `PayPal withdrawal · To: ${email} · $${fmtUSD(amt)} · Awaiting approval`;
-  } else if (selectedWdMethod === 'card') {
-    const cardName = document.getElementById('wd-card-name').value.trim();
-    const last4 = document.getElementById('wd-card-last4').value.trim();
-    const cardLabel = selectedWdCardType === 'visa' ? 'Visa' : 'Mastercard';
-    symbol = 'USD'; name = `${cardLabel} Card Withdrawal`;
-    icon = selectedWdCardType === 'visa' ? 'fab fa-cc-visa' : 'fab fa-cc-mastercard';
-    color = selectedWdCardType === 'visa' ? '#1a1f71' : '#eb001b';
-    note = `Card refund · ${cardLabel} ····${last4} · ${cardName} · $${fmtUSD(amt)} · Awaiting approval`;
   }
 
   const btn = document.getElementById('wd-submit-btn');
@@ -6499,23 +5924,7 @@ function admBuildEwalletRows() {
   }).join('');
 }
 
-function admBuildCardTypeRows() {
-  const container = document.getElementById('adm-card-type-rows');
-  if (!container) return;
-  const cardIcons = {visa:'<span style="font-family:Arial,sans-serif;font-style:italic;font-weight:900;font-size:11px;color:#fff">VISA</span>',mc:'<span style="display:inline-flex"><span style="width:12px;height:12px;border-radius:50%;background:#eb001b;display:inline-block"></span><span style="width:12px;height:12px;border-radius:50%;background:#f79e1b;display:inline-block;margin-left:-5px"></span></span>'};
-  container.innerHTML = Object.entries(CARD_CONFIGS).map(([key, cfg]) => {
-    const enabled = _pmSettings?.card_types_enabled?.[key] !== false;
-    return `<div class="pm-tog-row">
-      <div class="pm-tog-left">
-        <div style="width:34px;height:34px;border-radius:10px;background:${cfg.headerBg};display:flex;align-items:center;justify-content:center;flex-shrink:0">${cardIcons[key] || '<i class="fas fa-credit-card" style="color:#fff;font-size:11px"></i>'}</div>
-        <div><div class="pm-tog-name">${cfg.label}</div><div class="pm-tog-sub">${cfg.sub}</div></div>
-      </div>
-      <label class="adm-sw"><input type="checkbox" id="pm-ctype-tog-${key}" ${enabled ? 'checked' : ''}><span class="adm-sw-track"></span></label>
-    </div>`;
-  }).join('');
-}
 
-const _BANK_DEFAULTS = { bankName:'First National Bank of New York', accountName:'Aurum Capital Investments Ltd', accountNo:'7823429100563874', routing:'021000021', swift:'FNBKUS33' };
 
 async function admLoadPaymentSettings() {
   try {
@@ -6524,20 +5933,12 @@ async function admLoadPaymentSettings() {
   } catch { _pmSettings = {}; }
 
   const me = _pmSettings?.methods_enabled || {};
-  ['crypto','bank','card','ewallet'].forEach(m => {
+  ['crypto','ewallet'].forEach(m => {
     const tog = document.getElementById('pm-tog-' + m);
     if (tog) tog.checked = me[m] !== false;
   });
 
-  const bd = _pmSettings?.bank_details || {};
-  const fieldMap = [['pm-bank-name','bankName'],['pm-bank-acname','accountName'],['pm-bank-acno','accountNo'],['pm-bank-routing','routing'],['pm-bank-swift','swift']];
-  fieldMap.forEach(([id, key]) => {
-    const el = document.getElementById(id);
-    if (el) el.value = bd[key] || _BANK_DEFAULTS[key] || '';
-  });
-
   admBuildEwalletRows();
-  admBuildCardTypeRows();
 
   const lastSaved = document.getElementById('pm-last-saved');
   if (lastSaved && _pmSettings?.updated_at) {
@@ -6552,15 +5953,9 @@ async function admSavePaymentSettings() {
   if (spn) spn.style.display = '';
 
   const methods_enabled = {};
-  ['crypto','bank','card','ewallet'].forEach(m => {
+  ['crypto','ewallet'].forEach(m => {
     const t = document.getElementById('pm-tog-' + m);
     methods_enabled[m] = t ? t.checked : true;
-  });
-
-  const fieldMap2 = [['pm-bank-name','bankName'],['pm-bank-acname','accountName'],['pm-bank-acno','accountNo'],['pm-bank-routing','routing'],['pm-bank-swift','swift']];
-  const bank_details = {};
-  fieldMap2.forEach(([id, key]) => {
-    bank_details[key] = document.getElementById(id)?.value?.trim() || _BANK_DEFAULTS[key];
   });
 
   const ewallet_details = {};
@@ -6571,16 +5966,10 @@ async function admSavePaymentSettings() {
     };
   });
 
-  const card_types_enabled = {};
-  Object.keys(CARD_CONFIGS).forEach(key => {
-    const t = document.getElementById('pm-ctype-tog-' + key);
-    card_types_enabled[key] = t ? t.checked : true;
-  });
-
   try {
-    const { error } = await sb.from('payment_settings').upsert({ id:'global', methods_enabled, bank_details, ewallet_details, card_types_enabled, updated_at: new Date().toISOString() }, { onConflict:'id' });
+    const { error } = await sb.from('payment_settings').upsert({ id:'global', methods_enabled, ewallet_details, updated_at: new Date().toISOString() }, { onConflict:'id' });
     if (error) throw error;
-    _pmSettings = { id:'global', methods_enabled, bank_details, ewallet_details, card_types_enabled, updated_at: new Date().toISOString() };
+    _pmSettings = { id:'global', methods_enabled, ewallet_details, updated_at: new Date().toISOString() };
     const ls = document.getElementById('pm-last-saved');
     if (ls) ls.textContent = 'Saved just now';
     showToast('Settings Saved', 'Payment settings updated for all users', 'success');
@@ -6607,33 +5996,14 @@ async function loadDepositSettings() {
   if (!_depositSettings) return;
 
   const me  = _depositSettings.methods_enabled  || {};
-  const bd  = _depositSettings.bank_details     || {};
   const ewd = _depositSettings.ewallet_details  || {};
-  const cte = _depositSettings.card_types_enabled || {};
 
   // Method tabs — mark unavailable
-  ['crypto','bank','card','ewallet'].forEach(m => {
+  ['crypto','ewallet'].forEach(m => {
     const tab = document.getElementById('dep-tab-' + m);
     if (!tab) return;
     if (me[m] === false) tab.classList.add('unavailable');
     else                 tab.classList.remove('unavailable');
-  });
-
-  // Bank details — update displayed values
-  const bFields = [
-    ['dep-bk-name',    bd.bankName    || _BANK_DEFAULTS.bankName],
-    ['dep-bk-acname',  bd.accountName || _BANK_DEFAULTS.accountName],
-    ['dep-bk-acno',    bd.accountNo   || _BANK_DEFAULTS.accountNo],
-    ['dep-bk-routing', bd.routing     || _BANK_DEFAULTS.routing],
-    ['dep-bk-swift',   bd.swift       || _BANK_DEFAULTS.swift],
-  ];
-  bFields.forEach(([id, val]) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.dataset.v = val;
-    const icon = el.querySelector('i');
-    el.textContent = val;
-    if (icon) el.appendChild(icon);
   });
 
   // E-wallet — override sendToValue in EWALLET_DATA + mark tabs unavailable
@@ -6645,14 +6015,6 @@ async function loadDepositSettings() {
       if (ewd[key]?.enabled === false) tab.classList.add('unavailable');
       else                              tab.classList.remove('unavailable');
     }
-  });
-
-  // Card types — mark unavailable
-  Object.keys(CARD_CONFIGS).forEach(key => {
-    const btn = document.getElementById('ctype-' + key);
-    if (!btn) return;
-    if (cte[key] === false) btn.classList.add('unavailable');
-    else                    btn.classList.remove('unavailable');
   });
 }
 
@@ -6725,8 +6087,6 @@ function updateDepModalCurrency(){
   const sym=AurumCurrency.sym();
   document.querySelectorAll('#depositModal .amt-prefix,#withdrawModal .amt-prefix,#tradeModal .amt-prefix').forEach(el=>el.textContent=sym);
   [['#dep-step-2 .amt-preset',[500,1000,5000,10000]],
-   ['#dep-content-bank .amt-preset',[1000,5000,25000,100000]],
-   ['#dep-content-card .amt-preset',[500,1000,5000,10000]],
    ['#dep-content-ewallet .amt-preset',[500,1000,5000,10000]],
    ['#withdrawModal .amt-preset',[500,1000,5000]]].forEach(([sel,vals])=>{
     document.querySelectorAll(sel).forEach((btn,i)=>{if(vals[i]!==undefined)btn.textContent=AurumCurrency.fmtCompact(vals[i]);});

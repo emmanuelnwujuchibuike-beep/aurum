@@ -182,3 +182,25 @@ Still open: S5 (open email relay), S6 (payment settings write policy), S7 admin 
 
 - **S5 open email relay (fixed live):** `send-user-alert` requires a signed-in user and only emails that user's own address (10/hour). `new-user-handler` takes only a user id, reads email/name from auth, sends only for accounts < 15 min old, once per user; names HTML-escaped. Spoofed requests verified refused.
 - **S6 deposit details (fixed live):** `payment_settings` writes are admin-only (`20261029_payment_settings_admin_only.sql`); reads stay public for the deposit screens.
+
+## Payment methods reduced to crypto + PayPal (2026-10-29)
+Owner's decision, applied to `dashboard-classic.html` (deposit modal, withdraw modal, admin payment settings) and the landing-page FAQ.
+
+| Removed | Why |
+|---|---|
+| Walmart / Target / Amazon gift cards, Green Dot MoneyPak | Owner request; gift-card and reload codes are not a payment method a regulated firm can accept or verify. |
+| Amex, Discover, NetSpend | Owner narrowed supported cards to Visa/Mastercard, then removed cards entirely. |
+| All card deposits and card-refund withdrawals | Owner request. Collecting card numbers, CVVs (and a one-time passcode) for an admin to key in by hand is not a payment flow that can be made safe; a processor-hosted checkout is the replacement. |
+| Bank wire deposits and withdrawals | Follows from "leave only crypto and PayPal". Restorable from git if this was not intended. |
+| Apple Pay, Chime, Wise, Skrill, Neteller, Cash App, Zelle | Only PayPal remains. |
+
+Card numbers, CVVs, PINs and gift-card codes are no longer collected, stored or emailed.
+**Still stored from before:** rows already in `transactions.note` from the old card form. Not cleared — needs the owner's go-ahead.
+**Not built:** the requested OTP step. See the conversation record.
+
+### Verification run
+- Inline scripts parse; HTML tags balance; every inline handler resolves; no `getElementById` lookup lost its element (compared against the previous commit).
+- Headless Chrome, throttled to 4x CPU and slow 4G: **no console errors** on any page.
+- FCP: redesigned pages 340–470 ms; `dashboard-classic.html` 2400 ms (legacy page, 84K gzip, 7 render-blocking resources — the redesign replaces it).
+- Page weight (gzip): all 13 pages inside the 200K budget. `dashboard-classic.html` 91.4K → 84.0K.
+- Pages were loaded signed out, so they redirect to sign-in: the deposit and withdraw modals were checked statically, not exercised at runtime.
