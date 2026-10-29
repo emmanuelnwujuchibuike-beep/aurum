@@ -24,6 +24,7 @@ const minifyCss = (css) => css
   .trim();
 
 const css = minifyCss(readFileSync(join(src, 'styles/app.css'), 'utf8'));
+const shellCss = minifyCss(readFileSync(join(src, 'styles/shell.css'), 'utf8'));
 
 const icon = (d, w = 20, sw = 1.8) =>
   `<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
@@ -37,7 +38,10 @@ const ICONS = {
   bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
 };
 
+// Theme: same storage key and values the site has always used ('light' | 'dark');
+// no key = follow the phone. Applied before first paint so there is no flash.
 const head = `
+<script>try{var t=localStorage.getItem('aurum_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/playfair-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="image/favicon-32.png" type="image/png" sizes="32x32">
@@ -97,10 +101,113 @@ ${SOCIAL.map(([href, name, d]) => `    <a class="social raised-sm" href="${href}
 </footer>
 `;
 
+// ── Signed-in app shell ─────────────────────────────────────────────────────
+// Pages not rebuilt yet hand off to the classic dashboard, which opens the
+// matching window. Switch an entry to its own page when that page is built.
+const ROUTES = {
+  deposit: "dashboard-classic.html#deposit",
+  withdraw: "dashboard-classic.html#withdraw",
+  transactions: "dashboard-classic.html#transactions",
+  portfolio: "dashboard-classic.html#portfolio",
+};
+const APP_ICONS = {
+  grid: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+  close: '<path d="M6 6l12 12M18 6 6 18"/>',
+  back: '<path d="m15 18-6-6 6-6"/>',
+  invest: ICONS.markets,
+};
+
+// <!--@appheader Title|Subtitle--> or <!--@appheader back:Title--> (back arrow to dashboard)
+const appHeader = (spec) => {
+  const back = spec.startsWith('back:');
+  const [title, sub = ''] = (back ? spec.slice(5) : spec).split('|').map((s) => s.trim());
+  const left = back
+    ? `<a class="iconbtn raised-sm" href="dashboard.html" aria-label="Back to dashboard">${icon(APP_ICONS.back, 18, 2)}</a>
+    <span class="who-title grow" style="text-align:center">${title}</span>`
+    : `<a class="who" href="profile.html" aria-label="Open profile">
+    <span class="avatar raised-sm"><span data-avatar>&nbsp;</span></span>
+    <span class="stack" style="min-width:0"><span class="who-sub"${sub ? "" : " data-greeting"}>${sub || "&nbsp;"}</span><span class="who-title">${title}</span></span>
+  </a>`;
+  return `
+<header class="top">
+  ${left}
+  <div class="row g12">
+    <button class="iconbtn raised-sm" data-open="menu" aria-label="Menu">${icon(APP_ICONS.grid, 19, 1.9)}</button>
+    ${back ? '' : `<a class="iconbtn raised-sm" href="profile.html#alerts" aria-label="Notifications">${icon(ICONS.bell, 19, 1.9)}<span class="bell-dot" data-unread hidden></span></a>`}
+  </div>
+</header>
+<div class="test-banner" data-test-banner hidden style="margin:0 var(--gut) 10px" role="status"><b>TEST MODE</b><span>Figures marked TEST include admin test values and are not real.</span></div>
+`;
+};
+
+const MENU = [
+  ['dashboard', 'dashboard.html', '◈', 'Dashboard', 'Portfolio overview'],
+  ['invest', 'invest.html', '↗', 'Invest', 'Explore markets'],
+  ['trade', 'trade.html', '⇄', 'Trade', 'Practice or live execution'],
+  ['crypto', 'invest.html#crypto', '₿', 'Cryptocurrency', 'BTC · ETH · SOL · more'],
+  ['equities', 'invest.html#equities', '◎', 'Global equities', 'TSLA · AAPL · NVDA · more'],
+  ['commodities', 'invest.html#commodities', 'Au', 'Commodities', 'Gold · Oil · Silver'],
+  ['transactions', ROUTES.transactions, '≡', 'Transactions', 'Full ledger'],
+  ['support', 'contact.html', '?', 'Support', 'Talk to an advisor'],
+];
+const STRIP = [['BTC', 'BTC'], ['ETH', 'ETH'], ['SOL', 'SOL'], ['XRP', 'XRP'], ['Gold', 'XAUUSD']];
+const appMenu = (current) => `
+<div class="menu app" id="menu" hidden role="dialog" aria-label="Menu">
+  <div class="top" style="position:static">
+    <span class="row g12"><span class="logo gold" aria-hidden="true">A</span><span class="serif" style="font-size:21px;letter-spacing:.04em">Aurum</span></span>
+    <button class="iconbtn inset" data-close="menu" aria-label="Close menu">${icon(APP_ICONS.close, 18, 2)}</button>
+  </div>
+  <div class="menu-body">
+    <div class="vault strip scrollx mono" aria-label="Live prices">
+${STRIP.map(([label, sym]) => `      <span><b>${label}</b> <span data-price="${sym}">—</span> <span data-chg="${sym}" class="flat">—</span></span>`).join('\n')}
+    </div>
+    <div class="stack g10">
+      <span class="eyebrow">Navigate</span>
+      <nav class="raised" style="border-radius:22px;padding:6px" aria-label="All sections">
+${MENU.map(([key, href, glyph, label, sub]) => `        <a class="mi" href="${href}"${key === current ? ' aria-current="page"' : ''}><span class="badge inset" aria-hidden="true">${glyph}</span><span class="grow stack" style="gap:2px"><b style="font-size:15px">${label}</b><span class="mono muted" style="font-size:11px">${sub}</span></span><span class="muted" aria-hidden="true">›</span></a>`).join('\n')}
+      </nav>
+    </div>
+    <a href="${ROUTES.deposit}" class="btn gold" style="text-transform:none;letter-spacing:0">+ Deposit funds</a>
+    <span class="row g8 muted" style="justify-content:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase"><span class="dot" aria-hidden="true"></span>All systems operational</span>
+  </div>
+</div>
+`;
+
+const SHEET = [
+  [ROUTES.deposit, 'gold', '+', 'Deposit funds', 'Bank transfer, card or crypto'],
+  [ROUTES.withdraw, 'inset', '↑', 'Withdraw', 'To your bank or wallet'],
+  ['trade.html', 'inset', '⇅', 'Trade', 'Practice or live'],
+  ['invest.html', 'inset', '⌂', 'New investment', 'Equities or real estate'],
+];
+const sheet = `
+<div class="overlay" id="sheet" hidden>
+  <button class="scrim" data-close="sheet" aria-label="Close quick actions"></button>
+  <div class="sheet" role="dialog" aria-label="Quick actions">
+    <span class="grab" aria-hidden="true"></span><span class="eyebrow">Quick actions</span>
+${SHEET.map(([href, cls, glyph, label, sub]) => `    <a href="${href}" class="sheet-btn raised-sm"><span class="badge ${cls}" aria-hidden="true">${glyph}</span><span class="stack"><b style="font-size:14px">${label}</b><span class="muted" style="font-size:12px">${sub}</span></span></a>`).join('\n')}
+  </div>
+</div>
+`;
+
+const APP_NAV = [
+  ['home', 'dashboard.html', 'Home', ICONS.home],
+  ['invest', 'invest.html', 'Invest', APP_ICONS.invest],
+  ['fab'],
+  ['portfolio', ROUTES.portfolio, 'Portfolio', ICONS.portfolio],
+  ['account', 'profile.html', 'Account', ICONS.account],
+];
+const appNav = (current) => `
+<nav class="nav raised" aria-label="Main">
+${APP_NAV.map(([key, href, label, d]) => key === 'fab'
+  ? `  <button class="fab gold" data-open="sheet" aria-label="Quick actions">${icon(ICONS.plus, 24, 2.2)}</button>`
+  : `  <a href="${href}"${key === current ? ' aria-current="page"' : ''}><span class="ico">${icon(d)}</span>${label}</a>`).join('\n')}
+</nav>
+`;
+
 // Prerender static pages on hover/touch intent; app pages that run auth and
 // realtime code on load are only prefetched, so a prerender never opens sockets.
 const tail = `
-<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/dashboard.html","/trade.html","/profile.html","/signup.html"]}}]},"eagerness":"moderate"}],"prefetch":[{"source":"document","where":{"href_matches":["/dashboard.html","/trade.html","/profile.html","/signup.html"]},"eagerness":"moderate"}]}</script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/dashboard.html","/invest.html","/trade.html","/profile.html","/signup.html","/portfolio.html","/transactions.html","/deposit.html","/withdraw.html"]}}]},"eagerness":"moderate"}],"prefetch":[{"source":"document","where":{"href_matches":["/dashboard.html","/invest.html","/trade.html","/profile.html","/signup.html","/portfolio.html","/transactions.html","/deposit.html","/withdraw.html"]},"eagerness":"moderate"}]}</script>
 <script src="app.js" defer></script>
 `;
 
@@ -115,7 +222,12 @@ for (const file of pages) {
     .replace(/(<!--@header ([^>]*?)-->)[\s\S]*?(<!--\/@header-->)/, (_, a, label, b) => a + header(label.trim()) + b)
     .replace(/(<!--@nav (\w+)-->)[\s\S]*?(<!--\/@nav-->)/, (_, a, key, b) => a + nav(key) + b)
     .replace(/(<!--@footer-->)[\s\S]*?(<!--\/@footer-->)/, (_, a, b) => a + footer + b)
-    .replace(/(<!--@tail-->)[\s\S]*?(<!--\/@tail-->)/, (_, a, b) => a + tail + b);
+    .replace(/(<!--@tail-->)[\s\S]*?(<!--\/@tail-->)/, (_, a, b) => a + tail + b)
+    .replace(/(<style id="shell-css">)[\s\S]*?(<\/style>)/, (_, a, b) => a + shellCss + b)
+    .replace(/(<!--@appheader ([^>]*?)-->)[\s\S]*?(<!--\/@appheader-->)/, (_, a, spec, b) => a + appHeader(spec) + b)
+    .replace(/(<!--@appmenu (\w*)-->)[\s\S]*?(<!--\/@appmenu-->)/, (_, a, key, b) => a + appMenu(key) + b)
+    .replace(/(<!--@sheet-->)[\s\S]*?(<!--\/@sheet-->)/, (_, a, b) => a + sheet + b)
+    .replace(/(<!--@appnav (\w*)-->)[\s\S]*?(<!--\/@appnav-->)/, (_, a, key, b) => a + appNav(key) + b);
   if (after === before) continue;
   writeFileSync(path, after);
   touched++;

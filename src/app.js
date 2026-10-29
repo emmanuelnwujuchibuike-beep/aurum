@@ -3,7 +3,8 @@
    1. hover/touch prefetch where Speculation Rules aren't supported
    2. one delegated click listener for same-page toggles
    3. live prices, fetched after `load` when the browser is idle
-   4. page scripts declared with data-lazy-script, loaded after `load` */
+   4. page scripts declared with data-lazy-script, loaded after `load`
+   5. overlays (menu / sheet), hide balances and the theme switch */
 (function () {
   'use strict';
 
@@ -29,7 +30,60 @@
      [data-group] holds mutually exclusive buttons (aria-pressed);
      a button with data-filter="x" shows only [data-k="x"] items in its target;
      .sw is a toggle switch. */
+  /* Overlays (full-screen menu, quick-action sheet, dropdowns):
+     [data-open="id"] shows #id, [data-close="id"] or Escape hides it. */
+  var root = document.documentElement;
+  function setOverlay(el, open) {
+    el.hidden = !open;
+    root.classList.toggle('menu-open', !!document.querySelector('.menu:not([hidden]),.overlay:not([hidden])'));
+    if (open) { var f = el.querySelector('[data-close],a,button'); if (f) f.focus({ preventScroll: true }); }
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.menu:not([hidden]),.overlay:not([hidden])').forEach(function (o) { setOverlay(o, false); });
+  });
+
+  /* Hide balances — same key and values the site has always used.
+     Elements with [data-money] show "••••" while hidden; Aurum.money() keeps
+     the real text in data-value so it can be restored. */
+  var HIDE_KEY = 'aurum_balance_hidden';
+  function isHidden() { try { return localStorage.getItem(HIDE_KEY) === 'true'; } catch (e) { return false; } }
+  function applyHidden() {
+    var h = isHidden();
+    root.toggleAttribute('data-hide', h);
+    document.querySelectorAll('[data-money]').forEach(function (m) {
+      if (m.dataset.value == null) m.dataset.value = m.textContent;
+      m.textContent = h ? '••••' : m.dataset.value;
+    });
+    document.querySelectorAll('[data-hide-balances]').forEach(function (b) { b.setAttribute('aria-pressed', h ? 'true' : 'false'); });
+  }
+
+  /* Theme — key 'aurum_theme' holds 'light' | 'dark'; System removes it so the
+     phone's setting applies (exactly how existing pages already behave). */
+  function setTheme(v) {
+    try { if (v === 'system') localStorage.removeItem('aurum_theme'); else localStorage.setItem('aurum_theme', v); } catch (e) {}
+    root.dataset.theme = v === 'system' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : v;
+  }
+  // While on System, follow the phone if it switches light/dark
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { if (currentTheme() === 'system') setTheme('system'); });
+  function currentTheme() { try { return localStorage.getItem('aurum_theme') || 'system'; } catch (e) { return 'system'; } }
+
   document.addEventListener('click', function (e) {
+    var op = e.target.closest('[data-open]');
+    if (op) { var o = document.getElementById(op.getAttribute('data-open')); if (o) { e.preventDefault(); setOverlay(o, true); } return; }
+    var cl = e.target.closest('[data-close]');
+    if (cl) { var c = document.getElementById(cl.getAttribute('data-close')); if (c) { e.preventDefault(); setOverlay(c, false); } return; }
+    if (e.target.closest('[data-hide-balances]')) {
+      try { localStorage.setItem(HIDE_KEY, isHidden() ? 'false' : 'true'); } catch (err) {}
+      applyHidden();
+      return;
+    }
+    var th = e.target.closest('[data-theme-value]');
+    if (th) {
+      setTheme(th.getAttribute('data-theme-value'));
+      th.parentNode.querySelectorAll('[data-theme-value]').forEach(function (x) { x.setAttribute('aria-pressed', x === th ? 'true' : 'false'); });
+      return;
+    }
     var sw = e.target.closest('.sw');
     if (sw) {
       sw.setAttribute('aria-pressed', sw.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
@@ -64,6 +118,18 @@
   var FN = API + 'get-market-prices';
   // Shared with lazily loaded page scripts (e.g. aurum-chart.js)
   window.Aurum = { api: API, headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } };
+  /** Set a money figure; respects "hide balances". */
+  window.Aurum.money = function (el, text) {
+    if (!el) return;
+    el.dataset.value = text;
+    el.textContent = isHidden() ? '••••' : text;
+  };
+  window.Aurum.applyHidden = applyHidden;
+  window.Aurum.theme = currentTheme;
+  applyHidden();
+  document.querySelectorAll('[data-theme-value]').forEach(function (x) {
+    x.setAttribute('aria-pressed', x.getAttribute('data-theme-value') === currentTheme() ? 'true' : 'false');
+  });
 
   var usd = function (n) {
     var d = n >= 1000 ? 2 : n >= 1 ? 2 : 4;
@@ -109,6 +175,7 @@
     document.querySelectorAll('[data-price],[data-chg]').forEach(function (el) {
       syms[el.getAttribute('data-price') || el.getAttribute('data-chg')] = 1;
     });
+    (window.Aurum.extra || []).forEach(function (s) { syms[s] = 1; }); // symbols a page needs but does not display
     var list = Object.keys(syms);
     if (!list.length || document.visibilityState === 'hidden') return;
     fetch(FN + '?symbols=' + list.join(','), { headers: window.Aurum.headers })
@@ -116,6 +183,8 @@
       .then(function (j) { if (j && j.data) paint(j.data); })
       .catch(function () {});
   }
+
+  window.Aurum.refresh = function () { load(); };
 
   function start() {
     var idle = window.requestIdleCallback || function (cb) { return setTimeout(cb, 200); };

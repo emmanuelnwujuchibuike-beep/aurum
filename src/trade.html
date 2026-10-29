@@ -3035,7 +3035,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   const loaded=new Promise(r=>setTimeout(r,1800));
   const {data:{session}}=await sb.auth.getSession();
   await loaded;
-  if(!session){window.location.href='signup.html';return;}
+  if(!session){window.location.replace('signup.html');return;}
   authUser=session.user;
   await loadPricesFromDB();
   await loadProfile();

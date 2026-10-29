@@ -1,0 +1,62 @@
+/* Aurum Capital — signed-in app shell (header, menu, quick-action sheet, vault
+   cards, test-mode marks). Inlined by scripts/build.mjs into <style id="shell-css">
+   on signed-in pages only. Uses tokens from app.css. */
+
+main.app-main{padding:10px var(--gut) calc(128px + env(safe-area-inset-bottom))}
+
+/* header: avatar + page name | menu + notifications */
+.who{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;min-width:0}
+.avatar{width:46px;height:46px;border-radius:16px;padding:3px;display:flex;flex:none}
+.avatar span{flex:1;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;background:var(--gold);color:var(--on-gold);overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.who-sub{font-size:12px;color:var(--muted);line-height:1.3}
+.who-title{font:500 20px/1.2 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bell-dot{position:absolute;top:11px;right:12px;width:7px;height:7px;border-radius:4px;background:var(--gold)}
+
+/* vault (dark feature card) */
+.vault{background:var(--vault);color:var(--vault-text);box-shadow:var(--shadow-vault);position:relative;overflow:hidden}
+.vault .eyebrow{color:var(--vault-gold)}
+.vault .muted{color:var(--vault-muted)}
+.rngs{display:flex;gap:2px;background:var(--vault-2);border-radius:11px;padding:3px}
+.rng{flex:1;min-height:34px;border-radius:9px;font-size:11px;font-weight:600;color:var(--vault-muted);letter-spacing:.06em}
+.rng.on,.rng[aria-pressed="true"]{background:var(--vault-3);color:var(--vault-gold)}
+
+/* quick actions row */
+.qa{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--ink-2);text-decoration:none;min-height:44px}
+.qa .k{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink)}
+.qa .k.gold{color:var(--on-gold)}
+
+/* overlays: quick-action sheet + full-screen menu (no blur, no animation) */
+.overlay{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;justify-content:flex-end;max-width:480px;margin:0 auto}
+.scrim{position:absolute;inset:0;background:var(--scrim);width:100%}
+.sheet{position:relative;background:var(--bg);border-radius:30px 30px 0 0;padding:14px var(--gut) calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+.grab{align-self:center;width:40px;height:5px;border-radius:3px;background:var(--line)}
+.sheet-btn{display:flex;align-items:center;gap:14px;min-height:60px;padding:0 14px;border-radius:18px;text-align:left;width:100%;color:inherit;text-decoration:none}
+.menu{position:fixed;inset:0;z-index:45;max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+.menu-body{flex:1;overflow-y:auto;padding:8px var(--gut) 24px;display:flex;flex-direction:column;gap:20px}
+.mi{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:8px 12px;border-radius:16px;text-align:left;text-decoration:none;color:var(--ink)}
+.mi[aria-current="page"]{background:var(--well);box-shadow:var(--press-sm)}
+.mi:active{background:var(--well)}
+.strip{border-radius:20px;padding:12px 14px;gap:18px;white-space:nowrap;font-size:12px;flex:none;display:flex}
+.strip b{color:var(--vault-gold);font-weight:500}
+.strip .up{color:#86D5A6}.strip .down{color:#F29B8E}
+html.menu-open,html.menu-open body{overflow:hidden}
+
+/* money: hidden balances */
+html[data-hide] [data-money]{letter-spacing:.08em}
+
+/* data placeholders keep their size so nothing jumps (CLS 0) */
+.skel{display:inline-block;min-width:4ch;color:transparent;background:var(--well);border-radius:6px}
+
+/* test mode: every figure built from an admin override carries this mark */
+.test-banner{display:flex;align-items:center;gap:10px;line-height:1.4;border-radius:14px;padding:10px 14px;font-size:12px;font-weight:600;color:var(--new);background:var(--new-bg)}
+.test-banner b{white-space:nowrap;letter-spacing:.08em}
+.test-mark{display:inline-block;vertical-align:middle;margin-left:6px;font:600 9px/1 var(--mono);letter-spacing:.12em;padding:3px 5px;border-radius:5px;color:var(--new);background:var(--new-bg)}
+.vault .test-mark{color:#241A05;background:#E8CD8C}
+
+/* list rows for activity / holdings */
+.amt{font:500 14px/1.3 var(--mono);white-space:nowrap;text-align:right}
+.amt.neg{color:var(--ink)}
+.amt.pos{color:var(--up)}
+.when{font:500 11px/1.4 var(--mono);color:var(--muted)}
+.empty{padding:22px 0;text-align:center;font-size:13px;color:var(--muted)}

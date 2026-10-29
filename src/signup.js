@@ -15,7 +15,31 @@ const isConfirmError    = !!hashParams.get('error');
 const isConfirmRedirect = isConfirmOk || isConfirmError || isRecovery;
 
 // Clean the hash from the address bar without a page reload
-if (isConfirmRedirect) history.replaceState(null, '', window.location.pathname);
+if (isConfirmRedirect) history.replaceState(null, '', window.location.pathname + window.location.search);
+
+/* ───────────────────────────────────────────────
+   GO TO THE APP — always location.replace(), so the
+   sign-in page never stays in history. (With href,
+   an iOS back-swipe returned here and showed the
+   login form, which looked like being logged out.)
+   ?next= is honoured only for same-site page paths.
+─────────────────────────────────────────────── */
+function appTarget() {
+  const next = new URLSearchParams(window.location.search).get('next') || '';
+  return /^[a-z0-9][a-z0-9_-]*\.html(\?[^#\s]*)?$/i.test(next) && !/^signup\.html/i.test(next) ? next : 'dashboard.html';
+}
+function goApp() { window.location.replace(appTarget()); }
+
+// Already signed in? Skip the form — also when iOS restores this page from its
+// back-forward cache. Email links (confirm / reset / error) are left to finish.
+function hasStoredSession() {
+  try {
+    const s = JSON.parse(localStorage.getItem('sb-ttwwthfeordsojmcjwxn-auth-token') || 'null');
+    return !!(s && s.refresh_token);
+  } catch { return false; }
+}
+if (!isConfirmRedirect && hasStoredSession()) goApp();
+window.addEventListener('pageshow', e => { if (e.persisted && !isConfirmRedirect && hasStoredSession()) goApp(); });
 
 // Handle on DOM ready so panel functions are available
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,7 +70,7 @@ supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_IN' && session && isConfirmOk) {
     setTimeout(() => {
       showSuccess();
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 3200);
+      setTimeout(() => { goApp(); }, 3200);
     }, 800);
   }
 });
@@ -198,7 +222,7 @@ if (signupForm) {
     } else {
       // Email confirmation is disabled — sign in immediately.
       showSuccess();
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 3200);
+      setTimeout(() => { goApp(); }, 3200);
     }
   });
 }
@@ -266,7 +290,7 @@ window.doLogin = async function(e) {
     return;
   }
 
-  window.location.href = 'dashboard.html';
+  goApp();
 };
 
 /* ───────────────────────────────────────────────
@@ -345,7 +369,7 @@ window.updatePassword = async function() {
     const ok   = document.getElementById('resetPwOk');
     if (form) form.style.display = 'none';
     if (ok)   ok.style.display = 'block';
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 2500);
+    setTimeout(() => { goApp(); }, 2500);
   }
 };
 

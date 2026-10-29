@@ -1985,7 +1985,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   buildTicker();
 
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) { window.location.href = 'signup.html'; return; }
+  if (!session) { window.location.replace('signup.html'); return; }
   authUser = session.user;
 
   await loadPricesFromDB();
@@ -2121,7 +2121,7 @@ function refreshUI() {
   txt('headerCash', maskVal(fmtMoney(cash)));
   txt('mi-bal', maskVal(fmtMoney(cash)));
 }
-async function doSignOut() { await sb.auth.signOut(); window.location.href = 'signup.html'; }
+async function doSignOut() { await sb.auth.signOut(); window.location.replace('signup.html'); }
 
 // ══════════════════════════════════════════════════
 //  APPLY LIVE PRICE UPDATE

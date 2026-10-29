@@ -1928,7 +1928,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   buildColorGrid();
 
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) { window.location.href = 'signup.html'; return; }
+  if (!session) { window.location.replace('signup.html'); return; }
   authUser = session.user;
 
   await loadAll();
@@ -1938,7 +1938,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   ['signOutBtn','signOutBtn2'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', e => {
       e.preventDefault();
-      sb.auth.signOut().then(() => window.location.href = 'signup.html');
+      sb.auth.signOut().then(() => window.location.replace('signup.html'));
     });
   });
 
