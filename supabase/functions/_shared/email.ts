@@ -151,6 +151,7 @@ ${o.body}
 <div style="height:1px;background:${T.line};margin-bottom:18px"></div>
 <div style="font:400 12px/1.6 ${T.sans};color:${T.muted}">${footer}</div>
 <div style="font:500 11px/1.6 ${T.sans};letter-spacing:.14em;text-transform:uppercase;color:${T.muted};margin-top:12px">${esc(s.footer_note)}</div>
+<div style="font:400 11px/1.6 ${T.sans};color:${T.muted};margin-top:8px">&copy; ${new Date().getUTCFullYear()} ${esc(s.brand)}. All rights reserved.</div>
 </td></tr>
 </table>
 </td></tr></table></body></html>`;
