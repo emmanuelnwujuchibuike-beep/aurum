@@ -111,7 +111,7 @@ main{padding:8px var(--gut) calc(124px + env(safe-area-inset-bottom))}
 .iconbtn{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink);flex:none;position:relative}
 
 /* bottom nav */
-.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:calc(min(480px,100vw) - 28px);height:74px;border-radius:28px;display:flex;align-items:center;justify-content:space-around;padding:0 6px;z-index:30}
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:max(6px,calc(env(safe-area-inset-bottom) - 14px));width:calc(min(480px,100vw) - 28px);height:74px;border-radius:28px;display:flex;align-items:center;justify-content:space-around;padding:0 6px;z-index:30}
 .nav a,.nav .tab{color:var(--nav-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:500;width:58px;min-height:48px;text-decoration:none}
 .nav .ico{width:40px;height:30px;border-radius:12px;display:flex;align-items:center;justify-content:center}
 .nav [aria-current="page"]{color:var(--gold-ink)}
