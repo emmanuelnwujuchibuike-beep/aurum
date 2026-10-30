@@ -256,3 +256,16 @@ html{overscroll-behavior-x:none}
   input,select,textarea,.input{font-size:16px!important}
   .big-in{font-size:26px!important}
 }
+
+/* Bottom sheets (shared: quick actions, buy/sell, language). Drag down to close (app.js). */
+.overlay{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;justify-content:flex-end;max-width:480px;margin:0 auto}
+.scrim{position:absolute;inset:0;background:var(--scrim);width:100%}
+.sheet{position:relative;background:var(--bg);border-radius:30px 30px 0 0;padding:14px var(--gut) calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;will-change:transform}
+.grab{align-self:center;width:40px;height:5px;border-radius:3px;background:var(--line)}
+/* Language: globe button in the header + picker sheet */
+.lang-tag{position:absolute;right:3px;bottom:3px;font:700 8px/1 var(--mono);letter-spacing:.04em;padding:2px 3px;border-radius:4px;background:var(--gold);color:var(--on-gold);text-transform:uppercase}
+.langs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.langs button{min-height:52px;padding:6px 14px;border-radius:14px;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px;color:var(--ink);font-size:15px;font-weight:600}
+.langs button span{font-size:11px;font-weight:500;color:var(--muted)}
+.langs button[aria-pressed="true"]{background:var(--vault);color:var(--vault-gold);box-shadow:none}
+.langs button[aria-pressed="true"] span{color:var(--vault-muted)}

@@ -35,7 +35,7 @@ const ICONS = {
   plus: '<path d="M12 5v14M5 12h14"/>',
   portfolio: '<path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
   account: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
-  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/>',
 };
 
 // Theme: same storage key and values the site has always used ('light' | 'dark');
@@ -52,16 +52,37 @@ const head = `
 <meta name="theme-color" content="#ECE8E1">
 `;
 
+// Language picker (replaces the old bell). The ten most spoken languages; app.js loads the
+// translator only once a visitor picks one other than English, so English pages pay nothing.
+const LANGS = [
+  ['en', 'English', 'English'], ['zh-CN', '中文', 'Chinese'], ['hi', 'हिन्दी', 'Hindi'], ['es', 'Español', 'Spanish'],
+  ['fr', 'Français', 'French'], ['ar', 'العربية', 'Arabic'], ['bn', 'বাংলা', 'Bengali'], ['pt', 'Português', 'Portuguese'],
+  ['ru', 'Русский', 'Russian'], ['ur', 'اردو', 'Urdu'],
+];
+const langBtn = (w, sw) => `<button class="iconbtn raised-sm" data-open="lang" aria-label="Language">${icon(ICONS.globe, w, sw)}<span class="lang-tag" data-lang-tag translate="no" hidden></span></button>`;
+const langSheet = `
+<div class="overlay" id="lang" hidden>
+  <button class="scrim" data-close="lang" aria-label="Close language picker"></button>
+  <div class="sheet" role="dialog" aria-label="Language" translate="no">
+    <span class="grab" aria-hidden="true"></span><span class="eyebrow">Language</span>
+    <div class="langs">
+${LANGS.map(([code, native, en]) => `      <button type="button" class="raised-sm" data-lang="${code}" lang="${code}" aria-pressed="${code === 'en'}">${native}<span>${en}</span></button>`).join('\n')}
+    </div>
+    <span class="muted" style="font-size:11px;line-height:1.5">Translated automatically by Google Translate. If a translation differs, the English version applies.</span>
+  </div>
+</div>`;
+
 const DEMO_BAR = `<div class="demo-bar" role="note"><b>DEMO</b><span>Demo platform — balances and payments are not real.</span></div>`;
 const header = (label) => `
 ${DEMO_BAR}
 <header class="top">
   <a class="brand" href="index.html">
     <span class="logo gold" aria-hidden="true">A</span>
-    <span class="stack"><span class="brand-name">Aurum Capital</span><span class="brand-sub">${label}</span></span>
+    <span class="stack"><span class="brand-name" translate="no">Aurum Capital</span><span class="brand-sub">${label}</span></span>
   </a>
-  <a class="iconbtn raised-sm" href="profile.html#alerts" aria-label="Notifications">${icon(ICONS.bell)}</a>
+  ${langBtn(20, 1.8)}
 </header>
+${langSheet}
 `;
 
 const NAV = [
@@ -138,9 +159,10 @@ ${DEMO_BAR}
   ${left}
   <div class="row g12">
     <button class="iconbtn raised-sm" data-open="menu" aria-label="Menu">${icon(APP_ICONS.grid, 19, 1.9)}</button>
-    ${back ? '' : `<a class="iconbtn raised-sm" href="profile.html#alerts" aria-label="Notifications">${icon(ICONS.bell, 19, 1.9)}<span class="bell-dot" data-unread hidden></span></a>`}
+    ${back ? '' : langBtn(19, 1.9)}
   </div>
 </header>
+${back ? '' : langSheet}
 <div class="test-banner" data-test-banner hidden style="margin:0 var(--gut) 10px" role="status"><b>TEST MODE</b><span>Figures marked TEST include admin test values and are not real.</span></div>
 `;
 };

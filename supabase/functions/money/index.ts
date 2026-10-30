@@ -183,6 +183,10 @@ serve(async (req) => {
       }
       return json({ error: error.message }, 400);
     }
+    // "Withdraw to cash" from the portfolio is a sale too; label it so activity and history show it as a withdrawal
+    if (action === "sell" && body.to_cash === true && data?.tx_id) {
+      await svc.from("transactions").update({ note: `Withdraw to cash ${data.symbol} | Fee: $${data.fee} | Net: $${data.net}` }).eq("id", data.tx_id).eq("user_id", user.id);
+    }
     return json(data);
   } catch (err) {
     return json({ error: (err as Error).message }, 400);

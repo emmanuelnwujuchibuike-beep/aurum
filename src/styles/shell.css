@@ -11,7 +11,6 @@ main.app-main{padding:10px var(--gut) calc(128px + env(safe-area-inset-bottom))}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .who-sub{font-size:12px;color:var(--muted);line-height:1.3}
 .who-title{font:500 20px/1.2 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bell-dot{position:absolute;top:11px;right:12px;width:7px;height:7px;border-radius:4px;background:var(--gold)}
 
 /* vault (dark feature card) */
 .vault{background:var(--vault);color:var(--vault-text);box-shadow:var(--shadow-vault);position:relative;overflow:hidden}
@@ -26,11 +25,7 @@ main.app-main{padding:10px var(--gut) calc(128px + env(safe-area-inset-bottom))}
 .qa .k{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:var(--gold-ink)}
 .qa .k.gold{color:var(--on-gold)}
 
-/* overlays: quick-action sheet + full-screen menu (no blur, no animation) */
-.overlay{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;justify-content:flex-end;max-width:480px;margin:0 auto}
-.scrim{position:absolute;inset:0;background:var(--scrim);width:100%}
-.sheet{position:relative;background:var(--bg);border-radius:30px 30px 0 0;padding:14px var(--gut) calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
-.grab{align-self:center;width:40px;height:5px;border-radius:3px;background:var(--line)}
+/* overlays: quick-action sheet + full-screen menu (.overlay/.scrim/.sheet/.grab live in app.css) */
 .sheet-btn{display:flex;align-items:center;gap:14px;min-height:60px;padding:0 14px;border-radius:18px;text-align:left;width:100%;color:inherit;text-decoration:none}
 .menu{position:fixed;inset:0;z-index:45;max-width:480px;margin:0 auto;display:flex;flex-direction:column}
 .menu-body{flex:1;overflow-y:auto;padding:8px var(--gut) 24px;display:flex;flex-direction:column;gap:20px}

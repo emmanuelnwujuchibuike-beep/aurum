@@ -38,6 +38,58 @@
     root.classList.toggle('menu-open', !!document.querySelector('.menu:not([hidden]),.overlay:not([hidden])'));
     if (open) { var f = el.querySelector('[data-close],a,button'); if (f) f.focus({ preventScroll: true }); }
   }
+  /* Bottom sheets: drag down to close. A downward drag that starts while the sheet is
+     scrolled to the top moves it with the finger (transform only, no layout); let go past
+     a third of its height, or flick, and it slides away and closes through its own
+     [data-close] scrim. Sideways swipes (photo slider) and scrolling are left alone.
+     The non-passive touchmove is bound to a sheet only once it is first touched. */
+  function dragSheet(sh) {
+    var ov = sh.parentNode, scrim = ov.querySelector('.scrim'), y0, x0, dy, py, pt, v, h, mode = -1;
+    function reset() { sh.style.transition = sh.style.transform = ''; if (scrim) scrim.style.transition = scrim.style.opacity = ''; }
+    sh._drag = function (e) {
+      mode = e.touches.length === 1 && sh.scrollTop <= 0 ? 0 : -1;
+      if (mode) return;
+      y0 = py = e.touches[0].clientY; x0 = e.touches[0].clientX; pt = e.timeStamp; dy = v = 0;
+    };
+    sh.addEventListener('touchmove', function (e) {
+      if (mode < 0) return;
+      var y = e.touches[0].clientY;
+      if (mode === 0) {
+        var ddy = y - y0, ddx = e.touches[0].clientX - x0;
+        if (Math.abs(ddy) < 8 && Math.abs(ddx) < 8) return;
+        if (ddy <= 0 || Math.abs(ddx) > Math.abs(ddy) || sh.scrollTop > 0) { mode = -1; return; }
+        mode = 1; y0 = y; h = sh.offsetHeight || 1;
+        sh.style.transition = 'none'; if (scrim) scrim.style.transition = 'none';
+      }
+      if (e.cancelable) e.preventDefault();
+      dy = Math.max(0, y - y0);
+      if (e.timeStamp > pt) { v = (y - py) / (e.timeStamp - pt); py = y; pt = e.timeStamp; }
+      sh.style.transform = 'translate3d(0,' + dy + 'px,0)';
+      if (scrim) scrim.style.opacity = String(1 - Math.min(1, dy / h));
+    }, { passive: false });
+    function end() {
+      if (mode !== 1) { mode = -1; return; }
+      mode = -1;
+      var shut = dy > h / 3 || (v > 0.5 && dy > 30);
+      sh.style.transition = 'transform .26s cubic-bezier(.2,.8,.2,1)';
+      if (scrim) scrim.style.transition = 'opacity .26s';
+      sh.style.transform = shut ? 'translate3d(0,100%,0)' : '';
+      if (scrim) scrim.style.opacity = shut ? '0' : '';
+      setTimeout(function () {
+        if (shut) { var c = ov.querySelector('[data-close]'); if (c) c.click(); else setOverlay(ov, false); }
+        reset();
+      }, 270);
+    }
+    sh.addEventListener('touchend', end, { passive: true });
+    sh.addEventListener('touchcancel', end, { passive: true });
+  }
+  document.addEventListener('touchstart', function (e) {
+    var sh = e.target.closest && e.target.closest('.overlay > .sheet');
+    if (!sh) return;
+    if (!sh._drag) dragSheet(sh);
+    sh._drag(e);
+  }, { passive: true });
+
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
     document.querySelectorAll('.menu:not([hidden]),.overlay:not([hidden])').forEach(function (o) { setOverlay(o, false); });
@@ -68,7 +120,56 @@
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { if (currentTheme() === 'system') setTheme('system'); });
   function currentTheme() { try { return localStorage.getItem('aurum_theme') || 'system'; } catch (e) { return 'system'; } }
 
+  /* Language — the header globe opens #lang (ten most spoken languages). Google Translate
+     is loaded only once a visitor picks a language other than English, so English pages
+     carry no extra weight. The choice lives in the 'googtrans' cookie, which the translator
+     reads on every page; while a page is translated, links load normally (not swapped in
+     place) so each page is translated whole. English clears the cookie and reloads. */
+  var GT_CSS = 'body{top:0!important}.skiptranslate>iframe,iframe.skiptranslate,.goog-te-banner-frame,#goog-gt-tt,.goog-te-balloon-frame,.VIpgJd-ZVi9od-ORHb-OEVmcd,.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,.VIpgJd-yAWNEb-L7lbkb{display:none!important}.goog-text-highlight,.VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q{background:none!important;box-shadow:none!important}font{vertical-align:inherit!important}';
+  var LANG_CODES = 'en,zh-CN,hi,es,fr,ar,bn,pt,ru,ur';
+  function curLang() {
+    var m = document.cookie.match(/(?:^|;\s*)googtrans=\/[^\/;]*\/([^;]+)/), l = m ? decodeURIComponent(m[1]) : 'en';
+    return LANG_CODES.split(',').indexOf(l) >= 0 ? l : 'en';
+  }
+  function setLangCookie(l) {
+    var v = l === 'en' ? '' : '/en/' + l, exp = l === 'en' ? ';expires=Thu, 01 Jan 1970 00:00:00 GMT' : ';max-age=31536000';
+    var h = location.hostname, doms = [''];
+    // the translator may also have written it on the bare and dotted domain: set / clear every variant
+    if (/\./.test(h) && !/^[\d.]+$/.test(h)) { doms.push(';domain=' + h, ';domain=.' + h); var r = h.split('.').slice(-2).join('.'); if (r !== h) doms.push(';domain=.' + r); }
+    doms.forEach(function (d) { document.cookie = 'googtrans=' + v + ';path=/' + d + exp + ';SameSite=Lax'; });
+  }
+  function showLang() {
+    var l = curLang();
+    document.querySelectorAll('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === l ? 'true' : 'false'); });
+    document.querySelectorAll('[data-lang-tag]').forEach(function (t) { t.hidden = l === 'en'; t.textContent = l.slice(0, 2); });
+  }
+  var gtStarted = false;
+  function loadTranslator() {
+    if (gtStarted) return; gtStarted = true;
+    var st = document.createElement('style'); st.id = 'gt-css'; st.textContent = GT_CSS; document.head.appendChild(st);
+    var el = document.createElement('div'); el.id = 'gt_el'; el.className = 'skiptranslate'; el.setAttribute('aria-hidden', 'true');
+    el.style.cssText = 'position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden';
+    document.body.appendChild(el);
+    window.aurumTranslate = function () {
+      new window.google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: LANG_CODES, autoDisplay: false }, 'gt_el');
+    };
+    var s = document.createElement('script'); s.src = 'https://translate.google.com/translate_a/element.js?cb=aurumTranslate'; s.async = true;
+    document.head.appendChild(s);
+  }
+  function pickLang(l) {
+    if (l === curLang()) return;
+    setLangCookie(l);
+    showLang();
+    if (l === 'en') { location.reload(); return; }
+    var combo = document.querySelector('.goog-te-combo');
+    if (combo) { combo.value = l; combo.dispatchEvent(new Event('change')); } else loadTranslator();
+  }
+  showLang();
+  if (curLang() !== 'en') loadTranslator();
+
   document.addEventListener('click', function (e) {
+    var lb = e.target.closest('[data-lang]');
+    if (lb) { var ov = lb.closest('.overlay'); if (ov) setOverlay(ov, false); pickLang(lb.getAttribute('data-lang')); return; }
     var op = e.target.closest('[data-open]');
     if (op) { var o = document.getElementById(op.getAttribute('data-open')); if (o) { e.preventDefault(); setOverlay(o, true); } return; }
     var cl = e.target.closest('[data-close]');
@@ -327,7 +428,7 @@
   document.querySelectorAll('script[src]').forEach(function (s) { var m = s.getAttribute('src').match(ONCE); if (m) loadedOnce[m[2]] = 1; });
   var pages = {}; // url → Promise<html>
   function spaTarget(a) {
-    if (!Scope || !document.getElementById('app-css')) return false;
+    if (!Scope || !document.getElementById('app-css') || curLang() !== 'en') return false;
     if (a.target || a.hasAttribute('download') || a.origin !== location.origin) return false;
     if (!/\.html$/.test(a.pathname) || FULL.test(a.pathname)) return false;
     return a.pathname !== location.pathname || a.search !== location.search;
@@ -385,7 +486,7 @@
     window.Aurum.extra = [];
     Scope.spa = 1;
     document.dispatchEvent(new CustomEvent('aurum:navigated'));
-    applyHidden(); fillTodo();
+    applyHidden(); fillTodo(); showLang();
     document.querySelectorAll('[data-theme-value]').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-theme-value') === currentTheme() ? 'true' : 'false'); });
     return runScripts(scripts, 0).then(function () {
       if (window.Aurum.last) paint(window.Aurum.last); // instant figures, then fresh ones
