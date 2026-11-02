@@ -39,7 +39,6 @@
 <body class="wide">
 <div class="app">
 <!--@appheader back:Deposit funds-->
-<div class="demo-bar" role="note"><b>DEMO</b><span>Demo platform — balances and payments are not real.</span></div>
 <header class="top">
   <a class="iconbtn raised-sm" href="dashboard.html" aria-label="Back to dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a>
     <span class="who-title grow" style="text-align:center">Deposit funds</span>
@@ -49,7 +48,6 @@
   </div>
 </header>
 
-<div class="test-banner" data-test-banner hidden style="margin:0 var(--gut) 10px" role="status"><b>TEST MODE</b><span>Figures marked TEST include admin test values and are not real.</span></div>
 <!--/@appheader-->
 
 <main class="app-main dp stack g20">
@@ -83,7 +81,7 @@
     <span class="eyebrow" id="pay-h">4 · Send your payment</span>
     <form class="raised card stack g14" id="payForm" novalidate>
       <div class="stack g8" id="demoNote" data-demo-only>
-        <p class="warn"><b>Demo mode.</b> No real payment is needed. Submit to create a demo deposit request — an admin approves it to credit demo cash.</p>
+        <p class="warn">Click to deposit funds.</p>
       </div>
 
       <div class="stack g10" id="cryptoPay" data-live-only>
@@ -101,7 +99,7 @@
         <label class="field">Your PayPal email<input class="input" type="email" id="ppFrom" autocomplete="email" placeholder="you@example.com"></label>
       </div>
 
-      <div id="demoPp" hidden data-demo-only><label class="field">Your PayPal email (demo)<input class="input" type="email" id="ppFromDemo" autocomplete="email" placeholder="you@example.com"></label></div>
+      <div id="demoPp" hidden data-demo-only><label class="field">Your PayPal email<input class="input" type="email" id="ppFromDemo" autocomplete="email" placeholder="you@example.com"></label></div>
 
       <p class="err" id="err" role="alert"></p>
       <button class="btn gold" id="go" type="submit" style="text-transform:none;letter-spacing:0">Review deposit</button>
@@ -123,7 +121,7 @@
     <span class="grab" aria-hidden="true"></span><span class="eyebrow">Quick actions</span>
     <a href="deposit.html" class="sheet-btn raised-sm"><span class="badge gold" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="stack"><b style="font-size:14px">Deposit funds</b><span class="muted" style="font-size:12px">Bank transfer, card or crypto</span></span></a>
     <a href="withdraw.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><span class="stack"><b style="font-size:14px">Withdraw</b><span class="muted" style="font-size:12px">To your bank or wallet</span></span></a>
-    <a href="trade.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M7 4 3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></span><span class="stack"><b style="font-size:14px">Trade</b><span class="muted" style="font-size:12px">Practice or live</span></span></a>
+    <a href="trade.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M7 4 3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></span><span class="stack"><b style="font-size:14px">Trade</b><span class="muted" style="font-size:12px">live</span></span></a>
     <a href="invest.html" class="sheet-btn raised-sm"><span class="badge inset" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="stack"><b style="font-size:14px">New investment</b><span class="muted" style="font-size:12px">Equities or real estate</span></span></a>
   </div>
 </div>
