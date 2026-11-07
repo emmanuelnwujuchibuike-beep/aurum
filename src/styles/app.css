@@ -190,11 +190,6 @@ textarea.input{min-height:120px;padding:14px 16px;resize:vertical}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-/* demo platform label: shown until an admin turns real payments on */
-.demo-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px var(--gut);padding-top:calc(6px + env(safe-area-inset-top));font-size:11px;line-height:1.35;color:var(--new);background:var(--new-bg);text-align:center}
-.demo-bar b{font:600 10px/1 var(--mono);letter-spacing:.16em}
-html[data-live] .demo-bar,html[data-live] [data-demo-only]{display:none!important}
-html:not([data-live]) [data-live-only]{display:none!important}
 
 /* App-style navigation between pages: header and bottom nav stay put while the
    content cross-fades (cross-document view transitions; ignored where unsupported). */
